@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "dear-universe-app",
+    "name": "Dear universe",
     "slug": "dear-universe-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,13 +13,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.denbalogh.dearuniverseapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.denbalogh.dearuniverseapp"
     },
     "web": {
       "bundler": "metro",

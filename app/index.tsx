@@ -1,9 +1,28 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Text } from "react-native-paper";
 
 export default function Index() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Edit app/index.tsx to edit this screen right here.</Text>
+      <Text variant="displayLarge">Display Large</Text>
+      <Text variant="displayMedium">Display Medium</Text>
+      <Text variant="displaySmall">Display small</Text>
+
+      <Text variant="headlineLarge">Headline Large</Text>
+      <Text variant="headlineMedium">Headline Medium</Text>
+      <Text variant="headlineSmall">Headline Small</Text>
+
+      <Text variant="titleLarge">Title Large</Text>
+      <Text variant="titleMedium">Title Medium</Text>
+      <Text variant="titleSmall">Title Small</Text>
+
+      <Text variant="bodyLarge">Body Large</Text>
+      <Text variant="bodyMedium">Body Medium</Text>
+      <Text variant="bodySmall">Body Small</Text>
+
+      <Text variant="labelLarge">Label Large</Text>
+      <Text variant="labelMedium">Label Medium</Text>
+      <Text variant="labelSmall">Label Small</Text>
     </View>
   );
 }
