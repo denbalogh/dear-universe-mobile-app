@@ -1,28 +1,109 @@
-import { View } from "react-native";
-import { Text } from "react-native-paper";
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Pressable,
+} from "react-native";
+import { Realm, RealmProvider, useRealm, useQuery } from "@realm/react";
+import { ObjectSchema } from "realm";
 
-export default function Index() {
+const generate = (description: string) => ({
+  _id: new Realm.BSON.ObjectId(),
+  description,
+  createdAt: new Date(),
+});
+
+export class Task extends Realm.Object {
+  _id: Realm.BSON.ObjectId = new Realm.BSON.ObjectId();
+  description!: string;
+  isComplete: boolean = false;
+  createdAt: Date = new Date();
+  userId!: string;
+
+  static schema: ObjectSchema = {
+    name: "Task",
+    primaryKey: "_id",
+    properties: {
+      _id: "objectId",
+      description: "string",
+      isComplete: { type: "bool", default: false },
+      createdAt: "date",
+    },
+  };
+}
+
+export default function AppWrapper() {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text variant="displayLarge">Display Large</Text>
-      <Text variant="displayMedium">Display Medium</Text>
-      <Text variant="displaySmall">Display small</Text>
+    <RealmProvider schema={[Task]}>
+      <TaskApp />
+    </RealmProvider>
+  );
+}
 
-      <Text variant="headlineLarge">Headline Large</Text>
-      <Text variant="headlineMedium">Headline Medium</Text>
-      <Text variant="headlineSmall">Headline Small</Text>
+function TaskApp() {
+  const realm = useRealm();
+  const tasks = useQuery(Task);
+  const [newDescription, setNewDescription] = useState("");
 
-      <Text variant="titleLarge">Title Large</Text>
-      <Text variant="titleMedium">Title Medium</Text>
-      <Text variant="titleSmall">Title Small</Text>
-
-      <Text variant="bodyLarge">Body Large</Text>
-      <Text variant="bodyMedium">Body Medium</Text>
-      <Text variant="bodySmall">Body Small</Text>
-
-      <Text variant="labelLarge">Label Large</Text>
-      <Text variant="labelMedium">Label Medium</Text>
-      <Text variant="labelSmall">Label Small</Text>
-    </View>
+  return (
+    <SafeAreaView>
+      <View
+        style={{ flexDirection: "row", justifyContent: "center", margin: 10 }}
+      >
+        <TextInput
+          value={newDescription}
+          placeholder="Enter new task description"
+          onChangeText={setNewDescription}
+        />
+        <Pressable
+          onPress={() => {
+            realm.write(() => {
+              realm.create("Task", generate(newDescription));
+            });
+            setNewDescription("");
+          }}
+        >
+          <Text>➕</Text>
+        </Pressable>
+      </View>
+      <FlatList
+        data={tasks.sorted("createdAt")}
+        keyExtractor={(item) => item._id.toHexString()}
+        renderItem={({ item }) => {
+          return (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                margin: 10,
+              }}
+            >
+              <Pressable
+                onPress={() =>
+                  realm.write(() => {
+                    item.isComplete = !item.isComplete;
+                  })
+                }
+              >
+                <Text>{item.isComplete ? "✅" : "☑️"}</Text>
+              </Pressable>
+              <Text style={{ paddingHorizontal: 10 }}>{item.description}</Text>
+              <Pressable
+                onPress={() => {
+                  realm.write(() => {
+                    realm.delete(item);
+                  });
+                }}
+              >
+                <Text>{"🗑️"}</Text>
+              </Pressable>
+            </View>
+          );
+        }}
+      ></FlatList>
+    </SafeAreaView>
   );
 }
