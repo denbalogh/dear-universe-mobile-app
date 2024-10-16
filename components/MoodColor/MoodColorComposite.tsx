@@ -1,13 +1,13 @@
 import React from "react";
 import { Mood } from "./types";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import { getMoodColor, getMoodOrder } from "./values";
 
 type Props = {
   moods: { mood: Mood; count: number }[];
-};
+} & ViewProps;
 
-const MoodColorComposite = ({ moods }: Props) => {
+const MoodColorComposite = ({ moods, ...props }: Props) => {
   if (moods.length === 0) {
     return null;
   }
@@ -23,7 +23,7 @@ const MoodColorComposite = ({ moods }: Props) => {
   const moodsSorted = moodsWithOrder.sort((a, b) => a.order - b.order);
 
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.wrapper} {...props}>
       {moodsSorted.map(({ mood, count }, index) => {
         const isTop = index === 0;
         const isBottom = index === moodsSorted.length - 1;
@@ -40,6 +40,7 @@ const MoodColorComposite = ({ moods }: Props) => {
                 height: `${(count / totalCount) * 100}%`,
               },
             ]}
+            aria-label={`${mood} ${count}`}
           />
         );
       })}
