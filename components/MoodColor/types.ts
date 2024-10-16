@@ -1,3 +1,3 @@
-import { moodsWithColors } from "./values";
+import { moods } from "./values";
 
-export type Mood = keyof typeof moodsWithColors;
+export type Mood = keyof typeof moods;

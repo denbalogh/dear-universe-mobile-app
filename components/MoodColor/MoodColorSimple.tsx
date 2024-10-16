@@ -1,7 +1,7 @@
 import React from "react";
 import { Mood } from "./types";
 import { StyleSheet, View } from "react-native";
-import { moodsWithColors } from "./values";
+import { getMoodColor } from "./values";
 
 type Variant = "simple" | "wide-horizontal";
 
@@ -12,9 +12,7 @@ type Props = {
 
 const MoodColorSimple = ({ mood, variant = "simple" }: Props) => {
   return (
-    <View
-      style={[styles[variant], { backgroundColor: moodsWithColors[mood] }]}
-    />
+    <View style={[styles[variant], { backgroundColor: getMoodColor(mood) }]} />
   );
 };
 

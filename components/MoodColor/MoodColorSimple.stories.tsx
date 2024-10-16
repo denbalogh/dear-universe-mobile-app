@@ -1,5 +1,5 @@
 import MoodColorSimple from "./MoodColorSimple";
-import { moodsWithColors } from "./values";
+import { moods } from "./values";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -8,7 +8,7 @@ const meta = {
   component: MoodColorSimple,
   argTypes: {
     mood: {
-      options: Object.keys(moodsWithColors),
+      options: Object.keys(moods),
       control: {
         type: "select",
       },
@@ -28,7 +28,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
   args: {
-    mood: "Happines, Joy",
+    mood: "Happiness, Joy",
     variant: "simple",
   },
 };
