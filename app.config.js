@@ -41,6 +41,15 @@ module.exports = {
           },
         },
       ],
+      [
+        "expo-font",
+        {
+          fonts: [
+            "./assets/fonts/Alegreya_Sans_SC/AlegreyaSansSC-Regular.ttf",
+            "./assets/fonts/Baloo_Paaji_2/BalooPaaji2-Regular.ttf",
+          ],
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
