@@ -28,6 +28,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    padding: 20,
+    padding: themeLight.spaceMedium,
   },
 });

@@ -100,9 +100,20 @@ const fonts: MD3Theme["fonts"] = {
   },
 };
 
-export const themeLight: MD3Theme = {
+export const spacing = {
+  spaceExtraSmall: 5,
+  spaceSmall: 10,
+  spaceMedium: 20,
+  spaceLarge: 40,
+};
+
+export const roundness = 6;
+
+export type CustomTheme = MD3Theme & typeof spacing;
+
+export const themeLight: CustomTheme = {
   dark: false,
-  roundness: 4,
+  roundness,
   version: 3,
   isV3: true,
   animation: MD3LightTheme.animation,
@@ -149,11 +160,12 @@ export const themeLight: MD3Theme = {
     backdrop: "rgba(46, 48, 56, 0.4)",
   },
   fonts,
+  ...spacing,
 };
 
-export const themeDark: MD3Theme = {
+export const themeDark: CustomTheme = {
   dark: true,
-  roundness: 4,
+  roundness,
   version: 3,
   isV3: true,
   animation: MD3DarkTheme.animation,
@@ -200,4 +212,5 @@ export const themeDark: MD3Theme = {
     backdrop: "rgba(47, 48, 56, 0.4)",
   },
   fonts,
+  ...spacing,
 };
