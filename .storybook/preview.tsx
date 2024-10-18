@@ -1,24 +1,33 @@
-import React from 'react';
-import type { Preview } from '@storybook/react';
-import { StyleSheet, View } from 'react-native';
+import React from "react";
+import type { Preview } from "@storybook/react";
+import { StyleSheet, View, useColorScheme } from "react-native";
+import { PaperProvider } from "react-native-paper";
+import { themeDark, themeLight } from "../constants/theme";
 
 const preview: Preview = {
   decorators: [
-    (Story) => (
-      <View style={styles.wrapper}>
-        <Story />
-      </View>
-    ),
+    (Story) => {
+      const colorScheme = useColorScheme();
+      const activeTheme = colorScheme === "dark" ? themeDark : themeLight;
+
+      return (
+        <PaperProvider theme={activeTheme}>
+          <View style={styles.wrapper}>
+            <Story />
+          </View>
+        </PaperProvider>
+      );
+    },
   ],
 };
 
 export default preview;
 
 const styles = StyleSheet.create({
-  wrapper:{
+  wrapper: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    padding: 20,
-  }
-})
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    padding: themeLight.spaceMedium,
+  },
+});

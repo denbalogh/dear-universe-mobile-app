@@ -23,17 +23,17 @@ type Story = StoryObj<typeof meta>;
 
 export const AllMoodsEvenly: Story = {
   args: {
-    moods: Object.keys(moods).map((mood) => ({ mood: mood as Mood, count: 1 })),
+    moods: Object.keys(moods).map((mood) => mood as Mood),
   },
 };
 
 export const Example1: Story = {
   args: {
     moods: [
-      { mood: "Happiness, Joy", count: 3 },
-      { mood: "Excitement, Energy", count: 2 },
-      { mood: "Serenity, Balance", count: 1 },
-      { mood: "Sadness, Indifference", count: 2 },
+      "Happiness, Joy",
+      "Excitement, Energy",
+      "Serenity, Balance",
+      "Sadness, Indifference",
     ],
   },
 };
@@ -41,27 +41,24 @@ export const Example1: Story = {
 export const Example2: Story = {
   args: {
     moods: [
-      { mood: "Happiness, Joy", count: 1 },
-      { mood: "Excitement, Energy", count: 2 },
-      { mood: "Serenity, Balance", count: 1 },
-      { mood: "Calmness, Relaxation", count: 1 },
-      { mood: "Anger, Frustration", count: 1 },
-      { mood: "Sadness, Indifference", count: 3 },
+      "Happiness, Joy",
+      "Excitement, Energy",
+      "Serenity, Balance",
+      "Calmness, Relaxation",
+      "Anger, Frustration",
+      "Sadness, Indifference",
     ],
   },
 };
 
 export const SingleMood: Story = {
   args: {
-    moods: [{ mood: "Happiness, Joy", count: 5 }],
+    moods: ["Happiness, Joy"],
   },
 };
 
 export const TwoMoods: Story = {
   args: {
-    moods: [
-      { mood: "Happiness, Joy", count: 5 },
-      { mood: "Excitement, Energy", count: 2 },
-    ],
+    moods: ["Happiness, Joy", "Excitement, Energy"],
   },
 };

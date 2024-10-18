@@ -1,46 +1,42 @@
 import React from "react";
 import { Mood } from "./types";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { getMoodColor, getMoodOrder } from "./values";
+import { getMoodColor } from "./values";
 
 type Props = {
-  moods: { mood: Mood; count: number }[];
+  moods: Mood[];
 } & ViewProps;
+
+export const MOOD_COMPOSITE_WIDTH = 6;
 
 const MoodColorComposite = ({ moods, ...props }: Props) => {
   if (moods.length === 0) {
     return null;
   }
 
-  const totalCount = moods.reduce((acc, { count }) => acc + count, 0);
-
-  const moodsWithOrder = moods.map(({ mood, count }) => ({
-    mood,
-    count,
-    order: getMoodOrder(mood),
-  }));
-
-  const moodsSorted = moodsWithOrder.sort((a, b) => a.order - b.order);
+  const totalCount = moods.length;
+  const height = 100 / totalCount;
 
   return (
     <View style={styles.wrapper} {...props}>
-      {moodsSorted.map(({ mood, count }, index) => {
+      {moods.map((mood, index) => {
         const isTop = index === 0;
-        const isBottom = index === moodsSorted.length - 1;
+        const isBottom = index === totalCount - 1;
 
         return (
           <View
-            key={mood}
+            key={`${mood}-${index}`}
             style={[
               styles.common,
               isTop && styles.top,
               isBottom && styles.bottom,
               {
                 backgroundColor: getMoodColor(mood),
-                height: `${(count / totalCount) * 100}%`,
+                height: `${height}%`,
               },
             ]}
-            aria-label={`${mood} ${count}`}
+            aria-label={mood}
+            testID={`${mood}-${index}`}
           />
         );
       })}
@@ -54,12 +50,12 @@ const borderRadius = 5;
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: 6,
+    width: MOOD_COMPOSITE_WIDTH,
     height: "100%",
     borderRadius: borderRadius,
   },
   common: {
-    width: 6,
+    width: MOOD_COMPOSITE_WIDTH,
   },
   top: {
     borderTopStartRadius: borderRadius,
