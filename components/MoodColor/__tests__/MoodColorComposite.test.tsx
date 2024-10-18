@@ -7,12 +7,12 @@ describe("MoodColorComposite", () => {
       <MoodColorComposite
         aria-label="Mood indicator"
         moods={[
-          { mood: "Happiness, Joy", count: 3 },
-          { mood: "Excitement, Energy", count: 2 },
-          { mood: "Serenity, Balance", count: 1 },
-          { mood: "Sadness, Indifference", count: 2 },
-          { mood: "Anger, Frustration", count: 1 },
-          { mood: "Calmness, Relaxation", count: 1 },
+          "Happiness, Joy",
+          "Excitement, Energy",
+          "Serenity, Balance",
+          "Sadness, Indifference",
+          "Anger, Frustration",
+          "Calmness, Relaxation",
         ]}
       />,
     );
@@ -21,31 +21,31 @@ describe("MoodColorComposite", () => {
     expect(screen.getByLabelText("Mood indicator")).toBeOnTheScreen();
 
     // Check if the moods are rendered
-    expect(screen.getByLabelText("Happiness, Joy 3")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Excitement, Energy 2")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Serenity, Balance 1")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Sadness, Indifference 2")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Anger, Frustration 1")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Calmness, Relaxation 1")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Happiness, Joy")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Excitement, Energy")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Serenity, Balance")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Sadness, Indifference")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Anger, Frustration")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Calmness, Relaxation")).toBeOnTheScreen();
 
     // Check if the component contains the expected moods
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Happiness, Joy 3"),
+      screen.getByLabelText("Happiness, Joy"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Excitement, Energy 2"),
+      screen.getByLabelText("Excitement, Energy"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Serenity, Balance 1"),
+      screen.getByLabelText("Serenity, Balance"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Sadness, Indifference 2"),
+      screen.getByLabelText("Sadness, Indifference"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Anger, Frustration 1"),
+      screen.getByLabelText("Anger, Frustration"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Calmness, Relaxation 1"),
+      screen.getByLabelText("Calmness, Relaxation"),
     );
   });
 
@@ -53,5 +53,26 @@ describe("MoodColorComposite", () => {
     render(<MoodColorComposite aria-label="Mood indicator" moods={[]} />);
 
     expect(screen.queryByLabelText("Mood indicator")).not.toBeOnTheScreen();
+  });
+
+  test("multiple moods of the same type are rendered", () => {
+    render(
+      <MoodColorComposite
+        aria-label="Mood indicator"
+        moods={[
+          "Happiness, Joy",
+          "Anger, Frustration",
+          "Happiness, Joy",
+          "Happiness, Joy",
+          "Anger, Frustration",
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId("Happiness, Joy-0")).toBeOnTheScreen();
+    expect(screen.getByTestId("Anger, Frustration-1")).toBeOnTheScreen();
+    expect(screen.getByTestId("Happiness, Joy-2")).toBeOnTheScreen();
+    expect(screen.getByTestId("Happiness, Joy-3")).toBeOnTheScreen();
+    expect(screen.getByTestId("Anger, Frustration-4")).toBeOnTheScreen();
   });
 });
