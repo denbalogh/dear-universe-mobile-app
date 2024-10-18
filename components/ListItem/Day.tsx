@@ -19,10 +19,17 @@ const Day = ({ timestamp }: Props) => {
       <Text
         variant="displaySmall"
         style={[isToday && { color: theme.colors.tertiary }]}
+        aria-label={
+          isToday
+            ? `Today ${format(date, "do LLLL yyyy")}`
+            : format(date, "do LLLL yyyy")
+        }
       >
         {getDate(date)}
       </Text>
-      <Text variant="bodyLarge">{format(date, "E")}</Text>
+      <Text variant="bodyLarge" aria-label={format(date, "EEEE")}>
+        {format(date, "E")}
+      </Text>
     </View>
   );
 };

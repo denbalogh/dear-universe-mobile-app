@@ -48,20 +48,22 @@ const ListItem = ({
 
   if (isLoading) {
     return (
-      <View style={styles.wrapper}>
+      <View style={styles.wrapper} testID="LoadingWrapper">
         <Day timestamp={timestamp} />
-        <View style={styles.loadingMiddleWrapper}>
+        <View style={styles.loadingMiddleWrapper} aria-label="Loading the day">
           <View
             style={[
               styles.loadingExcerpt,
               { backgroundColor: loadingBackgroundColor },
             ]}
+            testID="LoadingExcerpt"
           />
           <View
             style={[
               styles.loadingStats,
               { backgroundColor: loadingBackgroundColor },
             ]}
+            testID="LoadingStats"
           />
         </View>
         <View
@@ -69,13 +71,18 @@ const ListItem = ({
             styles.loadingMoodComposite,
             { backgroundColor: loadingBackgroundColor },
           ]}
+          testID="LoadingMoodComposite"
         />
       </View>
     );
   }
 
   return (
-    <TouchableRipple style={styles.pressable} onPress={onPress}>
+    <TouchableRipple
+      style={styles.pressable}
+      onPress={onPress}
+      testID="ListItemPressable"
+    >
       <View style={styles.wrapper}>
         <Day timestamp={timestamp} />
         {hasStats ? (
@@ -86,7 +93,7 @@ const ListItem = ({
               </Text>
               <View style={styles.statsWrapper}>
                 {stats.texts > 0 && (
-                  <View style={styles.stat}>
+                  <View style={styles.stat} aria-label="Number of text entries">
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.texts}
                     </Text>
@@ -94,7 +101,10 @@ const ListItem = ({
                   </View>
                 )}
                 {stats.recordings > 0 && (
-                  <View style={styles.stat}>
+                  <View
+                    style={styles.stat}
+                    aria-label="Number of recording entries"
+                  >
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.recordings}
                     </Text>
@@ -102,7 +112,10 @@ const ListItem = ({
                   </View>
                 )}
                 {stats.images > 0 && (
-                  <View style={styles.stat}>
+                  <View
+                    style={styles.stat}
+                    aria-label="Number of image entries"
+                  >
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.images}
                     </Text>
@@ -111,7 +124,11 @@ const ListItem = ({
                 )}
               </View>
             </View>
-            <MoodColorComposite moods={moods} style={styles.moodComposite} />
+            <MoodColorComposite
+              moods={moods}
+              style={styles.moodComposite}
+              aria-label="Moods during the day"
+            />
           </>
         ) : (
           <View style={styles.addEntryButtonsWrapper}>
@@ -119,16 +136,19 @@ const ListItem = ({
               icon="pen-plus"
               mode="outlined"
               onPress={onAddTextEntryPress}
+              aria-label="Add text entry"
             />
             <IconButton
               icon="microphone-plus"
               mode="outlined"
               onPress={onAddRecordingEntryPress}
+              aria-label="Add recording entry"
             />
             <IconButton
               icon="image-plus"
               mode="outlined"
               onPress={onAddImageEntryPress}
+              aria-label="Add image entry"
             />
           </View>
         )}
