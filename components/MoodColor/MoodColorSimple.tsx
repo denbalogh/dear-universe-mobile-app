@@ -2,18 +2,16 @@ import React from "react";
 import { Mood } from "./types";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { getMoodColor } from "./values";
-
-type Variant = "simple" | "wide-horizontal";
+import { roundness, sizing } from "@/constants/theme";
 
 type Props = {
   mood: Mood;
-  variant?: Variant;
 } & ViewProps;
 
-const MoodColorSimple = ({ mood, variant = "simple", ...props }: Props) => {
+const MoodColorSimple = ({ mood, ...props }: Props) => {
   return (
     <View
-      style={[styles[variant], { backgroundColor: getMoodColor(mood) }]}
+      style={[styles.wrapper, { backgroundColor: getMoodColor(mood) }]}
       {...props}
     />
   );
@@ -22,14 +20,9 @@ const MoodColorSimple = ({ mood, variant = "simple", ...props }: Props) => {
 export default MoodColorSimple;
 
 const styles = StyleSheet.create({
-  simple: {
-    width: 24,
-    height: 24,
-    borderRadius: 5,
-  },
-  "wide-horizontal": {
-    width: 48,
-    height: 24,
-    borderRadius: 5,
+  wrapper: {
+    width: sizing.sizeMedium,
+    height: sizing.sizeMedium,
+    borderRadius: roundness,
   },
 });

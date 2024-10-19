@@ -13,12 +13,6 @@ const meta = {
         type: "select",
       },
     },
-    variant: {
-      options: ["simple", "wide-horizontal"],
-      control: {
-        type: "select",
-      },
-    },
   },
 } satisfies Meta<typeof MoodColorSimple>;
 
@@ -29,6 +23,5 @@ type Story = StoryObj<typeof meta>;
 export const Basic: Story = {
   args: {
     mood: "Happiness, Joy",
-    variant: "simple",
   },
 };

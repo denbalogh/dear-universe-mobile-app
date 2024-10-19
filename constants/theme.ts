@@ -107,11 +107,14 @@ export const spacing = {
   spaceLarge: 40,
 };
 
+export const sizing = {
+  sizeSmall: 16,
+  sizeMedium: 24,
+};
+
 export const roundness = 6;
 
-export type CustomTheme = MD3Theme & typeof spacing;
-
-export const themeLight: CustomTheme = {
+export const themeLight: MD3Theme = {
   dark: false,
   roundness,
   version: 3,
@@ -160,10 +163,9 @@ export const themeLight: CustomTheme = {
     backdrop: "rgba(46, 48, 56, 0.4)",
   },
   fonts,
-  ...spacing,
 };
 
-export const themeDark: CustomTheme = {
+export const themeDark: MD3Theme = {
   dark: true,
   roundness,
   version: 3,
@@ -212,5 +214,4 @@ export const themeDark: CustomTheme = {
     backdrop: "rgba(47, 48, 56, 0.4)",
   },
   fonts,
-  ...spacing,
 };

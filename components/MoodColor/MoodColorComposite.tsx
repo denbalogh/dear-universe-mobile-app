@@ -2,37 +2,68 @@ import React from "react";
 import { Mood } from "./types";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { getMoodColor } from "./values";
+import { roundness, sizing } from "@/constants/theme";
 
 type Props = {
   moods: Mood[];
+  variant: "vertical" | "horizontal";
 } & ViewProps;
 
-export const MOOD_COMPOSITE_WIDTH = 6;
+export const MOOD_COMPOSITE_VERTICAL_WIDTH = 6;
 
-const MoodColorComposite = ({ moods, ...props }: Props) => {
+const MoodColorComposite = ({ moods, variant, ...props }: Props) => {
   if (moods.length === 0) {
     return null;
   }
 
-  const totalCount = moods.length;
-  const height = 100 / totalCount;
+  if (variant === "vertical") {
+    const totalCount = moods.length;
+    const height = 100 / totalCount;
+
+    return (
+      <View style={styles.verticalWrapper} {...props}>
+        {moods.map((mood, index) => {
+          const isTop = index === 0;
+          const isBottom = index === totalCount - 1;
+
+          return (
+            <View
+              key={`${mood}-${index}`}
+              style={[
+                styles.verticalCommon,
+                isTop && styles.verticalTop,
+                isBottom && styles.verticalBottom,
+                {
+                  backgroundColor: getMoodColor(mood),
+                  height: `${height}%`,
+                },
+              ]}
+              aria-label={mood}
+              testID={`${mood}-${index}`}
+            />
+          );
+        })}
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.wrapper} {...props}>
+    <View style={styles.horizontalWrapper} {...props}>
       {moods.map((mood, index) => {
-        const isTop = index === 0;
-        const isBottom = index === totalCount - 1;
+        const isStart = index === 0;
+        const isEnd = index === moods.length - 1;
+        const isSingle = moods.length === 1;
 
         return (
           <View
             key={`${mood}-${index}`}
             style={[
-              styles.common,
-              isTop && styles.top,
-              isBottom && styles.bottom,
+              styles.horizontalCommon,
+              isStart && styles.horizontalStart,
+              isEnd && styles.horizontalEnd,
+              isSingle && styles.singleHorizontal,
               {
                 backgroundColor: getMoodColor(mood),
-                height: `${height}%`,
               },
             ]}
             aria-label={mood}
@@ -46,23 +77,38 @@ const MoodColorComposite = ({ moods, ...props }: Props) => {
 
 export default MoodColorComposite;
 
-const borderRadius = 5;
-
 const styles = StyleSheet.create({
-  wrapper: {
-    width: MOOD_COMPOSITE_WIDTH,
+  verticalWrapper: {
+    width: MOOD_COMPOSITE_VERTICAL_WIDTH,
     height: "100%",
-    borderRadius: borderRadius,
   },
-  common: {
-    width: MOOD_COMPOSITE_WIDTH,
+  verticalCommon: {
+    width: MOOD_COMPOSITE_VERTICAL_WIDTH,
   },
-  top: {
-    borderTopStartRadius: borderRadius,
-    borderTopEndRadius: borderRadius,
+  verticalTop: {
+    borderTopStartRadius: roundness,
+    borderTopEndRadius: roundness,
   },
-  bottom: {
-    borderBottomStartRadius: borderRadius,
-    borderBottomEndRadius: borderRadius,
+  verticalBottom: {
+    borderBottomStartRadius: roundness,
+    borderBottomEndRadius: roundness,
+  },
+  horizontalWrapper: {
+    flexDirection: "row",
+  },
+  horizontalCommon: {
+    width: sizing.sizeMedium,
+    height: sizing.sizeMedium,
+  },
+  singleHorizontal: {
+    width: 2 * sizing.sizeMedium,
+  },
+  horizontalStart: {
+    borderTopStartRadius: roundness,
+    borderBottomStartRadius: roundness,
+  },
+  horizontalEnd: {
+    borderTopEndRadius: roundness,
+    borderBottomEndRadius: roundness,
   },
 });

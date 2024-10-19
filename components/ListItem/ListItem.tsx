@@ -8,9 +8,9 @@ import {
   IconButton,
 } from "react-native-paper";
 import MoodColorComposite, {
-  MOOD_COMPOSITE_WIDTH,
+  MOOD_COMPOSITE_VERTICAL_WIDTH,
 } from "../MoodColor/MoodColorComposite";
-import { roundness, spacing } from "@/constants/theme";
+import { roundness, sizing, spacing } from "@/constants/theme";
 import { Mood } from "../MoodColor/types";
 import Day from "./Day";
 
@@ -97,7 +97,7 @@ const ListItem = ({
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.texts}
                     </Text>
-                    <Icon source="pen" size={16} />
+                    <Icon source="pen" size={sizing.sizeSmall} />
                   </View>
                 )}
                 {stats.recordings > 0 && (
@@ -108,7 +108,7 @@ const ListItem = ({
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.recordings}
                     </Text>
-                    <Icon source="microphone" size={16} />
+                    <Icon source="microphone" size={sizing.sizeSmall} />
                   </View>
                 )}
                 {stats.images > 0 && (
@@ -119,7 +119,7 @@ const ListItem = ({
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.images}
                     </Text>
-                    <Icon source="image" size={16} />
+                    <Icon source="image" size={sizing.sizeSmall} />
                   </View>
                 )}
               </View>
@@ -128,6 +128,7 @@ const ListItem = ({
               moods={moods}
               style={styles.moodComposite}
               aria-label="Moods during the day"
+              variant="vertical"
             />
           </>
         ) : (
@@ -137,18 +138,21 @@ const ListItem = ({
               mode="outlined"
               onPress={onAddTextEntryPress}
               aria-label="Add text entry"
+              size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
               mode="outlined"
               onPress={onAddRecordingEntryPress}
               aria-label="Add recording entry"
+              size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
               mode="outlined"
               onPress={onAddImageEntryPress}
               aria-label="Add image entry"
+              size={sizing.sizeMedium}
             />
           </View>
         )}
@@ -219,7 +223,7 @@ const styles = StyleSheet.create({
     borderRadius: roundness,
   },
   loadingMoodComposite: {
-    width: MOOD_COMPOSITE_WIDTH,
+    width: MOOD_COMPOSITE_VERTICAL_WIDTH,
     height: "100%",
     borderRadius: roundness,
     position: "absolute",

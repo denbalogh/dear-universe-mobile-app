@@ -15,19 +15,35 @@ const meta = {
       </View>
     ),
   ],
+  argTypes: {
+    variant: {
+      options: ["vertical", "horizontal"],
+      control: {
+        type: "select",
+      },
+    },
+  },
 } satisfies Meta<typeof MoodColorComposite>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const AllMoodsEvenly: Story = {
+export const AllMoodsVertical: Story = {
   args: {
     moods: Object.keys(moods).map((mood) => mood as Mood),
+    variant: "vertical",
   },
 };
 
-export const Example1: Story = {
+export const AllMoodsHorizontal: Story = {
+  args: {
+    moods: Object.keys(moods).map((mood) => mood as Mood),
+    variant: "horizontal",
+  },
+};
+
+export const Example1Vertical: Story = {
   args: {
     moods: [
       "Happiness, Joy",
@@ -35,10 +51,23 @@ export const Example1: Story = {
       "Serenity, Balance",
       "Sadness, Indifference",
     ],
+    variant: "vertical",
   },
 };
 
-export const Example2: Story = {
+export const Example1Horizontal: Story = {
+  args: {
+    moods: [
+      "Happiness, Joy",
+      "Excitement, Energy",
+      "Serenity, Balance",
+      "Sadness, Indifference",
+    ],
+    variant: "horizontal",
+  },
+};
+
+export const Example2Vertical: Story = {
   args: {
     moods: [
       "Happiness, Joy",
@@ -48,17 +77,48 @@ export const Example2: Story = {
       "Anger, Frustration",
       "Sadness, Indifference",
     ],
+    variant: "vertical",
   },
 };
 
-export const SingleMood: Story = {
+export const Example2Horizontal: Story = {
+  args: {
+    moods: [
+      "Happiness, Joy",
+      "Excitement, Energy",
+      "Serenity, Balance",
+      "Calmness, Relaxation",
+      "Anger, Frustration",
+      "Sadness, Indifference",
+    ],
+    variant: "horizontal",
+  },
+};
+
+export const SingleMoodVertical: Story = {
   args: {
     moods: ["Happiness, Joy"],
+    variant: "vertical",
   },
 };
 
-export const TwoMoods: Story = {
+export const SingleMoodHorizontal: Story = {
+  args: {
+    moods: ["Happiness, Joy"],
+    variant: "horizontal",
+  },
+};
+
+export const TwoMoodsVertical: Story = {
   args: {
     moods: ["Happiness, Joy", "Excitement, Energy"],
+    variant: "vertical",
+  },
+};
+
+export const TwoMoodsHorizontal: Story = {
+  args: {
+    moods: ["Happiness, Joy", "Excitement, Energy"],
+    variant: "horizontal",
   },
 };
