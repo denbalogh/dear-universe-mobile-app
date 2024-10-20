@@ -2,7 +2,7 @@ import React from "react";
 import type { Preview } from "@storybook/react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { PaperProvider } from "react-native-paper";
-import { themeDark, themeLight } from "../constants/theme";
+import { spacing, themeDark, themeLight } from "../constants/theme";
 
 const preview: Preview = {
   decorators: [
@@ -28,6 +28,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    padding: themeLight.spaceMedium,
+    padding: spacing.spaceMedium,
   },
 });
