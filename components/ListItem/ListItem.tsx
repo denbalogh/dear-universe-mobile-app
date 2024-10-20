@@ -50,7 +50,10 @@ const ListItem = ({
     return (
       <View style={styles.wrapper} testID="LoadingWrapper">
         <Day timestamp={timestamp} />
-        <View style={styles.loadingMiddleWrapper} aria-label="Loading the day">
+        <View
+          style={styles.loadingMiddleWrapper}
+          accessibilityLabel="Loading the day"
+        >
           <View
             style={[
               styles.loadingExcerpt,
@@ -93,7 +96,10 @@ const ListItem = ({
               </Text>
               <View style={styles.statsWrapper}>
                 {stats.texts > 0 && (
-                  <View style={styles.stat} aria-label="Number of text entries">
+                  <View
+                    style={styles.stat}
+                    accessibilityLabel="Number of text entries"
+                  >
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.texts}
                     </Text>
@@ -103,7 +109,7 @@ const ListItem = ({
                 {stats.recordings > 0 && (
                   <View
                     style={styles.stat}
-                    aria-label="Number of recording entries"
+                    accessibilityLabel="Number of recording entries"
                   >
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.recordings}
@@ -114,7 +120,7 @@ const ListItem = ({
                 {stats.images > 0 && (
                   <View
                     style={styles.stat}
-                    aria-label="Number of image entries"
+                    accessibilityLabel="Number of image entries"
                   >
                     <Text variant="bodySmall" style={styles.statText}>
                       {stats.images}
@@ -127,7 +133,7 @@ const ListItem = ({
             <MoodColorComposite
               moods={moods}
               style={styles.moodComposite}
-              aria-label="Moods during the day"
+              accessibilityLabel="Moods during the day"
               variant="vertical"
             />
           </>
@@ -137,21 +143,21 @@ const ListItem = ({
               icon="pen-plus"
               mode="outlined"
               onPress={onAddTextEntryPress}
-              aria-label="Add text entry"
+              accessibilityLabel="Add text entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
               mode="outlined"
               onPress={onAddRecordingEntryPress}
-              aria-label="Add recording entry"
+              accessibilityLabel="Add recording entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
               mode="outlined"
               onPress={onAddImageEntryPress}
-              aria-label="Add image entry"
+              accessibilityLabel="Add image entry"
               size={sizing.sizeMedium}
             />
           </View>

@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react-native";
 import MoodColorComposite from "../MoodColorComposite";
+import { moods } from "../values";
+import { Mood } from "../types";
 
 describe("MoodColorComposite", () => {
   test("renders correctly variant vertical", () => {
     render(
       <MoodColorComposite
-        aria-label="Mood indicator"
+        accessibilityLabel="Mood indicator"
         moods={[
           "Happiness, Joy",
           "Excitement, Energy",
@@ -53,7 +55,7 @@ describe("MoodColorComposite", () => {
   test("renders correctly variant horizontal", () => {
     render(
       <MoodColorComposite
-        aria-label="Mood indicator"
+        accessibilityLabel="Mood indicator"
         moods={[
           "Happiness, Joy",
           "Excitement, Energy",
@@ -101,7 +103,7 @@ describe("MoodColorComposite", () => {
   test("returns null on empty moods", () => {
     render(
       <MoodColorComposite
-        aria-label="Mood indicator"
+        accessibilityLabel="Mood indicator"
         moods={[]}
         variant="vertical"
       />,
@@ -111,7 +113,7 @@ describe("MoodColorComposite", () => {
 
     render(
       <MoodColorComposite
-        aria-label="Mood indicator"
+        accessibilityLabel="Mood indicator"
         moods={[]}
         variant="horizontal"
       />,
@@ -123,7 +125,7 @@ describe("MoodColorComposite", () => {
   test("multiple moods of the same type are rendered variant vertical", () => {
     render(
       <MoodColorComposite
-        aria-label="Mood indicator"
+        accessibilityLabel="Mood indicator"
         moods={[
           "Happiness, Joy",
           "Anger, Frustration",
@@ -145,7 +147,7 @@ describe("MoodColorComposite", () => {
   test("multiple moods of the same type are rendered variant horizontal", () => {
     render(
       <MoodColorComposite
-        aria-label="Mood indicator"
+        accessibilityLabel="Mood indicator"
         moods={[
           "Happiness, Joy",
           "Anger, Frustration",
@@ -162,5 +164,21 @@ describe("MoodColorComposite", () => {
     expect(screen.getByTestId("Happiness, Joy-2")).toBeOnTheScreen();
     expect(screen.getByTestId("Happiness, Joy-3")).toBeOnTheScreen();
     expect(screen.getByTestId("Anger, Frustration-4")).toBeOnTheScreen();
+  });
+
+  test("have right colors", () => {
+    render(
+      <MoodColorComposite
+        accessibilityLabel="Mood indicator"
+        moods={Object.keys(moods) as Mood[]}
+        variant="vertical"
+      />,
+    );
+
+    Object.keys(moods).forEach((mood) => {
+      expect(screen.getByLabelText(mood)).toHaveStyle({
+        backgroundColor: moods[mood as Mood].color,
+      });
+    });
   });
 });
