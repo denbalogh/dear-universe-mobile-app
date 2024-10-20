@@ -38,7 +38,7 @@ const MoodColorComposite = ({ moods, variant, ...props }: Props) => {
                   height: `${height}%`,
                 },
               ]}
-              aria-label={mood}
+              accessibilityLabel={mood}
               testID={`${mood}-${index}`}
             />
           );
@@ -66,7 +66,7 @@ const MoodColorComposite = ({ moods, variant, ...props }: Props) => {
                 backgroundColor: getMoodColor(mood),
               },
             ]}
-            aria-label={mood}
+            accessibilityLabel={mood}
             testID={`${mood}-${index}`}
           />
         );

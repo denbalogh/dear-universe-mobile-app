@@ -19,7 +19,7 @@ const Day = ({ timestamp }: Props) => {
       <Text
         variant="displaySmall"
         style={[isToday && { color: theme.colors.tertiary }]}
-        aria-label={
+        accessibilityLabel={
           isToday
             ? `Today ${format(date, "do LLLL yyyy")}`
             : format(date, "do LLLL yyyy")
@@ -27,7 +27,7 @@ const Day = ({ timestamp }: Props) => {
       >
         {getDate(date)}
       </Text>
-      <Text variant="bodyLarge" aria-label={format(date, "EEEE")}>
+      <Text variant="bodyLarge" accessibilityLabel={format(date, "EEEE")}>
         {format(date, "E")}
       </Text>
     </View>
@@ -41,6 +41,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width: 35,
   },
 });
