@@ -51,7 +51,7 @@ const fonts: MD3Theme["fonts"] = {
   bodyLarge: {
     ...bodyTypeRegular,
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 26,
   },
   bodyMedium: {
     ...bodyTypeRegular,
@@ -66,7 +66,7 @@ const fonts: MD3Theme["fonts"] = {
   labelLarge: {
     ...bodyTypeRegular,
     fontSize: 14,
-    lineHeight: 20,
+    lineHeight: 26,
   },
   labelMedium: {
     ...bodyTypeRegular,
