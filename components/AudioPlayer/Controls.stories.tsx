@@ -1,0 +1,63 @@
+import Controls from "./Controls";
+
+import type { Meta, StoryObj } from "@storybook/react";
+import { action } from "@storybook/addon-actions";
+
+const meta = {
+  title: "AudioPlayer/Controls",
+  component: Controls,
+} satisfies Meta<typeof Controls>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Basic: Story = {
+  args: {
+    isLoading: false,
+    isPlaying: false,
+    currentTime: "00:00",
+    maxTime: "05:00",
+    onPlayPress: action("onPlayPress"),
+    onPausePress: action("onPausePress"),
+    on10SecForwardPress: action("on10SecForwardPress"),
+    on10SecRewindPress: action("on10SecRewindPress"),
+  },
+};
+
+export const isLoading: Story = {
+  args: {
+    isLoading: true,
+    isPlaying: false,
+    currentTime: "00:00",
+    maxTime: "05:00",
+    onPlayPress: action("onPlayPress"),
+    onPausePress: action("onPausePress"),
+    on10SecForwardPress: action("on10SecForwardPress"),
+    on10SecRewindPress: action("on10SecRewindPress"),
+  },
+};
+
+export const isPlaying: Story = {
+  args: {
+    isLoading: false,
+    isPlaying: true,
+    currentTime: "00:00",
+    maxTime: "05:00",
+    onPlayPress: action("onPlayPress"),
+    onPausePress: action("onPausePress"),
+    on10SecForwardPress: action("on10SecForwardPress"),
+    on10SecRewindPress: action("on10SecRewindPress"),
+  },
+};
+
+export const noTimes: Story = {
+  args: {
+    isLoading: false,
+    isPlaying: false,
+    onPlayPress: action("onPlayPress"),
+    onPausePress: action("onPausePress"),
+    on10SecForwardPress: action("on10SecForwardPress"),
+    on10SecRewindPress: action("on10SecRewindPress"),
+  },
+};

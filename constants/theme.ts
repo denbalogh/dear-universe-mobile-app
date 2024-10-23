@@ -110,6 +110,7 @@ export const spacing = {
 export const sizing = {
   sizeSmall: 16,
   sizeMedium: 24,
+  sizeLarge: 40,
 };
 
 export const roundness = 6;
