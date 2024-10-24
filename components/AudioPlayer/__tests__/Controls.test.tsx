@@ -7,6 +7,7 @@ describe("AudioPlayer/Controls", () => {
     const onPausePressMock = jest.fn();
     const on10SecForwardPressMock = jest.fn();
     const on10SecRewindPressMock = jest.fn();
+    const onReloadPressMock = jest.fn();
 
     render(
       <Controls
@@ -18,6 +19,8 @@ describe("AudioPlayer/Controls", () => {
         onPausePress={onPausePressMock}
         on10SecForwardPress={on10SecForwardPressMock}
         on10SecRewindPress={on10SecRewindPressMock}
+        failedToLoad={false}
+        onReloadPress={onReloadPressMock}
       />,
     );
 
@@ -47,6 +50,7 @@ describe("AudioPlayer/Controls", () => {
     const onPausePressMock = jest.fn();
     const on10SecForwardPressMock = jest.fn();
     const on10SecRewindPressMock = jest.fn();
+    const onReloadPressMock = jest.fn();
 
     render(
       <Controls
@@ -56,6 +60,8 @@ describe("AudioPlayer/Controls", () => {
         onPausePress={onPausePressMock}
         on10SecForwardPress={on10SecForwardPressMock}
         on10SecRewindPress={on10SecRewindPressMock}
+        failedToLoad={false}
+        onReloadPress={onReloadPressMock}
       />,
     );
 
@@ -80,11 +86,12 @@ describe("AudioPlayer/Controls", () => {
     expect(on10SecForwardPressMock).toHaveBeenCalledTimes(1);
   });
 
-  test("renders correctly isLoading", async () => {
+  test("renders correctly isLoading = true, isPlaying = true", async () => {
     const onPlayPressMock = jest.fn();
     const onPausePressMock = jest.fn();
     const on10SecForwardPressMock = jest.fn();
     const on10SecRewindPressMock = jest.fn();
+    const onReloadPressMock = jest.fn();
 
     render(
       <Controls
@@ -94,6 +101,8 @@ describe("AudioPlayer/Controls", () => {
         onPausePress={onPausePressMock}
         on10SecForwardPress={on10SecForwardPressMock}
         on10SecRewindPress={on10SecRewindPressMock}
+        failedToLoad={false}
+        onReloadPress={onReloadPressMock}
       />,
     );
 
@@ -104,21 +113,28 @@ describe("AudioPlayer/Controls", () => {
     expect(screen.getByTestId("maxTimeLoading")).toBeOnTheScreen();
 
     expect(screen.queryByLabelText("Play")).not.toBeOnTheScreen();
-    expect(screen.getByLabelText("Pause")).toBeOnTheScreen();
+    expect(screen.queryByLabelText("Pause")).not.toBeOnTheScreen();
+
+    expect(screen.getByLabelText("Loading the recording")).toBeOnTheScreen();
 
     expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
     expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
-    await user.press(screen.getByLabelText("Pause"));
-    expect(onPausePressMock).toHaveBeenCalledTimes(0);
-
     await user.press(screen.getByLabelText("Rewind 10 seconds"));
     expect(on10SecRewindPressMock).toHaveBeenCalledTimes(0);
 
     await user.press(screen.getByLabelText("Forward 10 seconds"));
     expect(on10SecForwardPressMock).toHaveBeenCalledTimes(0);
+  });
+
+  test("renders correctly isLoading = true, isPlaying = false", async () => {
+    const onPlayPressMock = jest.fn();
+    const onPausePressMock = jest.fn();
+    const on10SecForwardPressMock = jest.fn();
+    const on10SecRewindPressMock = jest.fn();
+    const onReloadPressMock = jest.fn();
 
     render(
       <Controls
@@ -128,13 +144,103 @@ describe("AudioPlayer/Controls", () => {
         onPausePress={onPausePressMock}
         on10SecForwardPress={on10SecForwardPressMock}
         on10SecRewindPress={on10SecRewindPressMock}
+        failedToLoad={false}
+        onReloadPress={onReloadPressMock}
       />,
     );
 
-    expect(screen.getByLabelText("Play")).toBeOnTheScreen();
+    expect(screen.queryByLabelText("Play")).not.toBeOnTheScreen();
     expect(screen.queryByLabelText("Pause")).not.toBeOnTheScreen();
 
-    await user.press(screen.getByLabelText("Play"));
-    expect(onPlayPressMock).toHaveBeenCalledTimes(0);
+    expect(screen.getByLabelText("Loading the recording")).toBeOnTheScreen();
+  });
+
+  test("renders correctly failedLoading = true, isLoading = false", async () => {
+    const onPlayPressMock = jest.fn();
+    const onPausePressMock = jest.fn();
+    const on10SecForwardPressMock = jest.fn();
+    const on10SecRewindPressMock = jest.fn();
+    const onReloadPressMock = jest.fn();
+
+    render(
+      <Controls
+        isLoading={false}
+        isPlaying={true}
+        onPlayPress={onPlayPressMock}
+        onPausePress={onPausePressMock}
+        on10SecForwardPress={on10SecForwardPressMock}
+        on10SecRewindPress={on10SecRewindPressMock}
+        failedToLoad={true}
+        onReloadPress={onReloadPressMock}
+      />,
+    );
+
+    expect(screen.queryByLabelText("Current time")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Maximum time")).not.toBeOnTheScreen();
+
+    expect(screen.getByTestId("currentTimeLoading")).toBeOnTheScreen();
+    expect(screen.getByTestId("maxTimeLoading")).toBeOnTheScreen();
+
+    expect(screen.queryByLabelText("Play")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Pause")).not.toBeOnTheScreen();
+    expect(screen.getByLabelText("Reload")).toBeOnTheScreen();
+
+    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+
+    const user = userEvent.setup();
+
+    await user.press(screen.getByLabelText("Reload"));
+    expect(onReloadPressMock).toHaveBeenCalledTimes(1);
+
+    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    expect(on10SecRewindPressMock).toHaveBeenCalledTimes(0);
+
+    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    expect(on10SecForwardPressMock).toHaveBeenCalledTimes(0);
+  });
+
+  test("renders correctly failedLoading = true, isLoading = true", async () => {
+    const onPlayPressMock = jest.fn();
+    const onPausePressMock = jest.fn();
+    const on10SecForwardPressMock = jest.fn();
+    const on10SecRewindPressMock = jest.fn();
+    const onReloadPressMock = jest.fn();
+
+    render(
+      <Controls
+        isLoading={true}
+        isPlaying={false}
+        onPlayPress={onPlayPressMock}
+        onPausePress={onPausePressMock}
+        on10SecForwardPress={on10SecForwardPressMock}
+        on10SecRewindPress={on10SecRewindPressMock}
+        failedToLoad={true}
+        onReloadPress={onReloadPressMock}
+      />,
+    );
+
+    expect(screen.queryByLabelText("Current time")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Maximum time")).not.toBeOnTheScreen();
+
+    expect(screen.getByTestId("currentTimeLoading")).toBeOnTheScreen();
+    expect(screen.getByTestId("maxTimeLoading")).toBeOnTheScreen();
+
+    expect(screen.queryByLabelText("Play")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Pause")).not.toBeOnTheScreen();
+    expect(screen.queryByLabelText("Reload")).not.toBeOnTheScreen();
+
+    expect(screen.getByLabelText("Loading the recording")).toBeOnTheScreen();
+
+    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+
+    const user = userEvent.setup();
+
+    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    expect(on10SecRewindPressMock).toHaveBeenCalledTimes(0);
+
+    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    expect(on10SecForwardPressMock).toHaveBeenCalledTimes(0);
   });
 });

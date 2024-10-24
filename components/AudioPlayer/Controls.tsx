@@ -1,7 +1,12 @@
 import { roundness, sizing, spacing } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { IconButton, Text, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  IconButton,
+  Text,
+  useTheme,
+} from "react-native-paper";
 
 const TimePlaceholder = (props: ViewProps) => {
   const theme = useTheme();
@@ -18,10 +23,12 @@ const TimePlaceholder = (props: ViewProps) => {
 };
 
 type Props = {
+  failedToLoad: boolean;
   isLoading: boolean;
   isPlaying: boolean;
   onPlayPress: () => void;
   onPausePress: () => void;
+  onReloadPress: () => void;
   on10SecRewindPress: () => void;
   on10SecForwardPress: () => void;
   currentTime?: string;
@@ -29,10 +36,12 @@ type Props = {
 };
 
 const Controls = ({
+  failedToLoad,
   isLoading,
   isPlaying,
   onPausePress,
   onPlayPress,
+  onReloadPress,
   on10SecForwardPress,
   on10SecRewindPress,
   currentTime = "--:--",
@@ -40,7 +49,7 @@ const Controls = ({
 }: Props) => {
   return (
     <View style={styles.wrapper}>
-      {isLoading ? (
+      {isLoading || failedToLoad ? (
         <TimePlaceholder testID="currentTimeLoading" />
       ) : (
         <Text
@@ -56,16 +65,28 @@ const Controls = ({
           icon="rewind-10"
           size={sizing.sizeMedium}
           onPress={on10SecRewindPress}
-          disabled={isLoading}
+          disabled={isLoading || failedToLoad}
           accessibilityLabel="Rewind 10 seconds"
         />
-        {isPlaying ? (
+        {isLoading ? (
+          <ActivityIndicator
+            accessibilityLabel="Loading the recording"
+            style={styles.loadingIndicator}
+          />
+        ) : failedToLoad ? (
+          <IconButton
+            icon="reload"
+            size={sizing.sizeLarge}
+            onPress={onReloadPress}
+            style={styles.playPauseIconButton}
+            accessibilityLabel="Reload"
+          />
+        ) : isPlaying ? (
           <IconButton
             icon="pause"
             size={sizing.sizeLarge}
             onPress={onPausePress}
             style={styles.playPauseIconButton}
-            disabled={isLoading}
             accessibilityLabel="Pause"
           />
         ) : (
@@ -74,7 +95,6 @@ const Controls = ({
             size={sizing.sizeLarge}
             onPress={onPlayPress}
             style={styles.playPauseIconButton}
-            disabled={isLoading}
             accessibilityLabel="Play"
           />
         )}
@@ -82,11 +102,11 @@ const Controls = ({
           icon="fast-forward-10"
           size={sizing.sizeMedium}
           onPress={on10SecForwardPress}
-          disabled={isLoading}
+          disabled={isLoading || failedToLoad}
           accessibilityLabel="Forward 10 seconds"
         />
       </View>
-      {isLoading ? (
+      {isLoading || failedToLoad ? (
         <TimePlaceholder testID="maxTimeLoading" />
       ) : (
         <Text
@@ -114,6 +134,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  loadingIndicator: {
+    marginHorizontal: spacing.spaceMedium,
+    paddingVertical: spacing.spaceMedium,
   },
   playPauseIconButton: {
     marginHorizontal: spacing.spaceSmall,

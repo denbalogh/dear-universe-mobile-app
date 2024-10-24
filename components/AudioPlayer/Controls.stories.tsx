@@ -22,6 +22,8 @@ export const Basic: Story = {
     onPausePress: action("onPausePress"),
     on10SecForwardPress: action("on10SecForwardPress"),
     on10SecRewindPress: action("on10SecRewindPress"),
+    failedToLoad: false,
+    onReloadPress: action("onReloadPress"),
   },
 };
 
@@ -35,6 +37,8 @@ export const isLoading: Story = {
     onPausePress: action("onPausePress"),
     on10SecForwardPress: action("on10SecForwardPress"),
     on10SecRewindPress: action("on10SecRewindPress"),
+    failedToLoad: false,
+    onReloadPress: action("onReloadPress"),
   },
 };
 
@@ -48,6 +52,8 @@ export const isPlaying: Story = {
     onPausePress: action("onPausePress"),
     on10SecForwardPress: action("on10SecForwardPress"),
     on10SecRewindPress: action("on10SecRewindPress"),
+    failedToLoad: false,
+    onReloadPress: action("onReloadPress"),
   },
 };
 
@@ -59,5 +65,20 @@ export const noTimes: Story = {
     onPausePress: action("onPausePress"),
     on10SecForwardPress: action("on10SecForwardPress"),
     on10SecRewindPress: action("on10SecRewindPress"),
+    failedToLoad: false,
+    onReloadPress: action("onReloadPress"),
+  },
+};
+
+export const failedToLoad: Story = {
+  args: {
+    isLoading: false,
+    isPlaying: false,
+    onPlayPress: action("onPlayPress"),
+    onPausePress: action("onPausePress"),
+    on10SecForwardPress: action("on10SecForwardPress"),
+    on10SecRewindPress: action("on10SecRewindPress"),
+    failedToLoad: true,
+    onReloadPress: action("onReloadPress"),
   },
 };
