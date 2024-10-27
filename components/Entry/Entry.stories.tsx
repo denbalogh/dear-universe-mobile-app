@@ -44,8 +44,6 @@ const optionsMenuItems = [
     leadingIcon: "delete",
     title: "Delete entry",
     onPress: action("Delete entry"),
-    titleStyle: { color: "red" },
-    theme: { colors: { onSurfaceVariant: "red" } },
   },
 ];
 
@@ -66,6 +64,24 @@ export const Basic: Story = {
   },
 };
 
+export const WithRecording: Story = {
+  args: {
+    title: {
+      onPress: action("Title pressed"),
+      text: "Suspendisse blandit neque id ex volutpat condimentum.",
+    },
+    text: {
+      onPress: action("Text pressed"),
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut justo eros. Nulla quis neque tortor. Vivamus et elementum purus, id bibendum dolor. Aenean sit amet lacus justo. Praesent eu sapien in tellus imperdiet vestibulum nec ut eros. Vivamus at sem facilisis nisl cursus dignissim at id mi. Sed fermentum, elit id bibendum eleifend, neque nisl sollicitudin augue, vitae euismod eros augue sed mauris. Ut fermentum nibh maximus turpis suscipit tincidunt. Proin mattis interdum massa non facilisis. Duis non bibendum metus. Phasellus convallis bibendum nunc ac porttitor. Ut luctus nisi vitae dui scelerisque accumsan.",
+    },
+    moods: ["Happiness, Joy", "Excitement, Energy", "Calmness, Relaxation"],
+    onMoodsPress: action("Change moods"),
+    moveMenuItems,
+    optionsMenuItems,
+    recording: true,
+  },
+};
+
 export const NoTitle: Story = {
   args: {
     text: {
@@ -76,6 +92,7 @@ export const NoTitle: Story = {
     onMoodsPress: action("Change moods"),
     moveMenuItems,
     optionsMenuItems,
+    recording: false,
   },
 };
 
@@ -93,6 +110,7 @@ export const NoMoods: Story = {
     onMoodsPress: action("Change moods"),
     moveMenuItems,
     optionsMenuItems,
+    recording: false,
   },
 };
 
@@ -110,5 +128,6 @@ export const NoMoveMenu: Story = {
     onMoodsPress: action("Change moods"),
     moveMenuItems: [],
     optionsMenuItems,
+    recording: false,
   },
 };

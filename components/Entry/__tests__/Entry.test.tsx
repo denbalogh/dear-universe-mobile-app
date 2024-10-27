@@ -3,6 +3,8 @@ import Entry from "../Entry";
 import { PaperProvider } from "react-native-paper";
 
 describe("Entry", () => {
+  console.error = jest.fn();
+
   test("renders correctly", async () => {
     const onMoodsPress = jest.fn();
     const onMoveToPress = jest.fn();
@@ -71,13 +73,17 @@ describe("Entry", () => {
     expect(onMoodsPress).toHaveBeenCalled();
 
     await user.press(screen.getByLabelText("Move entry menu"));
-    expect(screen.getByText("Move to")).toBeOnTheScreen();
+
+    const moveToButton = await screen.findByText("Move to");
+    expect(moveToButton).toBeOnTheScreen();
 
     await user.press(screen.getByText("Move to"));
     expect(onMoveToPress).toHaveBeenCalled();
 
     await user.press(screen.getByLabelText("Options menu"));
-    expect(screen.getByText("Delete")).toBeOnTheScreen();
+
+    const deleteButton = await screen.findByText("Delete");
+    expect(deleteButton).toBeOnTheScreen();
 
     await user.press(screen.getByText("Delete"));
     expect(onDeletePress).toHaveBeenCalled();

@@ -10,6 +10,7 @@ import {
 import PickMoodsButton from "./PickMoodsButton";
 import { Mood } from "../MoodColor/types";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 
 type Props = {
   title?: {
@@ -24,6 +25,7 @@ type Props = {
   onMoodsPress: () => void;
   moveMenuItems: MenuItemProps[];
   optionsMenuItems: MenuItemProps[];
+  recording?: boolean;
 };
 
 const Entry = ({
@@ -33,6 +35,7 @@ const Entry = ({
   onMoodsPress,
   moveMenuItems,
   optionsMenuItems,
+  recording,
 }: Props) => {
   const theme = useTheme();
 
@@ -52,6 +55,7 @@ const Entry = ({
           </Text>
         </TouchableRipple>
       )}
+      {recording && <AudioPlayer style={styles.recording} />}
       {text && (
         <TouchableRipple
           onPress={text.onPress}
@@ -100,6 +104,9 @@ const styles = StyleSheet.create({
   },
   title: {
     lineHeight: 24,
+  },
+  recording: {
+    paddingHorizontal: spacing.spaceSmall,
   },
   textWrapper: {
     padding: spacing.spaceSmall,
