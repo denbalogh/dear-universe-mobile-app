@@ -49,17 +49,30 @@ const Controls = ({
 }: Props) => {
   return (
     <View style={styles.wrapper}>
-      {isLoading || failedToLoad ? (
-        <TimePlaceholder testID="currentTimeLoading" />
-      ) : (
-        <Text
-          variant="bodySmall"
-          style={styles.time}
-          accessibilityLabel="Current time"
-        >
-          {currentTime}
-        </Text>
-      )}
+      <View style={styles.timesWrapper}>
+        {isLoading || failedToLoad ? (
+          <TimePlaceholder testID="currentTimeLoading" />
+        ) : (
+          <Text
+            variant="bodySmall"
+            style={styles.time}
+            accessibilityLabel="Current time"
+          >
+            {currentTime}
+          </Text>
+        )}
+        {isLoading || failedToLoad ? (
+          <TimePlaceholder testID="maxTimeLoading" />
+        ) : (
+          <Text
+            variant="bodySmall"
+            style={styles.time}
+            accessibilityLabel="Maximum time"
+          >
+            {maxTime}
+          </Text>
+        )}
+      </View>
       <View style={styles.controlsWrapper}>
         <IconButton
           icon="rewind-10"
@@ -106,17 +119,6 @@ const Controls = ({
           accessibilityLabel="Forward 10 seconds"
         />
       </View>
-      {isLoading || failedToLoad ? (
-        <TimePlaceholder testID="maxTimeLoading" />
-      ) : (
-        <Text
-          variant="bodySmall"
-          style={styles.time}
-          accessibilityLabel="Maximum time"
-        >
-          {maxTime}
-        </Text>
-      )}
     </View>
   );
 };
@@ -134,6 +136,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
+  },
+  timesWrapper: {
+    position: "absolute",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   loadingIndicator: {
     marginHorizontal: spacing.spaceMedium,
@@ -145,7 +155,6 @@ const styles = StyleSheet.create({
   timePlaceholder: {
     width: 30,
     height: 10,
-    backgroundColor: "red",
     borderRadius: roundness,
   },
   time: {

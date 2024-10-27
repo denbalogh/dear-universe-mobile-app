@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
@@ -12,7 +12,9 @@ import {
 import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
 
-const AudioPlayer = () => {
+type Props = ViewProps;
+
+const AudioPlayer = (props: Props) => {
   const theme = useTheme();
 
   const [isLoadingSound, setIsLoadingSound] = useState(true);
@@ -107,7 +109,7 @@ const AudioPlayer = () => {
   const maxTime = new Date(durationMillis).toISOString().substr(14, 5);
 
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.wrapper} {...props}>
       <Slider
         style={styles.slider}
         minimumValue={0}
@@ -118,7 +120,6 @@ const AudioPlayer = () => {
         disabled={isLoadingSound}
         value={positionMillis}
         onSlidingComplete={(value) => setSoundPosition(value)}
-        testID="audioPlayerSlider"
       />
       <Controls
         isLoading={isLoadingSound}
