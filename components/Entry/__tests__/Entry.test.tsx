@@ -3,6 +3,8 @@ import Entry from "../Entry";
 import { PaperProvider } from "react-native-paper";
 
 describe("Entry", () => {
+  console.error = jest.fn();
+
   test("renders correctly", async () => {
     const onMoodsPress = jest.fn();
     const onMoveToPress = jest.fn();

@@ -2,6 +2,8 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import Controls from "../Controls";
 
 describe("AudioPlayer/Controls", () => {
+  console.error = jest.fn();
+
   test("renders correctly", async () => {
     const onPlayPressMock = jest.fn();
     const onPausePressMock = jest.fn();
