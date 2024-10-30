@@ -31,6 +31,7 @@ const CustomImage = ({
     <View {...props}>
       <Image
         {...imageProps}
+        onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
         style={[imageProps.style, styles.fullsize]}
       />

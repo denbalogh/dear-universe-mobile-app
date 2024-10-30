@@ -6,7 +6,7 @@ import { getRandomImage } from "./storyHelpers";
 import { roundness } from "@/constants/theme";
 
 const meta = {
-  title: "ImageGallery/CustomImage",
+  title: "CustomImage",
   component: CustomImage,
 } satisfies Meta<typeof CustomImage>;
 
