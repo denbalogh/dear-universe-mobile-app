@@ -10,35 +10,35 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1E25C8372BB8DBF21C54806A /* Pods_Dearuniverse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D67ADE7BF1C73F680ECB6EF /* Pods_Dearuniverse.framework */; };
+		19B360A405814073BCDE7BF5 /* BalooPaaji2-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A18E1AFF1B514507B8E35CC6 /* BalooPaaji2-Regular.ttf */; };
+		3045DA4A73A04877BD5FAE66 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB434C433ED4E9D83EED6D6 /* noop-file.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		575F2B8D7AB3AB70E9E58CB9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 99EBEA012E35C514E06EA5A2 /* PrivacyInfo.xcprivacy */; };
-		80B291219F91431BAF712127 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA5FA02BA8C4C4190EB5320 /* noop-file.swift */; };
-		A3EA5D79AF8240A0A9DFCFE0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C4372B265FF74710A18DA2A8 /* GoogleService-Info.plist */; };
+		5115EA016A51442EBA74B740 /* AlegreyaSansSC-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8B6E1AF96A2746159CC5E115 /* AlegreyaSansSC-Regular.ttf */; };
+		60BE376AE61CEFFC946370A9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 127029EE3B46A11147432BE4 /* PrivacyInfo.xcprivacy */; };
+		8D0AB77A3333D49E5775422F /* Pods_Dearuniverse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4242DE6BBC107BA972270523 /* Pods_Dearuniverse.framework */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
-		B44CA9C82FDA4C1D8A16FB37 /* AlegreyaSansSC-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 87A6CDA355EF4992BB8F4580 /* AlegreyaSansSC-Regular.ttf */; };
-		B5E7450F71E94D65A40D746E /* BalooPaaji2-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 45874F4C80F449C8B21B3F1E /* BalooPaaji2-Regular.ttf */; };
+		B4E5FDE4FCC84ADC93AE9679 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 348BDF25ECF2496789FF07F7 /* GoogleService-Info.plist */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		127029EE3B46A11147432BE4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Dearuniverse/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Dearuniverse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dearuniverse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Dearuniverse/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Dearuniverse/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Dearuniverse/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Dearuniverse/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Dearuniverse/main.m; sourceTree = "<group>"; };
-		3EA5FA02BA8C4C4190EB5320 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Dearuniverse/noop-file.swift"; sourceTree = "<group>"; };
-		45874F4C80F449C8B21B3F1E /* BalooPaaji2-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "BalooPaaji2-Regular.ttf"; path = "../assets/fonts/Baloo_Paaji_2/BalooPaaji2-Regular.ttf"; sourceTree = "<group>"; };
-		4D67ADE7BF1C73F680ECB6EF /* Pods_Dearuniverse.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dearuniverse.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		348BDF25ECF2496789FF07F7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Dearuniverse/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4242DE6BBC107BA972270523 /* Pods_Dearuniverse.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dearuniverse.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AB434C433ED4E9D83EED6D6 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Dearuniverse/noop-file.swift"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-Dearuniverse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dearuniverse.debug.xcconfig"; path = "Target Support Files/Pods-Dearuniverse/Pods-Dearuniverse.debug.xcconfig"; sourceTree = "<group>"; };
+		6F5E5F0F4C3D4A2CBCA043E4 /* Dearuniverse-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Dearuniverse-Bridging-Header.h"; path = "Dearuniverse/Dearuniverse-Bridging-Header.h"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-Dearuniverse.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dearuniverse.release.xcconfig"; path = "Target Support Files/Pods-Dearuniverse/Pods-Dearuniverse.release.xcconfig"; sourceTree = "<group>"; };
-		87A6CDA355EF4992BB8F4580 /* AlegreyaSansSC-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AlegreyaSansSC-Regular.ttf"; path = "../assets/fonts/Alegreya_Sans_SC/AlegreyaSansSC-Regular.ttf"; sourceTree = "<group>"; };
-		99EBEA012E35C514E06EA5A2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Dearuniverse/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8B6E1AF96A2746159CC5E115 /* AlegreyaSansSC-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AlegreyaSansSC-Regular.ttf"; path = "../assets/fonts/Alegreya_Sans_SC/AlegreyaSansSC-Regular.ttf"; sourceTree = "<group>"; };
+		A18E1AFF1B514507B8E35CC6 /* BalooPaaji2-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "BalooPaaji2-Regular.ttf"; path = "../assets/fonts/Baloo_Paaji_2/BalooPaaji2-Regular.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Dearuniverse/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C4372B265FF74710A18DA2A8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Dearuniverse/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		C5C04B6661654E8AAC8A5848 /* Dearuniverse-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "Dearuniverse-Bridging-Header.h"; path = "Dearuniverse/Dearuniverse-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Dearuniverse/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -48,7 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E25C8372BB8DBF21C54806A /* Pods_Dearuniverse.framework in Frameworks */,
+				8D0AB77A3333D49E5775422F /* Pods_Dearuniverse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,10 +65,10 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				C4372B265FF74710A18DA2A8 /* GoogleService-Info.plist */,
-				3EA5FA02BA8C4C4190EB5320 /* noop-file.swift */,
-				C5C04B6661654E8AAC8A5848 /* Dearuniverse-Bridging-Header.h */,
-				99EBEA012E35C514E06EA5A2 /* PrivacyInfo.xcprivacy */,
+				348BDF25ECF2496789FF07F7 /* GoogleService-Info.plist */,
+				4AB434C433ED4E9D83EED6D6 /* noop-file.swift */,
+				6F5E5F0F4C3D4A2CBCA043E4 /* Dearuniverse-Bridging-Header.h */,
+				127029EE3B46A11147432BE4 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Dearuniverse;
 			sourceTree = "<group>";
@@ -77,9 +77,19 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				4D67ADE7BF1C73F680ECB6EF /* Pods_Dearuniverse.framework */,
+				4242DE6BBC107BA972270523 /* Pods_Dearuniverse.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		647141F2D46D41EF8FADD130 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8B6E1AF96A2746159CC5E115 /* AlegreyaSansSC-Regular.ttf */,
+				A18E1AFF1B514507B8E35CC6 /* BalooPaaji2-Regular.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -98,7 +108,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				C4F128489AF840929EFA3BA1 /* Resources */,
+				647141F2D46D41EF8FADD130 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -130,16 +140,6 @@
 			path = Dearuniverse/Supporting;
 			sourceTree = "<group>";
 		};
-		C4F128489AF840929EFA3BA1 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				87A6CDA355EF4992BB8F4580 /* AlegreyaSansSC-Regular.ttf */,
-				45874F4C80F449C8B21B3F1E /* BalooPaaji2-Regular.ttf */,
-			);
-			name = Resources;
-			path = "";
-			sourceTree = "<group>";
-		};
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -165,14 +165,14 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Dearuniverse" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				3BEA851DEE592282BC9DF36B /* [Expo] Configure project */,
+				0DEBB3BEC56F541F2518365D /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				4703A168C7CA4BFECF0692E8 /* [CP] Embed Pods Frameworks */,
-				4D1FA25C512334A28F3407D4 /* [CP-User] [RNFB] Core Configuration */,
+				41C40AB0163A28F56AC864D3 /* [CP] Embed Pods Frameworks */,
+				746CA21943F99C09BEFDA7D1 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -222,10 +222,10 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				A3EA5D79AF8240A0A9DFCFE0 /* GoogleService-Info.plist in Resources */,
-				B44CA9C82FDA4C1D8A16FB37 /* AlegreyaSansSC-Regular.ttf in Resources */,
-				B5E7450F71E94D65A40D746E /* BalooPaaji2-Regular.ttf in Resources */,
-				575F2B8D7AB3AB70E9E58CB9 /* PrivacyInfo.xcprivacy in Resources */,
+				B4E5FDE4FCC84ADC93AE9679 /* GoogleService-Info.plist in Resources */,
+				5115EA016A51442EBA74B740 /* AlegreyaSansSC-Regular.ttf in Resources */,
+				19B360A405814073BCDE7BF5 /* BalooPaaji2-Regular.ttf in Resources */,
+				60BE376AE61CEFFC946370A9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,7 +269,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3BEA851DEE592282BC9DF36B /* [Expo] Configure project */ = {
+		0DEBB3BEC56F541F2518365D /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -288,7 +288,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Dearuniverse/expo-configure-project.sh\"\n";
 		};
-		4703A168C7CA4BFECF0692E8 /* [CP] Embed Pods Frameworks */ = {
+		41C40AB0163A28F56AC864D3 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,7 +306,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dearuniverse/Pods-Dearuniverse-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4D1FA25C512334A28F3407D4 /* [CP-User] [RNFB] Core Configuration */ = {
+		746CA21943F99C09BEFDA7D1 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -336,6 +336,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RealmJS/RealmJS.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-launcher/EXDevLauncher.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/expo-dev-menu/EXDevMenu.bundle",
 			);
@@ -351,6 +352,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCTI18nStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RealmJS.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevLauncher.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXDevMenu.bundle",
 			);
@@ -369,7 +371,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				80B291219F91431BAF712127 /* noop-file.swift in Sources */,
+				3045DA4A73A04877BD5FAE66 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
