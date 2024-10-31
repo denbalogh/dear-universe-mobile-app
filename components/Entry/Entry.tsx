@@ -50,9 +50,7 @@ const Entry = ({
           style={styles.titleWrapper}
           accessibilityLabel="Edit title"
         >
-          <Text variant="headlineSmall" style={styles.title}>
-            {title.text}
-          </Text>
+          <Text variant="headlineSmall">{title.text}</Text>
         </TouchableRipple>
       )}
       {recording && <AudioPlayer style={styles.recording} />}
@@ -102,15 +100,11 @@ const styles = StyleSheet.create({
   titleWrapper: {
     padding: spacing.spaceSmall,
   },
-  title: {
-    lineHeight: 24,
-  },
   recording: {
     paddingHorizontal: spacing.spaceSmall,
   },
   textWrapper: {
     padding: spacing.spaceSmall,
-    paddingBottom: 0,
   },
   actionBarWrapper: {
     flexDirection: "row",

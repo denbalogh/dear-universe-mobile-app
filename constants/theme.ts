@@ -2,7 +2,7 @@ import { MD3Theme, MD3LightTheme, MD3DarkTheme } from "react-native-paper";
 import { MD3Type } from "react-native-paper/lib/typescript/types";
 
 const headersTypeRegular: MD3Type = {
-  fontFamily: "AlegreyaSansSC-Regular",
+  fontFamily: "Nunito-Regular",
   letterSpacing: 0,
   fontWeight: "normal",
   fontSize: 57,
@@ -10,7 +10,7 @@ const headersTypeRegular: MD3Type = {
 };
 
 const bodyTypeRegular: MD3Type = {
-  fontFamily: "BalooPaaji2-Regular",
+  fontFamily: "PTSans-Regular",
   letterSpacing: 0,
   fontWeight: "normal",
   fontSize: 24,
@@ -51,7 +51,7 @@ const fonts: MD3Theme["fonts"] = {
   bodyLarge: {
     ...bodyTypeRegular,
     fontSize: 16,
-    lineHeight: 26,
+    lineHeight: 24,
   },
   bodyMedium: {
     ...bodyTypeRegular,
@@ -66,7 +66,7 @@ const fonts: MD3Theme["fonts"] = {
   labelLarge: {
     ...bodyTypeRegular,
     fontSize: 14,
-    lineHeight: 26,
+    lineHeight: 20,
   },
   labelMedium: {
     ...bodyTypeRegular,
