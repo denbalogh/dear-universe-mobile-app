@@ -1,6 +1,6 @@
 import { roundness, spacing } from "@/constants/theme";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import {
   MenuItemProps,
   Text,
@@ -102,6 +102,11 @@ const styles = StyleSheet.create({
   },
   recording: {
     paddingHorizontal: spacing.spaceSmall,
+    ...Platform.select({
+      ios: {
+        marginTop: spacing.spaceSmall,
+      },
+    }),
   },
   textWrapper: {
     padding: spacing.spaceSmall,

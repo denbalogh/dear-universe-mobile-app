@@ -43,3 +43,27 @@ export const Rounded: Story = {
     },
   },
 };
+
+export const WithCheckbox: Story = {
+  args: {
+    imageProps: { source: getRandomImage() },
+    touchableProps: { onPress: action("onPress") },
+    style: { width: 100, height: 100 },
+    checkbox: {
+      checked: false,
+      onPress: action("onCheckboxPress"),
+    },
+  },
+};
+
+export const WithCheckboxChecked: Story = {
+  args: {
+    imageProps: { source: getRandomImage() },
+    touchableProps: { onPress: action("onPress") },
+    style: { width: 100, height: 100 },
+    checkbox: {
+      checked: true,
+      onPress: action("onCheckboxPress"),
+    },
+  },
+};
