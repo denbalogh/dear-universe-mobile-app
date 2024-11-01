@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { Preview } from "@storybook/react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, PaperProvider } from "react-native-paper";
 import { spacing, themeDark, themeLight } from "../constants/theme";
 
@@ -21,12 +21,14 @@ const preview: Preview = {
               { backgroundColor: activeTheme.colors.background },
             ]}
           >
+            <ScrollView contentContainerStyle={styles.scrollview}>
+              <Story />
+            </ScrollView>
             <IconButton
               icon="theme-light-dark"
               onPress={toggleActiveTheme}
               style={styles.themeSwitcher}
             />
-            <Story />
           </View>
         </PaperProvider>
       );
@@ -39,6 +41,8 @@ export default preview;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+  },
+  scrollview: {
     justifyContent: "flex-start",
     alignItems: "flex-start",
     padding: spacing.spaceMedium,

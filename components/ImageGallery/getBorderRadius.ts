@@ -33,7 +33,7 @@ export const borderTopRightRadius = {
 const getBorderRadius = (
   index: number,
   totalCount: number,
-  columns: number = 3,
+  columns: number = 4,
 ): BorderRadius => {
   if (totalCount === 0) {
     return zeroBorderRadius;

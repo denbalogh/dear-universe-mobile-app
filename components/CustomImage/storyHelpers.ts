@@ -1,3 +1,5 @@
+import { ImageRequireSource } from "react-native";
+
 const images = [
   require("../../assets/images/photos/1.jpg"),
   require("../../assets/images/photos/2.jpg"),
@@ -16,5 +18,7 @@ export const getRandomImage = () => {
 };
 
 export const getRandomImages = (count: number) => {
-  return Array.from({ length: count }, () => getRandomImage());
+  return Array.from({ length: count }, () => getRandomImage()).map(
+    (source: ImageRequireSource) => ({ source }),
+  );
 };

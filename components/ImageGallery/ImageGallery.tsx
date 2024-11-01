@@ -1,54 +1,81 @@
-import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  ImageURISource,
+  StyleSheet,
+  View,
+  ViewProps,
+} from "react-native";
 import { ImageProps } from "expo-image";
-import getBorderRadius from "./getBorderRadius";
-import CustomImage, { CustomImageProps } from "./CustomImage";
-
-type ImageGalleryItemProps = {
-  index: number;
-  imagesCount: number;
-  imagesPerRow?: number;
-} & CustomImageProps;
-
-const ImageGalleryItem = ({
-  index,
-  imagesCount,
-  imagesPerRow = 3,
-  ...props
-}: ImageGalleryItemProps) => {
-  const borderRadii = useMemo(
-    () => getBorderRadius(index, imagesCount, imagesPerRow),
-    [index, imagesCount, imagesPerRow],
-  );
-
-  return (
-    <CustomImage
-      {...props}
-      style={[styles.galleryImageItem, { width: `${100 / imagesPerRow}%` }]}
-      imageProps={{ ...props.imageProps, style: { ...borderRadii } }}
-      loadingStyle={{ ...borderRadii }}
-    />
-  );
-};
+import { CustomImageProps } from "../CustomImage/CustomImage";
+import GalleryPreview, {
+  GalleryOverlayProps,
+} from "react-native-gallery-preview";
+import { IconButton, Text, useTheme } from "react-native-paper";
+import { roundness, spacing } from "@/constants/theme";
+import ImageGalleryItem from "./ImageGalleryItem";
 
 type Props = {
   images: ImageProps[];
-  imagesPerRow?: number;
-};
+  checkbox?: CustomImageProps["checkbox"]; // For testing purposes
+} & ViewProps;
 
-const ImageGallery = ({ images, imagesPerRow = 3 }: Props) => {
+const ImageGallery = ({ images, style, checkbox, ...props }: Props) => {
+  const theme = useTheme();
+  const [isGalleryVisible, setIsGalleryVisible] = useState(false);
+  const [initialIndex, setInitialIndex] = useState(0);
+
+  // Temporary solution for local images
+  const parsedImages = images.map((image) => ({
+    uri: Image.resolveAssetSource(image.source as ImageSourcePropType)?.uri,
+  })) as ImageURISource[];
+
+  const onImagePress = (index: number) => {
+    setInitialIndex(index);
+    setIsGalleryVisible(true);
+  };
+
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, style]} {...props}>
       {images.map((image, index) => (
         <ImageGalleryItem
           key={index}
           imageProps={image}
           index={index}
           imagesCount={images.length}
-          imagesPerRow={imagesPerRow}
-          touchableProps={{ onPress: () => console.warn("hello", index) }}
+          touchableProps={{ onPress: () => onImagePress(index) }}
+          checkbox={checkbox}
         />
       ))}
+      <GalleryPreview
+        isVisible={isGalleryVisible}
+        onRequestClose={() => setIsGalleryVisible(false)}
+        images={parsedImages}
+        initialIndex={initialIndex}
+        backgroundColor={theme.colors.background}
+        OverlayComponent={(props: GalleryOverlayProps) => (
+          <>
+            <IconButton
+              icon="close"
+              onPress={props.onClose}
+              style={styles.closeButton}
+              mode="contained"
+              accessibilityLabel="Close gallery"
+            />
+            <Text
+              variant="bodyLarge"
+              style={[
+                styles.imagePosition,
+                {
+                  backgroundColor: theme.colors.surfaceVariant,
+                  color: theme.colors.onSurfaceVariant,
+                },
+              ]}
+            >{`${props.currentImageIndex + 1}/${props.imagesLength}`}</Text>
+          </>
+        )}
+      />
     </View>
   );
 };
@@ -61,7 +88,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  galleryImageItem: {
-    height: 100,
+  closeButton: {
+    position: "absolute",
+    top: spacing.spaceMedium,
+    left: spacing.spaceMedium,
+  },
+  imagePosition: {
+    position: "absolute",
+    bottom: spacing.spaceMedium,
+    right: spacing.spaceMedium,
+    padding: spacing.spaceSmall,
+    borderRadius: roundness,
   },
 });

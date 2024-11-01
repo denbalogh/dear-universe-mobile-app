@@ -2,11 +2,12 @@ import ImageGallery from "./ImageGallery";
 
 import type { Meta, StoryObj } from "@storybook/react";
 import { useArgs } from "@storybook/preview-api";
-import { getRandomImages } from "./storyHelpers";
+import { getRandomImages } from "../CustomImage/storyHelpers";
 import { StyleSheet, View } from "react-native";
 import { useRef } from "react";
 import { IconButton } from "react-native-paper";
 import { spacing } from "@/constants/theme";
+import { action } from "@storybook/addon-actions";
 
 const meta = {
   title: "ImageGallery",
@@ -19,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
   args: {
-    images: getRandomImages(10).map((source) => ({ source })),
+    images: getRandomImages(10),
   },
   render: function Render(args) {
     const [{ images }, updateArgs] = useArgs();
@@ -29,7 +30,7 @@ export const Basic: Story = {
       const newImagesCount = imagesCount.current + 1;
       imagesCount.current = newImagesCount;
       updateArgs({
-        images: getRandomImages(newImagesCount).map((source) => ({ source })),
+        images: getRandomImages(newImagesCount),
       });
     };
 
@@ -37,7 +38,7 @@ export const Basic: Story = {
       const newImagesCount = imagesCount.current - 1;
       imagesCount.current = newImagesCount;
       updateArgs({
-        images: getRandomImages(newImagesCount).map((source) => ({ source })),
+        images: getRandomImages(newImagesCount),
       });
     };
 
@@ -50,6 +51,20 @@ export const Basic: Story = {
         <ImageGallery {...args} images={images} />
       </View>
     );
+  },
+};
+
+export const WithCheckboxSelected: Story = {
+  args: {
+    images: getRandomImages(10),
+    checkbox: { checked: true, onPress: action("Checkbox pressed") },
+  },
+};
+
+export const WithCheckboxUnselected: Story = {
+  args: {
+    images: getRandomImages(10),
+    checkbox: { checked: false, onPress: action("Checkbox pressed") },
   },
 };
 

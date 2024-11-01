@@ -110,7 +110,7 @@ const AudioPlayer = (props: Props) => {
   const maxTime = format(new Date(durationMillis), "mm:ss");
 
   return (
-    <View style={[styles.wrapper, props.style]} {...props}>
+    <View {...props}>
       <Slider
         style={styles.slider}
         minimumValue={0}
@@ -141,11 +141,7 @@ const AudioPlayer = (props: Props) => {
 export default AudioPlayer;
 
 const styles = StyleSheet.create({
-  wrapper: {
-    width: "100%",
-  },
   slider: {
-    width: "100%",
     paddingVertical: spacing.spaceMedium,
   },
 });

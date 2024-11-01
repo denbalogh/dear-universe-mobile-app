@@ -1,11 +1,11 @@
 import { spacing } from "@/constants/theme";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 const TextTesting = () => {
   return (
-    <ScrollView>
+    <View>
       <Text style={styles.text} variant="displayLarge">
         Display Large
       </Text>
@@ -51,7 +51,7 @@ const TextTesting = () => {
       <Text style={styles.text} variant="labelSmall">
         Label Small
       </Text>
-    </ScrollView>
+    </View>
   );
 };
 
