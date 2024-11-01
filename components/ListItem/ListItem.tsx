@@ -197,7 +197,6 @@ const styles = StyleSheet.create({
   },
   statText: {
     marginEnd: spacing.spaceExtraSmall,
-    height: 9,
   },
   moodComposite: {
     position: "absolute",

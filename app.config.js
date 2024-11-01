@@ -45,8 +45,8 @@ module.exports = {
         "expo-font",
         {
           fonts: [
-            "./assets/fonts/Alegreya_Sans_SC/AlegreyaSansSC-Regular.ttf",
-            "./assets/fonts/Baloo_Paaji_2/BalooPaaji2-Regular.ttf",
+            "./assets/fonts/Nunito/Nunito-Regular.ttf",
+            "./assets/fonts/PT_Sans/PTSans-Regular.ttf",
           ],
         },
       ],

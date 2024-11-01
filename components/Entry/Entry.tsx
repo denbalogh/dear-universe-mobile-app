@@ -1,6 +1,6 @@
 import { roundness, spacing } from "@/constants/theme";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import {
   MenuItemProps,
   Text,
@@ -11,6 +11,8 @@ import PickMoodsButton from "./PickMoodsButton";
 import { Mood } from "../MoodColor/types";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import { ImageProps } from "expo-image";
+import ImageGallery from "../ImageGallery/ImageGallery";
 
 type Props = {
   title?: {
@@ -26,6 +28,7 @@ type Props = {
   moveMenuItems: MenuItemProps[];
   optionsMenuItems: MenuItemProps[];
   recording?: boolean;
+  images?: ImageProps[];
 };
 
 const Entry = ({
@@ -36,6 +39,7 @@ const Entry = ({
   moveMenuItems,
   optionsMenuItems,
   recording,
+  images,
 }: Props) => {
   const theme = useTheme();
 
@@ -50,11 +54,10 @@ const Entry = ({
           style={styles.titleWrapper}
           accessibilityLabel="Edit title"
         >
-          <Text variant="headlineSmall" style={styles.title}>
-            {title.text}
-          </Text>
+          <Text variant="headlineSmall">{title.text}</Text>
         </TouchableRipple>
       )}
+      {images && <ImageGallery images={images} style={styles.imageGallery} />}
       {recording && <AudioPlayer style={styles.recording} />}
       {text && (
         <TouchableRipple
@@ -102,15 +105,19 @@ const styles = StyleSheet.create({
   titleWrapper: {
     padding: spacing.spaceSmall,
   },
-  title: {
-    lineHeight: 24,
+  imageGallery: {
+    padding: spacing.spaceSmall,
   },
   recording: {
     paddingHorizontal: spacing.spaceSmall,
+    ...Platform.select({
+      ios: {
+        marginTop: spacing.spaceSmall,
+      },
+    }),
   },
   textWrapper: {
     padding: spacing.spaceSmall,
-    paddingBottom: 0,
   },
   actionBarWrapper: {
     flexDirection: "row",

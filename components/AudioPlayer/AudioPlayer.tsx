@@ -11,6 +11,7 @@ import {
 } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
+import { format } from "date-fns";
 
 type Props = ViewProps;
 
@@ -105,11 +106,11 @@ const AudioPlayer = (props: Props) => {
     }
   };
 
-  const currentTime = new Date(positionMillis).toISOString().substr(14, 5);
-  const maxTime = new Date(durationMillis).toISOString().substr(14, 5);
+  const currentTime = format(new Date(positionMillis), "mm:ss");
+  const maxTime = format(new Date(durationMillis), "mm:ss");
 
   return (
-    <View style={styles.wrapper} {...props}>
+    <View {...props}>
       <Slider
         style={styles.slider}
         minimumValue={0}
@@ -140,11 +141,7 @@ const AudioPlayer = (props: Props) => {
 export default AudioPlayer;
 
 const styles = StyleSheet.create({
-  wrapper: {
-    width: "100%",
-  },
   slider: {
-    width: "100%",
     paddingVertical: spacing.spaceMedium,
   },
 });
