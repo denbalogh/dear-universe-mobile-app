@@ -11,7 +11,6 @@ describe("MoodColorComposite", () => {
         moods={[
           "Happiness, Joy",
           "Excitement, Energy",
-          "Serenity, Balance",
           "Sadness, Indifference",
           "Anger, Frustration",
           "Calmness, Relaxation",
@@ -26,7 +25,6 @@ describe("MoodColorComposite", () => {
     // Check if the moods are rendered
     expect(screen.getByLabelText("Happiness, Joy")).toBeOnTheScreen();
     expect(screen.getByLabelText("Excitement, Energy")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Serenity, Balance")).toBeOnTheScreen();
     expect(screen.getByLabelText("Sadness, Indifference")).toBeOnTheScreen();
     expect(screen.getByLabelText("Anger, Frustration")).toBeOnTheScreen();
     expect(screen.getByLabelText("Calmness, Relaxation")).toBeOnTheScreen();
@@ -37,9 +35,6 @@ describe("MoodColorComposite", () => {
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
       screen.getByLabelText("Excitement, Energy"),
-    );
-    expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Serenity, Balance"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
       screen.getByLabelText("Sadness, Indifference"),
@@ -59,7 +54,6 @@ describe("MoodColorComposite", () => {
         moods={[
           "Happiness, Joy",
           "Excitement, Energy",
-          "Serenity, Balance",
           "Sadness, Indifference",
           "Anger, Frustration",
           "Calmness, Relaxation",
@@ -74,7 +68,6 @@ describe("MoodColorComposite", () => {
     // Check if the moods are rendered
     expect(screen.getByLabelText("Happiness, Joy")).toBeOnTheScreen();
     expect(screen.getByLabelText("Excitement, Energy")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Serenity, Balance")).toBeOnTheScreen();
     expect(screen.getByLabelText("Sadness, Indifference")).toBeOnTheScreen();
     expect(screen.getByLabelText("Anger, Frustration")).toBeOnTheScreen();
     expect(screen.getByLabelText("Calmness, Relaxation")).toBeOnTheScreen();
@@ -85,9 +78,6 @@ describe("MoodColorComposite", () => {
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
       screen.getByLabelText("Excitement, Energy"),
-    );
-    expect(screen.getByLabelText("Mood indicator")).toContainElement(
-      screen.getByLabelText("Serenity, Balance"),
     );
     expect(screen.getByLabelText("Mood indicator")).toContainElement(
       screen.getByLabelText("Sadness, Indifference"),

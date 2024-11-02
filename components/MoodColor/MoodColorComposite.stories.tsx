@@ -48,7 +48,7 @@ export const Example1Vertical: Story = {
     moods: [
       "Happiness, Joy",
       "Excitement, Energy",
-      "Serenity, Balance",
+      "Calmness, Relaxation",
       "Sadness, Indifference",
     ],
     variant: "vertical",
@@ -60,7 +60,7 @@ export const Example1Horizontal: Story = {
     moods: [
       "Happiness, Joy",
       "Excitement, Energy",
-      "Serenity, Balance",
+      "Calmness, Relaxation",
       "Sadness, Indifference",
     ],
     variant: "horizontal",
@@ -72,7 +72,6 @@ export const Example2Vertical: Story = {
     moods: [
       "Happiness, Joy",
       "Excitement, Energy",
-      "Serenity, Balance",
       "Calmness, Relaxation",
       "Anger, Frustration",
       "Sadness, Indifference",
@@ -86,7 +85,6 @@ export const Example2Horizontal: Story = {
     moods: [
       "Happiness, Joy",
       "Excitement, Energy",
-      "Serenity, Balance",
       "Calmness, Relaxation",
       "Anger, Frustration",
       "Sadness, Indifference",
