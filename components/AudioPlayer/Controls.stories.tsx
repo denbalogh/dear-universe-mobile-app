@@ -2,10 +2,12 @@ import Controls from "./Controls";
 
 import type { Meta, StoryObj } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
+import { ViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "AudioPlayer/Controls",
   component: Controls,
+  decorators: [ViewDecorator],
 } satisfies Meta<typeof Controls>;
 
 export default meta;

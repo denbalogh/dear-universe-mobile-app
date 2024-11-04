@@ -4,6 +4,18 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, PaperProvider } from "react-native-paper";
 import { spacing, themeDark, themeLight } from "../constants/theme";
 
+export const ScrollViewDecorator = (Story) => (
+  <ScrollView contentContainerStyle={styles.scrollview}>
+    <Story />
+  </ScrollView>
+);
+
+export const ViewDecorator = (Story) => (
+  <View style={styles.view}>
+    <Story />
+  </View>
+);
+
 const preview: Preview = {
   decorators: [
     (Story) => {
@@ -21,9 +33,7 @@ const preview: Preview = {
               { backgroundColor: activeTheme.colors.background },
             ]}
           >
-            <ScrollView contentContainerStyle={styles.scrollview}>
-              <Story />
-            </ScrollView>
+            <Story />
             <IconButton
               icon="theme-light-dark"
               onPress={toggleActiveTheme}
@@ -41,6 +51,12 @@ export default preview;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+  },
+  view: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    padding: spacing.spaceMedium,
   },
   scrollview: {
     justifyContent: "flex-start",

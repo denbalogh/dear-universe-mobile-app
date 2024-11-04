@@ -8,10 +8,12 @@ import { useRef } from "react";
 import { IconButton } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { action } from "@storybook/addon-actions";
+import { ScrollViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "ImageGallery",
   component: ImageGallery,
+  decorators: [ScrollViewDecorator],
 } satisfies Meta<typeof ImageGallery>;
 
 export default meta;
