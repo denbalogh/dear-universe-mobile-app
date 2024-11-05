@@ -4,11 +4,13 @@ import { Mood } from "./types";
 import { moods } from "./values";
 
 import type { Meta, StoryObj } from "@storybook/react";
+import { ViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "MoodColor/MoodColorComposite",
   component: MoodColorComposite,
   decorators: [
+    ViewDecorator,
     (Story) => (
       <View style={{ height: 200 }}>
         <Story />

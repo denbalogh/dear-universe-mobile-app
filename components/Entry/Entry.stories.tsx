@@ -2,10 +2,12 @@ import Entry from "./Entry";
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 import { getRandomImages } from "../CustomImage/storyHelpers";
+import { ScrollViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "Entry",
   component: Entry,
+  decorators: [ScrollViewDecorator],
 } satisfies Meta<typeof Entry>;
 
 export default meta;

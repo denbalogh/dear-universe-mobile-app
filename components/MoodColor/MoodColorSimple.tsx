@@ -8,10 +8,10 @@ type Props = {
   mood: Mood;
 } & ViewProps;
 
-const MoodColorSimple = ({ mood, ...props }: Props) => {
+const MoodColorSimple = ({ mood, style, ...props }: Props) => {
   return (
     <View
-      style={[styles.wrapper, { backgroundColor: getMoodColor(mood) }]}
+      style={[style, styles.wrapper, { backgroundColor: getMoodColor(mood) }]}
       {...props}
     />
   );

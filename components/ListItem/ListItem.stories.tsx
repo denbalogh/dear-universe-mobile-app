@@ -3,10 +3,12 @@ import ListItem from "./ListItem";
 import type { Meta, StoryObj } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import { getUnixTime } from "date-fns";
+import { ViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "ListItem",
   component: ListItem,
+  decorators: [ViewDecorator],
   argTypes: {
     stats: { control: { type: "object" } },
     moods: { control: { type: "object" } },
