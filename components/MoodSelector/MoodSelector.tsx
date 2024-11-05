@@ -7,9 +7,9 @@ import {
   TouchableRipple,
   useTheme,
 } from "react-native-paper";
-import { useSortedMoods } from "../../MoodColor/values";
-import { Mood } from "../../MoodColor/types";
-import MoodColorSimple from "../../MoodColor/MoodColorSimple";
+import { useSortedMoods } from "../MoodColor/values";
+import { Mood } from "../MoodColor/types";
+import MoodColorSimple from "../MoodColor/MoodColorSimple";
 import { roundness, spacing } from "@/constants/theme";
 
 export type MoodSelectorProps = {

@@ -1,8 +1,8 @@
-import { ViewDecorator } from "../../storybookDecorators";
 import MoodSelector from "./MoodSelector";
 import { action } from "@storybook/addon-actions";
 
 import type { Meta, StoryObj } from "@storybook/react";
+import { ViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "MoodSelector",
