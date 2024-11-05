@@ -5,6 +5,7 @@ import { moods } from "@/components/MoodColor/values";
 describe("MoodSelector", () => {
   const onSubmitMock = jest.fn();
   const onDiscardMock = jest.fn();
+  const onBackPressMock = jest.fn();
 
   test("renders correctly", async () => {
     render(
@@ -12,6 +13,7 @@ describe("MoodSelector", () => {
         initialSelected={["Happiness, Joy"]}
         onSubmit={onSubmitMock}
         onDiscard={onDiscardMock}
+        onBackPress={onBackPressMock}
       />,
     );
 
@@ -53,5 +55,8 @@ describe("MoodSelector", () => {
       "Excitement, Energy",
       "Calmness, Relaxation",
     ]);
+
+    await user.press(screen.getByLabelText("Go back"));
+    expect(onBackPressMock).toHaveBeenCalledTimes(1);
   });
 });
