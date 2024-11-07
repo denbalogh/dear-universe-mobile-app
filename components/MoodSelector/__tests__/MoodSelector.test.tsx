@@ -4,7 +4,6 @@ import { moods } from "@/components/MoodColor/values";
 
 describe("MoodSelector", () => {
   const onSubmitMock = jest.fn();
-  const onDiscardMock = jest.fn();
   const onBackPressMock = jest.fn();
 
   test("renders correctly", async () => {
@@ -12,7 +11,6 @@ describe("MoodSelector", () => {
       <MoodSelector
         initialSelected={["Happiness, Joy"]}
         onSubmit={onSubmitMock}
-        onDiscard={onDiscardMock}
         onBackPress={onBackPressMock}
       />,
     );
@@ -25,11 +23,23 @@ describe("MoodSelector", () => {
       }
     }
 
+    expect(screen.queryByText("Discard")).not.toBeOnTheScreen();
+    expect(screen.getByText("Close")).toBeOnTheScreen();
+
     const user = userEvent.setup();
+
+    await user.press(screen.getByText("Close"));
+    expect(onBackPressMock).toHaveBeenCalledTimes(1);
+
+    await user.press(screen.getByText("Save"));
+    expect(onSubmitMock).toHaveBeenCalledTimes(0); // It is disabled when not edited
 
     await user.press(screen.getByLabelText("Unselect Happiness, Joy"));
     await user.press(screen.getByLabelText("Select Excitement, Energy"));
     await user.press(screen.getByLabelText("Select Calmness, Relaxation"));
+
+    expect(screen.queryByText("Close")).not.toBeOnTheScreen();
+    expect(screen.getByText("Discard")).toBeOnTheScreen();
 
     expect(
       screen.queryByLabelText("Unselect Happiness, Joy"),
@@ -47,7 +57,7 @@ describe("MoodSelector", () => {
     expect(screen.getByLabelText("Unselect Calmness, Relaxation"));
 
     await user.press(screen.getByText("Discard"));
-    expect(onDiscardMock).toHaveBeenCalledTimes(1);
+    expect(onBackPressMock).toHaveBeenCalledTimes(2);
 
     await user.press(screen.getByText("Save"));
     expect(onSubmitMock).toHaveBeenCalledTimes(1);
@@ -57,6 +67,6 @@ describe("MoodSelector", () => {
     ]);
 
     await user.press(screen.getByLabelText("Go back"));
-    expect(onBackPressMock).toHaveBeenCalledTimes(1);
+    expect(onBackPressMock).toHaveBeenCalledTimes(3);
   });
 });
