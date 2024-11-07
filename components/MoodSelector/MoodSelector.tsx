@@ -1,34 +1,34 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
-  Button,
   IconButton,
   Text,
   TouchableRipple,
   useTheme,
 } from "react-native-paper";
-import { useSortedMoods } from "../../MoodColor/values";
-import { Mood } from "../../MoodColor/types";
-import MoodColorSimple from "../../MoodColor/MoodColorSimple";
+import { useSortedMoods } from "../MoodColor/values";
+import { Mood } from "../MoodColor/types";
+import MoodColorSimple from "../MoodColor/MoodColorSimple";
 import { roundness, spacing } from "@/constants/theme";
+import BottomButtons from "../BottomButtons/BottomButtons";
+import * as _ from "lodash";
 
 export type MoodSelectorProps = {
   initialSelected: Mood[];
   onSubmit: (moods: Mood[]) => void;
-  onDiscard: () => void;
   onBackPress: () => void;
 };
 
 const MoodSelector = ({
   initialSelected,
   onSubmit,
-  onDiscard,
   onBackPress,
 }: MoodSelectorProps) => {
   const theme = useTheme();
   const sortedMoods = useSortedMoods();
 
   const [selectedMoods, setSelectedMoods] = useState(initialSelected);
+  const isEdited = _.isEqual(initialSelected, selectedMoods) === false;
 
   const handleSelecMood = (mood: Mood) => {
     if (selectedMoods.includes(mood)) {
@@ -48,7 +48,7 @@ const MoodSelector = ({
         accessibilityLabel="Go back"
       />
       <View style={styles.contentWrapper}>
-        <Text variant="headlineSmall" style={styles.title}>
+        <Text variant="titleMedium" style={styles.title}>
           What emotional states were you experiencing?
         </Text>
         <View style={styles.moodsWrapper}>
@@ -86,14 +86,21 @@ const MoodSelector = ({
             );
           })}
         </View>
-        <View style={styles.buttonsWrapper}>
-          <Button onPress={onDiscard} textColor={theme.colors.error}>
-            Discard
-          </Button>
-          <Button mode="contained" onPress={() => onSubmit(selectedMoods)}>
-            Save
-          </Button>
-        </View>
+        <BottomButtons
+          buttons={[
+            {
+              onPress: onBackPress,
+              textColor: isEdited ? theme.colors.error : undefined,
+              children: isEdited ? "Discard" : "Close",
+            },
+            {
+              onPress: () => onSubmit(selectedMoods),
+              mode: "contained",
+              children: "Save",
+              disabled: !isEdited,
+            },
+          ]}
+        />
       </View>
     </View>
   );
@@ -113,27 +120,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    marginTop: spacing.spaceLarge,
+    marginTop: spacing.spaceMedium,
   },
   moodsWrapper: {
     flexDirection: "column",
   },
   moodWrapper: {
-    marginVertical: spacing.spaceExtraSmall,
+    marginVertical: spacing.spaceSmall,
     borderRadius: roundness,
   },
   moodContent: {
-    padding: spacing.spaceMedium,
+    padding: spacing.spaceSmall,
     flexDirection: "row",
     alignItems: "center",
   },
   moodColor: {
     marginRight: spacing.spaceMedium,
-  },
-  buttonsWrapper: {
-    marginBottom: spacing.spaceLarge,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
 });

@@ -94,7 +94,7 @@ const fonts: MD3Theme["fonts"] = {
     lineHeight: 20,
   },
   default: {
-    fontFamily: "BalooPaaji2-Regular",
+    fontFamily: "PTSans-Regular",
     letterSpacing: 0,
     fontWeight: "normal",
   },

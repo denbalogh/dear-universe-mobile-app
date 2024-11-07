@@ -51,6 +51,7 @@
     "@storybook/react-native": "^8.3.8",
     "@testing-library/react-native": "^12.7.2",
     "@types/jest": "^29.5.12",
+    "@types/lodash": "^4.17.13",
     "@types/react": "~18.2.45",
     "babel-loader": "^8.4.1",
     "eslint": "^8.57.0",
