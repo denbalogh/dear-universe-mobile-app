@@ -1,18 +1,26 @@
-import { roundness, spacing } from "@/constants/theme";
-import React from "react";
+import { spacing } from "@/constants/theme";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { FAB, IconButton, Text, useTheme } from "react-native-paper";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 type Props = {
   time: string;
   isLoading: boolean;
   isRecording: boolean;
   hasRecordingStarted: boolean;
+  hasPermissions: boolean;
+  onRequestPermissionsPress: () => void;
   onRecordPress: () => void;
   onPausePress: () => void;
   onContinuePress: () => void;
   onStopPress: () => void;
   onDiscardPress: () => void;
+  metering?: number;
 };
 
 const Controls = ({
@@ -20,26 +28,36 @@ const Controls = ({
   isLoading,
   isRecording,
   hasRecordingStarted,
+  hasPermissions,
   onContinuePress,
   onDiscardPress,
   onPausePress,
   onRecordPress,
   onStopPress,
+  onRequestPermissionsPress,
+  metering = 1,
 }: Props) => {
   const theme = useTheme();
+  const scale = useSharedValue(metering);
+
+  useEffect(() => {
+    if (isRecording) {
+      scale.value = withTiming(metering, { duration: 50 });
+    } else {
+      scale.value = withTiming(1, { duration: 300 });
+    }
+  }, [isRecording, metering, scale]);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
 
   return (
     <View style={styles.wrapper}>
       <View style={styles.timeWrapper}>
-        {isLoading || !hasRecordingStarted ? (
-          <View
-            style={[
-              styles.placeholderTime,
-              { backgroundColor: theme.colors.surfaceVariant },
-            ]}
-            testID="placeholder-time"
-          />
-        ) : (
+        {hasRecordingStarted && (
           <Text variant="displayLarge" style={styles.time}>
             {time}
           </Text>
@@ -54,35 +72,58 @@ const Controls = ({
             onPress={onDiscardPress}
             accessibilityLabel="Discard recording"
           />
-          {!hasRecordingStarted ? (
-            <FAB
-              onPress={onRecordPress}
-              icon="record"
-              variant="surface"
-              size="large"
-              loading={isLoading}
-              disabled={isLoading}
-              accessibilityLabel="Start recording"
-            />
-          ) : isRecording ? (
-            <FAB
-              onPress={onPausePress}
-              icon="pause"
-              variant="surface"
-              size="large"
-              accessibilityLabel="Pause recording"
-              mode="flat"
-            />
-          ) : (
-            <FAB
-              onPress={onContinuePress}
-              icon="record"
-              variant="surface"
-              size="large"
-              accessibilityLabel="Continue recording"
-              mode="flat"
-            />
-          )}
+          <View>
+            {hasRecordingStarted && (
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: theme.colors.primaryContainer },
+                  styles.meteringAnimated,
+                  animatedStyles,
+                ]}
+                testID="metering-animated"
+              />
+            )}
+            {!hasPermissions ? (
+              <FAB
+                onPress={onRequestPermissionsPress}
+                icon="microphone-question"
+                variant="surface"
+                size="large"
+                loading={isLoading}
+                disabled={isLoading}
+                accessibilityLabel="Request recording permission"
+              />
+            ) : !hasRecordingStarted ? (
+              <FAB
+                onPress={onRecordPress}
+                icon="record"
+                variant="surface"
+                size="large"
+                loading={isLoading}
+                disabled={isLoading}
+                accessibilityLabel="Start recording"
+              />
+            ) : isRecording ? (
+              <FAB
+                onPress={onPausePress}
+                icon="pause"
+                variant="surface"
+                size="large"
+                accessibilityLabel="Pause recording"
+                mode="flat"
+              />
+            ) : (
+              <FAB
+                onPress={onContinuePress}
+                icon="record"
+                variant="surface"
+                size="large"
+                accessibilityLabel="Continue recording"
+                mode="flat"
+              />
+            )}
+          </View>
           <IconButton
             icon="stop"
             disabled={!hasRecordingStarted || isRecording}
@@ -91,14 +132,10 @@ const Controls = ({
             accessibilityLabel="Stop recording"
           />
         </View>
-        {isLoading ? (
-          <View
-            style={[
-              styles.placeholderHelperText,
-              { backgroundColor: theme.colors.surfaceVariant },
-            ]}
-            testID="placeholder-helper-text"
-          />
+        {!hasPermissions ? (
+          <Text style={styles.helperText}>
+            Press to request recording permissions
+          </Text>
         ) : !hasRecordingStarted ? (
           <Text style={styles.helperText}>Press to start recording</Text>
         ) : isRecording ? (
@@ -140,17 +177,7 @@ const styles = StyleSheet.create({
   helperText: {
     marginVertical: spacing.spaceSmall,
   },
-  placeholderTime: {
-    width: 130,
-    height: 45,
-    alignSelf: "center",
-    borderRadius: roundness,
-  },
-  placeholderHelperText: {
-    width: 160,
-    height: 15,
-    backgroundColor: "red",
-    marginVertical: spacing.spaceSmall,
-    borderRadius: roundness,
+  meteringAnimated: {
+    borderRadius: 100,
   },
 });

@@ -10,6 +10,7 @@ describe("AudioRecorder/Controls", () => {
     const onPausePressMock = jest.fn();
     const onContinuePressMock = jest.fn();
     const onDiscardPressMock = jest.fn();
+    const onRequestPermissionsPressMock = jest.fn();
 
     render(
       <Controls
@@ -22,10 +23,13 @@ describe("AudioRecorder/Controls", () => {
         onPausePress={onPausePressMock}
         onContinuePress={onContinuePressMock}
         onDiscardPress={onDiscardPressMock}
+        hasPermissions={true}
+        onRequestPermissionsPress={onRequestPermissionsPressMock}
       />,
     );
 
-    expect(screen.getByTestId("placeholder-time")).toBeOnTheScreen();
+    expect(screen.queryByText("00:00")).not.toBeOnTheScreen();
+    expect(screen.queryByTestId("metering-animated")).not.toBeOnTheScreen();
 
     expect(screen.getByLabelText("Start recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
@@ -50,6 +54,7 @@ describe("AudioRecorder/Controls", () => {
     const onPausePressMock = jest.fn();
     const onContinuePressMock = jest.fn();
     const onDiscardPressMock = jest.fn();
+    const onRequestPermissionsPressMock = jest.fn();
 
     render(
       <Controls
@@ -62,16 +67,17 @@ describe("AudioRecorder/Controls", () => {
         onPausePress={onPausePressMock}
         onContinuePress={onContinuePressMock}
         onDiscardPress={onDiscardPressMock}
+        hasPermissions={true}
+        onRequestPermissionsPress={onRequestPermissionsPressMock}
       />,
     );
 
-    expect(screen.getByTestId("placeholder-time")).toBeOnTheScreen();
+    expect(screen.queryByText("00:00")).not.toBeOnTheScreen();
+    expect(screen.queryByTestId("metering-animated")).not.toBeOnTheScreen();
 
     expect(screen.getByLabelText("Start recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
-
-    expect(screen.getByTestId("placeholder-helper-text")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
@@ -90,6 +96,7 @@ describe("AudioRecorder/Controls", () => {
     const onPausePressMock = jest.fn();
     const onContinuePressMock = jest.fn();
     const onDiscardPressMock = jest.fn();
+    const onRequestPermissionsPressMock = jest.fn();
 
     render(
       <Controls
@@ -102,10 +109,13 @@ describe("AudioRecorder/Controls", () => {
         onPausePress={onPausePressMock}
         onContinuePress={onContinuePressMock}
         onDiscardPress={onDiscardPressMock}
+        hasPermissions={true}
+        onRequestPermissionsPress={onRequestPermissionsPressMock}
       />,
     );
 
     expect(screen.getByText("00:00")).toBeOnTheScreen();
+    expect(screen.getByTestId("metering-animated")).toBeOnTheScreen();
 
     expect(screen.getByLabelText("Pause recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
@@ -130,6 +140,7 @@ describe("AudioRecorder/Controls", () => {
     const onPausePressMock = jest.fn();
     const onContinuePressMock = jest.fn();
     const onDiscardPressMock = jest.fn();
+    const onRequestPermissionsPressMock = jest.fn();
 
     render(
       <Controls
@@ -142,10 +153,13 @@ describe("AudioRecorder/Controls", () => {
         onPausePress={onPausePressMock}
         onContinuePress={onContinuePressMock}
         onDiscardPress={onDiscardPressMock}
+        hasPermissions={true}
+        onRequestPermissionsPress={onRequestPermissionsPressMock}
       />,
     );
 
     expect(screen.getByText("00:00")).toBeOnTheScreen();
+    expect(screen.getByTestId("metering-animated")).toBeOnTheScreen();
 
     expect(screen.getByLabelText("Continue recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
@@ -162,5 +176,101 @@ describe("AudioRecorder/Controls", () => {
     expect(onContinuePressMock).toHaveBeenCalledTimes(1);
     expect(onStopPressMock).toHaveBeenCalledTimes(1);
     expect(onDiscardPressMock).toHaveBeenCalledTimes(1);
+  });
+
+  test("no permissions", async () => {
+    const onRecordPressMock = jest.fn();
+    const onStopPressMock = jest.fn();
+    const onPausePressMock = jest.fn();
+    const onContinuePressMock = jest.fn();
+    const onDiscardPressMock = jest.fn();
+    const onRequestPermissionsPressMock = jest.fn();
+
+    render(
+      <Controls
+        time="00:00"
+        isLoading={false}
+        isRecording={false}
+        hasRecordingStarted={false}
+        onRecordPress={onRecordPressMock}
+        onStopPress={onStopPressMock}
+        onPausePress={onPausePressMock}
+        onContinuePress={onContinuePressMock}
+        onDiscardPress={onDiscardPressMock}
+        hasPermissions={false}
+        onRequestPermissionsPress={onRequestPermissionsPressMock}
+      />,
+    );
+
+    expect(screen.queryByText("00:00")).not.toBeOnTheScreen();
+    expect(screen.queryByTestId("metering-animated")).not.toBeOnTheScreen();
+
+    expect(
+      screen.getByLabelText("Request recording permission"),
+    ).toBeOnTheScreen();
+    expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
+
+    expect(
+      screen.getByText("Press to request recording permissions"),
+    ).toBeOnTheScreen();
+
+    const user = userEvent.setup();
+
+    await user.press(screen.getByLabelText("Request recording permission"));
+    await user.press(screen.getByLabelText("Stop recording"));
+    await user.press(screen.getByLabelText("Discard recording"));
+
+    expect(onRequestPermissionsPressMock).toHaveBeenCalledTimes(1);
+    expect(onStopPressMock).toHaveBeenCalledTimes(0);
+    expect(onDiscardPressMock).toHaveBeenCalledTimes(0);
+  });
+
+  test("no permissions and loading", async () => {
+    const onRecordPressMock = jest.fn();
+    const onStopPressMock = jest.fn();
+    const onPausePressMock = jest.fn();
+    const onContinuePressMock = jest.fn();
+    const onDiscardPressMock = jest.fn();
+    const onRequestPermissionsPressMock = jest.fn();
+
+    render(
+      <Controls
+        time="00:00"
+        isLoading={true}
+        isRecording={false}
+        hasRecordingStarted={false}
+        onRecordPress={onRecordPressMock}
+        onStopPress={onStopPressMock}
+        onPausePress={onPausePressMock}
+        onContinuePress={onContinuePressMock}
+        onDiscardPress={onDiscardPressMock}
+        hasPermissions={false}
+        onRequestPermissionsPress={onRequestPermissionsPressMock}
+      />,
+    );
+
+    expect(screen.queryByText("00:00")).not.toBeOnTheScreen();
+    expect(screen.queryByTestId("metering-animated")).not.toBeOnTheScreen();
+
+    expect(
+      screen.getByLabelText("Request recording permission"),
+    ).toBeOnTheScreen();
+    expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
+
+    expect(
+      screen.getByText("Press to request recording permissions"),
+    ).toBeOnTheScreen();
+
+    const user = userEvent.setup();
+
+    await user.press(screen.getByLabelText("Request recording permission"));
+    await user.press(screen.getByLabelText("Stop recording"));
+    await user.press(screen.getByLabelText("Discard recording"));
+
+    expect(onRequestPermissionsPressMock).toHaveBeenCalledTimes(0);
+    expect(onStopPressMock).toHaveBeenCalledTimes(0);
+    expect(onDiscardPressMock).toHaveBeenCalledTimes(0);
   });
 });

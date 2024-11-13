@@ -20,11 +20,13 @@ export const Basic: Story = {
     isLoading: false,
     isRecording: false,
     hasRecordingStarted: false,
+    hasPermissions: true,
     onContinuePress: action("onContinuePress"),
     onDiscardPress: action("onDiscardPress"),
     onPausePress: action("onPausePress"),
     onRecordPress: action("onRecordPress"),
     onStopPress: action("onStopPress"),
+    onRequestPermissionsPress: action("onRequestPermissionsPress"),
   },
 };
 
@@ -34,11 +36,13 @@ export const Loading: Story = {
     isLoading: true,
     isRecording: false,
     hasRecordingStarted: false,
+    hasPermissions: true,
     onContinuePress: action("onContinuePress"),
     onDiscardPress: action("onDiscardPress"),
     onPausePress: action("onPausePress"),
     onRecordPress: action("onRecordPress"),
     onStopPress: action("onStopPress"),
+    onRequestPermissionsPress: action("onRequestPermissionsPress"),
   },
 };
 
@@ -48,11 +52,13 @@ export const Recording: Story = {
     isLoading: false,
     isRecording: true,
     hasRecordingStarted: true,
+    hasPermissions: true,
     onContinuePress: action("onContinuePress"),
     onDiscardPress: action("onDiscardPress"),
     onPausePress: action("onPausePress"),
     onRecordPress: action("onRecordPress"),
     onStopPress: action("onStopPress"),
+    onRequestPermissionsPress: action("onRequestPermissionsPress"),
   },
 };
 
@@ -62,10 +68,44 @@ export const Paused: Story = {
     isLoading: false,
     isRecording: false,
     hasRecordingStarted: true,
+    hasPermissions: true,
     onContinuePress: action("onContinuePress"),
     onDiscardPress: action("onDiscardPress"),
     onPausePress: action("onPausePress"),
     onRecordPress: action("onRecordPress"),
     onStopPress: action("onStopPress"),
+    onRequestPermissionsPress: action("onRequestPermissionsPress"),
+  },
+};
+
+export const NoPermissions: Story = {
+  args: {
+    time: "00:10",
+    isLoading: false,
+    isRecording: false,
+    hasRecordingStarted: false,
+    hasPermissions: false,
+    onContinuePress: action("onContinuePress"),
+    onDiscardPress: action("onDiscardPress"),
+    onPausePress: action("onPausePress"),
+    onRecordPress: action("onRecordPress"),
+    onStopPress: action("onStopPress"),
+    onRequestPermissionsPress: action("onRequestPermissionsPress"),
+  },
+};
+
+export const NoPermissionsLoading: Story = {
+  args: {
+    time: "00:10",
+    isLoading: true,
+    isRecording: false,
+    hasRecordingStarted: false,
+    hasPermissions: false,
+    onContinuePress: action("onContinuePress"),
+    onDiscardPress: action("onDiscardPress"),
+    onPausePress: action("onPausePress"),
+    onRecordPress: action("onRecordPress"),
+    onStopPress: action("onStopPress"),
+    onRequestPermissionsPress: action("onRequestPermissionsPress"),
   },
 };

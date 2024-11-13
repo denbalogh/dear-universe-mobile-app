@@ -5,17 +5,10 @@ import {
   StyleSheet,
   TextInput as NativeTextInput,
 } from "react-native";
-import {
-  Button,
-  Dialog,
-  IconButton,
-  Portal,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { IconButton, TextInput, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import BottomButtons from "../BottomButtons/BottomButtons";
+import DiscardDialog from "../DiscardDialog/DiscardDialog";
 
 export type TitleDescriptionEditorProps = {
   initialTitle: string;
@@ -121,25 +114,12 @@ const TitleDescriptionEditor = ({
         ]}
         style={styles.buttonsWrapper}
       />
-      <Portal>
-        <Dialog visible={isDiscardDialogVisible} onDismiss={hideDiscardDialog}>
-          <Dialog.Content>
-            <Text variant="bodyLarge">
-              Do you really wish to discard the changes?
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={hideDiscardDialog}>Close</Button>
-            <Button
-              onPress={onBackPress}
-              textColor={theme.colors.error}
-              style={styles.dialogConfirmButton}
-            >
-              Confirm
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <DiscardDialog
+        text="Do you really wish to discard the changes?"
+        isVisible={isDiscardDialogVisible}
+        hideDialog={hideDiscardDialog}
+        onConfirm={onBackPress}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -162,8 +142,5 @@ const styles = StyleSheet.create({
   },
   buttonsWrapper: {
     marginTop: spacing.spaceMedium,
-  },
-  dialogConfirmButton: {
-    marginLeft: spacing.spaceSmall,
   },
 });
