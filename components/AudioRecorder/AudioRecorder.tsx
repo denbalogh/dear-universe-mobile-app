@@ -8,6 +8,8 @@ import Controls from "./Controls";
 import DiscardDialog from "../DiscardDialog/DiscardDialog";
 import { normalizeMeteringForScale } from "./utils";
 
+export const UPDATE_INTERVAL = 50;
+
 type Props = {
   onRecordingFinished: (uri: string) => void;
   onBackPress: () => void;
@@ -51,7 +53,7 @@ const AudioRecorder = ({ onRecordingFinished, onBackPress }: Props) => {
     const { recording, status } = await Audio.Recording.createAsync(
       Audio.RecordingOptionsPresets.HIGH_QUALITY,
       setRecordingStatus,
-      50,
+      UPDATE_INTERVAL,
     );
 
     setRecording(recording);
@@ -149,7 +151,7 @@ const AudioRecorder = ({ onRecordingFinished, onBackPress }: Props) => {
         icon="close"
         onIconPress={onDismissSnackBar}
       >
-        The recording permission has been denied. To enable it, go to system
+        The recording permission has been denied. To grant it, go to system
         settings.
       </Snackbar>
     </View>

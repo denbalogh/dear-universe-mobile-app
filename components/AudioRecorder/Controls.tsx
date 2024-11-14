@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { UPDATE_INTERVAL } from "./AudioRecorder";
 
 type Props = {
   time: string;
@@ -42,7 +43,7 @@ const Controls = ({
 
   useEffect(() => {
     if (isRecording) {
-      scale.value = withTiming(metering, { duration: 50 });
+      scale.value = withTiming(metering, { duration: UPDATE_INTERVAL });
     } else {
       scale.value = withTiming(1, { duration: 300 });
     }
