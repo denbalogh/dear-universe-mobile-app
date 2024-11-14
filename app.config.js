@@ -16,6 +16,10 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
       googleServicesFile: "./GoogleService-Info.plist",
+      infoPlist: {
+        NSMicrophoneUsageDescription:
+          "Microphone is needed to record an entry.",
+      },
     },
     android: {
       adaptiveIcon: {

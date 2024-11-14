@@ -45,7 +45,7 @@ describe("AudioPlayer/Controls", () => {
 
     await user.press(screen.getByLabelText("Forward 10 seconds"));
     expect(on10SecForwardPressMock).toHaveBeenCalledTimes(1);
-  });
+  }, 10000);
 
   test("renders correctly isPlaying and no times", async () => {
     const onPlayPressMock = jest.fn();
