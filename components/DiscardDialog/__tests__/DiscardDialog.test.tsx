@@ -1,7 +1,14 @@
-import { render, screen, userEvent } from "@testing-library/react-native";
+import {
+  render,
+  screen,
+  userEvent,
+  waitFor,
+} from "@testing-library/react-native";
 import DiscardDialog from "../DiscardDialog";
 import { PaperProvider } from "react-native-paper";
 import { themeLight } from "@/constants/theme";
+
+jest.useFakeTimers();
 
 describe("DiscardDialog", () => {
   console.error = jest.fn();
@@ -21,9 +28,11 @@ describe("DiscardDialog", () => {
       </PaperProvider>,
     );
 
-    expect(
-      screen.getByText("Are you sure you want to discard this recording?"),
-    ).toBeOnTheScreen();
+    const text = await screen.findByText(
+      "Are you sure you want to discard this recording?",
+    );
+
+    expect(text).toBeOnTheScreen();
 
     expect(screen.getByText("Close")).toBeOnTheScreen();
     expect(screen.getByText("Confirm")).toBeOnTheScreen();
@@ -37,7 +46,7 @@ describe("DiscardDialog", () => {
     expect(onConfirmMock).toHaveBeenCalledTimes(1);
   });
 
-  test("is not visible", () => {
+  test("is not visible", async () => {
     const hideDialogMock = jest.fn();
     const onConfirmMock = jest.fn();
 
@@ -52,8 +61,10 @@ describe("DiscardDialog", () => {
       </PaperProvider>,
     );
 
-    expect(
-      screen.queryByText("Are you sure you want to discard this recording?"),
-    ).not.toBeOnTheScreen();
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Are you sure you want to discard this recording?"),
+      ).not.toBeOnTheScreen();
+    });
   });
 });
