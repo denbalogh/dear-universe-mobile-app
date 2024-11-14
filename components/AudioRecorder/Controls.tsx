@@ -7,7 +7,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { UPDATE_INTERVAL } from "./AudioRecorder";
+
+export const UPDATE_INTERVAL = 50;
 
 type Props = {
   time: string;
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    marginVertical: spacing.spaceMedium,
+    marginVertical: spacing.spaceLarge,
   },
   helperText: {
     marginVertical: spacing.spaceSmall,

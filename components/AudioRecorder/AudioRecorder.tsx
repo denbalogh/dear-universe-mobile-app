@@ -4,11 +4,9 @@ import { Audio } from "expo-av";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { IconButton, Snackbar } from "react-native-paper";
-import Controls from "./Controls";
+import Controls, { UPDATE_INTERVAL } from "./Controls";
 import DiscardDialog from "../DiscardDialog/DiscardDialog";
 import { normalizeMeteringForScale } from "./utils";
-
-export const UPDATE_INTERVAL = 50;
 
 type Props = {
   onRecordingFinished: (uri: string) => void;
