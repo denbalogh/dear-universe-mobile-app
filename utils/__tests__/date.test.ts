@@ -1,0 +1,40 @@
+import {
+  formatDateId,
+  formatMonthName,
+  formatMonthYear,
+  parseDateId,
+} from "../date";
+
+describe("utils/date", () => {
+  test("parseDateId", () => {
+    const input = "1/1/2022";
+    const expected = new Date(2022, 0, 1);
+
+    const result = parseDateId(input);
+    expect(result).toEqual(expected);
+  });
+
+  test("formatDateId", () => {
+    const input = new Date(2022, 0, 1);
+    const expected = "1/1/2022";
+
+    const result = formatDateId(input);
+    expect(result).toEqual(expected);
+  });
+
+  test("formatMonthYear", () => {
+    const input = new Date(2022, 0, 1);
+    const expected = "January 2022";
+
+    const result = formatMonthYear(input);
+    expect(result).toEqual(expected);
+  });
+
+  test("formatMonthName", () => {
+    const input = new Date(2022, 0, 1);
+    const expected = "January";
+
+    const result = formatMonthName(input);
+    expect(result).toEqual(expected);
+  });
+});
