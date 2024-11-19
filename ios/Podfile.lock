@@ -262,7 +262,7 @@ PODS:
     - ExpoModulesCore
   - ExpoWebBrowser (13.0.3):
     - ExpoModulesCore
-  - EXSplashScreen (0.27.6):
+  - EXSplashScreen (0.27.5):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -1537,7 +1537,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.16.2):
+  - RNGestureHandler (2.16.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1918,7 +1918,7 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 3f83202e3cfec3aa1485eaf2e68cc902b2b10737
   ExpoSystemUI: d4f065a016cae6721b324eb659cdee4d4cf0cb26
   ExpoWebBrowser: 7595ccac6938eb65b076385fd23d035db9ecdc8e
-  EXSplashScreen: 20d60cb03f05e50c23745bf2dc2573b9b2eb42ec
+  EXSplashScreen: d8b3c547b9b18a41d80c6f6b274c4c26664febd4
   EXUpdatesInterface: 996527fd7d1a5d271eb523258d603f8f92038f24
   FBLazyVector: ac12dc084d1c8ec4cc4d7b3cf1b0ebda6dab85af
   Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
@@ -1986,7 +1986,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
   RNFBApp: c1337749fc4a372b515ba0eb82058efbd064e10b
   RNFlashList: d12fc0b6c10ebd40f3485f1662c16d294432b6e6
-  RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
+  RNGestureHandler: ad030559c93b4fa018c35e84466021a03a71198c
   RNReanimated: d51431fd3597a8f8320319dce8e42cee82a5445f
   RNScreens: 30249f9331c3b00ae7cb7922e11f58b3ed369c07
   RNSVG: 4590aa95758149fa27c5c83e54a6a466349a1688

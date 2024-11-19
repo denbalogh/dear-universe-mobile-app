@@ -1,23 +1,14 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  Icon,
-  Text,
-  useTheme,
-  TouchableRipple,
-  IconButton,
-} from "react-native-paper";
-import MoodColorComposite, {
-  MOOD_COMPOSITE_VERTICAL_WIDTH,
-} from "../MoodColor/MoodColorComposite";
-import { roundness, sizing, spacing } from "@/constants/theme";
+import { Icon, Text, IconButton, Card } from "react-native-paper";
+import MoodColorComposite from "../MoodColor/MoodColorComposite";
+import { sizing, spacing } from "@/constants/theme";
 import { Mood } from "../MoodColor/types";
 import Day from "./Day";
 
 type Props = {
   excerpt?: string;
-  isLoading?: boolean;
-  timestamp: number;
+  dateId: string;
   stats: {
     texts: number;
     recordings: number;
@@ -31,9 +22,8 @@ type Props = {
 };
 
 const ListItem = ({
-  isLoading = false,
   excerpt,
-  timestamp,
+  dateId,
   stats,
   moods,
   onPress,
@@ -41,53 +31,12 @@ const ListItem = ({
   onAddRecordingEntryPress,
   onAddTextEntryPress,
 }: Props) => {
-  const theme = useTheme();
-
   const hasStats = stats.texts || stats.recordings || stats.images;
-  const loadingBackgroundColor = theme.colors.surfaceVariant;
-
-  if (isLoading) {
-    return (
-      <View style={styles.wrapper} testID="LoadingWrapper">
-        <Day timestamp={timestamp} />
-        <View
-          style={styles.loadingMiddleWrapper}
-          accessibilityLabel="Loading the day"
-        >
-          <View
-            style={[
-              styles.loadingExcerpt,
-              { backgroundColor: loadingBackgroundColor },
-            ]}
-            testID="LoadingExcerpt"
-          />
-          <View
-            style={[
-              styles.loadingStats,
-              { backgroundColor: loadingBackgroundColor },
-            ]}
-            testID="LoadingStats"
-          />
-        </View>
-        <View
-          style={[
-            styles.loadingMoodComposite,
-            { backgroundColor: loadingBackgroundColor },
-          ]}
-          testID="LoadingMoodComposite"
-        />
-      </View>
-    );
-  }
 
   return (
-    <TouchableRipple
-      style={styles.pressable}
-      onPress={onPress}
-      testID="ListItemPressable"
-    >
-      <View style={styles.wrapper}>
-        <Day timestamp={timestamp} />
+    <Card onPress={onPress} style={styles.card} testID="ListItemPressable">
+      <View style={[styles.wrapper]}>
+        <Day dateId={dateId} />
         {hasStats ? (
           <>
             <View style={styles.middleWrapper}>
@@ -141,21 +90,18 @@ const ListItem = ({
           <View style={styles.addEntryButtonsWrapper}>
             <IconButton
               icon="pen-plus"
-              mode="outlined"
               onPress={onAddTextEntryPress}
               accessibilityLabel="Add text entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
-              mode="outlined"
               onPress={onAddRecordingEntryPress}
               accessibilityLabel="Add recording entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
-              mode="outlined"
               onPress={onAddImageEntryPress}
               accessibilityLabel="Add image entry"
               size={sizing.sizeMedium}
@@ -163,20 +109,22 @@ const ListItem = ({
           </View>
         )}
       </View>
-    </TouchableRipple>
+    </Card>
   );
 };
 
 export default ListItem;
 
 const styles = StyleSheet.create({
-  pressable: {
-    width: "100%",
+  card: {
+    marginHorizontal: spacing.spaceSmall,
+    marginTop: spacing.spaceSmall,
   },
   wrapper: {
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
+    padding: spacing.spaceSmall,
   },
   middleWrapper: {
     flexShrink: 1,
@@ -209,31 +157,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-  },
-  loadingMiddleWrapper: {
-    flex: 1,
-    padding: spacing.spaceMedium,
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-  loadingExcerpt: {
-    width: "100%",
-    height: 43,
-    borderRadius: roundness,
-  },
-  loadingStats: {
-    width: "35%",
-    height: 16,
-    marginTop: spacing.spaceSmall,
-    borderRadius: roundness,
-  },
-  loadingMoodComposite: {
-    width: MOOD_COMPOSITE_VERTICAL_WIDTH,
-    height: "100%",
-    borderRadius: roundness,
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
   },
 });
