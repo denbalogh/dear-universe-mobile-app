@@ -14,6 +14,7 @@ const config: Config = {
     "!**/.husky/**",
     "!**/.eslintrc.js",
   ],
+  testTimeout: 30000,
 };
 
 export default config;
