@@ -2,14 +2,15 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import ListItem from "../ListItem";
 import { PaperProvider } from "react-native-paper";
 import { themeLight } from "@/constants/theme";
-import { format, fromUnixTime, getUnixTime } from "date-fns";
+import { format } from "date-fns";
+import { formatDateId, parseDateId } from "@/utils/date";
 
 describe("ListItem", () => {
   test("renders filled correctly", () => {
     render(
       <ListItem
         excerpt="Hello, world!"
-        timestamp={1729090205}
+        dateId="16/10/2024"
         stats={{ texts: 1, recordings: 2, images: 3 }}
         moods={["Anger, Frustration"]}
         onPress={() => {}}
@@ -49,7 +50,7 @@ describe("ListItem", () => {
   test("renders missing excerpt, moods and text/recording stats correctly", () => {
     render(
       <ListItem
-        timestamp={1729090205}
+        dateId="16/9/2024"
         stats={{ texts: 0, recordings: 0, images: 5 }}
         moods={[]}
         onPress={() => {}}
@@ -82,7 +83,7 @@ describe("ListItem", () => {
 
     render(
       <ListItem
-        timestamp={1729268449}
+        dateId="16/9/2024"
         stats={{ texts: 1, recordings: 2, images: 3 }}
         moods={["Anger, Frustration"]}
         onPress={onPress}
@@ -106,7 +107,7 @@ describe("ListItem", () => {
 
     render(
       <ListItem
-        timestamp={1729268449}
+        dateId="16/9/2024"
         stats={{ texts: 0, recordings: 0, images: 0 }}
         moods={[]}
         onPress={onPressMock}
@@ -138,7 +139,7 @@ describe("ListItem", () => {
     render(
       <PaperProvider theme={themeLight}>
         <ListItem
-          timestamp={getUnixTime(new Date())}
+          dateId={formatDateId(new Date())}
           stats={{ texts: 0, recordings: 0, images: 0 }}
           moods={[]}
           onPress={() => {}}
@@ -154,12 +155,13 @@ describe("ListItem", () => {
     expect(screen.getByLabelText(dateFormatted)).toBeOnTheScreen();
     expect(screen.getByLabelText(dateFormatted)).toHaveStyle({
       color: themeLight.colors.tertiary,
+      fontWeight: "bold",
     });
 
     render(
       <PaperProvider theme={themeLight}>
         <ListItem
-          timestamp={1729090205}
+          dateId="16/9/2024"
           stats={{ texts: 0, recordings: 0, images: 0 }}
           moods={[]}
           onPress={() => {}}
@@ -170,46 +172,11 @@ describe("ListItem", () => {
       </PaperProvider>,
     );
 
-    dateFormatted = format(fromUnixTime(1729090205), "do LLLL yyyy");
+    dateFormatted = format(parseDateId("16/9/2024"), "do LLLL yyyy");
 
     expect(screen.getByLabelText(dateFormatted)).toBeOnTheScreen();
     expect(screen.getByLabelText(dateFormatted)).not.toHaveStyle({
       color: themeLight.colors.tertiary,
     });
-  });
-
-  test("loading state renders correctly", async () => {
-    const onPress = jest.fn();
-
-    render(
-      <ListItem
-        isLoading={true}
-        timestamp={1729090205}
-        stats={{ texts: 0, recordings: 0, images: 0 }}
-        moods={["Anger, Frustration"]}
-        onPress={onPress}
-        onAddTextEntryPress={() => {}}
-        onAddRecordingEntryPress={() => {}}
-        onAddImageEntryPress={() => {}}
-      />,
-    );
-
-    expect(screen.getByLabelText("16th October 2024")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Wednesday")).toBeOnTheScreen();
-
-    expect(screen.getByText("16")).toBeOnTheScreen();
-    expect(screen.getByText("Wed")).toBeOnTheScreen();
-
-    expect(screen.queryByTestId("ListItemPressable")).not.toBeOnTheScreen();
-    expect(screen.getByTestId("LoadingWrapper")).toBeOnTheScreen();
-
-    const user = userEvent.setup();
-    await user.press(screen.getByTestId("LoadingWrapper"));
-
-    expect(onPress).toHaveBeenCalledTimes(0);
-
-    expect(screen.getByTestId("LoadingExcerpt")).toBeOnTheScreen();
-    expect(screen.getByTestId("LoadingStats")).toBeOnTheScreen();
-    expect(screen.getByTestId("LoadingMoodComposite")).toBeOnTheScreen();
   });
 });

@@ -1,24 +1,24 @@
-import { format, fromUnixTime, getDate } from "date-fns";
+import { parseDateId } from "@/utils/date";
+import { format, getDate, isToday as isTodayDateFns } from "date-fns";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 
 type Props = {
-  timestamp: number;
+  dateId: string;
 };
 
-const Day = ({ timestamp }: Props) => {
+const Day = ({ dateId }: Props) => {
   const theme = useTheme();
 
-  const date = fromUnixTime(timestamp);
-  const isToday =
-    format(date, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+  const date = parseDateId(dateId);
+  const isToday = isTodayDateFns(date);
 
   return (
     <View style={styles.wrapper}>
       <Text
         variant="displaySmall"
-        style={[isToday && { color: theme.colors.tertiary }]}
+        style={isToday && [styles.today, { color: theme.colors.tertiary }]}
         accessibilityLabel={
           isToday
             ? `Today ${format(date, "do LLLL yyyy")}`
@@ -41,5 +41,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    minWidth: 50,
+  },
+  today: {
+    fontWeight: "bold",
   },
 });

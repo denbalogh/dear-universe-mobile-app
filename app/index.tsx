@@ -1,109 +1,51 @@
+import { Stack } from "expo-router";
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Pressable,
-} from "react-native";
-import { Realm, RealmProvider, useRealm, useQuery } from "@realm/react";
-import { ObjectSchema } from "realm";
+import { StyleSheet, View } from "react-native";
+import { Appbar, useTheme } from "react-native-paper";
+import * as _ from "lodash";
+import InfiniteDaysList from "@/components/InfiniteDaysList/InfiniteDaysList";
+import { formatMonthYear } from "@/utils/date";
 
-const generate = (description: string) => ({
-  _id: new Realm.BSON.ObjectId(),
-  description,
-  createdAt: new Date(),
-});
-
-export class Task extends Realm.Object {
-  _id: Realm.BSON.ObjectId = new Realm.BSON.ObjectId();
-  description!: string;
-  isComplete: boolean = false;
-  createdAt: Date = new Date();
-  userId!: string;
-
-  static schema: ObjectSchema = {
-    name: "Task",
-    primaryKey: "_id",
-    properties: {
-      _id: "objectId",
-      description: "string",
-      isComplete: { type: "bool", default: false },
-      createdAt: "date",
-    },
-  };
-}
-
-export default function AppWrapper() {
-  return (
-    <RealmProvider schema={[Task]}>
-      <TaskApp />
-    </RealmProvider>
-  );
-}
-
-function TaskApp() {
-  const realm = useRealm();
-  const tasks = useQuery(Task);
-  const [newDescription, setNewDescription] = useState("");
+const App = () => {
+  const theme = useTheme();
+  const [monthYear, setMonthYear] = useState(formatMonthYear(new Date()));
 
   return (
-    <SafeAreaView>
-      <View
-        style={{ flexDirection: "row", justifyContent: "center", margin: 10 }}
-      >
-        <TextInput
-          value={newDescription}
-          placeholder="Enter new task description"
-          onChangeText={setNewDescription}
-        />
-        <Pressable
-          onPress={() => {
-            realm.write(() => {
-              realm.create("Task", generate(newDescription));
-            });
-            setNewDescription("");
-          }}
-        >
-          <Text>➕</Text>
-        </Pressable>
-      </View>
-      <FlatList
-        data={tasks.sorted("createdAt")}
-        keyExtractor={(item) => item._id.toHexString()}
-        renderItem={({ item }) => {
-          return (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                margin: 10,
-              }}
+    <View style={styles.wrapper}>
+      <Stack.Screen
+        options={{
+          header: ({ navigation }) => (
+            <Appbar.Header
+              mode="center-aligned"
+              style={{ backgroundColor: theme.colors.background }}
             >
-              <Pressable
-                onPress={() =>
-                  realm.write(() => {
-                    item.isComplete = !item.isComplete;
-                  })
-                }
-              >
-                <Text>{item.isComplete ? "✅" : "☑️"}</Text>
-              </Pressable>
-              <Text style={{ paddingHorizontal: 10 }}>{item.description}</Text>
-              <Pressable
-                onPress={() => {
-                  realm.write(() => {
-                    realm.delete(item);
-                  });
-                }}
-              >
-                <Text>{"🗑️"}</Text>
-              </Pressable>
-            </View>
-          );
+              <Appbar.Action
+                icon="calendar-month"
+                onPress={() => console.log("open calendar")}
+                color={theme.colors.onBackground}
+              />
+              <Appbar.Content
+                title={monthYear}
+                titleStyle={{ color: theme.colors.onBackground }}
+              />
+              <Appbar.Action
+                icon="cog"
+                onPress={() => console.log("open settings")}
+                color={theme.colors.onBackground}
+              />
+            </Appbar.Header>
+          ),
         }}
-      ></FlatList>
-    </SafeAreaView>
+      />
+      <InfiniteDaysList onMonthYearChange={setMonthYear} />
+    </View>
   );
-}
+};
+
+export default App;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+});
