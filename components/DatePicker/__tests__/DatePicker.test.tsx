@@ -8,6 +8,9 @@ import {
   userEvent,
   waitFor,
 } from "@testing-library/react-native";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+
+registerTranslation("en", enGB);
 
 const TestComponent = ({
   onDismiss,
