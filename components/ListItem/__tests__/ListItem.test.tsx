@@ -10,7 +10,7 @@ describe("ListItem", () => {
     render(
       <ListItem
         title="Hello, world!"
-        dateId="16/10/2024"
+        dateId="16_10_2024"
         moods={["Anger, Frustration"]}
         onPress={() => {}}
       />,
@@ -31,7 +31,7 @@ describe("ListItem", () => {
 
     render(
       <ListItem
-        dateId="16/9/2024"
+        dateId="16_9_2024"
         moods={["Anger, Frustration"]}
         onPress={onPress}
         title="Title"
@@ -53,7 +53,7 @@ describe("ListItem", () => {
     render(
       <ListItem
         title="Title"
-        dateId="16/9/2024"
+        dateId="16_9_2024"
         moods={[]}
         onPress={onPressMock}
         empty={{
@@ -105,7 +105,7 @@ describe("ListItem", () => {
     render(
       <PaperProvider theme={themeLight}>
         <ListItem
-          dateId="16/9/2024"
+          dateId="16_9_2024"
           moods={[]}
           onPress={() => {}}
           title="Title"
@@ -113,7 +113,7 @@ describe("ListItem", () => {
       </PaperProvider>,
     );
 
-    dateFormatted = format(parseDateId("16/9/2024"), "do LLLL yyyy");
+    dateFormatted = format(parseDateId("16_9_2024"), "do LLLL yyyy");
 
     expect(screen.getByLabelText(dateFormatted)).toBeOnTheScreen();
     expect(screen.getByLabelText(dateFormatted)).not.toHaveStyle({

@@ -8,7 +8,7 @@ import {
 
 describe("utils/date", () => {
   test("parseDateId", () => {
-    const input = "1/1/2022";
+    const input = "1_1_2022";
     const expected = new Date(2022, 0, 1);
 
     const result = parseDateId(input);
@@ -17,7 +17,7 @@ describe("utils/date", () => {
 
   test("formatDateId", () => {
     const input = new Date(2022, 0, 1);
-    const expected = "1/1/2022";
+    const expected = "1_1_2022";
 
     const result = formatDateId(input);
     expect(result).toEqual(expected);

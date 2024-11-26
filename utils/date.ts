@@ -1,6 +1,6 @@
 import { format, isMatch, parse } from "date-fns";
 
-const ID_DATE_FORMAT = "d/M/y";
+const ID_DATE_FORMAT = "d_M_y";
 
 export const parseDateId = (date: string): Date => {
   return parse(date, ID_DATE_FORMAT, new Date());
