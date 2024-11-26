@@ -10,6 +10,8 @@ import {
 } from "@testing-library/react-native";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 
+jest.useFakeTimers();
+
 registerTranslation("en", enGB);
 
 const TestComponent = ({
