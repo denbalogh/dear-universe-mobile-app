@@ -1,114 +1,83 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Icon, Text, IconButton, Card } from "react-native-paper";
+import { Text, IconButton, Card, useTheme } from "react-native-paper";
 import MoodColorComposite from "../MoodColor/MoodColorComposite";
-import { sizing, spacing } from "@/constants/theme";
+import { roundness, sizing, spacing } from "@/constants/theme";
 import { Mood } from "../MoodColor/types";
-import Day from "./Day";
+import { format, getDate, isToday as isTodayDateFns } from "date-fns";
+import { parseDateId } from "@/utils/date";
+import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
 
 type Props = {
-  excerpt?: string;
+  title: string;
   dateId: string;
-  stats: {
-    texts: number;
-    recordings: number;
-    images: number;
-  };
   moods: Mood[];
   onPress: () => void;
-  onAddTextEntryPress: () => void;
-  onAddRecordingEntryPress: () => void;
-  onAddImageEntryPress: () => void;
+  empty?: {
+    onAddTextEntryPress: () => void;
+    onAddRecordingEntryPress: () => void;
+    onAddImageEntryPress: () => void;
+  };
 };
 
-const ListItem = ({
-  excerpt,
-  dateId,
-  stats,
-  moods,
-  onPress,
-  onAddImageEntryPress,
-  onAddRecordingEntryPress,
-  onAddTextEntryPress,
-}: Props) => {
-  const hasStats = stats.texts || stats.recordings || stats.images;
+const ListItem = ({ title, dateId, moods, onPress, empty }: Props) => {
+  const theme = useTheme();
+
+  const date = parseDateId(dateId);
+  const isToday = isTodayDateFns(date);
 
   return (
-    <Card onPress={onPress} style={styles.card} testID="ListItemPressable">
-      <View style={[styles.wrapper]}>
-        <Day dateId={dateId} />
-        {hasStats ? (
-          <>
-            <View style={styles.middleWrapper}>
-              <Text variant="bodySmall" numberOfLines={3}>
-                {excerpt || "No description provided"}
-              </Text>
-              <View style={styles.statsWrapper}>
-                {stats.texts > 0 && (
-                  <View
-                    style={styles.stat}
-                    accessibilityLabel="Number of text entries"
-                  >
-                    <Text variant="bodySmall" style={styles.statText}>
-                      {stats.texts}
-                    </Text>
-                    <Icon source="pen" size={sizing.sizeSmall} />
-                  </View>
-                )}
-                {stats.recordings > 0 && (
-                  <View
-                    style={styles.stat}
-                    accessibilityLabel="Number of recording entries"
-                  >
-                    <Text variant="bodySmall" style={styles.statText}>
-                      {stats.recordings}
-                    </Text>
-                    <Icon source="microphone" size={sizing.sizeSmall} />
-                  </View>
-                )}
-                {stats.images > 0 && (
-                  <View
-                    style={styles.stat}
-                    accessibilityLabel="Number of image entries"
-                  >
-                    <Text variant="bodySmall" style={styles.statText}>
-                      {stats.images}
-                    </Text>
-                    <Icon source="image" size={sizing.sizeSmall} />
-                  </View>
-                )}
-              </View>
-            </View>
-            <MoodColorComposite
-              moods={moods}
-              style={styles.moodComposite}
-              accessibilityLabel="Moods during the day"
-              variant="vertical"
-            />
-          </>
-        ) : (
+    <Card onPress={onPress} testID="ListItemPressable" style={styles.card}>
+      <Card.Content style={styles.cardContent}>
+        <View style={styles.dayWrapper}>
+          <Text
+            variant="displaySmall"
+            style={isToday && [styles.today, { color: theme.colors.tertiary }]}
+            accessibilityLabel={
+              isToday
+                ? `Today ${format(date, "do LLLL yyyy")}`
+                : format(date, "do LLLL yyyy")
+            }
+          >
+            {getDate(date)}
+          </Text>
+          <Text variant="bodyLarge" accessibilityLabel={format(date, "EEEE")}>
+            {format(date, "E")}
+          </Text>
+        </View>
+        {empty ? (
           <View style={styles.addEntryButtonsWrapper}>
             <IconButton
               icon="pen-plus"
-              onPress={onAddTextEntryPress}
+              onPress={empty.onAddTextEntryPress}
               accessibilityLabel="Add text entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
-              onPress={onAddRecordingEntryPress}
+              onPress={empty.onAddRecordingEntryPress}
               accessibilityLabel="Add recording entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
-              onPress={onAddImageEntryPress}
+              onPress={empty.onAddImageEntryPress}
               accessibilityLabel="Add image entry"
               size={sizing.sizeMedium}
             />
           </View>
+        ) : (
+          <Text style={styles.title} variant="bodySmall" numberOfLines={4}>
+            {title}
+          </Text>
         )}
-      </View>
+        <MoodColorComposite
+          moods={moods}
+          style={styles.moodComposite}
+          accessibilityLabel="Moods during the day"
+          variant="vertical"
+        />
+      </Card.Content>
     </Card>
   );
 };
@@ -117,34 +86,26 @@ export default ListItem;
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: spacing.spaceSmall,
-    marginTop: spacing.spaceSmall,
+    width: "100%",
+    height: ITEM_HEIGHT,
+    borderRadius: roundness,
   },
-  wrapper: {
+  cardContent: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  dayWrapper: {
+    flexDirection: "column",
     alignItems: "center",
-    padding: spacing.spaceSmall,
-  },
-  middleWrapper: {
-    flexShrink: 1,
-    padding: spacing.spaceMedium,
-    flex: 1,
-  },
-  statsWrapper: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginTop: spacing.spaceExtraSmall,
-  },
-  stat: {
-    flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
-    marginStart: spacing.spaceSmall,
+    minWidth: 50,
   },
-  statText: {
-    marginEnd: spacing.spaceExtraSmall,
+  today: {
+    fontWeight: "bold",
+  },
+  title: {
+    paddingHorizontal: spacing.spaceSmall,
+    flexShrink: 1,
   },
   moodComposite: {
     position: "absolute",
@@ -157,5 +118,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
+    height: "100%",
   },
 });

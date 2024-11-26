@@ -2,14 +2,14 @@ import React from "react";
 import { Mood } from "./types";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { getMoodColor } from "./values";
-import { roundness, sizing } from "@/constants/theme";
+import { roundness, sizing, spacing } from "@/constants/theme";
 
 type Props = {
   moods: Mood[];
   variant: "vertical" | "horizontal";
 } & ViewProps;
 
-export const MOOD_COMPOSITE_VERTICAL_WIDTH = 6;
+export const MOOD_COMPOSITE_VERTICAL_WIDTH = spacing.spaceSmall;
 
 const MoodColorComposite = ({ moods, variant, ...props }: Props) => {
   if (moods.length === 0) {
@@ -86,11 +86,9 @@ const styles = StyleSheet.create({
     width: MOOD_COMPOSITE_VERTICAL_WIDTH,
   },
   verticalTop: {
-    borderTopStartRadius: roundness,
     borderTopEndRadius: roundness,
   },
   verticalBottom: {
-    borderBottomStartRadius: roundness,
     borderBottomEndRadius: roundness,
   },
   horizontalWrapper: {

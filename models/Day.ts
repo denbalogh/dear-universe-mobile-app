@@ -5,10 +5,7 @@ export class Day extends Realm.Object {
   _id!: string;
   locked: boolean = false;
   entryObjects!: Realm.List<Entry>;
-  excerpt: string = "";
-  statsTexts: number = 0;
-  statsRecordings: number = 0;
-  statsImages: number = 0;
+  title: string = "";
 
   static schema: Realm.ObjectSchema = {
     name: "Day",
@@ -17,10 +14,7 @@ export class Day extends Realm.Object {
       _id: "string",
       locked: "bool",
       entryObjects: "Entry[]",
-      excerpt: "string",
-      statsTexts: "int",
-      statsRecordings: "int",
-      statsImages: "int",
+      title: "string",
     },
   };
 }

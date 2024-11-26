@@ -2,6 +2,7 @@ import {
   formatDateId,
   formatMonthName,
   formatMonthYear,
+  isMonthYearFormat,
   parseDateId,
 } from "../date";
 
@@ -36,5 +37,12 @@ describe("utils/date", () => {
 
     const result = formatMonthName(input);
     expect(result).toEqual(expected);
+  });
+
+  test("isMonthYearFormat", () => {
+    const input = "January 2022";
+
+    const result = isMonthYearFormat(input);
+    expect(result).toBe(true);
   });
 });
