@@ -15,10 +15,11 @@ const CTAButtons = ({
   addImageEntryButton,
   addRecordingEntryButton,
   addTextEntryButton,
+  style,
   ...props
 }: Props) => {
   return (
-    <View style={styles.wrapper} {...props}>
+    <View style={[styles.wrapper, style]} {...props}>
       <FAB icon="pen-plus" variant="tertiary" {...addTextEntryButton} />
       <FAB
         icon="microphone-plus"

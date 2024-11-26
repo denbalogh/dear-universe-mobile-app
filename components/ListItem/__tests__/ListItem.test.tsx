@@ -9,14 +9,10 @@ describe("ListItem", () => {
   test("renders filled correctly", () => {
     render(
       <ListItem
-        excerpt="Hello, world!"
+        title="Hello, world!"
         dateId="16/10/2024"
-        stats={{ texts: 1, recordings: 2, images: 3 }}
         moods={["Anger, Frustration"]}
         onPress={() => {}}
-        onAddTextEntryPress={() => {}}
-        onAddRecordingEntryPress={() => {}}
-        onAddImageEntryPress={() => {}}
       />,
     );
 
@@ -28,54 +24,6 @@ describe("ListItem", () => {
 
     expect(screen.getByText("Hello, world!")).toBeOnTheScreen();
     expect(screen.getByLabelText("Moods during the day")).toBeOnTheScreen();
-
-    expect(screen.getByLabelText("Number of text entries")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Number of text entries")).toContainElement(
-      screen.getByText("1"),
-    );
-
-    expect(
-      screen.getByLabelText("Number of recording entries"),
-    ).toBeOnTheScreen();
-    expect(
-      screen.getByLabelText("Number of recording entries"),
-    ).toContainElement(screen.getByText("2"));
-
-    expect(screen.getByLabelText("Number of image entries")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Number of image entries")).toContainElement(
-      screen.getByText("3"),
-    );
-  });
-
-  test("renders missing excerpt, moods and text/recording stats correctly", () => {
-    render(
-      <ListItem
-        dateId="16/9/2024"
-        stats={{ texts: 0, recordings: 0, images: 5 }}
-        moods={[]}
-        onPress={() => {}}
-        onAddTextEntryPress={() => {}}
-        onAddRecordingEntryPress={() => {}}
-        onAddImageEntryPress={() => {}}
-      />,
-    );
-
-    expect(screen.getByText("No description provided")).toBeOnTheScreen();
-    expect(
-      screen.queryByLabelText("Moods during the day"),
-    ).not.toBeOnTheScreen();
-
-    expect(
-      screen.queryByLabelText("Number of text entries"),
-    ).not.toBeOnTheScreen();
-    expect(
-      screen.queryByLabelText("Number of recording entries"),
-    ).not.toBeOnTheScreen();
-
-    expect(screen.getByLabelText("Number of image entries")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Number of image entries")).toContainElement(
-      screen.getByText("5"),
-    );
   });
 
   test("on press works", async () => {
@@ -84,12 +32,9 @@ describe("ListItem", () => {
     render(
       <ListItem
         dateId="16/9/2024"
-        stats={{ texts: 1, recordings: 2, images: 3 }}
         moods={["Anger, Frustration"]}
         onPress={onPress}
-        onAddTextEntryPress={() => {}}
-        onAddRecordingEntryPress={() => {}}
-        onAddImageEntryPress={() => {}}
+        title="Title"
       />,
     );
 
@@ -107,13 +52,15 @@ describe("ListItem", () => {
 
     render(
       <ListItem
+        title="Title"
         dateId="16/9/2024"
-        stats={{ texts: 0, recordings: 0, images: 0 }}
         moods={[]}
         onPress={onPressMock}
-        onAddTextEntryPress={onAddTextEntryPressMock}
-        onAddRecordingEntryPress={onAddRecordingEntryPressMock}
-        onAddImageEntryPress={onAddImageEntryPressMock}
+        empty={{
+          onAddImageEntryPress: onAddImageEntryPressMock,
+          onAddRecordingEntryPress: onAddRecordingEntryPressMock,
+          onAddTextEntryPress: onAddTextEntryPressMock,
+        }}
       />,
     );
 
@@ -140,12 +87,9 @@ describe("ListItem", () => {
       <PaperProvider theme={themeLight}>
         <ListItem
           dateId={formatDateId(new Date())}
-          stats={{ texts: 0, recordings: 0, images: 0 }}
+          title="Title"
           moods={[]}
           onPress={() => {}}
-          onAddTextEntryPress={() => {}}
-          onAddRecordingEntryPress={() => {}}
-          onAddImageEntryPress={() => {}}
         />
       </PaperProvider>,
     );
@@ -162,12 +106,9 @@ describe("ListItem", () => {
       <PaperProvider theme={themeLight}>
         <ListItem
           dateId="16/9/2024"
-          stats={{ texts: 0, recordings: 0, images: 0 }}
           moods={[]}
           onPress={() => {}}
-          onAddTextEntryPress={() => {}}
-          onAddRecordingEntryPress={() => {}}
-          onAddImageEntryPress={() => {}}
+          title="Title"
         />
       </PaperProvider>,
     );

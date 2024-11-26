@@ -15,15 +15,7 @@ const App = () => {
       <Stack.Screen
         options={{
           header: ({ navigation }) => (
-            <Appbar.Header
-              mode="center-aligned"
-              style={{ backgroundColor: theme.colors.background }}
-            >
-              <Appbar.Action
-                icon="calendar-month"
-                onPress={() => console.log("open calendar")}
-                color={theme.colors.onBackground}
-              />
+            <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
               <Appbar.Content
                 title={monthYear}
                 titleStyle={{ color: theme.colors.onBackground }}

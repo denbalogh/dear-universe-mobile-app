@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
   NativeScrollEvent,
@@ -6,13 +6,29 @@ import {
   View,
   ViewToken,
 } from "react-native";
-import { appendDays, createInitDays } from "./utils";
+import { appendDays, createDaysUntilDate } from "./utils";
 import InfiniteDaysListItem from "./InfiniteDaysListItem";
-import { useTheme } from "react-native-paper";
-import { formatMonthYear, parseDateId } from "@/utils/date";
-import { subDays } from "date-fns";
+import { FAB, useTheme } from "react-native-paper";
+import {
+  formatDateId,
+  formatMonthYear,
+  isMonthYearFormat,
+  parseDateId,
+} from "@/utils/date";
+import DatePicker from "../DatePicker/DatePicker";
+import { CalendarDate } from "react-native-paper-dates/lib/typescript/Date/Calendar";
+import { ITEM_HEIGHT } from "./constants";
+import { spacing } from "@/constants/theme";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const EXTEND_LIST_OFFSET = 10;
+const BOTTOM_BUTTON_HEIGHT = 60;
+const BOTTOM_BUTTON_HEIGHT_AND_OFFSET =
+  BOTTOM_BUTTON_HEIGHT + spacing.spaceLarge;
 
 type Props = {
   onMonthYearChange: (monthYear: string) => void;
@@ -20,9 +36,72 @@ type Props = {
 
 const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
   const theme = useTheme();
-  const [days, setDays] = useState(createInitDays());
+  const [days, setDays] = useState(createDaysUntilDate());
   const scrollDir = useRef<"up" | "down">("down");
   const currentOffset = useRef(0);
+
+  const flatListRef = useRef<FlatList<string> | null>(null);
+
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeDate, setActiveDate] = useState(new Date());
+
+  const handleDismissDatePicker = () => {
+    setIsDatePickerVisible(false);
+  };
+
+  const handleShowDatePicker = () => {
+    setIsDatePickerVisible(true);
+  };
+
+  const translateSearchDate = useSharedValue(BOTTOM_BUTTON_HEIGHT_AND_OFFSET);
+  const opacitySearchDate = useSharedValue(0);
+
+  const animatedSearchDateStyles = useAnimatedStyle(() => ({
+    opacity: opacitySearchDate.value,
+    transform: [{ translateY: translateSearchDate.value }],
+  }));
+
+  const translateScrollToTop = useSharedValue(BOTTOM_BUTTON_HEIGHT_AND_OFFSET);
+  const opacityScrollToTop = useSharedValue(0);
+
+  const animatedScrollToTopStyles = useAnimatedStyle(() => ({
+    opacity: opacityScrollToTop.value,
+    transform: [{ translateY: translateScrollToTop.value }],
+  }));
+
+  const handleScrollToIndex = (index: number, animated = false) => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index, animated });
+    }
+  };
+
+  const handleConfirmDate = (date: CalendarDate) => {
+    if (date) {
+      if (formatDateId(date) === formatDateId(activeDate)) {
+        onMonthYearChange(formatMonthYear(activeDate));
+        return handleScrollToIndex(activeIndex);
+      }
+
+      const newDays = createDaysUntilDate(date);
+      const index = newDays.indexOf(formatDateId(date));
+
+      setDays(newDays);
+      setActiveIndex(index);
+      setActiveDate(date);
+
+      onMonthYearChange(formatMonthYear(date));
+    }
+  };
+
+  useEffect(() => {
+    handleScrollToIndex(activeIndex);
+  }, [activeIndex]);
+
+  const handleRenderItem = useCallback(
+    ({ item }: { item: string }) => <InfiniteDaysListItem item={item} />,
+    [],
+  );
 
   const onScroll = useCallback(
     ({
@@ -30,15 +109,44 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
     }: {
       nativeEvent: NativeScrollEvent;
     }) => {
-      if (contentOffset.y <= 0) {
-        return;
-      }
+      const isScrollingDown =
+        contentOffset.y > 0 && contentOffset.y > currentOffset.current;
 
-      scrollDir.current =
-        contentOffset.y > currentOffset.current ? "down" : "up";
+      scrollDir.current = isScrollingDown ? "down" : "up";
       currentOffset.current = contentOffset.y;
+
+      if (scrollDir.current === "up") {
+        // Hide the search date button when scrolling up
+        opacitySearchDate.value = withTiming(0);
+        translateSearchDate.value = withTiming(BOTTOM_BUTTON_HEIGHT_AND_OFFSET);
+        // Show the scroll to top button when scrolling up
+        if (contentOffset.y <= 0) {
+          opacityScrollToTop.value = withTiming(0);
+          translateScrollToTop.value = withTiming(
+            BOTTOM_BUTTON_HEIGHT_AND_OFFSET,
+          );
+          // Hide the scroll to top button when scrolling up
+        } else {
+          opacityScrollToTop.value = withTiming(1);
+          translateScrollToTop.value = withTiming(0);
+        }
+      } else {
+        // Show the search date button when scrolling down
+        opacitySearchDate.value = withTiming(1);
+        translateSearchDate.value = withTiming(0);
+        // Hide the scroll to top button when scrolling down
+        opacityScrollToTop.value = withTiming(0);
+        translateScrollToTop.value = withTiming(
+          BOTTOM_BUTTON_HEIGHT_AND_OFFSET,
+        );
+      }
     },
-    [],
+    [
+      opacityScrollToTop,
+      translateScrollToTop,
+      opacitySearchDate,
+      translateSearchDate,
+    ],
   );
 
   const lastDayIndex = days.length - 1;
@@ -47,20 +155,26 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
     ({ changed }: { changed: ViewToken[] }) => {
       for (const item of changed) {
         // Handle appending days
-        if (item.index && item.index > lastDayIndex - EXTEND_LIST_OFFSET) {
-          setDays(appendDays(days, 10));
+        if (
+          item.isViewable &&
+          item.index &&
+          item.index > lastDayIndex - EXTEND_LIST_OFFSET
+        ) {
+          setDays(appendDays(days));
         }
 
         // Handle setting current month year in the list
+        if (
+          isMonthYearFormat(item.item) &&
+          scrollDir.current === "down" &&
+          !item.isViewable
+        ) {
+          onMonthYearChange(item.item);
+        }
+
         if (parseDateId(item.item).getDate() === 1) {
-          if (scrollDir.current === "down" && !item.isViewable) {
-            const lastDayInPreviousMonth = subDays(parseDateId(item.item), 1);
-            const newMonthYear = formatMonthYear(lastDayInPreviousMonth);
-            onMonthYearChange(newMonthYear);
-          }
           if (scrollDir.current === "up" && item.isViewable) {
-            const newMonthYear = formatMonthYear(parseDateId(item.item));
-            onMonthYearChange(newMonthYear);
+            onMonthYearChange(formatMonthYear(parseDateId(item.item)));
           }
         }
       }
@@ -69,21 +183,68 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
   );
 
   const handleOnRefresh = () => {
-    setDays(createInitDays());
+    setDays(createDaysUntilDate());
   };
+
+  const handleGetItemLayout = useCallback((_: any, index: number) => {
+    const TOTAL_ITEM_HEIGHT = ITEM_HEIGHT + 2 * spacing.spaceExtraSmall;
+    return {
+      length: TOTAL_ITEM_HEIGHT,
+      offset: TOTAL_ITEM_HEIGHT * index,
+      index,
+    };
+  }, []);
+
+  const handleScrollToTop = () => {
+    handleScrollToIndex(0);
+    onMonthYearChange(formatMonthYear(new Date()));
+  };
+
+  const handleKeyExtractor = (item: string) => item;
 
   return (
     <View
       style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+      key={activeIndex}
     >
       <FlatList
+        ref={flatListRef}
         data={days}
-        renderItem={(data) => <InfiniteDaysListItem {...data} />}
+        renderItem={handleRenderItem}
         onViewableItemsChanged={onViewableItemsChanged}
-        keyExtractor={(item) => item}
+        keyExtractor={handleKeyExtractor}
         onScroll={onScroll}
         onRefresh={handleOnRefresh}
         refreshing={false}
+        initialScrollIndex={activeIndex}
+        getItemLayout={handleGetItemLayout}
+        showsVerticalScrollIndicator={false}
+      />
+      <Animated.View
+        style={[styles.bottomButtonWrapper, animatedSearchDateStyles]}
+      >
+        <FAB
+          onPress={handleShowDatePicker}
+          icon="calendar-search"
+          variant="primary"
+          label="Search date"
+        />
+      </Animated.View>
+      <Animated.View
+        style={[styles.bottomButtonWrapper, animatedScrollToTopStyles]}
+      >
+        <FAB
+          onPress={handleScrollToTop}
+          icon="arrow-up"
+          variant="surface"
+          label="To the top"
+        />
+      </Animated.View>
+      <DatePicker
+        visible={isDatePickerVisible}
+        onDismiss={handleDismissDatePicker}
+        date={new Date()}
+        onConfirm={handleConfirmDate}
       />
     </View>
   );
@@ -94,5 +255,14 @@ export default InfiniteDaysList;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+  },
+  bottomButtonWrapper: {
+    position: "absolute",
+    bottom: spacing.spaceLarge,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    height: BOTTOM_BUTTON_HEIGHT,
+    justifyContent: "center",
   },
 });

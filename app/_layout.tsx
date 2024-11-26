@@ -10,6 +10,9 @@ import "react-native-get-random-values";
 import { themeDark, themeLight } from "@/constants/theme";
 import { Appearance } from "react-native";
 import { useState } from "react";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+
+registerTranslation("en", enGB);
 
 const App = () => {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());

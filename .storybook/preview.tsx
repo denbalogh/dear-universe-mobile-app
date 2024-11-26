@@ -3,6 +3,9 @@ import type { Preview } from "@storybook/react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, PaperProvider } from "react-native-paper";
 import { spacing, themeDark, themeLight } from "../constants/theme";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+
+registerTranslation("en", enGB);
 
 export const ScrollViewDecorator = (Story) => (
   <ScrollView contentContainerStyle={styles.scrollview}>
