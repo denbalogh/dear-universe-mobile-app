@@ -13,7 +13,7 @@ export const ScrollViewDecorator = (Story) => (
   </ScrollView>
 );
 
-export const ViewDecorator = (Story) => (
+export const FlexViewDecorator = (Story) => (
   <View style={styles.view}>
     <Story />
   </View>

@@ -2,12 +2,12 @@ import Controls from "./Controls";
 
 import type { Meta, StoryObj } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
-import { ViewDecorator } from "../storybookDecorators";
+import { FlexViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "AudioRecorder/Controls",
   component: Controls,
-  decorators: [ViewDecorator],
+  decorators: [FlexViewDecorator],
 } satisfies Meta<typeof Controls>;
 
 export default meta;

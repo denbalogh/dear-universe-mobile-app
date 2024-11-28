@@ -5,12 +5,12 @@ import { useArgs } from "@storybook/preview-api";
 import { View } from "react-native";
 import { Button } from "react-native-paper";
 import { action } from "@storybook/addon-actions";
-import { ViewDecorator } from "../storybookDecorators";
+import { FlexViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "DatePicker",
   component: DatePicker,
-  decorators: [ViewDecorator],
+  decorators: [FlexViewDecorator],
 } satisfies Meta<typeof DatePicker>;
 
 export default meta;

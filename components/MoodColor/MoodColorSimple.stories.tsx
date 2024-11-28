@@ -1,4 +1,4 @@
-import { ViewDecorator } from "../storybookDecorators";
+import { FlexViewDecorator } from "../storybookDecorators";
 import MoodColorSimple from "./MoodColorSimple";
 import { moods } from "./values";
 
@@ -7,7 +7,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 const meta = {
   title: "MoodColor/MoodColorSimple",
   component: MoodColorSimple,
-  decorators: [ViewDecorator],
+  decorators: [FlexViewDecorator],
   argTypes: {
     mood: {
       options: Object.keys(moods),

@@ -2,12 +2,12 @@ import AudioRecorder from "./AudioRecorder";
 import { action } from "@storybook/addon-actions";
 
 import type { Meta, StoryObj } from "@storybook/react";
-import { ViewDecorator } from "../storybookDecorators";
+import { FlexViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "AudioRecorder",
   component: AudioRecorder,
-  decorators: [ViewDecorator],
+  decorators: [FlexViewDecorator],
 } satisfies Meta<typeof AudioRecorder>;
 
 export default meta;
