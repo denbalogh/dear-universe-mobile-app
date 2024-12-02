@@ -7,7 +7,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { BackHandler, StyleSheet, View } from "react-native";
 import { Appbar, HelperText, TextInput, useTheme } from "react-native-paper";
-import * as _ from "lodash";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
@@ -53,7 +52,7 @@ const DayScreen = () => {
     });
   };
 
-  const isTitleEdited = !_.isEqual(title, dayObject?.title);
+  const isTitleEdited = title !== dayObject?.title;
   const editedUnderlineColor = isTitleEdited
     ? theme.colors.tertiary
     : undefined;

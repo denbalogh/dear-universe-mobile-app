@@ -7,7 +7,6 @@ import {
 import React, { useState } from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
-import * as _ from "lodash";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
