@@ -23,3 +23,9 @@ export const isMonthYearFormat = (date: string): boolean => {
 export const formatMonthName = (date: Date): string => {
   return format(date, "MMMM");
 };
+
+const FULL_DATE_FORMAT = "do MMMM yyyy";
+
+export const formatFullDate = (date: Date): string => {
+  return format(date, FULL_DATE_FORMAT);
+};

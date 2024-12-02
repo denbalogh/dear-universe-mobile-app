@@ -1,5 +1,6 @@
 import {
   formatDateId,
+  formatFullDate,
   formatMonthName,
   formatMonthYear,
   isMonthYearFormat,
@@ -44,5 +45,13 @@ describe("utils/date", () => {
 
     const result = isMonthYearFormat(input);
     expect(result).toBe(true);
+  });
+
+  test("formatFullDate", () => {
+    const input = new Date(2022, 0, 1);
+    const expected = "1st January 2022";
+
+    const result = formatFullDate(input);
+    expect(result).toEqual(expected);
   });
 });
