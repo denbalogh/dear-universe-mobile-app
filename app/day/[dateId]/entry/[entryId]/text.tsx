@@ -16,7 +16,6 @@ import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDes
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON } from "realm";
-import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
 import {
   FOCUS_DESCRIPTION,
   FOCUS_TITLE,
@@ -26,7 +25,6 @@ const EditedEntryTextScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const navigation = useNavigation();
-  const { showSnackbar } = useSnackbar();
 
   const { dateId, entryId, focus } = useLocalSearchParams();
 
@@ -88,7 +86,6 @@ const EditedEntryTextScreen = () => {
       entryObject.description = description;
     });
 
-    showSnackbar("Entry was updated.");
     navigation.goBack();
   };
 
@@ -124,7 +121,7 @@ const EditedEntryTextScreen = () => {
           }
         />
         <DiscardDialog
-          text="Do you really wish to discard the changes?"
+          text="Do you wish to discard the changes?"
           isVisible={isDiscardDialogVisible}
           hideDialog={hideDiscardDialog}
           onConfirm={navigation.goBack}

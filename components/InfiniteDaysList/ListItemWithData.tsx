@@ -9,16 +9,21 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const dayObject = useObject(Day, dateId);
   const router = useRouter();
 
-  const { title = "" } = dayObject || {};
+  const { title = "No title" } = dayObject || {};
 
   const addEntryHandlers = {
     onAddImageEntryPress: () => {},
     onAddRecordingEntryPress: () => {},
-    onAddTextEntryPress: () =>
+    onAddTextEntryPress: () => {
+      router.navigate({
+        pathname: "/day/[dateId]",
+        params: { dateId },
+      });
       router.navigate({
         pathname: "/day/[dateId]/entry/new/text",
         params: { dateId, ...FOCUS_DESCRIPTION },
-      }),
+      });
+    },
   };
 
   const isEmpty = dayObject === null || dayObject.entryObjects.length === 0;

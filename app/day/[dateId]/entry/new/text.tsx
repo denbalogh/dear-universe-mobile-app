@@ -16,14 +16,12 @@ import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDescriptionEditor";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
-import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
 import { FOCUS_DESCRIPTION } from "@/components/TitleDescriptionEditor/constants";
 
 const NewEntryTextScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
-  const { showSnackbar } = useSnackbar();
 
   const { dateId, focus } = useLocalSearchParams();
   const dayObject = useObject(Day, dateId as string);
@@ -42,18 +40,11 @@ const NewEntryTextScreen = () => {
   const isDescriptionEdited = description !== "";
   const isEdited = isTitleEdited || isDescriptionEdited;
 
-  const goBack = () => {
-    router.dismissTo({
-      pathname: "/day/[dateId]",
-      params: { dateId: dateId as string },
-    });
-  };
-
   const handleBackPress = () => {
     if (isEdited) {
       showDiscardDialog();
     } else {
-      goBack();
+      router.back();
     }
   };
 
@@ -92,8 +83,7 @@ const NewEntryTextScreen = () => {
       dayObject.entryObjects.push(entry);
     });
 
-    showSnackbar("Entry was created.");
-    goBack();
+    router.back();
   };
 
   return (
@@ -124,10 +114,10 @@ const NewEntryTextScreen = () => {
           }
         />
         <DiscardDialog
-          text="Do you really wish to discard the entry?"
+          text="Do you wish to discard the entry?"
           isVisible={isDiscardDialogVisible}
           hideDialog={hideDiscardDialog}
-          onConfirm={goBack}
+          onConfirm={router.back}
         />
       </View>
     </View>

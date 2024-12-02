@@ -141,7 +141,7 @@ const AudioRecorder = ({ onRecordingFinished, onBackPress }: Props) => {
       <DiscardDialog
         isVisible={isDiscardDialogVisible}
         hideDialog={hideDiscardDialog}
-        text="Do you really wish to discard the recording?"
+        text="Do you wish to discard the recording?"
         onConfirm={unloadRecordingAndBackPress}
       />
     </View>
