@@ -20,15 +20,24 @@ type Props = {
   };
 };
 
-const ListItem = ({ title, dateId, moods, onPress, empty }: Props) => {
+const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
   const theme = useTheme();
 
   const date = parseDateId(dateId);
   const isToday = isTodayDateFns(date);
 
   return (
-    <Card onPress={onPress} testID="ListItemPressable" style={styles.card}>
-      <Card.Content style={styles.cardContent}>
+    <Card testID="ListItemPressable" style={styles.card} onPress={onPress}>
+      <Card.Content
+        style={[
+          styles.cardContent,
+          {
+            backgroundColor: empty
+              ? theme.colors.background
+              : theme.colors.surface,
+          },
+        ]}
+      >
         <View style={styles.dayWrapper}>
           <Text
             variant="displaySmall"
@@ -67,8 +76,8 @@ const ListItem = ({ title, dateId, moods, onPress, empty }: Props) => {
             />
           </View>
         ) : (
-          <Text style={styles.title} variant="bodySmall" numberOfLines={4}>
-            {title}
+          <Text style={styles.title} variant="bodyMedium" numberOfLines={4}>
+            {title || "No title"}
           </Text>
         )}
         <MoodColorComposite
@@ -93,6 +102,7 @@ const styles = StyleSheet.create({
   cardContent: {
     flexDirection: "row",
     alignItems: "flex-start",
+    borderRadius: roundness,
   },
   dayWrapper: {
     flexDirection: "column",

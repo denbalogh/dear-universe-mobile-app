@@ -12,9 +12,15 @@ export class Day extends Realm.Object {
     primaryKey: "_id",
     properties: {
       _id: "string",
-      locked: "bool",
+      locked: {
+        type: "bool",
+        default: false,
+      },
       entryObjects: "Entry[]",
-      title: "string",
+      title: {
+        type: "string",
+        default: "",
+      },
     },
   };
 }

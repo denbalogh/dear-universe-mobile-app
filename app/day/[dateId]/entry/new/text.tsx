@@ -1,0 +1,147 @@
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import React, { useState } from "react";
+import { StyleSheet, View, BackHandler } from "react-native";
+import { Appbar, useTheme } from "react-native-paper";
+import * as _ from "lodash";
+import { spacing } from "@/constants/theme";
+import { useObject, useRealm } from "@realm/react";
+import { Day } from "@/models/Day";
+import { formatFullDate, parseDateId } from "@/utils/date";
+import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
+import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDescriptionEditor";
+import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
+import { Entry } from "@/models/Entry";
+import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
+import { FOCUS_DESCRIPTION } from "@/components/TitleDescriptionEditor/constants";
+
+const NewEntryTextScreen = () => {
+  const theme = useTheme();
+  const realm = useRealm();
+  const router = useRouter();
+  const { showSnackbar } = useSnackbar();
+
+  const { dateId, focus } = useLocalSearchParams();
+  const dayObject = useObject(Day, dateId as string);
+
+  const focusDescription = focus === FOCUS_DESCRIPTION.focus;
+
+  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
+
+  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
+  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const isTitleEdited = title !== "";
+  const isDescriptionEdited = description !== "";
+  const isEdited = isTitleEdited || isDescriptionEdited;
+
+  const goBack = () => {
+    router.dismissTo({
+      pathname: "/day/[dateId]",
+      params: { dateId: dateId as string },
+    });
+  };
+
+  const handleBackPress = () => {
+    if (isEdited) {
+      showDiscardDialog();
+    } else {
+      goBack();
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (isEdited) {
+          showDiscardDialog();
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [isEdited]),
+  );
+
+  const handleCreateEntry = () => {
+    if (dayObject === null) {
+      return;
+    }
+
+    realm.write(() => {
+      const entry = realm.create(Entry, {
+        title,
+        description,
+        day: dayObject,
+      });
+
+      dayObject.entryObjects.push(entry);
+    });
+
+    showSnackbar("Entry was created.");
+    goBack();
+  };
+
+  return (
+    <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <Appbar.Header>
+              <Appbar.BackAction onPress={handleBackPress} />
+            </Appbar.Header>
+          ),
+        }}
+      />
+      <View style={styles.contentWrapper}>
+        <TitleDescriptionEditor
+          headline={`Creating entry for ${formatFullDate(parseDateId(dateId as string))}`}
+          titleTextInput={{ value: title, onChangeText: setTitle }}
+          descriptionTextInput={{
+            value: description,
+            onChangeText: setDescription,
+            autoFocus: focusDescription,
+          }}
+          bottomButtons={
+            <CloseSaveButtons
+              closeButton={{ onPress: handleBackPress }}
+              saveButton={{ disabled: !isEdited, onPress: handleCreateEntry }}
+            />
+          }
+        />
+        <DiscardDialog
+          text="Do you really wish to discard the entry?"
+          isVisible={isDiscardDialogVisible}
+          hideDialog={hideDiscardDialog}
+          onConfirm={goBack}
+        />
+      </View>
+    </View>
+  );
+};
+
+export default NewEntryTextScreen;
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  contentWrapper: {
+    flex: 1,
+    padding: spacing.spaceMedium,
+  },
+});
