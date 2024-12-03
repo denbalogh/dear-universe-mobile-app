@@ -29,6 +29,7 @@ const TitleDescriptionEditor = ({
           mode="outlined"
           multiline={true}
           style={[styles.input, { backgroundColor: theme.colors.surface }]}
+          contentStyle={{ marginTop: 5 }}
           placeholder="Enter title"
           blurOnSubmit={true}
           enterKeyHint="done"
@@ -39,6 +40,7 @@ const TitleDescriptionEditor = ({
           mode="outlined"
           multiline={true}
           style={[styles.input, { backgroundColor: theme.colors.surface }]}
+          contentStyle={{ marginTop: 5 }}
           scrollEnabled={false}
           placeholder="Enter description"
           {...descriptionTextInput}
