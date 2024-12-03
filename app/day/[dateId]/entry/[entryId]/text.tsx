@@ -19,18 +19,20 @@ import {
   FOCUS_DESCRIPTION,
   FOCUS_TITLE,
 } from "@/components/TitleDescriptionEditor/constants";
+import { EntrySearchTermParams } from "@/types/entryTextScreen";
 
 const EditedEntryTextScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const navigation = useNavigation();
 
-  const { dateId, entryId, focus } = useLocalSearchParams();
+  const { dateId, entryId, focus } =
+    useLocalSearchParams<EntrySearchTermParams>();
 
   const focusTitleInput = focus === FOCUS_TITLE.focus;
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
 
-  const entryObject = useObject(Entry, new BSON.ObjectId(entryId as string));
+  const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
   const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
 
@@ -101,7 +103,7 @@ const EditedEntryTextScreen = () => {
       />
       <View style={styles.contentWrapper}>
         <TitleDescriptionEditor
-          headline={`Editing entry for ${formatFullDate(parseDateId(dateId as string))}`}
+          headline={`Editing entry for ${formatFullDate(parseDateId(dateId))}`}
           titleTextInput={{
             value: title,
             onChangeText: setTitle,

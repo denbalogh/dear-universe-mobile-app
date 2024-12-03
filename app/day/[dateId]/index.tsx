@@ -15,14 +15,15 @@ import { Day } from "@/models/Day";
 import EntriesList from "@/components/EntriesList/EntriesList";
 import { FOCUS_DESCRIPTION } from "@/components/TitleDescriptionEditor/constants";
 import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
+import { DaySearchTermParams } from "@/types/dayScreen";
 
 const DayScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId } = useLocalSearchParams();
-  const dayObject = useObject(Day, dateId as string);
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
+  const dayObject = useObject(Day, dateId);
 
   const [title, setTitle] = useState(dayObject?.title || "");
   const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
@@ -34,7 +35,7 @@ const DayScreen = () => {
     if (dayObject === null) {
       realm.write(() => {
         realm.create(Day, {
-          _id: dateId as string,
+          _id: dateId,
         });
       });
     }
@@ -92,9 +93,7 @@ const DayScreen = () => {
           header: () => (
             <Appbar.Header>
               <Appbar.BackAction onPress={handleGoBack} />
-              <Appbar.Content
-                title={formatFullDate(parseDateId(dateId as string))}
-              />
+              <Appbar.Content title={formatFullDate(parseDateId(dateId))} />
             </Appbar.Header>
           ),
         }}

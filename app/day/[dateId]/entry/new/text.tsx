@@ -16,14 +16,15 @@ import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDes
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { FOCUS_DESCRIPTION } from "@/components/TitleDescriptionEditor/constants";
+import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 
 const NewEntryTextScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId, focus } = useLocalSearchParams();
-  const dayObject = useObject(Day, dateId as string);
+  const { dateId, focus } = useLocalSearchParams<NewEntrySearchTermParams>();
+  const dayObject = useObject(Day, dateId);
 
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
 
@@ -98,7 +99,7 @@ const NewEntryTextScreen = () => {
       />
       <View style={styles.contentWrapper}>
         <TitleDescriptionEditor
-          headline={`Creating entry for ${formatFullDate(parseDateId(dateId as string))}`}
+          headline={`Creating entry for ${formatFullDate(parseDateId(dateId))}`}
           titleTextInput={{ value: title, onChangeText: setTitle }}
           descriptionTextInput={{
             value: description,
