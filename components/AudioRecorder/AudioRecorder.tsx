@@ -3,10 +3,11 @@ import { format } from "date-fns";
 import { Audio } from "expo-av";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { IconButton, Snackbar } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import Controls, { UPDATE_INTERVAL } from "./Controls";
 import DiscardDialog from "../DiscardDialog/DiscardDialog";
 import { normalizeMeteringForScale } from "./utils";
+import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
 
 type Props = {
   onRecordingFinished: (uri: string) => void;
@@ -20,13 +21,11 @@ const AudioRecorder = ({ onRecordingFinished, onBackPress }: Props) => {
     [permissionResponse],
   );
 
+  const { showSnackbar } = useSnackbar();
+
   const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
   const showDiscardDialog = () => setIsDiscardDialogVisible(true);
   const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-
-  const [isSnackBarVisible, setIsSnackBarVisible] = useState(false);
-  const onDismissSnackBar = () => setIsSnackBarVisible(false);
-  const showSnackBar = () => setIsSnackBarVisible(true);
 
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording>();
@@ -37,7 +36,9 @@ const AudioRecorder = ({ onRecordingFinished, onBackPress }: Props) => {
     setIsLoading(true);
     const { canAskAgain, granted } = await requestPermission();
     if (!granted && !canAskAgain) {
-      showSnackBar();
+      showSnackbar(
+        "The recording permission has been denied. To grant it, go to system settings.",
+      );
     }
     setIsLoading(false);
   };
@@ -140,18 +141,9 @@ const AudioRecorder = ({ onRecordingFinished, onBackPress }: Props) => {
       <DiscardDialog
         isVisible={isDiscardDialogVisible}
         hideDialog={hideDiscardDialog}
-        text="Do you really wish to discard the recording?"
+        text="Do you wish to discard the recording?"
         onConfirm={unloadRecordingAndBackPress}
       />
-      <Snackbar
-        visible={isSnackBarVisible}
-        onDismiss={onDismissSnackBar}
-        icon="close"
-        onIconPress={onDismissSnackBar}
-      >
-        The recording permission has been denied. To grant it, go to system
-        settings.
-      </Snackbar>
     </View>
   );
 };

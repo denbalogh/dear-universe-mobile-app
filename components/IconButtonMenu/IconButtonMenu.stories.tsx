@@ -1,12 +1,12 @@
 import IconButtonMenu from "./IconButtonMenu";
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ViewDecorator } from "../storybookDecorators";
+import { FlexViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "IconButtonMenu",
   component: IconButtonMenu,
-  decorators: [ViewDecorator],
+  decorators: [FlexViewDecorator],
 } satisfies Meta<typeof IconButtonMenu>;
 
 export default meta;

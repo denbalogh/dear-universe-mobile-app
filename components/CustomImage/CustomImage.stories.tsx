@@ -4,12 +4,12 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import { getRandomImage } from "./storyHelpers";
 import { roundness } from "@/constants/theme";
-import { ViewDecorator } from "../storybookDecorators";
+import { FlexViewDecorator } from "../storybookDecorators";
 
 const meta = {
   title: "CustomImage",
   component: CustomImage,
-  decorators: [ViewDecorator],
+  decorators: [FlexViewDecorator],
 } satisfies Meta<typeof CustomImage>;
 
 export default meta;

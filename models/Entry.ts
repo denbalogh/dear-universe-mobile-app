@@ -12,8 +12,14 @@ export class Entry extends Realm.Object<Entry, "day"> {
     name: "Entry",
     primaryKey: "_id",
     properties: {
-      _id: "objectId",
-      createdAt: "date",
+      _id: {
+        type: "objectId",
+        default: () => new BSON.ObjectId(),
+      },
+      createdAt: {
+        type: "date",
+        default: () => new Date(),
+      },
       title: "string?",
       description: "string?",
       day: {

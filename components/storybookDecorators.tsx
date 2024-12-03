@@ -8,6 +8,12 @@ export const ScrollViewDecorator = (Story: any) => (
   </ScrollView>
 );
 
+export const FlexViewDecorator = (Story: any) => (
+  <View style={styles.viewFlex}>
+    <Story />
+  </View>
+);
+
 export const ViewDecorator = (Story: any) => (
   <View style={styles.view}>
     <Story />
@@ -15,10 +21,13 @@ export const ViewDecorator = (Story: any) => (
 );
 
 const styles = StyleSheet.create({
-  view: {
+  viewFlex: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-start",
+    padding: spacing.spaceMedium,
+  },
+  view: {
     padding: spacing.spaceMedium,
   },
   scrollview: {

@@ -20,7 +20,7 @@ const DiscardDialog = ({ text, isVisible, hideDialog, onConfirm }: Props) => {
           <Text variant="bodyLarge">{text}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={hideDialog}>Close</Button>
+          <Button onPress={hideDialog}>No</Button>
           <Button
             onPress={() => {
               onConfirm();
@@ -29,7 +29,7 @@ const DiscardDialog = ({ text, isVisible, hideDialog, onConfirm }: Props) => {
             textColor={theme.colors.error}
             style={styles.dialogConfirmButton}
           >
-            Confirm
+            Yes
           </Button>
         </Dialog.Actions>
       </Dialog>

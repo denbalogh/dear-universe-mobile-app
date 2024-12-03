@@ -1,3 +1,6 @@
+// Polyfill for React Native's `crypto` module
+import "react-native-get-random-values";
+
 import { Stack } from "expo-router";
 import { PaperProvider } from "react-native-paper";
 import Constants from "expo-constants";
@@ -5,12 +8,11 @@ import Storybook from "../.storybook";
 import { RealmProvider } from "@realm/react";
 import { schemas } from "@/models";
 
-// Polyfill for React Native's `crypto` module
-import "react-native-get-random-values";
 import { themeDark, themeLight } from "@/constants/theme";
-import { Appearance } from "react-native";
+import { Appearance, StyleSheet, View } from "react-native";
 import { useState } from "react";
 import { enGB, registerTranslation } from "react-native-paper-dates";
+import { SnackbarContextProvider } from "@/contexts/SnackbarContext/SnackbarContext";
 
 registerTranslation("en", enGB);
 
@@ -25,8 +27,16 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} inMemory={true}>
-        <Stack />
+      <RealmProvider schema={schemas}>
+        <SnackbarContextProvider>
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: theme.colors.background },
+            ]}
+          />
+          <Stack />
+        </SnackbarContextProvider>
       </RealmProvider>
     </PaperProvider>
   );

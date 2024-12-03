@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
-import * as _ from "lodash";
 import InfiniteDaysList from "@/components/InfiniteDaysList/InfiniteDaysList";
 import { formatMonthYear } from "@/utils/date";
 
@@ -14,7 +13,7 @@ const App = () => {
     <View style={styles.wrapper}>
       <Stack.Screen
         options={{
-          header: ({ navigation }) => (
+          header: () => (
             <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
               <Appbar.Content
                 title={monthYear}

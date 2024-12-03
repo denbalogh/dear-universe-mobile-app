@@ -1,125 +1,52 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  ScrollView,
-  StyleSheet,
-  TextInput as NativeTextInput,
-} from "react-native";
-import { IconButton, TextInput, useTheme } from "react-native-paper";
+import React, { ReactNode } from "react";
+import { KeyboardAvoidingView, ScrollView, StyleSheet } from "react-native";
+import { Text, TextInput, TextInputProps, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
-import BottomButtons from "../BottomButtons/BottomButtons";
-import DiscardDialog from "../DiscardDialog/DiscardDialog";
 
 export type TitleDescriptionEditorProps = {
-  initialTitle: string;
-  initialDescription: string;
-  onSubmit: (payload: { title: string; description: string }) => void;
-  onBackPress: () => void;
-  focusTitle?: boolean;
-  focusDescription?: boolean;
+  headline: string;
+  titleTextInput: TextInputProps;
+  descriptionTextInput: TextInputProps;
+  bottomComponent: ReactNode;
 };
 
 const TitleDescriptionEditor = ({
-  initialTitle,
-  initialDescription,
-  onSubmit,
-  onBackPress,
-  focusDescription,
-  focusTitle,
+  headline,
+  titleTextInput,
+  descriptionTextInput,
+  bottomComponent,
 }: TitleDescriptionEditorProps) => {
   const theme = useTheme();
 
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
-
-  const [title, setTitle] = useState(initialTitle);
-  const [description, setDescription] = useState(initialDescription);
-
-  const titleRef = useRef<NativeTextInput>(null);
-  const descriptionRef = useRef<NativeTextInput>(null);
-
-  const isTitleEdited = title !== initialTitle;
-  const isDescriptionEdited = description !== initialDescription;
-  const isEdited = isTitleEdited || isDescriptionEdited;
-
-  useEffect(() => {
-    if (focusTitle && titleRef.current) {
-      titleRef.current.focus();
-    } else if (focusDescription && descriptionRef.current) {
-      descriptionRef.current.focus();
-    }
-  }, [focusTitle, focusDescription]);
-
-  const handleBackPress = () => {
-    if (isEdited) {
-      showDiscardDialog();
-    } else {
-      onBackPress();
-    }
-  };
-
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
-      <IconButton
-        icon="arrow-left"
-        onPress={handleBackPress}
-        accessibilityLabel="Go back"
-      />
-      <ScrollView
-        style={styles.inputsWrapper}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.scrollView}>
+        <Text variant="titleLarge" style={styles.headline}>
+          {headline}
+        </Text>
         <TextInput
           label="Title"
-          value={title}
-          onChangeText={setTitle}
           mode="outlined"
           multiline={true}
-          style={styles.input}
-          ref={titleRef}
-          outlineColor={isTitleEdited ? theme.colors.primary : undefined}
-          textAlignVertical="top"
-          scrollEnabled={false}
+          style={[styles.input, { backgroundColor: theme.colors.surface }]}
+          contentStyle={{ marginTop: 5 }}
           placeholder="Enter title"
+          blurOnSubmit={true}
+          enterKeyHint="done"
+          {...titleTextInput}
         />
         <TextInput
           label="Description"
-          value={description}
-          onChangeText={setDescription}
           mode="outlined"
           multiline={true}
-          style={styles.input}
-          ref={descriptionRef}
-          outlineColor={isDescriptionEdited ? theme.colors.primary : undefined}
-          textAlignVertical="top"
+          style={[styles.input, { backgroundColor: theme.colors.surface }]}
+          contentStyle={{ marginTop: 5 }}
           scrollEnabled={false}
           placeholder="Enter description"
+          {...descriptionTextInput}
         />
       </ScrollView>
-      <BottomButtons
-        buttons={[
-          {
-            onPress: handleBackPress,
-            textColor: isEdited ? theme.colors.error : undefined,
-            children: isEdited ? "Discard" : "Close",
-          },
-          {
-            onPress: () => onSubmit({ title, description }),
-            mode: "contained",
-            children: "Save",
-            disabled: !isEdited,
-          },
-        ]}
-        style={styles.buttonsWrapper}
-      />
-      <DiscardDialog
-        text="Do you really wish to discard the changes?"
-        isVisible={isDiscardDialogVisible}
-        hideDialog={hideDiscardDialog}
-        onConfirm={onBackPress}
-      />
+      {bottomComponent}
     </KeyboardAvoidingView>
   );
 };
@@ -128,19 +55,17 @@ export default TitleDescriptionEditor;
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: "100%",
     flexDirection: "column",
     flex: 1,
   },
-  inputsWrapper: {
+  scrollView: {
+    marginBottom: spacing.spaceMedium,
     flex: 1,
-    marginHorizontal: -spacing.spaceMedium,
-    paddingHorizontal: spacing.spaceMedium,
+  },
+  headline: {
+    marginBottom: spacing.spaceMedium,
   },
   input: {
-    marginTop: spacing.spaceMedium,
-  },
-  buttonsWrapper: {
     marginTop: spacing.spaceMedium,
   },
 });

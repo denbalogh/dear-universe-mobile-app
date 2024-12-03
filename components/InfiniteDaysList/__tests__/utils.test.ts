@@ -7,13 +7,13 @@ describe("createDaysUntilDate", () => {
     const startDay = new Date(2024, 9, 1);
 
     const expectedDays = [
-      "1/10/2024",
+      "1_10_2024",
       "September 2024",
-      "30/9/2024",
-      "29/9/2024",
-      "28/9/2024",
-      "27/9/2024",
-      "26/9/2024",
+      "30_9_2024",
+      "29_9_2024",
+      "28_9_2024",
+      "27_9_2024",
+      "26_9_2024",
     ];
 
     const result = createDaysUntilDate(untilDate, extraDays, startDay);
@@ -26,18 +26,18 @@ describe("createDaysUntilDate", () => {
     const startDay = new Date(2024, 9, 6);
 
     const expectedDays = [
-      "6/10/2024",
-      "5/10/2024",
-      "4/10/2024",
-      "3/10/2024",
-      "2/10/2024",
-      "1/10/2024",
+      "6_10_2024",
+      "5_10_2024",
+      "4_10_2024",
+      "3_10_2024",
+      "2_10_2024",
+      "1_10_2024",
       "September 2024",
-      "30/9/2024",
-      "29/9/2024",
-      "28/9/2024",
-      "27/9/2024",
-      "26/9/2024",
+      "30_9_2024",
+      "29_9_2024",
+      "28_9_2024",
+      "27_9_2024",
+      "26_9_2024",
     ];
 
     const result = createDaysUntilDate(untilDate, extraDays, startDay);
@@ -47,17 +47,17 @@ describe("createDaysUntilDate", () => {
 
 describe("appendDays", () => {
   test("appends 5 days", () => {
-    const days = ["2/10/2024"];
+    const days = ["2_10_2024"];
     const COUNT = 5;
 
     const expectedDays = [
-      "2/10/2024",
-      "1/10/2024",
+      "2_10_2024",
+      "1_10_2024",
       "September 2024",
-      "30/9/2024",
-      "29/9/2024",
-      "28/9/2024",
-      "27/9/2024",
+      "30_9_2024",
+      "29_9_2024",
+      "28_9_2024",
+      "27_9_2024",
     ];
 
     const result = appendDays(days, COUNT);
