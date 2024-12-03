@@ -134,7 +134,7 @@ const DayScreen = () => {
         }}
       />
       <DiscardDialog
-        text="Do you wish to discard the changes to title?"
+        text="Do you wish to discard changes to title?"
         isVisible={isDiscardDialogVisible}
         hideDialog={hideDiscardDialog}
         onConfirm={router.back}

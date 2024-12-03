@@ -7,23 +7,20 @@ export type TitleDescriptionEditorProps = {
   headline: string;
   titleTextInput: TextInputProps;
   descriptionTextInput: TextInputProps;
-  bottomButtons: ReactNode;
+  bottomComponent: ReactNode;
 };
 
 const TitleDescriptionEditor = ({
   headline,
   titleTextInput,
   descriptionTextInput,
-  bottomButtons,
+  bottomComponent,
 }: TitleDescriptionEditorProps) => {
   const theme = useTheme();
 
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollContentContainer}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.scrollView}>
         <Text variant="titleLarge" style={styles.headline}>
           {headline}
         </Text>
@@ -47,7 +44,7 @@ const TitleDescriptionEditor = ({
           {...descriptionTextInput}
         />
       </ScrollView>
-      {bottomButtons}
+      {bottomComponent}
     </KeyboardAvoidingView>
   );
 };
@@ -59,8 +56,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
   },
-  scrollContentContainer: {
-    paddingBottom: spacing.spaceMedium,
+  scrollView: {
+    marginBottom: spacing.spaceMedium,
+    flex: 1,
   },
   headline: {
     marginBottom: spacing.spaceMedium,

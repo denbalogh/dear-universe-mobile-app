@@ -105,7 +105,7 @@ const NewEntryTextScreen = () => {
             onChangeText: setDescription,
             autoFocus: focusDescription,
           }}
-          bottomButtons={
+          bottomComponent={
             <CloseSaveButtons
               closeButton={{ onPress: handleBackPress }}
               saveButton={{ disabled: !isEdited, onPress: handleCreateEntry }}
