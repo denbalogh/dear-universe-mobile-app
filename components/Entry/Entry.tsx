@@ -101,7 +101,7 @@ const Entry = ({
   // );
 
   return (
-    <Card style={styles.wrapper} mode="contained">
+    <Card style={[styles.wrapper, style]} mode="contained">
       <Card.Content
         style={{
           paddingHorizontal: spacing.spaceSmall,
@@ -160,7 +160,6 @@ export default Entry;
 const styles = StyleSheet.create({
   wrapper: {
     borderRadius: roundness,
-    marginBottom: spacing.spaceSmall,
   },
   titleWrapper: {
     padding: spacing.spaceExtraSmall,

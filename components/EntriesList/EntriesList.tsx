@@ -9,6 +9,8 @@ import {
   FOCUS_DESCRIPTION,
   FOCUS_TITLE,
 } from "../TitleDescriptionEditor/constants";
+import NoEntries from "../NoEntries/NoEntries";
+import AfterEntriesMessage from "../AfterEntriesMessage/AfterEntriesMessage";
 
 type Props = {
   entries: List<EntryModel> | undefined;
@@ -30,6 +32,7 @@ const EntriesList = ({ entries, bottomPadding }: Props) => {
         bottomPadding && styles.bottomPadding,
       ]}
     >
+      {entries.length === 0 && <NoEntries />}
       {entries.map((entry) => {
         const { _id, title, description } = entry;
 
@@ -60,6 +63,7 @@ const EntriesList = ({ entries, bottomPadding }: Props) => {
           />
         );
       })}
+      {entries.length > 0 && <AfterEntriesMessage />}
     </ScrollView>
   );
 };
@@ -72,11 +76,12 @@ const styles = StyleSheet.create({
   },
   scrollContentWrapper: {
     paddingHorizontal: spacing.spaceSmall,
+    paddingTop: spacing.spaceSmall,
   },
   bottomPadding: {
     paddingBottom: 120,
   },
   entry: {
-    marginBottom: spacing.spaceSmall,
+    marginBottom: spacing.spaceMedium,
   },
 });
