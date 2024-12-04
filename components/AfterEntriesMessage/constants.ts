@@ -1,4 +1,4 @@
-const phrases = [
+export const phrases = [
   "What else happened today? Write it down or record a quick thought!",
   "A picture is worth a thousand words — did you capture anything special today?",
   "Your day isn’t over yet. Why not add a voice note about what’s on your mind?",
@@ -29,9 +29,3 @@ const phrases = [
   "Your story is still unfolding. Add another chapter with an image, note, or sound.",
   "Let the universe see your day through your eyes — share a picture or another memory.",
 ];
-
-export const getRandomPhrase = (phrasesToChooseFrom = phrases) => {
-  return phrasesToChooseFrom[
-    Math.floor(Math.random() * phrasesToChooseFrom.length)
-  ];
-};

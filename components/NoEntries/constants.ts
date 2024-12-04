@@ -1,4 +1,4 @@
-const phrases = [
+export const phrases = [
   "Hello Universe, today was filled with moments of...",
   "Dear Universe, I woke up feeling...",
   "Universe, I felt grateful for so many things today, especially...",
@@ -53,9 +53,3 @@ const phrases = [
   "Dear Universe, I ended the day feeling inspired by...",
   "Today brought me unexpected happiness, Universe, when I saw...",
 ];
-
-export const getRandomPhrase = (phrasesToChooseFrom = phrases) => {
-  return phrasesToChooseFrom[
-    Math.floor(Math.random() * phrasesToChooseFrom.length)
-  ];
-};

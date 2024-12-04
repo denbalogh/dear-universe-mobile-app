@@ -1,47 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Text } from "react-native-paper";
-import { getRandomPhrase } from "./utils";
-import Animated, {
-  useSharedValue,
-  withSequence,
-  withTiming,
-} from "react-native-reanimated";
 import { StyleSheet, View } from "react-native";
 import { spacing } from "@/constants/theme";
+import FadeInOutTextChange from "../FadeInOutTextChange/FadeInOutTextChange";
+import { phrases } from "./constants";
 
-const NoEntries = () => {
-  const [phrase, setPhrase] = useState(getRandomPhrase());
-  const opacity = useSharedValue(1);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimeout(() => setPhrase(getRandomPhrase()), 500);
-      opacity.value = withSequence(
-        withTiming(0, { duration: 500 }),
-        withTiming(1, { duration: 500 }),
-      );
-    }, 5000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [phrase, opacity]);
-
-  return (
-    <View style={styles.wrapper}>
-      <Text variant="titleLarge" style={styles.title}>
-        Here's a place to describe your day.
-      </Text>
-      <Text variant="labelMedium" style={styles.helperText}>
-        How you might begin:
-      </Text>
-      <Animated.View style={{ opacity }}>
+const NoEntries = () => (
+  <View style={styles.wrapper}>
+    <Text variant="titleLarge" style={styles.title}>
+      Here's a place to describe your day.
+    </Text>
+    <Text variant="labelMedium" style={styles.helperText}>
+      How you might begin:
+    </Text>
+    <FadeInOutTextChange phrases={phrases}>
+      {(phrase) => (
         <Text variant="bodyLarge" style={styles.phrase}>
           {phrase}
         </Text>
-      </Animated.View>
-    </View>
-  );
-};
+      )}
+    </FadeInOutTextChange>
+  </View>
+);
 
 export default NoEntries;
 
