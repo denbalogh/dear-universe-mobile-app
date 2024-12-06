@@ -1,5 +1,10 @@
 import { MD3Theme, MD3LightTheme, MD3DarkTheme } from "react-native-paper";
-import { MD3Type } from "react-native-paper/lib/typescript/types";
+import { MD3Colors, MD3Type } from "react-native-paper/lib/typescript/types";
+import {
+  FeelingColors,
+  feelingColorsDark,
+  feelingColorsLight,
+} from "./feelings";
 
 const headersTypeRegular: MD3Type = {
   fontFamily: "Nunito-Regular",
@@ -115,7 +120,11 @@ export const sizing = {
 
 export const roundness = 6;
 
-export const themeLight: MD3Theme = {
+export type CustomTheme = MD3Theme & {
+  colors: MD3Colors & FeelingColors;
+};
+
+export const themeLight: CustomTheme = {
   dark: false,
   roundness,
   version: 3,
@@ -162,11 +171,12 @@ export const themeLight: MD3Theme = {
     surfaceDisabled: "rgba(25, 28, 30, 0.12)",
     onSurfaceDisabled: "rgba(25, 28, 30, 0.38)",
     backdrop: "rgba(43, 49, 54, 0.4)",
+    ...feelingColorsLight,
   },
   fonts,
 };
 
-export const themeDark: MD3Theme = {
+export const themeDark: CustomTheme = {
   dark: true,
   roundness,
   version: 3,
@@ -213,6 +223,7 @@ export const themeDark: MD3Theme = {
     surfaceDisabled: "rgba(226, 226, 229, 0.12)",
     onSurfaceDisabled: "rgba(226, 226, 229, 0.38)",
     backdrop: "rgba(43, 49, 54, 0.4)",
+    ...feelingColorsDark,
   },
   fonts,
 };
