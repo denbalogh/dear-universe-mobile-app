@@ -13,9 +13,9 @@ import CTAButtons from "@/components/CTAButtons/CTAButtons";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import EntriesList from "@/components/EntriesList/EntriesList";
-import { FOCUS_DESCRIPTION } from "@/components/TitleDescriptionEditor/constants";
 import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import { DaySearchTermParams } from "@/types/dayScreen";
+import { COMING_FROM_DAY, FOCUS_DESCRIPTION } from "@/constants/screens";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -128,7 +128,7 @@ const DayScreen = () => {
           onPress: () =>
             router.navigate({
               pathname: "./entry/new/text",
-              params: FOCUS_DESCRIPTION,
+              params: { ...FOCUS_DESCRIPTION, ...COMING_FROM_DAY },
             }),
         }}
       />

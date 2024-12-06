@@ -77,7 +77,7 @@ const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
           </View>
         ) : (
           <Text style={styles.title} variant="bodyMedium" numberOfLines={4}>
-            {title || "No title"}
+            {title || "No title for the day"}
           </Text>
         )}
         <MoodColorComposite

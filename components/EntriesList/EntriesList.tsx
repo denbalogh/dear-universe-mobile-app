@@ -5,12 +5,9 @@ import { List } from "realm";
 import { Entry as EntryModel } from "@/models/Entry";
 import { spacing } from "@/constants/theme";
 import { useRouter } from "expo-router";
-import {
-  FOCUS_DESCRIPTION,
-  FOCUS_TITLE,
-} from "../TitleDescriptionEditor/constants";
 import NoEntries from "../NoEntries/NoEntries";
 import AfterEntriesMessage from "../AfterEntriesMessage/AfterEntriesMessage";
+import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
 
 const BOTTOM_BUTTONS_HEIGHT = 130;
 
