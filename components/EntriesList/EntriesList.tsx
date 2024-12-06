@@ -1,41 +1,44 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import Entry from "../Entry/Entry";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { List } from "realm";
 import { Entry as EntryModel } from "@/models/Entry";
 import { spacing } from "@/constants/theme";
 import { useRouter } from "expo-router";
-import NoEntries from "../NoEntries/NoEntries";
+import BeginningHints from "../BeginningHints/BeginningHints";
 import AfterEntriesMessage from "../AfterEntriesMessage/AfterEntriesMessage";
 import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
-
-const BOTTOM_BUTTONS_HEIGHT = 130;
+import { Text } from "react-native-paper";
 
 type Props = {
+  dayTitleComponent: ReactNode;
   entries: List<EntryModel> | undefined;
   bottomPadding?: boolean;
 };
 
-const EntriesList = ({ entries, bottomPadding }: Props) => {
+const EntriesList = ({ dayTitleComponent, entries, bottomPadding }: Props) => {
   const router = useRouter();
 
-  if (entries === undefined) {
-    return null;
-  }
-
-  const hasEntries = entries.length > 0;
+  const hasEntries = entries && entries.length > 0;
 
   return (
     <View style={styles.wrapper}>
-      {hasEntries ? (
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContentWrapper,
-            bottomPadding && styles.bottomPadding,
-          ]}
-        >
-          {entries.map((entry) => {
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContentWrapper,
+          bottomPadding && styles.bottomPadding,
+        ]}
+      >
+        {dayTitleComponent}
+        {!hasEntries && (
+          <Text variant="titleLarge" style={styles.noEntriesTitle}>
+            You can add multiple entries with text, recording, images and
+            videos.
+          </Text>
+        )}
+        {hasEntries &&
+          entries.map((entry) => {
             const { _id, title, description } = entry;
 
             const titleProp = {
@@ -65,11 +68,9 @@ const EntriesList = ({ entries, bottomPadding }: Props) => {
               />
             );
           })}
-          <AfterEntriesMessage />
-        </ScrollView>
-      ) : (
-        <NoEntries style={styles.bottomMargin} />
-      )}
+        {hasEntries && <AfterEntriesMessage />}
+      </ScrollView>
+      {!hasEntries && <BeginningHints style={styles.bottomPadding} />}
     </View>
   );
 };
@@ -87,11 +88,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.spaceSmall,
     paddingTop: spacing.spaceSmall,
   },
-  bottomPadding: {
-    paddingBottom: BOTTOM_BUTTONS_HEIGHT,
+  noEntriesTitle: {
+    marginVertical: spacing.spaceMedium,
+    textAlign: "center",
   },
-  bottomMargin: {
-    marginBottom: BOTTOM_BUTTONS_HEIGHT,
+  bottomPadding: {
+    paddingBottom: 130,
   },
   entry: {
     marginBottom: spacing.spaceMedium,

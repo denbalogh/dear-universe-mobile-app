@@ -98,28 +98,33 @@ const DayScreen = () => {
           ),
         }}
       />
-      <View style={styles.titleWrapper}>
-        <TextInput
-          label="Title for the day"
-          value={title}
-          onChangeText={setTitle}
-          multiline={true}
-          enterKeyHint="done"
-          blurOnSubmit={true}
-          contentStyle={{ marginTop: 5 }}
-          mode="outlined"
-          onSubmitEditing={handleOnSubmit}
-          outlineColor={editedUnderlineColor}
-          activeOutlineColor={editedUnderlineColor}
-          style={{ backgroundColor: theme.colors.surface }}
-        />
-        {isTitleEdited && (
-          <HelperText type="info" visible={isTitleEdited}>
-            To save the title, press done on the keyboard.
-          </HelperText>
-        )}
-      </View>
-      <EntriesList entries={dayObject?.entryObjects} bottomPadding={true} />
+      <EntriesList
+        dayTitleComponent={
+          <View style={styles.titleWrapper}>
+            <TextInput
+              label="Title for the day"
+              value={title}
+              onChangeText={setTitle}
+              multiline={true}
+              enterKeyHint="done"
+              blurOnSubmit={true}
+              contentStyle={{ marginTop: 5 }}
+              mode="outlined"
+              onSubmitEditing={handleOnSubmit}
+              outlineColor={editedUnderlineColor}
+              activeOutlineColor={editedUnderlineColor}
+              style={{ backgroundColor: theme.colors.surface }}
+            />
+            {isTitleEdited && (
+              <HelperText type="info" visible={isTitleEdited}>
+                To save the title, press done on the keyboard.
+              </HelperText>
+            )}
+          </View>
+        }
+        entries={dayObject?.entryObjects}
+        bottomPadding={true}
+      />
       <CTAButtons
         style={styles.bottomButtons}
         addImageEntryButton={{ onPress: () => {} }}
@@ -149,7 +154,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleWrapper: {
-    padding: spacing.spaceSmall,
+    marginBottom: spacing.spaceMedium,
   },
   bottomButtons: {
     position: "absolute",
