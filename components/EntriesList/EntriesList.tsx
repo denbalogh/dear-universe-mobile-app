@@ -1,6 +1,6 @@
 import React from "react";
 import Entry from "../Entry/Entry";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { List } from "realm";
 import { Entry as EntryModel } from "@/models/Entry";
 import { spacing } from "@/constants/theme";
@@ -11,6 +11,8 @@ import {
 } from "../TitleDescriptionEditor/constants";
 import NoEntries from "../NoEntries/NoEntries";
 import AfterEntriesMessage from "../AfterEntriesMessage/AfterEntriesMessage";
+
+const BOTTOM_BUTTONS_HEIGHT = 130;
 
 type Props = {
   entries: List<EntryModel> | undefined;
@@ -24,53 +26,63 @@ const EntriesList = ({ entries, bottomPadding }: Props) => {
     return null;
   }
 
+  const hasEntries = entries.length > 0;
+
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={[
-        styles.scrollContentWrapper,
-        bottomPadding && styles.bottomPadding,
-      ]}
-    >
-      {entries.length === 0 && <NoEntries />}
-      {entries.map((entry) => {
-        const { _id, title, description } = entry;
+    <View style={styles.wrapper}>
+      {hasEntries ? (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[
+            styles.scrollContentWrapper,
+            bottomPadding && styles.bottomPadding,
+          ]}
+        >
+          {entries.map((entry) => {
+            const { _id, title, description } = entry;
 
-        const titleProp = {
-          text: title || "",
-          onPress: () =>
-            router.navigate({
-              pathname: `./entry/${_id.toString()}/text`,
-              params: FOCUS_TITLE,
-            }),
-        };
+            const titleProp = {
+              text: title || "",
+              onPress: () =>
+                router.navigate({
+                  pathname: `./entry/${_id.toString()}/text`,
+                  params: FOCUS_TITLE,
+                }),
+            };
 
-        const descriptionProp = {
-          text: description || "",
-          onPress: () =>
-            router.navigate({
-              pathname: `./entry/${_id.toString()}/text`,
-              params: FOCUS_DESCRIPTION,
-            }),
-        };
+            const descriptionProp = {
+              text: description || "",
+              onPress: () =>
+                router.navigate({
+                  pathname: `./entry/${_id.toString()}/text`,
+                  params: FOCUS_DESCRIPTION,
+                }),
+            };
 
-        return (
-          <Entry
-            key={_id.toString()}
-            style={styles.entry}
-            title={title ? titleProp : undefined}
-            text={description ? descriptionProp : undefined}
-          />
-        );
-      })}
-      {entries.length > 0 && <AfterEntriesMessage />}
-    </ScrollView>
+            return (
+              <Entry
+                key={_id.toString()}
+                style={styles.entry}
+                title={title ? titleProp : undefined}
+                text={description ? descriptionProp : undefined}
+              />
+            );
+          })}
+          <AfterEntriesMessage />
+        </ScrollView>
+      ) : (
+        <NoEntries style={styles.bottomMargin} />
+      )}
+    </View>
   );
 };
 
 export default EntriesList;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   scrollView: {
     flex: 1,
   },
@@ -79,7 +91,10 @@ const styles = StyleSheet.create({
     paddingTop: spacing.spaceSmall,
   },
   bottomPadding: {
-    paddingBottom: 120,
+    paddingBottom: BOTTOM_BUTTONS_HEIGHT,
+  },
+  bottomMargin: {
+    marginBottom: BOTTOM_BUTTONS_HEIGHT,
   },
   entry: {
     marginBottom: spacing.spaceMedium,
