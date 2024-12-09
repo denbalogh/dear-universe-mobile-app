@@ -16,23 +16,23 @@ const FeelingsIndicator = ({ feelings, style, ...props }: Props) => {
   }
 
   const totalCount = feelings.length;
-  const height = 100 / totalCount;
+  const width = 100 / totalCount;
 
   return (
     <View style={[styles.wrapper, style]} {...props}>
       {feelings.map((feeling, index) => {
-        const isTop = index === 0;
-        const isBottom = index === totalCount - 1;
+        const isLeftEnd = index === 0;
+        const isRightEnd = index === totalCount - 1;
 
         return (
           <View
             key={`${feelings}-${index}`}
             style={[
-              isTop && styles.top,
-              isBottom && styles.bottom,
+              isLeftEnd && styles.leftEnd,
+              isRightEnd && styles.rightEnd,
               {
                 backgroundColor: theme.colors[`${feeling}base`],
-                height: `${height}%`,
+                width: `${width}%`,
               },
             ]}
             accessibilityLabel={feeling}
@@ -48,12 +48,13 @@ export default FeelingsIndicator;
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: spacing.spaceSmall,
+    height: spacing.spaceExtraSmall,
+    flexDirection: "row",
   },
-  top: {
-    borderTopEndRadius: roundness,
+  leftEnd: {
+    borderBottomStartRadius: roundness,
   },
-  bottom: {
+  rightEnd: {
     borderBottomEndRadius: roundness,
   },
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Text, IconButton, Card, useTheme } from "react-native-paper";
+import { Text, IconButton, Card, useTheme, Icon } from "react-native-paper";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { format, getDate, isToday as isTodayDateFns } from "date-fns";
 import { parseDateId } from "@/utils/date";
@@ -31,10 +31,16 @@ const ListItem = ({
 }: Props) => {
   const theme = useTheme();
 
-  console.log(feelings);
-
   const date = parseDateId(dateId);
   const isToday = isTodayDateFns(date);
+
+  const backgroundColor = isEmpty
+    ? theme.colors.background
+    : theme.colors.surfaceVariant;
+
+  const textColor = isEmpty
+    ? theme.colors.onBackground
+    : theme.colors.onSurfaceVariant;
 
   return (
     <Card testID="ListItemPressable" style={styles.card} onPress={onPress}>
@@ -42,16 +48,17 @@ const ListItem = ({
         style={[
           styles.cardContent,
           {
-            backgroundColor: isEmpty
-              ? theme.colors.background
-              : theme.colors.surface,
+            backgroundColor,
           },
         ]}
       >
         <View style={styles.dayWrapper}>
           <Text
             variant="displaySmall"
-            style={isToday && [styles.today, { color: theme.colors.tertiary }]}
+            style={[
+              { color: textColor },
+              isToday && [styles.today, { color: theme.colors.tertiary }],
+            ]}
             accessibilityLabel={
               isToday
                 ? `Today ${format(date, "do LLLL yyyy")}`
@@ -60,7 +67,11 @@ const ListItem = ({
           >
             {getDate(date)}
           </Text>
-          <Text variant="bodyLarge" accessibilityLabel={format(date, "EEEE")}>
+          <Text
+            variant="bodyLarge"
+            accessibilityLabel={format(date, "EEEE")}
+            style={{ color: textColor }}
+          >
             {format(date, "E")}
           </Text>
         </View>
@@ -86,7 +97,11 @@ const ListItem = ({
             />
           </View>
         ) : (
-          <Text style={styles.title} variant="bodyMedium" numberOfLines={3}>
+          <Text
+            style={[styles.title, { color: textColor }]}
+            variant="bodyMedium"
+            numberOfLines={3}
+          >
             {title || "No title for the day"}
           </Text>
         )}
@@ -109,7 +124,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "stretch",
     borderRadius: roundness,
   },
   dayWrapper: {
@@ -122,13 +137,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   title: {
-    paddingHorizontal: spacing.spaceSmall,
     flexShrink: 1,
+    paddingHorizontal: spacing.spaceSmall,
   },
   feelingsIndicator: {
     position: "absolute",
     right: 0,
-    top: 0,
+    left: 0,
     bottom: 0,
   },
   addEntryButtonsWrapper: {
