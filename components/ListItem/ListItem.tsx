@@ -5,6 +5,8 @@ import { roundness, sizing, spacing } from "@/constants/theme";
 import { format, getDate, isToday as isTodayDateFns } from "date-fns";
 import { parseDateId } from "@/utils/date";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
+import { FEELING_GROUP_NAMES } from "@/constants/feelings";
+import FeelingsIndicator from "../FeelingsIndicator/FeelingsIndicator";
 
 type Props = {
   title: string;
@@ -16,6 +18,7 @@ type Props = {
     onAddImageEntryPress: () => void;
   };
   isEmpty?: boolean;
+  feelings: FEELING_GROUP_NAMES[];
 };
 
 const ListItem = ({
@@ -24,8 +27,11 @@ const ListItem = ({
   addEntryHandlers,
   isEmpty,
   onPress,
+  feelings,
 }: Props) => {
   const theme = useTheme();
+
+  console.log(feelings);
 
   const date = parseDateId(dateId);
   const isToday = isTodayDateFns(date);
@@ -84,6 +90,10 @@ const ListItem = ({
             {title || "No title for the day"}
           </Text>
         )}
+        <FeelingsIndicator
+          style={styles.feelingsIndicator}
+          feelings={feelings}
+        />
       </Card.Content>
     </Card>
   );
@@ -115,7 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.spaceSmall,
     flexShrink: 1,
   },
-  moodComposite: {
+  feelingsIndicator: {
     position: "absolute",
     right: 0,
     top: 0,

@@ -8,7 +8,7 @@ type Props = {
   feelings: FEELING_GROUP_NAMES[];
 } & ViewProps;
 
-const FeelingsIndicator = ({ feelings, ...props }: Props) => {
+const FeelingsIndicator = ({ feelings, style, ...props }: Props) => {
   const theme = useCustomTheme();
 
   if (feelings.length === 0) {
@@ -19,7 +19,7 @@ const FeelingsIndicator = ({ feelings, ...props }: Props) => {
   const height = 100 / totalCount;
 
   return (
-    <View style={styles.verticalWrapper} {...props}>
+    <View style={[styles.wrapper, style]} {...props}>
       {feelings.map((feeling, index) => {
         const isTop = index === 0;
         const isBottom = index === totalCount - 1;
@@ -28,8 +28,8 @@ const FeelingsIndicator = ({ feelings, ...props }: Props) => {
           <View
             key={`${feelings}-${index}`}
             style={[
-              isTop && styles.verticalTop,
-              isBottom && styles.verticalBottom,
+              isTop && styles.top,
+              isBottom && styles.bottom,
               {
                 backgroundColor: theme.colors[`${feeling}base`],
                 height: `${height}%`,
@@ -47,14 +47,13 @@ const FeelingsIndicator = ({ feelings, ...props }: Props) => {
 export default FeelingsIndicator;
 
 const styles = StyleSheet.create({
-  verticalWrapper: {
+  wrapper: {
     width: spacing.spaceSmall,
-    height: "100%",
   },
-  verticalTop: {
+  top: {
     borderTopEndRadius: roundness,
   },
-  verticalBottom: {
+  bottom: {
     borderBottomEndRadius: roundness,
   },
 });

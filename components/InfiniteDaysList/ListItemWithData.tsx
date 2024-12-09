@@ -9,7 +9,7 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const dayObject = useObject(Day, dateId);
   const router = useRouter();
 
-  const { title = "" } = dayObject || {};
+  const { title = "", entryObjects = [] } = dayObject || {};
 
   const onPressHandler = () => {
     router.navigate({ pathname: "/day/[dateId]", params: { dateId } });
@@ -27,6 +27,10 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
 
   const isEmpty = !title && (!dayObject || dayObject.entryObjects.length === 0);
 
+  const feelings = entryObjects
+    .map((entry) => entry?.feelings?.name)
+    .filter((feeling) => !!feeling);
+
   return (
     <ListItem
       onPress={onPressHandler}
@@ -34,6 +38,7 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
       title={title}
       addEntryHandlers={addEntryHandlers}
       isEmpty={isEmpty}
+      feelings={feelings}
     />
   );
 };
