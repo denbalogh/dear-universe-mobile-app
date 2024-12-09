@@ -6,10 +6,12 @@ export enum FEELING_GROUP_NAMES {
   VERY_PLEASANT = "Very pleasant",
 }
 
-export const feelings: {
+export type Feelings = {
   name: FEELING_GROUP_NAMES;
   emotions: string[];
-}[] = [
+};
+
+export const feelings: Feelings[] = [
   {
     name: FEELING_GROUP_NAMES.VERY_PLEASANT,
     emotions: [

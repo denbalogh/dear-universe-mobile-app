@@ -1,11 +1,13 @@
 import Realm, { BSON } from "realm";
 import { Day } from "./Day";
+import { Feelings } from "./Feelings";
 
 export class Entry extends Realm.Object<Entry, "day"> {
   _id: BSON.ObjectId = new BSON.ObjectId();
   createdAt: Date = new Date();
   title?: string = "";
   description?: string = "";
+  feelings?: Feelings;
   day!: Day;
 
   static schema: Realm.ObjectSchema = {
@@ -22,6 +24,7 @@ export class Entry extends Realm.Object<Entry, "day"> {
       },
       title: "string?",
       description: "string?",
+      feelings: "Feelings?",
       day: {
         type: "linkingObjects",
         objectType: "Day",
