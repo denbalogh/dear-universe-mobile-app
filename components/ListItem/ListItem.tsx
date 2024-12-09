@@ -1,9 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, IconButton, Card, useTheme } from "react-native-paper";
-import MoodColorComposite from "../MoodColor/MoodColorComposite";
 import { roundness, sizing, spacing } from "@/constants/theme";
-import { Mood } from "../MoodColor/types";
 import { format, getDate, isToday as isTodayDateFns } from "date-fns";
 import { parseDateId } from "@/utils/date";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
@@ -11,16 +9,22 @@ import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
 type Props = {
   title: string;
   dateId: string;
-  moods: Mood[];
   onPress: () => void;
-  empty?: {
+  addEntryHandlers: {
     onAddTextEntryPress: () => void;
     onAddRecordingEntryPress: () => void;
     onAddImageEntryPress: () => void;
   };
+  isEmpty?: boolean;
 };
 
-const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
+const ListItem = ({
+  title,
+  dateId,
+  addEntryHandlers,
+  isEmpty,
+  onPress,
+}: Props) => {
   const theme = useTheme();
 
   const date = parseDateId(dateId);
@@ -32,7 +36,7 @@ const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
         style={[
           styles.cardContent,
           {
-            backgroundColor: empty
+            backgroundColor: isEmpty
               ? theme.colors.background
               : theme.colors.surface,
           },
@@ -54,23 +58,23 @@ const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
             {format(date, "E")}
           </Text>
         </View>
-        {empty ? (
+        {isEmpty ? (
           <View style={styles.addEntryButtonsWrapper}>
             <IconButton
               icon="pen-plus"
-              onPress={empty.onAddTextEntryPress}
+              onPress={addEntryHandlers.onAddTextEntryPress}
               accessibilityLabel="Add text entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
-              onPress={empty.onAddRecordingEntryPress}
+              onPress={addEntryHandlers.onAddRecordingEntryPress}
               accessibilityLabel="Add recording entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
-              onPress={empty.onAddImageEntryPress}
+              onPress={addEntryHandlers.onAddImageEntryPress}
               accessibilityLabel="Add image entry"
               size={sizing.sizeMedium}
             />
@@ -80,12 +84,6 @@ const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
             {title || "No title for the day"}
           </Text>
         )}
-        <MoodColorComposite
-          moods={moods}
-          style={styles.moodComposite}
-          accessibilityLabel="Moods during the day"
-          variant="vertical"
-        />
       </Card.Content>
     </Card>
   );

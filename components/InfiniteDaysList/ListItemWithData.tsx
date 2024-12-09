@@ -11,6 +11,10 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
 
   const { title = "" } = dayObject || {};
 
+  const onPressHandler = () => {
+    router.navigate({ pathname: "/day/[dateId]", params: { dateId } });
+  };
+
   const addEntryHandlers = {
     onAddImageEntryPress: () => {},
     onAddRecordingEntryPress: () => {},
@@ -21,17 +25,15 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
       }),
   };
 
-  const isEmpty = dayObject === null || dayObject.entryObjects.length === 0;
+  const isEmpty = !title && (!dayObject || dayObject.entryObjects.length === 0);
 
   return (
     <ListItem
-      onPress={() =>
-        router.navigate({ pathname: "/day/[dateId]", params: { dateId } })
-      }
+      onPress={onPressHandler}
       dateId={dateId}
       title={title}
-      moods={[]}
-      empty={isEmpty ? addEntryHandlers : undefined}
+      addEntryHandlers={addEntryHandlers}
+      isEmpty={isEmpty}
     />
   );
 };
