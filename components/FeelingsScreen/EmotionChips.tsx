@@ -7,7 +7,7 @@ import { Chip } from "react-native-paper";
 
 type Props = {
   emotions: string[];
-  activeEmotions: string[];
+  activeEmotions: string[] | undefined;
   onEmotionPress: (emotion: string) => void;
   feelingsGroupName: FEELING_GROUP_NAMES;
 };
@@ -23,7 +23,7 @@ const EmotionChips = ({
   return (
     <View style={styles.wrapper}>
       {emotions.map((emotion) => {
-        const isActiveEmotion = activeEmotions.includes(emotion);
+        const isActiveEmotion = activeEmotions?.includes(emotion);
 
         return (
           <Chip

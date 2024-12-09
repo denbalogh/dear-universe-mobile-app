@@ -28,10 +28,6 @@ const styles = StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.spaceMedium,
     alignItems: "center",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   helperText: {
     marginBottom: spacing.spaceExtraSmall,

@@ -1,19 +1,9 @@
 import { roundness, spacing } from "@/constants/theme";
 import React from "react";
-import { Platform, StyleSheet, ViewProps } from "react-native";
-import {
-  Card,
-  // MenuItemProps,
-  Text,
-  TouchableRipple,
-  useTheme,
-} from "react-native-paper";
-// import PickMoodsButton from "./PickMoodsButton";
-// import { Mood } from "../MoodColor/types";
-// import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
-// import AudioPlayer from "../AudioPlayer/AudioPlayer";
-// import { ImageProps } from "expo-image";
-// import ImageGallery from "../ImageGallery/ImageGallery";
+import { Platform, StyleSheet, View, ViewProps } from "react-native";
+import { Card, IconButton, Text, TouchableRipple } from "react-native-paper";
+import FeelingsButton from "./FeelingsButton";
+import { Feelings } from "@/constants/feelings";
 
 type Props = {
   title?: {
@@ -24,81 +14,28 @@ type Props = {
     onPress: () => void;
     text: string;
   };
-  // moods: Mood[];
-  // onMoodsPress: () => void;
+  feelings?: Feelings;
+  onFeelingsPress: () => void;
   // moveMenuItems: MenuItemProps[];
   // optionsMenuItems: MenuItemProps[];
   // recording?: boolean;
   // images?: ImageProps[];
-} & ViewProps;
+  style: ViewProps["style"];
+};
 
 const Entry = ({
   title,
   text,
-  // moods,
-  // onMoodsPress,
+  feelings,
+  onFeelingsPress,
   // moveMenuItems,
   // optionsMenuItems,
   // recording,
   // images,
   style,
-  ...viewProps
 }: Props) => {
-  const theme = useTheme();
-
   // const hasMoveMenuItems = moveMenuItems.length > 0;
   // const hasOptionsMenuItems = optionsMenuItems.length > 0;
-
-  // return (
-  //   <View
-  //     style={[styles.wrapper, style, { backgroundColor: theme.colors.surface }]}
-  //     {...viewProps}
-  //   >
-  //     {title && (
-  //       <TouchableRipple
-  //         onPress={title.onPress}
-  //         style={styles.titleWrapper}
-  //         accessibilityLabel="Edit title"
-  //       >
-  //         <Text variant="headlineSmall">{title.text}</Text>
-  //       </TouchableRipple>
-  //     )}
-  //     {images && <ImageGallery images={images} style={styles.imageGallery} />}
-  //     {recording && <AudioPlayer style={styles.recording} />}
-  //     {text && (
-  //       <TouchableRipple
-  //         onPress={text.onPress}
-  //         style={styles.textWrapper}
-  //         accessibilityLabel="Edit text"
-  //       >
-  //         <Text variant="bodySmall">{text.text}</Text>
-  //       </TouchableRipple>
-  //     )}
-  //     <View style={styles.actionBarWrapper}>
-  //       <PickMoodsButton moods={moods} onPress={onMoodsPress} />
-  //       <View style={styles.actionBarMenusWrapper}>
-  //         {hasMoveMenuItems && (
-  //           <IconButtonMenu
-  //             iconButtonProps={{
-  //               icon: "arrow-up-down",
-  //               accessibilityLabel: "Move entry menu",
-  //             }}
-  //             menuItems={moveMenuItems}
-  //           />
-  //         )}
-  //         {hasOptionsMenuItems && (
-  //           <IconButtonMenu
-  //             iconButtonProps={{
-  //               icon: "dots-vertical",
-  //               accessibilityLabel: "Options menu",
-  //             }}
-  //             menuItems={optionsMenuItems}
-  //           />
-  //         )}
-  //       </View>
-  //     </View>
-  //   </View>
-  // );
 
   return (
     <Card style={[styles.wrapper, style]} mode="contained">
@@ -126,30 +63,14 @@ const Entry = ({
             <Text variant="bodyMedium">{text.text}</Text>
           </TouchableRipple>
         )}
-        {/* <View style={styles.actionBarWrapper}>
-          <PickMoodsButton moods={moods} onPress={onMoodsPress} />
+        <View style={styles.actionBarWrapper}>
+          <FeelingsButton feelings={feelings} onPress={onFeelingsPress} />
           <View style={styles.actionBarMenusWrapper}>
-            {hasMoveMenuItems && (
-              <IconButtonMenu
-                iconButtonProps={{
-                  icon: "arrow-up-down",
-                  accessibilityLabel: "Move entry menu",
-                }}
-                menuItems={moveMenuItems}
-              />
-            )}
-            {hasOptionsMenuItems && (
-              <IconButtonMenu
-                iconButtonProps={{
-                  icon: "dots-vertical",
-                  accessibilityLabel: "Options menu",
-                }}
-                anchorPosition="top"
-                menuItems={optionsMenuItems}
-              />
-            )}
+            <IconButton icon="dots-vertical" onPress={() => {}} />
+            <IconButton icon="arrow-up-down" />
+            <IconButton icon="plus" />
           </View>
-        </View> */}
+        </View>
       </Card.Content>
     </Card>
   );
@@ -181,11 +102,13 @@ const styles = StyleSheet.create({
   actionBarWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "stretch",
-    width: "100%",
+    alignItems: "center",
+    paddingTop: spacing.spaceExtraSmall,
+    paddingHorizontal: spacing.spaceExtraSmall,
   },
   actionBarMenusWrapper: {
     flexDirection: "row",
     alignItems: "center",
+    marginLeft: spacing.spaceSmall,
   },
 });

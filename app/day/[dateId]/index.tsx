@@ -4,18 +4,24 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { BackHandler, StyleSheet, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, HelperText, TextInput, useTheme } from "react-native-paper";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
-import EntriesList from "@/components/EntriesList/EntriesList";
 import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import { DaySearchTermParams } from "@/types/dayScreen";
-import { COMING_FROM_DAY, FOCUS_DESCRIPTION } from "@/constants/screens";
+import {
+  COMING_FROM_DAY,
+  FOCUS_DESCRIPTION,
+  FOCUS_TITLE,
+} from "@/constants/screens";
+import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
+import Entry from "@/components/Entry/Entry";
+import BeginningHints from "@/components/BeginningHints/BeginningHints";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -25,11 +31,19 @@ const DayScreen = () => {
   const { dateId } = useLocalSearchParams<DaySearchTermParams>();
   const dayObject = useObject(Day, dateId);
 
-  const [title, setTitle] = useState(dayObject?.title || "");
+  const { entryObjects = [], title: initialTitle = "" } = dayObject || {};
+  const hasEntries = entryObjects.length > 0;
+
+  const [title, setTitle] = useState(initialTitle);
   const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
 
   const showDiscardDialog = () => setIsDiscardDialogVisible(true);
   const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
+
+  const isTitleEdited = title !== initialTitle;
+  const editedUnderlineColor = isTitleEdited
+    ? theme.colors.tertiary
+    : undefined;
 
   useEffect(() => {
     if (dayObject === null) {
@@ -52,11 +66,6 @@ const DayScreen = () => {
       }
     });
   };
-
-  const isTitleEdited = title !== dayObject?.title;
-  const editedUnderlineColor = isTitleEdited
-    ? theme.colors.tertiary
-    : undefined;
 
   const handleGoBack = () => {
     if (isTitleEdited) {
@@ -86,6 +95,8 @@ const DayScreen = () => {
     }, [isTitleEdited]),
   );
 
+  const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
+
   return (
     <View style={[styles.wrapper, { backgroundColor: theme.colors.surface }]}>
       <Stack.Screen
@@ -93,40 +104,85 @@ const DayScreen = () => {
           header: () => (
             <Appbar.Header>
               <Appbar.BackAction onPress={handleGoBack} />
-              <Appbar.Content title={formatFullDate(parseDateId(dateId))} />
+              <Appbar.Content title={fullDate} />
             </Appbar.Header>
           ),
         }}
       />
-      <EntriesList
-        dayTitleComponent={
-          <View style={styles.titleWrapper}>
-            <TextInput
-              label="Title for the day"
-              value={title}
-              onChangeText={setTitle}
-              multiline={true}
-              enterKeyHint="done"
-              blurOnSubmit={true}
-              contentStyle={{ marginTop: 5 }}
-              mode="outlined"
-              onSubmitEditing={handleOnSubmit}
-              outlineColor={editedUnderlineColor}
-              activeOutlineColor={editedUnderlineColor}
-              style={{ backgroundColor: theme.colors.surface }}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContentWrapper,
+          styles.bottomPadding,
+        ]}
+      >
+        <View style={styles.titleWrapper}>
+          <TextInput
+            label="Title for the day"
+            value={title}
+            onChangeText={setTitle}
+            multiline={true}
+            enterKeyHint="done"
+            blurOnSubmit={true}
+            contentStyle={{ marginTop: 5 }}
+            mode="outlined"
+            onSubmitEditing={handleOnSubmit}
+            outlineColor={editedUnderlineColor}
+            activeOutlineColor={editedUnderlineColor}
+            style={{ backgroundColor: theme.colors.surface }}
+          />
+          {isTitleEdited && (
+            <HelperText type="info" visible={true}>
+              To save the title, press done on the keyboard.
+            </HelperText>
+          )}
+        </View>
+        {!hasEntries && <BeginningHints />}
+        {entryObjects.map(({ _id, title, description, feelings }) => {
+          const titleProp = title
+            ? {
+                text: title || "",
+                onPress: () =>
+                  router.navigate({
+                    pathname: `./entry/${_id.toString()}/text`,
+                    params: FOCUS_TITLE,
+                  }),
+              }
+            : undefined;
+
+          const descriptionProp = description
+            ? {
+                text: description || "",
+                onPress: () =>
+                  router.navigate({
+                    pathname: `./entry/${_id.toString()}/text`,
+                    params: FOCUS_DESCRIPTION,
+                  }),
+              }
+            : undefined;
+
+          const handleFeelingsPress = () => {
+            router.navigate({
+              pathname: `./entry/${_id.toString()}/feelings`,
+            });
+          };
+
+          return (
+            <Entry
+              key={_id.toString()}
+              style={styles.entry}
+              title={titleProp}
+              text={descriptionProp}
+              feelings={feelings}
+              onFeelingsPress={handleFeelingsPress}
             />
-            {isTitleEdited && (
-              <HelperText type="info" visible={isTitleEdited}>
-                To save the title, press done on the keyboard.
-              </HelperText>
-            )}
-          </View>
-        }
-        entries={dayObject?.entryObjects}
-        bottomPadding={true}
-      />
+          );
+        })}
+        {hasEntries && <AfterEntriesMessage />}
+      </ScrollView>
       <CTAButtons
         style={styles.bottomButtons}
+        showText={!hasEntries}
         addImageEntryButton={{ onPress: () => {} }}
         addRecordingEntryButton={{ onPress: () => {} }}
         addTextEntryButton={{
@@ -156,10 +212,23 @@ const styles = StyleSheet.create({
   titleWrapper: {
     marginBottom: spacing.spaceMedium,
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContentWrapper: {
+    paddingHorizontal: spacing.spaceSmall,
+    paddingTop: spacing.spaceSmall,
+  },
+  entry: {
+    marginBottom: spacing.spaceMedium,
+  },
   bottomButtons: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: spacing.spaceLarge,
+  },
+  bottomPadding: {
+    paddingBottom: 130,
   },
 });
