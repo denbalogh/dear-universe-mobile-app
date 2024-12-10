@@ -132,7 +132,7 @@ const FeelingsScreen = () => {
         <Text variant="titleLarge" style={styles.headline}>
           What emotions did you experience?
         </Text>
-        <View>
+        <View style={styles.scrollViewWrapper}>
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
             {feelings.map(({ name, emotions }) => {
               const isActive = activeGroup === name;
@@ -215,6 +215,9 @@ const styles = StyleSheet.create({
   },
   headline: {
     padding: spacing.spaceMedium,
+  },
+  scrollViewWrapper: {
+    flexShrink: 1,
   },
   scrollViewContent: {
     paddingHorizontal: spacing.spaceMedium,
