@@ -1,21 +1,20 @@
 import React from "react";
 import { Text } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import { spacing } from "@/constants/theme";
 import FadeInOutTextChange from "../FadeInOutTextChange/FadeInOutTextChange";
 import { phrases } from "./constants";
 
-const NoEntries = () => (
-  <View style={styles.wrapper}>
-    <Text variant="titleLarge" style={styles.title}>
-      Here's a place to describe your day.
-    </Text>
+type Props = ViewProps;
+
+const BeginningHints = ({ style, ...props }: Props) => (
+  <View style={[styles.wrapper, style]} {...props}>
     <Text variant="labelMedium" style={styles.helperText}>
       How you might begin:
     </Text>
     <FadeInOutTextChange phrases={phrases}>
       {(phrase) => (
-        <Text variant="bodyLarge" style={styles.phrase}>
+        <Text variant="bodyLarge" style={styles.phrase} numberOfLines={2}>
           {phrase}
         </Text>
       )}
@@ -23,16 +22,12 @@ const NoEntries = () => (
   </View>
 );
 
-export default NoEntries;
+export default BeginningHints;
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginVertical: spacing.spaceSmall,
+    paddingHorizontal: spacing.spaceMedium,
     alignItems: "center",
-  },
-  title: {
-    marginVertical: spacing.spaceLarge,
-    textAlign: "center",
   },
   helperText: {
     marginBottom: spacing.spaceExtraSmall,

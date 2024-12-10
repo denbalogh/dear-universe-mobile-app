@@ -15,11 +15,8 @@ import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDes
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON } from "realm";
-import {
-  FOCUS_DESCRIPTION,
-  FOCUS_TITLE,
-} from "@/components/TitleDescriptionEditor/constants";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
 
 const EditedEntryTextScreen = () => {
   const theme = useTheme();

@@ -3,6 +3,7 @@ import { Text } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import FadeInOutTextChange from "../FadeInOutTextChange/FadeInOutTextChange";
 import { phrases } from "./constants";
+import { spacing } from "@/constants/theme";
 
 const AfterEntriesMessage = () => (
   <FadeInOutTextChange phrases={phrases}>
@@ -18,6 +19,7 @@ export default AfterEntriesMessage;
 
 const styles = StyleSheet.create({
   phrase: {
+    paddingHorizontal: spacing.spaceMedium,
     textAlign: "center",
   },
 });

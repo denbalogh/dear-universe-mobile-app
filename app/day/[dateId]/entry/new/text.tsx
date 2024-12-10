@@ -15,15 +15,16 @@ import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDescriptionEditor";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
-import { FOCUS_DESCRIPTION } from "@/components/TitleDescriptionEditor/constants";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
+import { FOCUS_DESCRIPTION } from "@/constants/screens";
 
 const NewEntryTextScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId, focus } = useLocalSearchParams<NewEntrySearchTermParams>();
+  const { dateId, focus, comingFromScreen } =
+    useLocalSearchParams<NewEntrySearchTermParams>();
   const dayObject = useObject(Day, dateId);
 
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
@@ -83,7 +84,14 @@ const NewEntryTextScreen = () => {
       dayObject.entryObjects.push(entry);
     });
 
-    router.back();
+    if (comingFromScreen === "index") {
+      router.replace({
+        pathname: "/day/[dateId]",
+        params: { dateId },
+      });
+    } else {
+      router.back();
+    }
   };
 
   return (

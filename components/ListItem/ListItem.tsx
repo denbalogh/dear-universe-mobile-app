@@ -1,30 +1,46 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Text, IconButton, Card, useTheme } from "react-native-paper";
-import MoodColorComposite from "../MoodColor/MoodColorComposite";
+import { Text, IconButton, Card, useTheme, Icon } from "react-native-paper";
 import { roundness, sizing, spacing } from "@/constants/theme";
-import { Mood } from "../MoodColor/types";
 import { format, getDate, isToday as isTodayDateFns } from "date-fns";
 import { parseDateId } from "@/utils/date";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
+import { FEELING_GROUP_NAMES } from "@/constants/feelings";
+import FeelingsIndicator from "../FeelingsIndicator/FeelingsIndicator";
 
 type Props = {
   title: string;
   dateId: string;
-  moods: Mood[];
   onPress: () => void;
-  empty?: {
+  addEntryHandlers: {
     onAddTextEntryPress: () => void;
     onAddRecordingEntryPress: () => void;
     onAddImageEntryPress: () => void;
   };
+  isEmpty?: boolean;
+  feelings: FEELING_GROUP_NAMES[];
 };
 
-const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
+const ListItem = ({
+  title,
+  dateId,
+  addEntryHandlers,
+  isEmpty,
+  onPress,
+  feelings,
+}: Props) => {
   const theme = useTheme();
 
   const date = parseDateId(dateId);
   const isToday = isTodayDateFns(date);
+
+  const backgroundColor = isEmpty
+    ? theme.colors.background
+    : theme.colors.surfaceVariant;
+
+  const textColor = isEmpty
+    ? theme.colors.onBackground
+    : theme.colors.onSurfaceVariant;
 
   return (
     <Card testID="ListItemPressable" style={styles.card} onPress={onPress}>
@@ -32,16 +48,17 @@ const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
         style={[
           styles.cardContent,
           {
-            backgroundColor: empty
-              ? theme.colors.background
-              : theme.colors.surface,
+            backgroundColor,
           },
         ]}
       >
         <View style={styles.dayWrapper}>
           <Text
             variant="displaySmall"
-            style={isToday && [styles.today, { color: theme.colors.tertiary }]}
+            style={[
+              { color: textColor },
+              isToday && [styles.today, { color: theme.colors.tertiary }],
+            ]}
             accessibilityLabel={
               isToday
                 ? `Today ${format(date, "do LLLL yyyy")}`
@@ -50,41 +67,47 @@ const ListItem = ({ title, dateId, moods, empty, onPress }: Props) => {
           >
             {getDate(date)}
           </Text>
-          <Text variant="bodyLarge" accessibilityLabel={format(date, "EEEE")}>
+          <Text
+            variant="bodyLarge"
+            accessibilityLabel={format(date, "EEEE")}
+            style={{ color: textColor }}
+          >
             {format(date, "E")}
           </Text>
         </View>
-        {empty ? (
+        {isEmpty ? (
           <View style={styles.addEntryButtonsWrapper}>
             <IconButton
               icon="pen-plus"
-              onPress={empty.onAddTextEntryPress}
+              onPress={addEntryHandlers.onAddTextEntryPress}
               accessibilityLabel="Add text entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
-              onPress={empty.onAddRecordingEntryPress}
+              onPress={addEntryHandlers.onAddRecordingEntryPress}
               accessibilityLabel="Add recording entry"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
-              onPress={empty.onAddImageEntryPress}
+              onPress={addEntryHandlers.onAddImageEntryPress}
               accessibilityLabel="Add image entry"
               size={sizing.sizeMedium}
             />
           </View>
         ) : (
-          <Text style={styles.title} variant="bodyMedium" numberOfLines={4}>
-            {title || "No title"}
+          <Text
+            style={[styles.title, { color: textColor }]}
+            variant="bodyMedium"
+            numberOfLines={3}
+          >
+            {title || "No title for the day"}
           </Text>
         )}
-        <MoodColorComposite
-          moods={moods}
-          style={styles.moodComposite}
-          accessibilityLabel="Moods during the day"
-          variant="vertical"
+        <FeelingsIndicator
+          style={styles.feelingsIndicator}
+          feelings={feelings}
         />
       </Card.Content>
     </Card>
@@ -101,7 +124,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "stretch",
     borderRadius: roundness,
   },
   dayWrapper: {
@@ -114,13 +137,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   title: {
-    paddingHorizontal: spacing.spaceSmall,
     flexShrink: 1,
+    paddingHorizontal: spacing.spaceSmall,
   },
-  moodComposite: {
+  feelingsIndicator: {
     position: "absolute",
     right: 0,
-    top: 0,
+    left: 0,
     bottom: 0,
   },
   addEntryButtonsWrapper: {
