@@ -17,7 +17,11 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
 
   const addEntryHandlers = {
     onAddImageEntryPress: () => {},
-    onAddRecordingEntryPress: () => {},
+    onAddRecordingEntryPress: () =>
+      router.navigate({
+        pathname: "/day/[dateId]/entry/new/recording",
+        params: { dateId, ...COMING_FROM_INDEX },
+      }),
     onAddTextEntryPress: () =>
       router.navigate({
         pathname: "/day/[dateId]/entry/new/text",
