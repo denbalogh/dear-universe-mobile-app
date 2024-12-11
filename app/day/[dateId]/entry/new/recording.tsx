@@ -1,0 +1,257 @@
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import React, { useCallback, useMemo, useState } from "react";
+import { StyleSheet, View, BackHandler } from "react-native";
+import { Appbar, Text, useTheme } from "react-native-paper";
+import { spacing } from "@/constants/theme";
+import { useObject, useRealm } from "@realm/react";
+import { Day } from "@/models/Day";
+import { formatFullDate, parseDateId } from "@/utils/date";
+import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
+import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
+import Controls, {
+  UPDATE_INTERVAL,
+} from "@/components/RecordingControls/RecordingControls";
+import { Audio } from "expo-av";
+import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
+import { normalizeMeteringForScale } from "@/components/RecordingControls/utils";
+import { format } from "date-fns";
+import * as FileSystem from "expo-file-system";
+import { Entry } from "@/models/Entry";
+
+const RECORDINGS_DIR = `${FileSystem.documentDirectory}recordings/`;
+
+const NewEntryRecordingScreen = () => {
+  const theme = useTheme();
+  const realm = useRealm();
+  const router = useRouter();
+
+  const { showSnackbar } = useSnackbar();
+
+  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
+
+  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
+  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
+
+  const { dateId, comingFromScreen } =
+    useLocalSearchParams<NewEntrySearchTermParams>();
+  const dayObject = useObject(Day, dateId);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [recording, setRecording] = useState<Audio.Recording>();
+  const [recordingStatus, setRecordingStatus] =
+    useState<Audio.RecordingStatus>();
+
+  const [permissionResponse, requestPermission] = Audio.usePermissions();
+  const isRecordingAllowed = useMemo(
+    () => permissionResponse?.status === "granted",
+    [permissionResponse],
+  );
+
+  const handleRequestPermissions = async () => {
+    setIsLoading(true);
+    const { canAskAgain, granted } = await requestPermission();
+    if (!granted && !canAskAgain) {
+      showSnackbar(
+        "The recording permission has been denied. To grant it, go to system settings.",
+      );
+    }
+    setIsLoading(false);
+  };
+
+  const startRecording = async () => {
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      playsInSilentModeIOS: true,
+    });
+
+    const { recording, status } = await Audio.Recording.createAsync(
+      Audio.RecordingOptionsPresets.HIGH_QUALITY,
+      setRecordingStatus,
+      UPDATE_INTERVAL,
+    );
+
+    setRecording(recording);
+    setRecordingStatus(status);
+  };
+
+  const pauseRecording = useCallback(async () => {
+    if (recording) {
+      await recording.pauseAsync();
+    }
+  }, [recording]);
+
+  const continueRecording = async () => {
+    if (recording) {
+      await recording.startAsync();
+    }
+  };
+
+  const stopRecording = async () => {
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
+
+      const fileURI = recording.getURI();
+
+      if (fileURI) {
+        const fileName = fileURI.split("/").pop();
+        const newFileURI = `${RECORDINGS_DIR}${fileName}`;
+
+        const { exists } = await FileSystem.getInfoAsync(RECORDINGS_DIR);
+        if (!exists) {
+          await FileSystem.makeDirectoryAsync(RECORDINGS_DIR);
+        }
+
+        await FileSystem.moveAsync({
+          from: fileURI,
+          to: newFileURI,
+        });
+
+        createEntryWithRecording(newFileURI);
+      }
+
+      setRecording(undefined);
+    }
+  };
+
+  const {
+    durationMillis = 1,
+    isRecording = false,
+    isDoneRecording = false,
+    metering = -160, // Range from -160 to 0
+  } = recordingStatus || {};
+
+  const hasRecordingStarted = !!recording && !isDoneRecording;
+  const time = format(new Date(durationMillis), "mm:ss");
+  const normalizedMetering = normalizeMeteringForScale(metering);
+
+  const handleBackPress = () => {
+    if (hasRecordingStarted) {
+      if (isRecording) {
+        pauseRecording();
+      }
+      showDiscardDialog();
+    } else {
+      router.back();
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (hasRecordingStarted) {
+          if (isRecording) {
+            pauseRecording();
+          }
+          showDiscardDialog();
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [hasRecordingStarted, isRecording, pauseRecording]),
+  );
+
+  const unloadRecordingAndBackPress = async () => {
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
+      setRecording(undefined);
+    }
+    router.back();
+  };
+
+  const createEntryWithRecording = (recordingURI: string) => {
+    if (dayObject === null) {
+      return;
+    }
+
+    realm.write(() => {
+      const entry = realm.create(Entry, {
+        recordingURI,
+        day: dayObject,
+      });
+
+      dayObject.entryObjects.push(entry);
+    });
+
+    if (comingFromScreen === "index") {
+      router.replace({
+        pathname: "/day/[dateId]",
+        params: { dateId },
+      });
+    } else {
+      router.back();
+    }
+  };
+
+  const headline = useMemo(
+    () => `Creating recording for ${formatFullDate(parseDateId(dateId))}`,
+    [dateId],
+  );
+
+  return (
+    <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <Appbar.Header>
+              <Appbar.BackAction onPress={handleBackPress} />
+            </Appbar.Header>
+          ),
+        }}
+      />
+      <View style={styles.contentWrapper}>
+        <Text variant="titleLarge">{headline}</Text>
+        <Controls
+          time={time}
+          hasRecordingStarted={hasRecordingStarted}
+          isRecording={isRecording}
+          hasPermissions={isRecordingAllowed}
+          isLoading={isLoading}
+          onRequestPermissionsPress={handleRequestPermissions}
+          onRecordPress={startRecording}
+          onPausePress={pauseRecording}
+          onStopPress={stopRecording}
+          onDiscardPress={handleBackPress}
+          onContinuePress={continueRecording}
+          metering={normalizedMetering}
+        />
+        <DiscardDialog
+          text="Do you wish to discard the recording?"
+          isVisible={isDiscardDialogVisible}
+          hideDialog={hideDiscardDialog}
+          onConfirm={unloadRecordingAndBackPress}
+        />
+      </View>
+    </View>
+  );
+};
+
+export default NewEntryRecordingScreen;
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  contentWrapper: {
+    flex: 1,
+    padding: spacing.spaceMedium,
+  },
+});

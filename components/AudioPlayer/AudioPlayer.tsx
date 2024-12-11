@@ -13,9 +13,11 @@ import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
 import { format } from "date-fns";
 
-type Props = ViewProps;
+type Props = {
+  sourceURI: string;
+} & ViewProps;
 
-const AudioPlayer = (props: Props) => {
+const AudioPlayer = ({ sourceURI, ...props }: Props) => {
   const theme = useTheme();
 
   const [isLoadingSound, setIsLoadingSound] = useState(true);
@@ -39,7 +41,7 @@ const AudioPlayer = (props: Props) => {
     setIsLoadingSound(true);
 
     const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/audio/boris_brejcha.mp3"),
+      { uri: sourceURI },
       {},
       handleSetStatus,
     );

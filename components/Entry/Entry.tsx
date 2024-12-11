@@ -4,6 +4,7 @@ import { Platform, StyleSheet, View, ViewProps } from "react-native";
 import { Card, IconButton, Text, TouchableRipple } from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
 import { Feelings } from "@/constants/feelings";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 
 type Props = {
   title?: {
@@ -16,9 +17,9 @@ type Props = {
   };
   feelings?: Feelings;
   onFeelingsPress: () => void;
+  recordingURI?: string;
   // moveMenuItems: MenuItemProps[];
   // optionsMenuItems: MenuItemProps[];
-  // recording?: boolean;
   // images?: ImageProps[];
   style: ViewProps["style"];
 };
@@ -28,9 +29,9 @@ const Entry = ({
   text,
   feelings,
   onFeelingsPress,
+  recordingURI,
   // moveMenuItems,
   // optionsMenuItems,
-  // recording,
   // images,
   style,
 }: Props) => {
@@ -53,6 +54,9 @@ const Entry = ({
           >
             <Text variant="titleLarge">{title.text}</Text>
           </TouchableRipple>
+        )}
+        {recordingURI && (
+          <AudioPlayer sourceURI={recordingURI} style={styles.recording} />
         )}
         {text && (
           <TouchableRipple

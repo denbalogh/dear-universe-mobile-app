@@ -1,5 +1,5 @@
 import { render, screen, userEvent } from "@testing-library/react-native";
-import Controls from "../Controls";
+import Controls from "../RecordingControls";
 
 describe("AudioRecorder/Controls", () => {
   console.error = jest.fn();

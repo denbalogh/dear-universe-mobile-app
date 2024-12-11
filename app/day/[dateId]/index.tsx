@@ -138,53 +138,62 @@ const DayScreen = () => {
           )}
         </View>
         {!hasEntries && <BeginningHints />}
-        {entryObjects.map(({ _id, title, description, feelings }) => {
-          const titleProp = title
-            ? {
-                text: title || "",
-                onPress: () =>
-                  router.navigate({
-                    pathname: `./entry/${_id.toString()}/text`,
-                    params: FOCUS_TITLE,
-                  }),
-              }
-            : undefined;
+        {entryObjects.map(
+          ({ _id, title, description, feelings, recordingURI }) => {
+            const titleProp = title
+              ? {
+                  text: title || "",
+                  onPress: () =>
+                    router.navigate({
+                      pathname: `./entry/${_id.toString()}/text`,
+                      params: FOCUS_TITLE,
+                    }),
+                }
+              : undefined;
 
-          const descriptionProp = description
-            ? {
-                text: description || "",
-                onPress: () =>
-                  router.navigate({
-                    pathname: `./entry/${_id.toString()}/text`,
-                    params: FOCUS_DESCRIPTION,
-                  }),
-              }
-            : undefined;
+            const descriptionProp = description
+              ? {
+                  text: description || "",
+                  onPress: () =>
+                    router.navigate({
+                      pathname: `./entry/${_id.toString()}/text`,
+                      params: FOCUS_DESCRIPTION,
+                    }),
+                }
+              : undefined;
 
-          const handleFeelingsPress = () => {
-            router.navigate({
-              pathname: `./entry/${_id.toString()}/feelings`,
-            });
-          };
+            const handleFeelingsPress = () => {
+              router.navigate({
+                pathname: `./entry/${_id.toString()}/feelings`,
+              });
+            };
 
-          return (
-            <Entry
-              key={_id.toString()}
-              style={styles.entry}
-              title={titleProp}
-              text={descriptionProp}
-              feelings={feelings}
-              onFeelingsPress={handleFeelingsPress}
-            />
-          );
-        })}
+            return (
+              <Entry
+                key={_id.toString()}
+                style={styles.entry}
+                title={titleProp}
+                text={descriptionProp}
+                feelings={feelings}
+                onFeelingsPress={handleFeelingsPress}
+                recordingURI={recordingURI}
+              />
+            );
+          },
+        )}
         {hasEntries && <AfterEntriesMessage />}
       </ScrollView>
       <CTAButtons
         style={styles.bottomButtons}
         showText={!hasEntries}
         addImageEntryButton={{ onPress: () => {} }}
-        addRecordingEntryButton={{ onPress: () => {} }}
+        addRecordingEntryButton={{
+          onPress: () =>
+            router.navigate({
+              pathname: "./entry/new/recording",
+              params: COMING_FROM_DAY,
+            }),
+        }}
         addTextEntryButton={{
           onPress: () =>
             router.navigate({
