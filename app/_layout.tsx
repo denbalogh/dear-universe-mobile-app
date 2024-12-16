@@ -28,7 +28,7 @@ const App = () => {
 
   useEffect(() => {
     const setRootBackgroundColor = async () =>
-      await SystemUI.setBackgroundColorAsync(theme.colors.background);
+      await SystemUI.setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
 
     setRootBackgroundColor();
   }, [theme]);

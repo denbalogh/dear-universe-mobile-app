@@ -115,6 +115,7 @@ const NewEntryRecordingScreen = () => {
         const newFileURI = `${RECORDINGS_DIR}${fileName}`;
 
         const { exists } = await FileSystem.getInfoAsync(RECORDINGS_DIR);
+
         if (!exists) {
           await FileSystem.makeDirectoryAsync(RECORDINGS_DIR);
         }

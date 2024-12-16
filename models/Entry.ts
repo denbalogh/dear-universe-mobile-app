@@ -9,6 +9,7 @@ export class Entry extends Realm.Object<Entry, "day"> {
   description?: string = "";
   feelings?: Feelings;
   recordingURI?: string;
+  images?: string[];
   day!: Day;
 
   static schema: Realm.ObjectSchema = {
@@ -27,6 +28,11 @@ export class Entry extends Realm.Object<Entry, "day"> {
       description: "string?",
       feelings: "Feelings?",
       recordingURI: "string?",
+      images: {
+        type: "list",
+        objectType: "string",
+        default: [],
+      },
       day: {
         type: "linkingObjects",
         objectType: "Day",
