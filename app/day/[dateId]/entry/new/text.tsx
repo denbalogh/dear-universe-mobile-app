@@ -4,7 +4,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
@@ -26,6 +26,16 @@ const NewEntryTextScreen = () => {
   const { dateId, focus, comingFromScreen } =
     useLocalSearchParams<NewEntrySearchTermParams>();
   const dayObject = useObject(Day, dateId);
+
+  useEffect(() => {
+    if (dayObject === null) {
+      realm.write(() => {
+        realm.create(Day, {
+          _id: dateId,
+        });
+      });
+    }
+  }, [dateId, dayObject, realm]);
 
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
 

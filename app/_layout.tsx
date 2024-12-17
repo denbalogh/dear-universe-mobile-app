@@ -10,9 +10,10 @@ import { schemas } from "@/models";
 
 import { themeDark, themeLight } from "@/constants/theme";
 import { Appearance, StyleSheet, View } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext/SnackbarContext";
+import * as SystemUI from "expo-system-ui";
 
 registerTranslation("en", enGB);
 
@@ -25,9 +26,16 @@ const App = () => {
 
   const theme = colorScheme === "dark" ? themeDark : themeLight;
 
+  useEffect(() => {
+    const setRootBackgroundColor = async () =>
+      await SystemUI.setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
+
+    setRootBackgroundColor();
+  }, [theme]);
+
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} schemaVersion={4}>
+      <RealmProvider schema={schemas} schemaVersion={5}>
         <SnackbarContextProvider>
           <View
             style={[

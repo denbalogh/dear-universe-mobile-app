@@ -1,34 +1,47 @@
 import React, { useMemo } from "react";
-import { StyleSheet } from "react-native";
 import getBorderRadius from "./getBorderRadius";
-import CustomImage, { CustomImageProps } from "../CustomImage/CustomImage";
+import { Image, ImageProps } from "expo-image";
+import { TouchableRipple, TouchableRippleProps } from "react-native-paper";
+import { StyleSheet } from "react-native";
 
 type Props = {
   index: number;
   imagesCount: number;
-} & CustomImageProps;
+  cols: number;
+  touchableProps: Omit<TouchableRippleProps, "children">;
+} & ImageProps;
 
-const ImageGalleryItem = ({ index, imagesCount, ...props }: Props) => {
+const ImageGalleryItem = ({
+  index,
+  imagesCount,
+  cols,
+  style,
+  touchableProps,
+  ...props
+}: Props) => {
   const borderRadii = useMemo(
-    () => getBorderRadius(index, imagesCount),
-    [index, imagesCount],
+    () => getBorderRadius(index, imagesCount, cols),
+    [index, imagesCount, cols],
   );
 
   return (
-    <CustomImage
-      {...props}
-      style={styles.galleryImage}
-      imageProps={{ ...props.imageProps, style: { ...borderRadii } }}
-      loadingStyle={{ ...borderRadii }}
-    />
+    <TouchableRipple
+      {...touchableProps}
+      style={[styles.touchable, { ...borderRadii }]}
+      background={{
+        borderless: false,
+        foreground: true,
+      }}
+    >
+      <Image style={[style, { ...borderRadii }]} {...props} />
+    </TouchableRipple>
   );
 };
 
 export default ImageGalleryItem;
 
 const styles = StyleSheet.create({
-  galleryImage: {
-    width: "25%",
-    height: 80,
+  touchable: {
+    overflow: "hidden",
   },
 });

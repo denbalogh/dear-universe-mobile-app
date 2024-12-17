@@ -139,7 +139,14 @@ const DayScreen = () => {
         </View>
         {!hasEntries && <BeginningHints />}
         {entryObjects.map(
-          ({ _id, title, description, feelings, recordingURI }) => {
+          ({
+            _id,
+            title,
+            description,
+            feelings,
+            recordingURI,
+            images = [],
+          }) => {
             const titleProp = title
               ? {
                   text: title || "",
@@ -168,6 +175,12 @@ const DayScreen = () => {
               });
             };
 
+            const onImageLongPress = () => {
+              router.navigate({
+                pathname: `./entry/${_id.toString()}/image`,
+              });
+            };
+
             return (
               <Entry
                 key={_id.toString()}
@@ -177,6 +190,8 @@ const DayScreen = () => {
                 feelings={feelings}
                 onFeelingsPress={handleFeelingsPress}
                 recordingURI={recordingURI}
+                imagesURI={images}
+                onImageLongPress={onImageLongPress}
               />
             );
           },
@@ -186,7 +201,13 @@ const DayScreen = () => {
       <CTAButtons
         style={styles.bottomButtons}
         showText={!hasEntries}
-        addImageEntryButton={{ onPress: () => {} }}
+        addImageEntryButton={{
+          onPress: () =>
+            router.navigate({
+              pathname: "./entry/new/image",
+              params: COMING_FROM_DAY,
+            }),
+        }}
         addRecordingEntryButton={{
           onPress: () =>
             router.navigate({

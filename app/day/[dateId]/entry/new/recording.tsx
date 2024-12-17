@@ -4,7 +4,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
 import { Appbar, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
@@ -40,6 +40,16 @@ const NewEntryRecordingScreen = () => {
   const { dateId, comingFromScreen } =
     useLocalSearchParams<NewEntrySearchTermParams>();
   const dayObject = useObject(Day, dateId);
+
+  useEffect(() => {
+    if (dayObject === null) {
+      realm.write(() => {
+        realm.create(Day, {
+          _id: dateId,
+        });
+      });
+    }
+  }, [dateId, dayObject, realm]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording>();
@@ -105,6 +115,7 @@ const NewEntryRecordingScreen = () => {
         const newFileURI = `${RECORDINGS_DIR}${fileName}`;
 
         const { exists } = await FileSystem.getInfoAsync(RECORDINGS_DIR);
+
         if (!exists) {
           await FileSystem.makeDirectoryAsync(RECORDINGS_DIR);
         }
@@ -202,7 +213,7 @@ const NewEntryRecordingScreen = () => {
   };
 
   const headline = useMemo(
-    () => `Creating recording for ${formatFullDate(parseDateId(dateId))}`,
+    () => `Creating entry for ${formatFullDate(parseDateId(dateId))}`,
     [dateId],
   );
 

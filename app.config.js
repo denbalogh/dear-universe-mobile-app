@@ -18,7 +18,7 @@ module.exports = {
       googleServicesFile: "./GoogleService-Info.plist",
       infoPlist: {
         NSMicrophoneUsageDescription:
-          "Microphone is needed to record an entry.",
+          "The app needs access to your microphone in order to record audio for your entry.",
       },
     },
     android: {
@@ -52,6 +52,15 @@ module.exports = {
             "./assets/fonts/Nunito/Nunito-Regular.ttf",
             "./assets/fonts/PT_Sans/PTSans-Regular.ttf",
           ],
+        },
+      ],
+      [
+        "expo-image-picker",
+        {
+          photosPermission:
+            "The app needs access to your media library in order to add photos to your entry.",
+          cameraPermission:
+            "The app needs access to your camera in order to take photos for your entry.",
         },
       ],
     ],

@@ -5,6 +5,7 @@ import { Card, IconButton, Text, TouchableRipple } from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
 import { Feelings } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import ImageGallery from "../ImageGallery/ImageGallery";
 
 type Props = {
   title?: {
@@ -18,9 +19,10 @@ type Props = {
   feelings?: Feelings;
   onFeelingsPress: () => void;
   recordingURI?: string;
+  imagesURI: string[];
+  onImageLongPress?: (index: number) => void;
   // moveMenuItems: MenuItemProps[];
   // optionsMenuItems: MenuItemProps[];
-  // images?: ImageProps[];
   style: ViewProps["style"];
 };
 
@@ -30,13 +32,16 @@ const Entry = ({
   feelings,
   onFeelingsPress,
   recordingURI,
+  imagesURI,
+  onImageLongPress,
   // moveMenuItems,
   // optionsMenuItems,
-  // images,
   style,
 }: Props) => {
   // const hasMoveMenuItems = moveMenuItems.length > 0;
   // const hasOptionsMenuItems = optionsMenuItems.length > 0;
+
+  const hasImages = imagesURI.length > 0;
 
   return (
     <Card style={[styles.wrapper, style]} mode="contained">
@@ -55,6 +60,13 @@ const Entry = ({
             <Text variant="titleLarge">{title.text}</Text>
           </TouchableRipple>
         )}
+        {hasImages && (
+          <ImageGallery
+            imagesURI={imagesURI}
+            cols={4}
+            onImageLongPress={onImageLongPress}
+          />
+        )}
         {recordingURI && (
           <AudioPlayer sourceURI={recordingURI} style={styles.recording} />
         )}
@@ -72,7 +84,7 @@ const Entry = ({
           <View style={styles.actionBarMenusWrapper}>
             <IconButton icon="dots-vertical" onPress={() => {}} />
             <IconButton icon="arrow-up-down" />
-            <IconButton icon="plus" />
+            <IconButton icon="plus-minus" />
           </View>
         </View>
       </Card.Content>
@@ -87,13 +99,9 @@ const styles = StyleSheet.create({
     borderRadius: roundness,
   },
   titleWrapper: {
-    padding: spacing.spaceExtraSmall,
-  },
-  imageGallery: {
-    padding: spacing.spaceSmall,
+    paddingVertical: spacing.spaceExtraSmall,
   },
   recording: {
-    paddingHorizontal: spacing.spaceSmall,
     ...Platform.select({
       ios: {
         marginTop: spacing.spaceSmall,
@@ -101,14 +109,13 @@ const styles = StyleSheet.create({
     }),
   },
   textWrapper: {
-    padding: spacing.spaceExtraSmall,
+    paddingVertical: spacing.spaceExtraSmall,
   },
   actionBarWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: spacing.spaceExtraSmall,
-    paddingHorizontal: spacing.spaceExtraSmall,
+    marginTop: spacing.spaceSmall,
   },
   actionBarMenusWrapper: {
     flexDirection: "row",
