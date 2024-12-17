@@ -175,6 +175,12 @@ const DayScreen = () => {
               });
             };
 
+            const onImageLongPress = () => {
+              router.navigate({
+                pathname: `./entry/${_id.toString()}/image`,
+              });
+            };
+
             return (
               <Entry
                 key={_id.toString()}
@@ -185,6 +191,7 @@ const DayScreen = () => {
                 onFeelingsPress={handleFeelingsPress}
                 recordingURI={recordingURI}
                 imagesURI={images}
+                onImageLongPress={onImageLongPress}
               />
             );
           },

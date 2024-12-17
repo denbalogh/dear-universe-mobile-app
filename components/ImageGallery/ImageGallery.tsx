@@ -21,6 +21,7 @@ type Props = {
     onCameraPress: () => void;
     onImageLibraryPress: () => void;
   };
+  onImageLongPress?: (index: number) => void;
 } & ViewProps;
 
 const ImageGallery = ({
@@ -28,6 +29,7 @@ const ImageGallery = ({
   cols = 3,
   optionsCallbacks,
   addButtons,
+  onImageLongPress,
   style,
   ...props
 }: Props) => {
@@ -96,7 +98,10 @@ const ImageGallery = ({
                 imagesCount={imagesCount}
                 cols={cols}
                 style={{ width: imageSize, height: imageSize }}
-                touchableProps={{ onPress: () => onImagePress(index) }}
+                touchableProps={{
+                  onPress: () => onImagePress(index),
+                  onLongPress: () => onImageLongPress?.(index),
+                }}
               />
               {optionsCallbacks && (
                 <View style={styles.buttons}>

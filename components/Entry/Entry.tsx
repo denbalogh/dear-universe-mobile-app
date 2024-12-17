@@ -20,6 +20,7 @@ type Props = {
   onFeelingsPress: () => void;
   recordingURI?: string;
   imagesURI: string[];
+  onImageLongPress?: (index: number) => void;
   // moveMenuItems: MenuItemProps[];
   // optionsMenuItems: MenuItemProps[];
   style: ViewProps["style"];
@@ -32,6 +33,7 @@ const Entry = ({
   onFeelingsPress,
   recordingURI,
   imagesURI,
+  onImageLongPress,
   // moveMenuItems,
   // optionsMenuItems,
   style,
@@ -58,7 +60,13 @@ const Entry = ({
             <Text variant="titleLarge">{title.text}</Text>
           </TouchableRipple>
         )}
-        {hasImages && <ImageGallery imagesURI={imagesURI} cols={4} />}
+        {hasImages && (
+          <ImageGallery
+            imagesURI={imagesURI}
+            cols={4}
+            onImageLongPress={onImageLongPress}
+          />
+        )}
         {recordingURI && (
           <AudioPlayer sourceURI={recordingURI} style={styles.recording} />
         )}
@@ -76,7 +84,7 @@ const Entry = ({
           <View style={styles.actionBarMenusWrapper}>
             <IconButton icon="dots-vertical" onPress={() => {}} />
             <IconButton icon="arrow-up-down" />
-            <IconButton icon="plus" />
+            <IconButton icon="plus-minus" />
           </View>
         </View>
       </Card.Content>
