@@ -1,4 +1,4 @@
-import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 import {
   ImagePickerAsset,
   launchCameraAsync,

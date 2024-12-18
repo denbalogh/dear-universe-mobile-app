@@ -11,17 +11,17 @@ import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import Controls, {
   UPDATE_INTERVAL,
 } from "@/components/RecordingControls/RecordingControls";
 import { Audio } from "expo-av";
-import { useSnackbar } from "@/contexts/SnackbarContext/SnackbarContext";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 import { normalizeMeteringForScale } from "@/components/RecordingControls/utils";
 import { format } from "date-fns";
 import * as FileSystem from "expo-file-system";
 import { Entry } from "@/models/Entry";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 
 const RECORDINGS_DIR = `${FileSystem.documentDirectory}recordings/`;
 
@@ -31,11 +31,6 @@ const NewEntryRecordingScreen = () => {
   const router = useRouter();
 
   const { showSnackbar } = useSnackbar();
-
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
 
   const { dateId, comingFromScreen } =
     useLocalSearchParams<NewEntrySearchTermParams>();
@@ -143,12 +138,32 @@ const NewEntryRecordingScreen = () => {
   const time = format(new Date(durationMillis), "mm:ss");
   const normalizedMetering = normalizeMeteringForScale(metering);
 
+  const unloadRecordingAndBackPress = useCallback(async () => {
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
+      setRecording(undefined);
+    }
+    router.back();
+  }, [recording, router]);
+
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the recording?",
+      callback: unloadRecordingAndBackPress,
+    });
+  }, [showDiscardDialog, unloadRecordingAndBackPress]);
+
   const handleBackPress = () => {
     if (hasRecordingStarted) {
       if (isRecording) {
         pauseRecording();
       }
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
       router.back();
     }
@@ -161,7 +176,7 @@ const NewEntryRecordingScreen = () => {
           if (isRecording) {
             pauseRecording();
           }
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -174,19 +189,13 @@ const NewEntryRecordingScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [hasRecordingStarted, isRecording, pauseRecording]),
+    }, [
+      hasRecordingStarted,
+      isRecording,
+      pauseRecording,
+      handleShowDiscardDialog,
+    ]),
   );
-
-  const unloadRecordingAndBackPress = async () => {
-    if (recording) {
-      await recording.stopAndUnloadAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-      });
-      setRecording(undefined);
-    }
-    router.back();
-  };
 
   const createEntryWithRecording = (recordingURI: string) => {
     if (dayObject === null) {
@@ -243,12 +252,6 @@ const NewEntryRecordingScreen = () => {
           onDiscardPress={handleBackPress}
           onContinuePress={continueRecording}
           metering={normalizedMetering}
-        />
-        <DiscardDialog
-          text="Do you wish to discard the recording?"
-          isVisible={isDiscardDialogVisible}
-          hideDialog={hideDiscardDialog}
-          onConfirm={unloadRecordingAndBackPress}
         />
       </View>
     </View>

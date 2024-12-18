@@ -4,13 +4,12 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, FAB, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import * as ImagePicker from "expo-image-picker";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
@@ -22,29 +21,25 @@ import { IMAGES_DIR } from "../new/image";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { BSON } from "realm";
 import * as _ from "lodash";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 
 const EditEntryImagesScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
-
   const { dateId, entryId } = useLocalSearchParams<EntrySearchTermParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
-  const { images: initialImages = [] } = entryObject || {};
+  const { imagesURI: initialImagesURI = [] } = entryObject || {};
 
-  const initialImagesPrepared = initialImages.map((image) => ({
+  const initialImagesURIPrepared = initialImagesURI.map((image) => ({
     new: false,
     uri: image,
   }));
 
-  const [images, setImages] = useState(initialImagesPrepared);
+  const [images, setImages] = useState(initialImagesURIPrepared);
   const imagesToDelete = useRef<string[]>([]);
 
   const handleAddImages = (newImages: ImagePicker.ImagePickerAsset[]) => {
@@ -85,11 +80,20 @@ const EditEntryImagesScreen = () => {
     });
   };
 
-  const isEdited = !_.isEqual(images, initialImagesPrepared);
+  const isEdited = !_.isEqual(images, initialImagesURIPrepared);
+
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the changes?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
 
   const handleBackPress = () => {
     if (isEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
       router.back();
     }
@@ -99,7 +103,7 @@ const EditEntryImagesScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -112,7 +116,7 @@ const EditEntryImagesScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isEdited]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleSavePress = async () => {
@@ -148,13 +152,13 @@ const EditEntryImagesScreen = () => {
     updateEntryWithImages(newImages);
   };
 
-  const updateEntryWithImages = (images: string[]) => {
+  const updateEntryWithImages = (imagesURI: string[]) => {
     if (entryObject === null) {
       return;
     }
 
     realm.write(() => {
-      entryObject.images = images;
+      entryObject.imagesURI = imagesURI;
     });
 
     router.back();
@@ -221,12 +225,6 @@ const EditEntryImagesScreen = () => {
             />
           </>
         )}
-        <DiscardDialog
-          text="Do you wish to discard the changes?"
-          isVisible={isDiscardDialogVisible}
-          hideDialog={hideDiscardDialog}
-          onConfirm={router.back}
-        />
       </View>
     </View>
   );

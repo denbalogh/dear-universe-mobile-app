@@ -2,14 +2,13 @@ import {
   Stack,
   useFocusEffect,
   useLocalSearchParams,
-  useNavigation,
+  useRouter,
 } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View, BackHandler, ScrollView } from "react-native";
 import { Appbar, Card, Text } from "react-native-paper";
 import { roundness, spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON, UpdateMode } from "realm";
@@ -18,20 +17,16 @@ import * as _ from "lodash";
 import EmotionChips from "@/components/FeelingsScreen/EmotionChips";
 import { FEELING_GROUP_NAMES, feelings } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 
 const FeelingsScreen = () => {
   const theme = useCustomTheme();
   const realm = useRealm();
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const { entryId } = useLocalSearchParams<EntrySearchTermParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
-
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
 
   const { feelings: initialFeelings } = entryObject || {};
 
@@ -67,11 +62,20 @@ const FeelingsScreen = () => {
     !_.isEqual(activeGroup, initialActiveGroup) ||
     !_.isEqual(_.sortBy(activeEmotions), _.sortBy(initialActiveEmotions));
 
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the changes?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
+
   const handleBackPress = () => {
     if (isEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
-      navigation.goBack();
+      router.back();
     }
   };
 
@@ -79,7 +83,7 @@ const FeelingsScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -92,7 +96,7 @@ const FeelingsScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isEdited]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleUpdateEntry = () => {
@@ -114,7 +118,7 @@ const FeelingsScreen = () => {
       );
     });
 
-    navigation.goBack();
+    router.back();
   };
 
   return (
@@ -192,12 +196,6 @@ const FeelingsScreen = () => {
           }}
         />
       </View>
-      <DiscardDialog
-        text="Do you wish to discard the changes?"
-        isVisible={isDiscardDialogVisible}
-        hideDialog={hideDiscardDialog}
-        onConfirm={navigation.goBack}
-      />
     </View>
   );
 };

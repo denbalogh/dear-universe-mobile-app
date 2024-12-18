@@ -12,8 +12,9 @@ import { themeDark, themeLight } from "@/constants/theme";
 import { Appearance, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import { enGB, registerTranslation } from "react-native-paper-dates";
-import { SnackbarContextProvider } from "@/contexts/SnackbarContext/SnackbarContext";
+import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 import * as SystemUI from "expo-system-ui";
+import { DiscardDialogContextProvider } from "@/contexts/DiscardDialogContext";
 
 registerTranslation("en", enGB);
 
@@ -35,16 +36,18 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} schemaVersion={5}>
-        <SnackbarContextProvider>
-          <View
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: theme.colors.background },
-            ]}
-          />
-          <Stack />
-        </SnackbarContextProvider>
+      <RealmProvider schema={schemas} schemaVersion={6}>
+        <DiscardDialogContextProvider>
+          <SnackbarContextProvider>
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: theme.colors.background },
+              ]}
+            />
+            <Stack />
+          </SnackbarContextProvider>
+        </DiscardDialogContextProvider>
       </RealmProvider>
     </PaperProvider>
   );

@@ -4,7 +4,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, HelperText, TextInput, useTheme } from "react-native-paper";
 import { formatFullDate, parseDateId } from "@/utils/date";
@@ -12,16 +12,12 @@ import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import { DaySearchTermParams } from "@/types/dayScreen";
-import {
-  COMING_FROM_DAY,
-  FOCUS_DESCRIPTION,
-  FOCUS_TITLE,
-} from "@/constants/screens";
+import { COMING_FROM_DAY, FOCUS_DESCRIPTION } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
-import Entry from "@/components/Entry/Entry";
 import BeginningHints from "@/components/BeginningHints/BeginningHints";
+import EntryWithData from "@/components/EntryWithData/EntryWithData";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -35,10 +31,6 @@ const DayScreen = () => {
   const hasEntries = entryObjects.length > 0;
 
   const [title, setTitle] = useState(initialTitle);
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
 
   const isTitleEdited = title !== initialTitle;
   const editedUnderlineColor = isTitleEdited
@@ -67,9 +59,18 @@ const DayScreen = () => {
     });
   };
 
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard changes to title?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
+
   const handleGoBack = () => {
     if (isTitleEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
       router.back();
     }
@@ -79,7 +80,7 @@ const DayScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isTitleEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -92,10 +93,14 @@ const DayScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isTitleEdited]),
+    }, [isTitleEdited, handleShowDiscardDialog]),
   );
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
+
+  if (dayObject === null) {
+    return null;
+  }
 
   return (
     <View style={[styles.wrapper, { backgroundColor: theme.colors.surface }]}>
@@ -138,64 +143,14 @@ const DayScreen = () => {
           )}
         </View>
         {!hasEntries && <BeginningHints />}
-        {entryObjects.map(
-          ({
-            _id,
-            title,
-            description,
-            feelings,
-            recordingURI,
-            images = [],
-          }) => {
-            const titleProp = title
-              ? {
-                  text: title || "",
-                  onPress: () =>
-                    router.navigate({
-                      pathname: `./entry/${_id.toString()}/text`,
-                      params: FOCUS_TITLE,
-                    }),
-                }
-              : undefined;
-
-            const descriptionProp = description
-              ? {
-                  text: description || "",
-                  onPress: () =>
-                    router.navigate({
-                      pathname: `./entry/${_id.toString()}/text`,
-                      params: FOCUS_DESCRIPTION,
-                    }),
-                }
-              : undefined;
-
-            const handleFeelingsPress = () => {
-              router.navigate({
-                pathname: `./entry/${_id.toString()}/feelings`,
-              });
-            };
-
-            const onImageLongPress = () => {
-              router.navigate({
-                pathname: `./entry/${_id.toString()}/image`,
-              });
-            };
-
-            return (
-              <Entry
-                key={_id.toString()}
-                style={styles.entry}
-                title={titleProp}
-                text={descriptionProp}
-                feelings={feelings}
-                onFeelingsPress={handleFeelingsPress}
-                recordingURI={recordingURI}
-                imagesURI={images}
-                onImageLongPress={onImageLongPress}
-              />
-            );
-          },
-        )}
+        {entryObjects.map((entryObject, index) => (
+          <EntryWithData
+            entryObject={entryObject}
+            dayObject={dayObject}
+            key={entryObject._id.toString()}
+            index={index}
+          />
+        ))}
         {hasEntries && <AfterEntriesMessage />}
       </ScrollView>
       <CTAButtons
@@ -223,12 +178,6 @@ const DayScreen = () => {
             }),
         }}
       />
-      <DiscardDialog
-        text="Do you wish to discard changes to title?"
-        isVisible={isDiscardDialogVisible}
-        hideDialog={hideDiscardDialog}
-        onConfirm={router.back}
-      />
     </View>
   );
 };
@@ -248,9 +197,6 @@ const styles = StyleSheet.create({
   scrollContentWrapper: {
     paddingHorizontal: spacing.spaceSmall,
     paddingTop: spacing.spaceSmall,
-  },
-  entry: {
-    marginBottom: spacing.spaceMedium,
   },
   bottomButtons: {
     position: "absolute",
