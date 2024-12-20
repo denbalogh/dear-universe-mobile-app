@@ -8,6 +8,7 @@ import { roundness, sizing, spacing } from "@/constants/theme";
 import ImageGalleryItem from "./ImageGalleryItem";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import AddGalleryItem from "./AddGalleryItem";
+import { lockAsync, OrientationLock } from "expo-screen-orientation";
 
 type Props = {
   imagesURI: string[];
@@ -47,9 +48,15 @@ const ImageGallery = ({
     setGalleryWidth(width);
   };
 
-  const onImagePress = (index: number) => {
+  const onImagePress = async (index: number) => {
+    await lockAsync(OrientationLock.ALL);
     setInitialIndex(index);
     setIsGalleryVisible(true);
+  };
+
+  const handleGalleryPreviewClose = async () => {
+    await lockAsync(OrientationLock.PORTRAIT);
+    setIsGalleryVisible(false);
   };
 
   const imagesForGallery = imagesURI.map((uri) => ({
@@ -87,6 +94,7 @@ const ImageGallery = ({
               leadingIcon: "delete",
               onPress: () => optionsCallbacks.onDeletePress(index),
               title: "Delete",
+              titleStyle: { color: theme.colors.error },
             });
           }
 
@@ -130,7 +138,7 @@ const ImageGallery = ({
       </View>
       <GalleryPreview
         isVisible={isGalleryVisible}
-        onRequestClose={() => setIsGalleryVisible(false)}
+        onRequestClose={handleGalleryPreviewClose}
         images={imagesForGallery}
         initialIndex={initialIndex}
         backgroundColor={theme.colors.surfaceVariant}
