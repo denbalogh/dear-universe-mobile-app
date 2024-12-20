@@ -5,6 +5,7 @@ import { spacing } from "@/constants/theme";
 
 export type TitleDescriptionEditorProps = {
   headline: string;
+  date: string;
   titleTextInput: TextInputProps;
   descriptionTextInput: TextInputProps;
   bottomComponent: ReactNode;
@@ -12,6 +13,7 @@ export type TitleDescriptionEditorProps = {
 
 const TitleDescriptionEditor = ({
   headline,
+  date,
   titleTextInput,
   descriptionTextInput,
   bottomComponent,
@@ -21,7 +23,8 @@ const TitleDescriptionEditor = ({
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
       <ScrollView keyboardShouldPersistTaps="handled" style={styles.scrollView}>
-        <Text variant="titleLarge" style={styles.headline}>
+        <Text variant="titleMedium">{date}</Text>
+        <Text variant="headlineLarge" style={styles.headline}>
           {headline}
         </Text>
         <TextInput

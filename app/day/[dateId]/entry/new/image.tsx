@@ -12,16 +12,21 @@ import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
-import * as ImagePicker from "expo-image-picker";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
-import * as FileSystem from "expo-file-system";
 import { Entry } from "@/models/Entry";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import {
+  documentDirectory,
+  getInfoAsync,
+  makeDirectoryAsync,
+  moveAsync,
+} from "expo-file-system";
+import { ImagePickerAsset } from "expo-image-picker";
 
-export const IMAGES_DIR = `${FileSystem.documentDirectory}images/`;
+export const IMAGES_DIR = `${documentDirectory}images/`;
 
 const NewEntryImageScreen = () => {
   const theme = useTheme();
@@ -44,7 +49,7 @@ const NewEntryImageScreen = () => {
 
   const [imagesURI, setImagesURI] = useState<string[]>([]);
 
-  const handleAddImages = (newImages: ImagePicker.ImagePickerAsset[]) => {
+  const handleAddImages = (newImages: ImagePickerAsset[]) => {
     const newImagesURI = newImages.map((image) => image.uri);
 
     setImagesURI((prevImagesURI) => [...prevImagesURI, ...newImagesURI]);
@@ -115,10 +120,10 @@ const NewEntryImageScreen = () => {
   );
 
   const handleSavePress = async () => {
-    const { exists } = await FileSystem.getInfoAsync(IMAGES_DIR);
+    const { exists } = await getInfoAsync(IMAGES_DIR);
 
     if (!exists) {
-      await FileSystem.makeDirectoryAsync(IMAGES_DIR);
+      await makeDirectoryAsync(IMAGES_DIR);
     }
 
     const newImages = [];
@@ -127,7 +132,7 @@ const NewEntryImageScreen = () => {
       const filename = uri.split("/").pop();
       const dest = `${IMAGES_DIR}${filename}`;
 
-      await FileSystem.moveAsync({
+      await moveAsync({
         from: uri,
         to: dest,
       });
@@ -174,10 +179,12 @@ const NewEntryImageScreen = () => {
         }}
       />
       <View style={styles.contentWrapper}>
-        <Text
-          variant="titleLarge"
-          style={styles.title}
-        >{`Creating entry for ${formatFullDate(parseDateId(dateId))}`}</Text>
+        <Text variant="titleMedium" style={styles.subheading}>
+          {formatFullDate(parseDateId(dateId))}
+        </Text>
+        <Text variant="headlineLarge" style={styles.headline}>
+          Creating new entry
+        </Text>
         {!hasImages ? (
           <View style={styles.imageSourceWrapper}>
             <Text variant="bodyLarge" style={styles.imageSourceTitle}>
@@ -235,8 +242,13 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
   },
-  title: {
+  subheading: {
     margin: spacing.spaceMedium,
+    marginBottom: 0,
+  },
+  headline: {
+    margin: spacing.spaceMedium,
+    marginTop: 0,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,

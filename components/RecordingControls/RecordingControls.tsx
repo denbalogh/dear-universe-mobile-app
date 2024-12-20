@@ -1,4 +1,4 @@
-import { spacing } from "@/constants/theme";
+import { roundness, spacing } from "@/constants/theme";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { FAB, IconButton, Text, useTheme } from "react-native-paper";
@@ -12,7 +12,6 @@ export const UPDATE_INTERVAL = 50;
 
 type Props = {
   time: string;
-  isLoading: boolean;
   isRecording: boolean;
   hasRecordingStarted: boolean;
   hasPermissions: boolean;
@@ -27,7 +26,6 @@ type Props = {
 
 const Controls = ({
   time,
-  isLoading,
   isRecording,
   hasRecordingStarted,
   hasPermissions,
@@ -59,10 +57,17 @@ const Controls = ({
   return (
     <View style={styles.wrapper}>
       <View style={styles.timeWrapper}>
-        {hasRecordingStarted && (
+        {hasRecordingStarted ? (
           <Text variant="displayLarge" style={styles.time}>
             {time}
           </Text>
+        ) : (
+          <View
+            style={[
+              styles.timePlaceholder,
+              { backgroundColor: theme.colors.surfaceVariant },
+            ]}
+          />
         )}
       </View>
       <View style={styles.controlsWrapper}>
@@ -92,8 +97,6 @@ const Controls = ({
                 icon="microphone-question"
                 variant="surface"
                 size="large"
-                loading={isLoading}
-                disabled={isLoading}
                 accessibilityLabel="Request recording permission"
               />
             ) : !hasRecordingStarted ? (
@@ -102,8 +105,6 @@ const Controls = ({
                 icon="record"
                 variant="surface"
                 size="large"
-                loading={isLoading}
-                disabled={isLoading}
                 accessibilityLabel="Start recording"
               />
             ) : isRecording ? (
@@ -164,6 +165,13 @@ const styles = StyleSheet.create({
   },
   time: {
     textAlign: "center",
+    lineHeight: 80,
+  },
+  timePlaceholder: {
+    borderRadius: roundness,
+    width: 120,
+    height: 50,
+    alignSelf: "center",
   },
   controlsWrapper: {
     width: "100%",

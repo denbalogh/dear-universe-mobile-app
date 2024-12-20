@@ -4,14 +4,12 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
 import { Appbar, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
-import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import Controls, {
   UPDATE_INTERVAL,
 } from "@/components/RecordingControls/RecordingControls";
@@ -21,35 +19,21 @@ import { normalizeMeteringForScale } from "@/components/RecordingControls/utils"
 import { format } from "date-fns";
 import { Entry } from "@/models/Entry";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import {
-  documentDirectory,
-  getInfoAsync,
-  makeDirectoryAsync,
-  moveAsync,
-} from "expo-file-system";
+import { RECORDINGS_DIR } from "../new/recording";
+import { BSON } from "realm";
+import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 
-export const RECORDINGS_DIR = `${documentDirectory}recordings/`;
-
-const NewEntryRecordingScreen = () => {
+const EditEntryRecordingScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
   const { showSnackbar } = useSnackbar();
 
-  const { dateId, comingFromScreen } =
-    useLocalSearchParams<NewEntrySearchTermParams>();
-  const dayObject = useObject(Day, dateId);
+  const { dateId, entryId } = useLocalSearchParams<EntrySearchTermParams>();
 
-  useEffect(() => {
-    if (dayObject === null) {
-      realm.write(() => {
-        realm.create(Day, {
-          _id: dateId,
-        });
-      });
-    }
-  }, [dateId, dayObject, realm]);
+  const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
   const [recording, setRecording] = useState<Audio.Recording>();
   const [recordingStatus, setRecordingStatus] =
@@ -122,7 +106,7 @@ const NewEntryRecordingScreen = () => {
           to: newFileURI,
         });
 
-        createEntryWithRecording(newFileURI);
+        handleUpdateEntry(newFileURI);
       }
 
       setRecording(undefined);
@@ -208,28 +192,16 @@ const NewEntryRecordingScreen = () => {
     ]),
   );
 
-  const createEntryWithRecording = (recordingURI: string) => {
-    if (dayObject === null) {
+  const handleUpdateEntry = (recordingURI: string) => {
+    if (entryObject === null) {
       return;
     }
 
     realm.write(() => {
-      const entry = realm.create(Entry, {
-        recordingURI,
-        day: dayObject,
-      });
-
-      dayObject.entryObjects.push(entry);
+      entryObject.recordingURI = recordingURI;
     });
 
-    if (comingFromScreen === "index") {
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: { dateId },
-      });
-    } else {
-      router.back();
-    }
+    router.back();
   };
 
   return (
@@ -246,7 +218,7 @@ const NewEntryRecordingScreen = () => {
       <View style={styles.contentWrapper}>
         <Text variant="titleMedium">{formatFullDate(parseDateId(dateId))}</Text>
         <Text variant="headlineLarge" style={styles.headline}>
-          Creating new entry
+          Adding recording
         </Text>
         <Controls
           time={time}
@@ -266,7 +238,7 @@ const NewEntryRecordingScreen = () => {
   );
 };
 
-export default NewEntryRecordingScreen;
+export default EditEntryRecordingScreen;
 
 const styles = StyleSheet.create({
   flex: {

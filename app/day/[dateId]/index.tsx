@@ -98,10 +98,6 @@ const DayScreen = () => {
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 
-  if (dayObject === null) {
-    return null;
-  }
-
   return (
     <View style={[styles.wrapper, { backgroundColor: theme.colors.surface }]}>
       <Stack.Screen

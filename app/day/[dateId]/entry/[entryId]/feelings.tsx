@@ -4,7 +4,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, ScrollView } from "react-native";
 import { Appbar, Card, Text } from "react-native-paper";
 import { roundness, spacing } from "@/constants/theme";
@@ -13,18 +13,39 @@ import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON, UpdateMode } from "realm";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
-import * as _ from "lodash";
 import EmotionChips from "@/components/FeelingsScreen/EmotionChips";
 import { FEELING_GROUP_NAMES, feelings } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { formatFullDate, parseDateId } from "@/utils/date";
+import { isEqual, sortBy } from "lodash";
+
+const COLLAPSED_CARD_HEIGHT = 70;
 
 const FeelingsScreen = () => {
   const theme = useCustomTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const { entryId } = useLocalSearchParams<EntrySearchTermParams>();
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrolledToActiveGroupOnMount = useRef(false);
+
+  const handleScrollToGroup = (groupIndex: number) => {
+    if (scrolledToActiveGroupOnMount.current) {
+      return;
+    }
+
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        y: groupIndex * (COLLAPSED_CARD_HEIGHT + spacing.spaceSmall),
+        animated: false,
+      });
+
+      scrolledToActiveGroupOnMount.current = true;
+    }
+  };
+
+  const { entryId, dateId } = useLocalSearchParams<EntrySearchTermParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
@@ -59,8 +80,8 @@ const FeelingsScreen = () => {
   );
 
   const isEdited =
-    !_.isEqual(activeGroup, initialActiveGroup) ||
-    !_.isEqual(_.sortBy(activeEmotions), _.sortBy(initialActiveEmotions));
+    !isEqual(activeGroup, initialActiveGroup) ||
+    !isEqual(sortBy(activeEmotions), sortBy(initialActiveEmotions));
 
   const { showDiscardDialog } = useDiscardDialog();
 
@@ -133,13 +154,27 @@ const FeelingsScreen = () => {
         }}
       />
       <View style={styles.contentWrapper}>
-        <Text variant="titleLarge" style={styles.headline}>
-          What emotions did you experience?
-        </Text>
+        <View>
+          <Text variant="titleMedium" style={styles.subheading}>
+            {formatFullDate(parseDateId(dateId))}
+          </Text>
+          <Text variant="headlineLarge" style={styles.headline}>
+            How did you feel?
+          </Text>
+        </View>
         <View style={styles.scrollViewWrapper}>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            {feelings.map(({ name, emotions }) => {
+          <ScrollView
+            contentContainerStyle={styles.scrollViewContent}
+            ref={scrollViewRef}
+          >
+            {feelings.map(({ name, emotions }, index) => {
               const isActive = activeGroup === name;
+
+              const handleOnLayout = () => {
+                if (isActive) {
+                  handleScrollToGroup(index);
+                }
+              };
 
               return (
                 <Card
@@ -151,6 +186,7 @@ const FeelingsScreen = () => {
                     },
                   ]}
                   onPress={() => handleSetActiveGroup(name)}
+                  onLayout={handleOnLayout}
                 >
                   <Card.Content
                     style={{
@@ -211,8 +247,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
   },
+  subheading: {
+    padding: spacing.spaceMedium,
+    paddingBottom: 0,
+  },
   headline: {
     padding: spacing.spaceMedium,
+    paddingTop: 0,
   },
   scrollViewWrapper: {
     flexShrink: 1,
@@ -222,6 +263,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.spaceSmall,
   },
   card: {
+    minHeight: COLLAPSED_CARD_HEIGHT,
     borderRadius: roundness,
     marginBottom: spacing.spaceSmall,
   },

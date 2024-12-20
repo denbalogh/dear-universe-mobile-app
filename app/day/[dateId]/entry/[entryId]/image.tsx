@@ -10,18 +10,23 @@ import { Appbar, FAB, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import * as ImagePicker from "expo-image-picker";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
-import * as FileSystem from "expo-file-system";
 import { Entry } from "@/models/Entry";
 import { IMAGES_DIR } from "../new/image";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { BSON } from "realm";
-import * as _ from "lodash";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import {
+  deleteAsync,
+  getInfoAsync,
+  makeDirectoryAsync,
+  moveAsync,
+} from "expo-file-system";
+import { ImagePickerAsset } from "expo-image-picker";
+import { isEqual } from "lodash";
 
 const EditEntryImagesScreen = () => {
   const theme = useTheme();
@@ -34,6 +39,8 @@ const EditEntryImagesScreen = () => {
 
   const { imagesURI: initialImagesURI = [] } = entryObject || {};
 
+  const hasInitialImages = initialImagesURI.length > 0;
+
   const initialImagesURIPrepared = initialImagesURI.map((image) => ({
     new: false,
     uri: image,
@@ -42,7 +49,7 @@ const EditEntryImagesScreen = () => {
   const [images, setImages] = useState(initialImagesURIPrepared);
   const imagesToDelete = useRef<string[]>([]);
 
-  const handleAddImages = (newImages: ImagePicker.ImagePickerAsset[]) => {
+  const handleAddImages = (newImages: ImagePickerAsset[]) => {
     const newImagesURI = newImages.map((image) => ({
       uri: image.uri,
       new: true,
@@ -80,7 +87,7 @@ const EditEntryImagesScreen = () => {
     });
   };
 
-  const isEdited = !_.isEqual(images, initialImagesURIPrepared);
+  const isEdited = !isEqual(images, initialImagesURIPrepared);
 
   const { showDiscardDialog } = useDiscardDialog();
 
@@ -120,15 +127,15 @@ const EditEntryImagesScreen = () => {
   );
 
   const handleSavePress = async () => {
-    const { exists } = await FileSystem.getInfoAsync(IMAGES_DIR);
+    const { exists } = await getInfoAsync(IMAGES_DIR);
 
     if (!exists) {
-      await FileSystem.makeDirectoryAsync(IMAGES_DIR);
+      await makeDirectoryAsync(IMAGES_DIR);
     }
 
     // Delete images that were removed
     for (const image of imagesToDelete.current) {
-      await FileSystem.deleteAsync(image);
+      await deleteAsync(image);
     }
 
     const newImages = [];
@@ -138,7 +145,7 @@ const EditEntryImagesScreen = () => {
         const filename = image.uri.split("/").pop();
         const dest = `${IMAGES_DIR}${filename}`;
 
-        await FileSystem.moveAsync({
+        await moveAsync({
           from: image.uri,
           to: dest,
         });
@@ -178,10 +185,12 @@ const EditEntryImagesScreen = () => {
         }}
       />
       <View style={styles.contentWrapper}>
-        <Text
-          variant="titleLarge"
-          style={styles.title}
-        >{`Updating entry for ${formatFullDate(parseDateId(dateId))}`}</Text>
+        <Text variant="titleMedium" style={styles.subheading}>
+          {formatFullDate(parseDateId(dateId))}
+        </Text>
+        <Text variant="headlineLarge" style={styles.headline}>
+          {hasInitialImages ? "Editing images" : "Adding images"}
+        </Text>
         {!hasImages ? (
           <View style={styles.imageSourceWrapper}>
             <Text variant="bodyLarge" style={styles.imageSourceTitle}>
@@ -201,6 +210,13 @@ const EditEntryImagesScreen = () => {
                 onPress={openImageLibrary}
               />
             </View>
+            {hasInitialImages && (
+              <CloseSaveButtons
+                style={styles.bottomButtons}
+                closeButton={{ onPress: handleBackPress }}
+                saveButton={{ onPress: handleSavePress, disabled: !isEdited }}
+              />
+            )}
           </View>
         ) : (
           <>
@@ -239,8 +255,13 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
   },
-  title: {
+  subheading: {
     margin: spacing.spaceMedium,
+    marginBottom: 0,
+  },
+  headline: {
+    margin: spacing.spaceMedium,
+    marginTop: 0,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,
@@ -255,13 +276,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-end",
     alignItems: "stretch",
-    paddingBottom: spacing.spaceLarge,
     marginTop: spacing.spaceMedium,
   },
   imageSourceButtonsWrapper: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+    marginBottom: spacing.spaceLarge,
   },
   imageSourceTitle: {
     marginBottom: spacing.spaceMedium,

@@ -13,7 +13,7 @@ import { Appearance, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
-import * as SystemUI from "expo-system-ui";
+import { setBackgroundColorAsync } from "expo-system-ui";
 import { DiscardDialogContextProvider } from "@/contexts/DiscardDialogContext";
 
 registerTranslation("en", enGB);
@@ -29,7 +29,7 @@ const App = () => {
 
   useEffect(() => {
     const setRootBackgroundColor = async () =>
-      await SystemUI.setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
+      await setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
 
     setRootBackgroundColor();
   }, [theme]);

@@ -121,7 +121,8 @@ const NewEntryTextScreen = () => {
       />
       <View style={styles.contentWrapper}>
         <TitleDescriptionEditor
-          headline={`Creating entry for ${formatFullDate(parseDateId(dateId))}`}
+          headline="Creating new entry"
+          date={formatFullDate(parseDateId(dateId))}
           titleTextInput={{ value: title, onChangeText: setTitle }}
           descriptionTextInput={{
             value: description,
