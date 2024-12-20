@@ -1,11 +1,12 @@
 import { roundness, spacing } from "@/constants/theme";
 import React from "react";
-import { Platform, StyleSheet, View, ViewProps } from "react-native";
-import { Card, IconButton, Text, TouchableRipple } from "react-native-paper";
+import { StyleSheet, View, ViewProps } from "react-native";
+import { Card, MenuItemProps, Text, TouchableRipple } from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
 import { Feelings } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import ImageGallery from "../ImageGallery/ImageGallery";
+import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 
 type Props = {
   title?: {
@@ -21,8 +22,9 @@ type Props = {
   recordingURI?: string;
   imagesURI: string[];
   onImageLongPress?: (index: number) => void;
-  // moveMenuItems: MenuItemProps[];
-  // optionsMenuItems: MenuItemProps[];
+  moveMenuItems: MenuItemProps[];
+  optionsMenuItems: MenuItemProps[];
+  addRemoveMenuItems: MenuItemProps[];
   style: ViewProps["style"];
 };
 
@@ -34,12 +36,14 @@ const Entry = ({
   recordingURI,
   imagesURI,
   onImageLongPress,
-  // moveMenuItems,
-  // optionsMenuItems,
+  moveMenuItems,
+  optionsMenuItems,
+  addRemoveMenuItems,
   style,
 }: Props) => {
-  // const hasMoveMenuItems = moveMenuItems.length > 0;
-  // const hasOptionsMenuItems = optionsMenuItems.length > 0;
+  const hasMoveMenuItems = moveMenuItems.length > 0;
+  const hasOptionsMenuItems = optionsMenuItems.length > 0;
+  const hasAddRemoveMenuItems = addRemoveMenuItems.length > 0;
 
   const hasImages = imagesURI.length > 0;
 
@@ -63,8 +67,9 @@ const Entry = ({
         {hasImages && (
           <ImageGallery
             imagesURI={imagesURI}
-            cols={4}
+            cols={5}
             onImageLongPress={onImageLongPress}
+            style={styles.imageGallery}
           />
         )}
         {recordingURI && (
@@ -82,9 +87,24 @@ const Entry = ({
         <View style={styles.actionBarWrapper}>
           <FeelingsButton feelings={feelings} onPress={onFeelingsPress} />
           <View style={styles.actionBarMenusWrapper}>
-            <IconButton icon="dots-vertical" onPress={() => {}} />
-            <IconButton icon="arrow-up-down" />
-            <IconButton icon="plus-minus" />
+            {hasOptionsMenuItems && (
+              <IconButtonMenu
+                menuItems={optionsMenuItems}
+                iconButtonProps={{ icon: "dots-vertical" }}
+              />
+            )}
+            {hasMoveMenuItems && (
+              <IconButtonMenu
+                menuItems={moveMenuItems}
+                iconButtonProps={{ icon: "arrow-up-down" }}
+              />
+            )}
+            {hasAddRemoveMenuItems && (
+              <IconButtonMenu
+                menuItems={addRemoveMenuItems}
+                iconButtonProps={{ icon: "plus-minus" }}
+              />
+            )}
           </View>
         </View>
       </Card.Content>
@@ -102,11 +122,10 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.spaceExtraSmall,
   },
   recording: {
-    ...Platform.select({
-      ios: {
-        marginTop: spacing.spaceSmall,
-      },
-    }),
+    marginVertical: spacing.spaceSmall,
+  },
+  imageGallery: {
+    marginVertical: spacing.spaceSmall,
   },
   textWrapper: {
     paddingVertical: spacing.spaceExtraSmall,

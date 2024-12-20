@@ -40,6 +40,8 @@
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>EXDefaultScreenOrientationMask</key>
+    <string>UIInterfaceOrientationMaskPortrait</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -54,7 +56,7 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>The app needs access to your microphone in order to record audio for your entry.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>The app needs access to your photos in order to add photos to your entry.</string>
+    <string>The app needs access to your media library in order to add photos to your entry.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
@@ -71,20 +73,13 @@
       <string>arm64</string>
     </array>
     <key>UIRequiresFullScreen</key>
-    <false/>
+    <true/>
     <key>UIStatusBarStyle</key>
     <string>UIStatusBarStyleDefault</string>
     <key>UISupportedInterfaceOrientations</key>
     <array>
       <string>UIInterfaceOrientationPortrait</string>
       <string>UIInterfaceOrientationPortraitUpsideDown</string>
-    </array>
-    <key>UISupportedInterfaceOrientations~ipad</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationPortraitUpsideDown</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
     <key>UIUserInterfaceStyle</key>
     <string>Automatic</string>

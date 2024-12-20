@@ -4,19 +4,19 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDescriptionEditor";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import { FOCUS_DESCRIPTION } from "@/constants/screens";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 
 const NewEntryTextScreen = () => {
   const theme = useTheme();
@@ -39,11 +39,6 @@ const NewEntryTextScreen = () => {
 
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
 
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -51,9 +46,18 @@ const NewEntryTextScreen = () => {
   const isDescriptionEdited = description !== "";
   const isEdited = isTitleEdited || isDescriptionEdited;
 
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the entry?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
+
   const handleBackPress = () => {
     if (isEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
       router.back();
     }
@@ -63,7 +67,7 @@ const NewEntryTextScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -76,7 +80,7 @@ const NewEntryTextScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isEdited]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleCreateEntry = () => {
@@ -117,7 +121,8 @@ const NewEntryTextScreen = () => {
       />
       <View style={styles.contentWrapper}>
         <TitleDescriptionEditor
-          headline={`Creating entry for ${formatFullDate(parseDateId(dateId))}`}
+          headline="Creating new entry"
+          date={formatFullDate(parseDateId(dateId))}
           titleTextInput={{ value: title, onChangeText: setTitle }}
           descriptionTextInput={{
             value: description,
@@ -130,12 +135,6 @@ const NewEntryTextScreen = () => {
               saveButton={{ disabled: !isEdited, onPress: handleCreateEntry }}
             />
           }
-        />
-        <DiscardDialog
-          text="Do you wish to discard the entry?"
-          isVisible={isDiscardDialogVisible}
-          hideDialog={hideDiscardDialog}
-          onConfirm={router.back}
         />
       </View>
     </View>

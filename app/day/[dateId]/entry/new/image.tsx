@@ -4,34 +4,34 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, FAB, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
-import * as ImagePicker from "expo-image-picker";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
-import * as FileSystem from "expo-file-system";
 import { Entry } from "@/models/Entry";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import {
+  documentDirectory,
+  getInfoAsync,
+  makeDirectoryAsync,
+  moveAsync,
+} from "expo-file-system";
+import { ImagePickerAsset } from "expo-image-picker";
 
-export const IMAGES_DIR = `${FileSystem.documentDirectory}images/`;
+export const IMAGES_DIR = `${documentDirectory}images/`;
 
 const NewEntryImageScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
-
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
 
   const { dateId, comingFromScreen } =
     useLocalSearchParams<NewEntrySearchTermParams>();
@@ -49,7 +49,7 @@ const NewEntryImageScreen = () => {
 
   const [imagesURI, setImagesURI] = useState<string[]>([]);
 
-  const handleAddImages = (newImages: ImagePicker.ImagePickerAsset[]) => {
+  const handleAddImages = (newImages: ImagePickerAsset[]) => {
     const newImagesURI = newImages.map((image) => image.uri);
 
     setImagesURI((prevImagesURI) => [...prevImagesURI, ...newImagesURI]);
@@ -82,9 +82,18 @@ const NewEntryImageScreen = () => {
     });
   };
 
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the images?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
+
   const handleBackPress = () => {
     if (hasImages) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
       router.back();
     }
@@ -94,7 +103,7 @@ const NewEntryImageScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (hasImages) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -107,14 +116,14 @@ const NewEntryImageScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [hasImages]),
+    }, [hasImages, handleShowDiscardDialog]),
   );
 
   const handleSavePress = async () => {
-    const { exists } = await FileSystem.getInfoAsync(IMAGES_DIR);
+    const { exists } = await getInfoAsync(IMAGES_DIR);
 
     if (!exists) {
-      await FileSystem.makeDirectoryAsync(IMAGES_DIR);
+      await makeDirectoryAsync(IMAGES_DIR);
     }
 
     const newImages = [];
@@ -123,7 +132,7 @@ const NewEntryImageScreen = () => {
       const filename = uri.split("/").pop();
       const dest = `${IMAGES_DIR}${filename}`;
 
-      await FileSystem.moveAsync({
+      await moveAsync({
         from: uri,
         to: dest,
       });
@@ -134,14 +143,14 @@ const NewEntryImageScreen = () => {
     createEntryWithImages(newImages);
   };
 
-  const createEntryWithImages = (images: string[]) => {
+  const createEntryWithImages = (imagesURI: string[]) => {
     if (dayObject === null) {
       return;
     }
 
     realm.write(() => {
       const entry = realm.create(Entry, {
-        images,
+        imagesURI,
         day: dayObject,
       });
 
@@ -170,10 +179,12 @@ const NewEntryImageScreen = () => {
         }}
       />
       <View style={styles.contentWrapper}>
-        <Text
-          variant="titleLarge"
-          style={styles.title}
-        >{`Creating entry for ${formatFullDate(parseDateId(dateId))}`}</Text>
+        <Text variant="titleMedium" style={styles.subheading}>
+          {formatFullDate(parseDateId(dateId))}
+        </Text>
+        <Text variant="headlineLarge" style={styles.headline}>
+          Creating new entry
+        </Text>
         {!hasImages ? (
           <View style={styles.imageSourceWrapper}>
             <Text variant="bodyLarge" style={styles.imageSourceTitle}>
@@ -217,12 +228,6 @@ const NewEntryImageScreen = () => {
             />
           </>
         )}
-        <DiscardDialog
-          text="Do you wish to discard the images?"
-          isVisible={isDiscardDialogVisible}
-          hideDialog={hideDiscardDialog}
-          onConfirm={router.back}
-        />
       </View>
     </View>
   );
@@ -237,8 +242,13 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
   },
-  title: {
+  subheading: {
     margin: spacing.spaceMedium,
+    marginBottom: 0,
+  },
+  headline: {
+    margin: spacing.spaceMedium,
+    marginTop: 0,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, ViewProps } from "react-native";
+import { Platform, StyleSheet, View, ViewProps } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
@@ -144,6 +144,10 @@ export default AudioPlayer;
 
 const styles = StyleSheet.create({
   slider: {
-    paddingVertical: spacing.spaceMedium,
+    ...Platform.select({
+      android: {
+        marginHorizontal: -spacing.spaceSmall,
+      },
+    }),
   },
 });

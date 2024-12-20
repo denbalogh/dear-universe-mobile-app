@@ -2,36 +2,52 @@ import {
   Stack,
   useFocusEffect,
   useLocalSearchParams,
-  useNavigation,
+  useRouter,
 } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, ScrollView } from "react-native";
 import { Appbar, Card, Text } from "react-native-paper";
 import { roundness, spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON, UpdateMode } from "realm";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
-import * as _ from "lodash";
 import EmotionChips from "@/components/FeelingsScreen/EmotionChips";
 import { FEELING_GROUP_NAMES, feelings } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { formatFullDate, parseDateId } from "@/utils/date";
+import { isEqual, sortBy } from "lodash";
+
+const COLLAPSED_CARD_HEIGHT = 70;
 
 const FeelingsScreen = () => {
   const theme = useCustomTheme();
   const realm = useRealm();
-  const navigation = useNavigation();
+  const router = useRouter();
 
-  const { entryId } = useLocalSearchParams<EntrySearchTermParams>();
+  const scrollViewRef = useRef<ScrollView>(null);
+  const scrolledToActiveGroupOnMount = useRef(false);
+
+  const handleScrollToGroup = (groupIndex: number) => {
+    if (scrolledToActiveGroupOnMount.current) {
+      return;
+    }
+
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        y: groupIndex * (COLLAPSED_CARD_HEIGHT + spacing.spaceSmall),
+        animated: false,
+      });
+
+      scrolledToActiveGroupOnMount.current = true;
+    }
+  };
+
+  const { entryId, dateId } = useLocalSearchParams<EntrySearchTermParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
-
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
 
   const { feelings: initialFeelings } = entryObject || {};
 
@@ -64,14 +80,23 @@ const FeelingsScreen = () => {
   );
 
   const isEdited =
-    !_.isEqual(activeGroup, initialActiveGroup) ||
-    !_.isEqual(_.sortBy(activeEmotions), _.sortBy(initialActiveEmotions));
+    !isEqual(activeGroup, initialActiveGroup) ||
+    !isEqual(sortBy(activeEmotions), sortBy(initialActiveEmotions));
+
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the changes?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
 
   const handleBackPress = () => {
     if (isEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
-      navigation.goBack();
+      router.back();
     }
   };
 
@@ -79,7 +104,7 @@ const FeelingsScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -92,7 +117,7 @@ const FeelingsScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isEdited]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleUpdateEntry = () => {
@@ -114,7 +139,7 @@ const FeelingsScreen = () => {
       );
     });
 
-    navigation.goBack();
+    router.back();
   };
 
   return (
@@ -129,13 +154,27 @@ const FeelingsScreen = () => {
         }}
       />
       <View style={styles.contentWrapper}>
-        <Text variant="titleLarge" style={styles.headline}>
-          What emotions did you experience?
-        </Text>
+        <View>
+          <Text variant="titleMedium" style={styles.subheading}>
+            {formatFullDate(parseDateId(dateId))}
+          </Text>
+          <Text variant="headlineLarge" style={styles.headline}>
+            How did you feel?
+          </Text>
+        </View>
         <View style={styles.scrollViewWrapper}>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            {feelings.map(({ name, emotions }) => {
+          <ScrollView
+            contentContainerStyle={styles.scrollViewContent}
+            ref={scrollViewRef}
+          >
+            {feelings.map(({ name, emotions }, index) => {
               const isActive = activeGroup === name;
+
+              const handleOnLayout = () => {
+                if (isActive) {
+                  handleScrollToGroup(index);
+                }
+              };
 
               return (
                 <Card
@@ -147,6 +186,7 @@ const FeelingsScreen = () => {
                     },
                   ]}
                   onPress={() => handleSetActiveGroup(name)}
+                  onLayout={handleOnLayout}
                 >
                   <Card.Content
                     style={{
@@ -192,12 +232,6 @@ const FeelingsScreen = () => {
           }}
         />
       </View>
-      <DiscardDialog
-        text="Do you wish to discard the changes?"
-        isVisible={isDiscardDialogVisible}
-        hideDialog={hideDiscardDialog}
-        onConfirm={navigation.goBack}
-      />
     </View>
   );
 };
@@ -213,8 +247,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
   },
+  subheading: {
+    padding: spacing.spaceMedium,
+    paddingBottom: 0,
+  },
   headline: {
     padding: spacing.spaceMedium,
+    paddingTop: 0,
   },
   scrollViewWrapper: {
     flexShrink: 1,
@@ -224,6 +263,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.spaceSmall,
   },
   card: {
+    minHeight: COLLAPSED_CARD_HEIGHT,
     borderRadius: roundness,
     marginBottom: spacing.spaceSmall,
   },

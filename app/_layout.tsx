@@ -12,8 +12,9 @@ import { themeDark, themeLight } from "@/constants/theme";
 import { Appearance, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
 import { enGB, registerTranslation } from "react-native-paper-dates";
-import { SnackbarContextProvider } from "@/contexts/SnackbarContext/SnackbarContext";
-import * as SystemUI from "expo-system-ui";
+import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
+import { setBackgroundColorAsync } from "expo-system-ui";
+import { DiscardDialogContextProvider } from "@/contexts/DiscardDialogContext";
 
 registerTranslation("en", enGB);
 
@@ -28,23 +29,25 @@ const App = () => {
 
   useEffect(() => {
     const setRootBackgroundColor = async () =>
-      await SystemUI.setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
+      await setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
 
     setRootBackgroundColor();
   }, [theme]);
 
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} schemaVersion={5}>
-        <SnackbarContextProvider>
-          <View
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: theme.colors.background },
-            ]}
-          />
-          <Stack />
-        </SnackbarContextProvider>
+      <RealmProvider schema={schemas} schemaVersion={6}>
+        <DiscardDialogContextProvider>
+          <SnackbarContextProvider>
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: theme.colors.background },
+              ]}
+            />
+            <Stack />
+          </SnackbarContextProvider>
+        </DiscardDialogContextProvider>
       </RealmProvider>
     </PaperProvider>
   );

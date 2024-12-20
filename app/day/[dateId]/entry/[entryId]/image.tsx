@@ -4,50 +4,52 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, FAB, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
-import * as ImagePicker from "expo-image-picker";
 import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
-import * as FileSystem from "expo-file-system";
 import { Entry } from "@/models/Entry";
 import { IMAGES_DIR } from "../new/image";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { BSON } from "realm";
-import * as _ from "lodash";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import {
+  deleteAsync,
+  getInfoAsync,
+  makeDirectoryAsync,
+  moveAsync,
+} from "expo-file-system";
+import { ImagePickerAsset } from "expo-image-picker";
+import { isEqual } from "lodash";
 
 const EditEntryImagesScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
-
   const { dateId, entryId } = useLocalSearchParams<EntrySearchTermParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
-  const { images: initialImages = [] } = entryObject || {};
+  const { imagesURI: initialImagesURI = [] } = entryObject || {};
 
-  const initialImagesPrepared = initialImages.map((image) => ({
+  const hasInitialImages = initialImagesURI.length > 0;
+
+  const initialImagesURIPrepared = initialImagesURI.map((image) => ({
     new: false,
     uri: image,
   }));
 
-  const [images, setImages] = useState(initialImagesPrepared);
+  const [images, setImages] = useState(initialImagesURIPrepared);
   const imagesToDelete = useRef<string[]>([]);
 
-  const handleAddImages = (newImages: ImagePicker.ImagePickerAsset[]) => {
+  const handleAddImages = (newImages: ImagePickerAsset[]) => {
     const newImagesURI = newImages.map((image) => ({
       uri: image.uri,
       new: true,
@@ -85,11 +87,20 @@ const EditEntryImagesScreen = () => {
     });
   };
 
-  const isEdited = !_.isEqual(images, initialImagesPrepared);
+  const isEdited = !isEqual(images, initialImagesURIPrepared);
+
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the changes?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
 
   const handleBackPress = () => {
     if (isEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
       router.back();
     }
@@ -99,7 +110,7 @@ const EditEntryImagesScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -112,19 +123,19 @@ const EditEntryImagesScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isEdited]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleSavePress = async () => {
-    const { exists } = await FileSystem.getInfoAsync(IMAGES_DIR);
+    const { exists } = await getInfoAsync(IMAGES_DIR);
 
     if (!exists) {
-      await FileSystem.makeDirectoryAsync(IMAGES_DIR);
+      await makeDirectoryAsync(IMAGES_DIR);
     }
 
     // Delete images that were removed
     for (const image of imagesToDelete.current) {
-      await FileSystem.deleteAsync(image);
+      await deleteAsync(image);
     }
 
     const newImages = [];
@@ -134,7 +145,7 @@ const EditEntryImagesScreen = () => {
         const filename = image.uri.split("/").pop();
         const dest = `${IMAGES_DIR}${filename}`;
 
-        await FileSystem.moveAsync({
+        await moveAsync({
           from: image.uri,
           to: dest,
         });
@@ -148,13 +159,13 @@ const EditEntryImagesScreen = () => {
     updateEntryWithImages(newImages);
   };
 
-  const updateEntryWithImages = (images: string[]) => {
+  const updateEntryWithImages = (imagesURI: string[]) => {
     if (entryObject === null) {
       return;
     }
 
     realm.write(() => {
-      entryObject.images = images;
+      entryObject.imagesURI = imagesURI;
     });
 
     router.back();
@@ -174,10 +185,12 @@ const EditEntryImagesScreen = () => {
         }}
       />
       <View style={styles.contentWrapper}>
-        <Text
-          variant="titleLarge"
-          style={styles.title}
-        >{`Updating entry for ${formatFullDate(parseDateId(dateId))}`}</Text>
+        <Text variant="titleMedium" style={styles.subheading}>
+          {formatFullDate(parseDateId(dateId))}
+        </Text>
+        <Text variant="headlineLarge" style={styles.headline}>
+          {hasInitialImages ? "Editing images" : "Adding images"}
+        </Text>
         {!hasImages ? (
           <View style={styles.imageSourceWrapper}>
             <Text variant="bodyLarge" style={styles.imageSourceTitle}>
@@ -197,6 +210,13 @@ const EditEntryImagesScreen = () => {
                 onPress={openImageLibrary}
               />
             </View>
+            {hasInitialImages && (
+              <CloseSaveButtons
+                style={styles.bottomButtons}
+                closeButton={{ onPress: handleBackPress }}
+                saveButton={{ onPress: handleSavePress, disabled: !isEdited }}
+              />
+            )}
           </View>
         ) : (
           <>
@@ -221,12 +241,6 @@ const EditEntryImagesScreen = () => {
             />
           </>
         )}
-        <DiscardDialog
-          text="Do you wish to discard the changes?"
-          isVisible={isDiscardDialogVisible}
-          hideDialog={hideDiscardDialog}
-          onConfirm={router.back}
-        />
       </View>
     </View>
   );
@@ -241,8 +255,13 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
   },
-  title: {
+  subheading: {
     margin: spacing.spaceMedium,
+    marginBottom: 0,
+  },
+  headline: {
+    margin: spacing.spaceMedium,
+    marginTop: 0,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,
@@ -257,13 +276,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-end",
     alignItems: "stretch",
-    paddingBottom: spacing.spaceLarge,
     marginTop: spacing.spaceMedium,
   },
   imageSourceButtonsWrapper: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+    marginBottom: spacing.spaceLarge,
   },
   imageSourceTitle: {
     marginBottom: spacing.spaceMedium,

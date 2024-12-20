@@ -13,13 +13,14 @@ module.exports = {
       backgroundColor: "#ffffff",
     },
     ios: {
-      supportsTablet: true,
+      supportsTablet: false,
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
       googleServicesFile: "./GoogleService-Info.plist",
       infoPlist: {
         NSMicrophoneUsageDescription:
           "The app needs access to your microphone in order to record audio for your entry.",
       },
+      requireFullScreen: true,
     },
     android: {
       adaptiveIcon: {
@@ -61,6 +62,12 @@ module.exports = {
             "The app needs access to your media library in order to add photos to your entry.",
           cameraPermission:
             "The app needs access to your camera in order to take photos for your entry.",
+        },
+      ],
+      [
+        "expo-screen-orientation",
+        {
+          initialOrientation: "PORTRAIT",
         },
       ],
     ],

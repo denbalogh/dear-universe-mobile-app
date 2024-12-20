@@ -2,26 +2,26 @@ import {
   Stack,
   useFocusEffect,
   useLocalSearchParams,
-  useNavigation,
+  useRouter,
 } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import DiscardDialog from "@/components/DiscardDialog/DiscardDialog";
 import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDescriptionEditor";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON } from "realm";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 
 const EditedEntryTextScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const { dateId, entryId, focus } =
     useLocalSearchParams<EntrySearchTermParams>();
@@ -30,11 +30,6 @@ const EditedEntryTextScreen = () => {
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
-
-  const [isDiscardDialogVisible, setIsDiscardDialogVisible] = useState(false);
-
-  const hideDiscardDialog = () => setIsDiscardDialogVisible(false);
-  const showDiscardDialog = () => setIsDiscardDialogVisible(true);
 
   const { title: initialTitle = "", description: initialDescription = "" } =
     entryObject || {};
@@ -46,11 +41,20 @@ const EditedEntryTextScreen = () => {
   const isDescriptionEdited = description !== initialDescription;
   const isEdited = isTitleEdited || isDescriptionEdited;
 
+  const { showDiscardDialog } = useDiscardDialog();
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showDiscardDialog({
+      message: "Do you wish to discard the changes?",
+      callback: router.back,
+    });
+  }, [showDiscardDialog, router.back]);
+
   const handleBackPress = () => {
     if (isEdited) {
-      showDiscardDialog();
+      handleShowDiscardDialog();
     } else {
-      navigation.goBack();
+      router.back();
     }
   };
 
@@ -58,7 +62,7 @@ const EditedEntryTextScreen = () => {
     React.useCallback(() => {
       const onBackPress = () => {
         if (isEdited) {
-          showDiscardDialog();
+          handleShowDiscardDialog();
           return true;
         } else {
           return false;
@@ -71,7 +75,7 @@ const EditedEntryTextScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [isEdited]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleUpdateEntry = () => {
@@ -84,7 +88,7 @@ const EditedEntryTextScreen = () => {
       entryObject.description = description;
     });
 
-    navigation.goBack();
+    router.back();
   };
 
   return (
@@ -100,7 +104,8 @@ const EditedEntryTextScreen = () => {
       />
       <View style={styles.contentWrapper}>
         <TitleDescriptionEditor
-          headline={`Editing entry for ${formatFullDate(parseDateId(dateId))}`}
+          headline="Editing entry"
+          date={formatFullDate(parseDateId(dateId))}
           titleTextInput={{
             value: title,
             onChangeText: setTitle,
@@ -117,12 +122,6 @@ const EditedEntryTextScreen = () => {
               saveButton={{ disabled: !isEdited, onPress: handleUpdateEntry }}
             />
           }
-        />
-        <DiscardDialog
-          text="Do you wish to discard the changes?"
-          isVisible={isDiscardDialogVisible}
-          hideDialog={hideDiscardDialog}
-          onConfirm={navigation.goBack}
         />
       </View>
     </View>
