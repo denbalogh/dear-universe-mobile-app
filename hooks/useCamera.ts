@@ -17,10 +17,24 @@ const useCamera = (onSuccess: (images: ImagePickerAsset[]) => void) => {
     [cameraPermissions],
   );
 
+  const handleOpenCamera = async () => {
+    const selectedImages = await launchCameraAsync({
+      allowsMultipleSelection: true,
+      mediaTypes: MediaTypeOptions.Images,
+      quality: 0.5,
+    });
+
+    if (!selectedImages.canceled) {
+      onSuccess(selectedImages.assets);
+    }
+  };
+
   const handleRequestCameraPermissions = async () => {
     const { canAskAgain, granted } = await requestCameraPermission();
 
-    if (!granted && !canAskAgain) {
+    if (granted) {
+      await handleOpenCamera();
+    } else if (!canAskAgain) {
       showSnackbar(
         "The camera permission has been denied. To grant it, go to system settings.",
       );
@@ -31,15 +45,7 @@ const useCamera = (onSuccess: (images: ImagePickerAsset[]) => void) => {
     if (!isCameraAllowed) {
       await handleRequestCameraPermissions();
     } else {
-      const selectedImages = await launchCameraAsync({
-        allowsMultipleSelection: true,
-        mediaTypes: MediaTypeOptions.Images,
-        orderedSelection: true,
-      });
-
-      if (!selectedImages.canceled) {
-        onSuccess(selectedImages.assets);
-      }
+      await handleOpenCamera();
     }
   };
 };

@@ -18,10 +18,24 @@ const useImageLibrary = (onSuccess: (images: ImagePickerAsset[]) => void) => {
     [libraryPermissions],
   );
 
+  const handleOpenLibrary = async () => {
+    const selectedImages = await launchImageLibraryAsync({
+      allowsMultipleSelection: true,
+      mediaTypes: MediaTypeOptions.Images,
+      orderedSelection: true,
+    });
+
+    if (!selectedImages.canceled) {
+      onSuccess(selectedImages.assets);
+    }
+  };
+
   const handleRequestLibraryPermissions = async () => {
     const { canAskAgain, granted } = await requestLibraryPermission();
 
-    if (!granted && !canAskAgain) {
+    if (granted) {
+      await handleOpenLibrary();
+    } else if (!canAskAgain) {
       showSnackbar(
         "The media library permission has been denied. To grant it, go to system settings.",
       );
@@ -31,15 +45,7 @@ const useImageLibrary = (onSuccess: (images: ImagePickerAsset[]) => void) => {
     if (!isLibraryAllowed) {
       await handleRequestLibraryPermissions();
     } else {
-      const selectedImages = await launchImageLibraryAsync({
-        allowsMultipleSelection: true,
-        mediaTypes: MediaTypeOptions.Images,
-        orderedSelection: true,
-      });
-
-      if (!selectedImages.canceled) {
-        onSuccess(selectedImages.assets);
-      }
+      await handleOpenLibrary();
     }
   };
 };

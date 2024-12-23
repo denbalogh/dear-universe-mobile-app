@@ -15,6 +15,7 @@ import { enGB, registerTranslation } from "react-native-paper-dates";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import { DiscardDialogContextProvider } from "@/contexts/DiscardDialogContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 registerTranslation("en", enGB);
 
@@ -45,7 +46,9 @@ const App = () => {
                 { backgroundColor: theme.colors.background },
               ]}
             />
-            <Stack />
+            <GestureHandlerRootView>
+              <Stack />
+            </GestureHandlerRootView>
           </SnackbarContextProvider>
         </DiscardDialogContextProvider>
       </RealmProvider>
