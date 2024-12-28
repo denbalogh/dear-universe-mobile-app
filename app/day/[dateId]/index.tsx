@@ -222,6 +222,15 @@ const DayScreen = () => {
                 },
               }),
           }}
+          addVideoEntryButton={{
+            onPress: () =>
+              router.navigate({
+                pathname: "./entry/new/video",
+                params: {
+                  ...COMING_FROM_DAY_SCREEN,
+                },
+              }),
+          }}
         />
       </View>
     </GestureDetector>

@@ -9,6 +9,7 @@ type Props = {
   addTextEntryButton: FABPropsWithoutIconAndLabel;
   addRecordingEntryButton: FABPropsWithoutIconAndLabel;
   addImageEntryButton: FABPropsWithoutIconAndLabel;
+  addVideoEntryButton: FABPropsWithoutIconAndLabel;
   showText?: boolean;
 } & ViewProps;
 
@@ -16,6 +17,7 @@ const CTAButtons = ({
   addImageEntryButton,
   addRecordingEntryButton,
   addTextEntryButton,
+  addVideoEntryButton,
   showText,
   style,
   ...props
@@ -28,14 +30,30 @@ const CTAButtons = ({
         </Text>
       )}
       <View style={styles.buttonsWrapper}>
-        <FAB icon="pen-plus" variant="tertiary" {...addTextEntryButton} />
+        <FAB
+          icon="pen-plus"
+          variant="tertiary"
+          style={styles.button}
+          {...addTextEntryButton}
+        />
         <FAB
           icon="microphone-plus"
-          style={styles.centerButton}
           variant="tertiary"
+          style={styles.button}
           {...addRecordingEntryButton}
         />
-        <FAB icon="image-plus" variant="tertiary" {...addImageEntryButton} />
+        <FAB
+          icon="image-plus"
+          variant="tertiary"
+          style={styles.button}
+          {...addImageEntryButton}
+        />
+        <FAB
+          icon="movie-open-plus"
+          variant="tertiary"
+          style={styles.button}
+          {...addVideoEntryButton}
+        />
       </View>
     </View>
   );
@@ -58,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
   },
-  centerButton: {
-    marginHorizontal: spacing.spaceLarge,
+  button: {
+    marginHorizontal: spacing.spaceSmall,
   },
 });

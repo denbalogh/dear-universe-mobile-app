@@ -55,8 +55,15 @@ const NewEntryImageScreen = () => {
     setImagesURI((prevImagesURI) => [...prevImagesURI, ...newImagesURI]);
   };
 
-  const openCamera = useCamera(handleAddImages);
-  const openImageLibrary = useImageLibrary(handleAddImages);
+  const openCamera = useCamera({
+    onSuccess: handleAddImages,
+    type: "IMAGES",
+  });
+
+  const openImageLibrary = useImageLibrary({
+    onSuccess: handleAddImages,
+    type: "IMAGES",
+  });
 
   const hasImages = imagesURI.length > 0;
 
@@ -183,7 +190,7 @@ const NewEntryImageScreen = () => {
           {formatFullDate(parseDateId(dateId))}
         </Text>
         <Text variant="headlineLarge" style={styles.headline}>
-          Creating new entry
+          Creating new entry with images
         </Text>
         {!hasImages ? (
           <View style={styles.imageSourceWrapper}>
@@ -248,7 +255,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     margin: spacing.spaceMedium,
-    marginTop: 0,
+    marginTop: spacing.spaceExtraSmall,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,

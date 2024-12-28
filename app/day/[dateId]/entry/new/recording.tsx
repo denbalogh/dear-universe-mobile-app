@@ -246,7 +246,7 @@ const NewEntryRecordingScreen = () => {
       <View style={styles.contentWrapper}>
         <Text variant="titleMedium">{formatFullDate(parseDateId(dateId))}</Text>
         <Text variant="headlineLarge" style={styles.headline}>
-          Creating new entry
+          Creating new entry with recording
         </Text>
         <Controls
           time={time}
@@ -278,5 +278,6 @@ const styles = StyleSheet.create({
   },
   headline: {
     marginBottom: spacing.spaceLarge,
+    marginTop: spacing.spaceExtraSmall,
   },
 });
