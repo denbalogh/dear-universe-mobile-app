@@ -6,8 +6,15 @@ import {
   useMediaLibraryPermissions,
 } from "expo-image-picker";
 import { useMemo } from "react";
+import { defaultOptions, MediaType } from "./useCamera";
 
-const useImageLibrary = (onSuccess: (images: ImagePickerAsset[]) => void) => {
+const useImageLibrary = ({
+  onSuccess,
+  type,
+}: {
+  onSuccess: (images: ImagePickerAsset[]) => void;
+  type: MediaType;
+}) => {
   const { showSnackbar } = useSnackbar();
 
   const [libraryPermissions, requestLibraryPermission] =
@@ -18,11 +25,16 @@ const useImageLibrary = (onSuccess: (images: ImagePickerAsset[]) => void) => {
     [libraryPermissions],
   );
 
+  const mediaType = useMemo(() => {
+    return type === "IMAGES"
+      ? MediaTypeOptions.Images
+      : MediaTypeOptions.Videos;
+  }, [type]);
+
   const handleOpenLibrary = async () => {
     const selectedImages = await launchImageLibraryAsync({
-      allowsMultipleSelection: true,
-      mediaTypes: MediaTypeOptions.Images,
-      orderedSelection: true,
+      ...defaultOptions,
+      mediaTypes: mediaType,
     });
 
     if (!selectedImages.canceled) {

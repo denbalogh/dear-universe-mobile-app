@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     marginBottom: spacing.spaceMedium,
+    marginTop: spacing.spaceExtraSmall,
   },
   input: {
     marginTop: spacing.spaceMedium,

@@ -10,7 +10,6 @@ import { Appbar, FAB, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
@@ -27,6 +26,7 @@ import {
 } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
 import { isEqual } from "lodash";
+import EditableImageGrid from "@/components/MediaGallery/EditableImageGrid";
 
 const EditEntryImagesScreen = () => {
   const theme = useTheme();
@@ -37,41 +37,42 @@ const EditEntryImagesScreen = () => {
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
-  const { imagesURI: initialImagesURI = [] } = entryObject || {};
+  const { imagesURI: initialImagesUri = [] } = entryObject || {};
 
-  const hasInitialImages = initialImagesURI.length > 0;
+  const hasInitialImages = initialImagesUri.length > 0;
 
-  const initialImagesURIPrepared = initialImagesURI.map((image) => ({
-    new: false,
-    uri: image,
-  }));
-
-  const [images, setImages] = useState(initialImagesURIPrepared);
+  const [imagesUri, setImagesUri] = useState<string[]>(initialImagesUri);
   const imagesToDelete = useRef<string[]>([]);
 
   const handleAddImages = (newImages: ImagePickerAsset[]) => {
-    const newImagesURI = newImages.map((image) => ({
-      uri: image.uri,
-      new: true,
-    }));
+    const newImagesUri = newImages.map((image) => image.uri);
 
-    setImages((prevImagesURI) => [...prevImagesURI, ...newImagesURI]);
+    setImagesUri((prevImagesUri) => [...prevImagesUri, ...newImagesUri]);
   };
 
-  const openCamera = useCamera(handleAddImages);
-  const openImageLibrary = useImageLibrary(handleAddImages);
+  const openCamera = useCamera({
+    onSuccess: handleAddImages,
+    type: "IMAGES",
+  });
 
-  const hasImages = images.length > 0;
+  const openImageLibrary = useImageLibrary({
+    onSuccess: handleAddImages,
+    type: "IMAGES",
+  });
+
+  const hasImages = imagesUri.length > 0;
 
   const handleOnDeletePress = (index: number) => {
-    imagesToDelete.current.push(images[index].uri);
+    imagesToDelete.current.push(imagesUri[index]);
 
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagesUri((prevImagesUri) =>
+      prevImagesUri.filter((_, i) => i !== index),
+    );
   };
 
   const handleMoveLeftPress = (index: number) => {
-    setImages((prevImages) => {
-      const newImages = [...prevImages];
+    setImagesUri((prevImagesUri) => {
+      const newImages = [...prevImagesUri];
       const [removedImage] = newImages.splice(index, 1);
       newImages.splice(index - 1, 0, removedImage);
       return newImages;
@@ -79,15 +80,15 @@ const EditEntryImagesScreen = () => {
   };
 
   const handleMoveRightPress = (index: number) => {
-    setImages((prevImages) => {
-      const newImages = [...prevImages];
+    setImagesUri((prevImagesUri) => {
+      const newImages = [...prevImagesUri];
       const [removedImage] = newImages.splice(index, 1);
       newImages.splice(index + 1, 0, removedImage);
       return newImages;
     });
   };
 
-  const isEdited = !isEqual(images, initialImagesURIPrepared);
+  const isEdited = !isEqual(imagesUri, initialImagesUri);
 
   const { showDiscardDialog } = useDiscardDialog();
 
@@ -140,19 +141,21 @@ const EditEntryImagesScreen = () => {
 
     const newImages = [];
 
-    for (const image of images) {
-      if (image.new) {
-        const filename = image.uri.split("/").pop();
+    for (const imageUri of imagesUri) {
+      const isImageNew = !initialImagesUri.includes(imageUri);
+
+      if (isImageNew) {
+        const filename = imageUri.split("/").pop();
         const dest = `${IMAGES_DIR}${filename}`;
 
         await moveAsync({
-          from: image.uri,
+          from: imageUri,
           to: dest,
         });
 
         newImages.push(dest);
       } else {
-        newImages.push(image.uri);
+        newImages.push(imageUri);
       }
     }
 
@@ -170,8 +173,6 @@ const EditEntryImagesScreen = () => {
 
     router.back();
   };
-
-  const imagesURI = images.map((image) => image.uri);
 
   return (
     <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
@@ -221,17 +222,25 @@ const EditEntryImagesScreen = () => {
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-              <ImageGallery
-                imagesURI={imagesURI}
+              <EditableImageGrid
+                imagesUri={imagesUri}
                 optionsCallbacks={{
                   onDeletePress: handleOnDeletePress,
                   onMoveLeftPress: handleMoveLeftPress,
                   onMoveRightPress: handleMoveRightPress,
                 }}
-                addButtons={{
-                  onCameraPress: openCamera,
-                  onImageLibraryPress: openImageLibrary,
-                }}
+                addButtons={[
+                  {
+                    leadingIcon: "camera",
+                    title: "Take a photo",
+                    onPress: openCamera,
+                  },
+                  {
+                    leadingIcon: "folder-multiple-image",
+                    title: "From gallery",
+                    onPress: openImageLibrary,
+                  },
+                ]}
               />
             </ScrollView>
             <CloseSaveButtons

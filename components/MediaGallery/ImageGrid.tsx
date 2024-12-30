@@ -6,13 +6,15 @@ type Props = {
   imagesUri: string[];
   onImagePress: (index: number) => void;
   gridSize?: number;
+  showPlayIcon?: boolean;
 } & ViewProps;
 
 const ImageGrid = ({
   imagesUri,
-  gridSize = 3,
-  style,
   onImagePress,
+  gridSize = 3,
+  showPlayIcon = false,
+  style,
   ...props
 }: Props) => {
   const [gridWidth, setGridWidth] = useState(0);
@@ -41,6 +43,7 @@ const ImageGrid = ({
             touchableProps={{
               onPress: () => onImagePress(index),
             }}
+            showPlayIcon={showPlayIcon}
           />
         );
       })}
