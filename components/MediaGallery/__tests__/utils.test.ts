@@ -1,12 +1,13 @@
-import getBorderRadius, {
+import {
+  getBorderRadius,
   borderBottomLeftRadius,
   borderBottomRightRadius,
   borderTopLeftRadius,
   borderTopRightRadius,
   zeroBorderRadius,
-} from "../getBorderRadius";
+} from "../utils";
 
-describe("getBorderRadius", () => {
+describe("utils/getBorderRadius", () => {
   test("returns zero border radius when totalCount is 0", () => {
     expect(getBorderRadius(0, 0)).toEqual(zeroBorderRadius);
     expect(getBorderRadius(3, 0)).toEqual(zeroBorderRadius);

@@ -71,12 +71,6 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     });
   };
 
-  const onImageLongPress = () => {
-    router.navigate({
-      pathname: `./entry/${_id.toString()}/image`,
-    });
-  };
-
   const moveMenuItems: MenuItemProps[] = useMemo(() => {
     if (dayObject === null) {
       return [];
@@ -274,7 +268,6 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       onFeelingsPress={handleFeelingsPress}
       recordingURI={recordingURI}
       imagesURI={imagesURI}
-      onImageLongPress={onImageLongPress}
       optionsMenuItems={optionsMenuItem}
       moveMenuItems={moveMenuItems}
       addRemoveMenuItems={addRemoveMenuItems}

@@ -1,27 +1,27 @@
 import React, { useMemo } from "react";
-import getBorderRadius from "./getBorderRadius";
 import { Image, ImageProps } from "expo-image";
 import { TouchableRipple, TouchableRippleProps } from "react-native-paper";
 import { StyleSheet } from "react-native";
+import { getBorderRadius } from "./utils";
 
 type Props = {
   index: number;
   imagesCount: number;
-  cols: number;
+  gridSize: number;
   touchableProps: Omit<TouchableRippleProps, "children">;
 } & ImageProps;
 
-const ImageGalleryItem = ({
+const ImageGridItem = ({
   index,
   imagesCount,
-  cols,
+  gridSize,
   style,
   touchableProps,
   ...props
 }: Props) => {
   const borderRadii = useMemo(
-    () => getBorderRadius(index, imagesCount, cols),
-    [index, imagesCount, cols],
+    () => getBorderRadius(index, imagesCount, gridSize),
+    [index, imagesCount, gridSize],
   );
 
   return (
@@ -38,7 +38,7 @@ const ImageGalleryItem = ({
   );
 };
 
-export default ImageGalleryItem;
+export default ImageGridItem;
 
 const styles = StyleSheet.create({
   touchable: {

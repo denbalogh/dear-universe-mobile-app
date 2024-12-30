@@ -12,7 +12,6 @@ import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
-import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
@@ -25,6 +24,7 @@ import {
   moveAsync,
 } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
+import EditableImageGrid from "@/components/MediaGallery/EditableImageGrid";
 
 export const IMAGES_DIR = `${documentDirectory}images/`;
 
@@ -47,12 +47,12 @@ const NewEntryImageScreen = () => {
     }
   }, [dateId, dayObject, realm]);
 
-  const [imagesURI, setImagesURI] = useState<string[]>([]);
+  const [imagesUri, setImagesUri] = useState<string[]>([]);
 
   const handleAddImages = (newImages: ImagePickerAsset[]) => {
-    const newImagesURI = newImages.map((image) => image.uri);
+    const newImagesUri = newImages.map((image) => image.uri);
 
-    setImagesURI((prevImagesURI) => [...prevImagesURI, ...newImagesURI]);
+    setImagesUri((prevImagesUri) => [...prevImagesUri, ...newImagesUri]);
   };
 
   const openCamera = useCamera({
@@ -65,14 +65,14 @@ const NewEntryImageScreen = () => {
     type: "IMAGES",
   });
 
-  const hasImages = imagesURI.length > 0;
+  const hasImages = imagesUri.length > 0;
 
   const handleOnDeletePress = (index: number) => {
-    setImagesURI((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagesUri((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleMoveLeftPress = (index: number) => {
-    setImagesURI((prevImages) => {
+    setImagesUri((prevImages) => {
       const newImages = [...prevImages];
       const [removedImage] = newImages.splice(index, 1);
       newImages.splice(index - 1, 0, removedImage);
@@ -81,7 +81,7 @@ const NewEntryImageScreen = () => {
   };
 
   const handleMoveRightPress = (index: number) => {
-    setImagesURI((prevImages) => {
+    setImagesUri((prevImages) => {
       const newImages = [...prevImages];
       const [removedImage] = newImages.splice(index, 1);
       newImages.splice(index + 1, 0, removedImage);
@@ -135,7 +135,7 @@ const NewEntryImageScreen = () => {
 
     const newImages = [];
 
-    for (const uri of imagesURI) {
+    for (const uri of imagesUri) {
       const filename = uri.split("/").pop();
       const dest = `${IMAGES_DIR}${filename}`;
 
@@ -150,14 +150,14 @@ const NewEntryImageScreen = () => {
     createEntryWithImages(newImages);
   };
 
-  const createEntryWithImages = (imagesURI: string[]) => {
+  const createEntryWithImages = (imagesUri: string[]) => {
     if (dayObject === null) {
       return;
     }
 
     realm.write(() => {
       const entry = realm.create(Entry, {
-        imagesURI,
+        imagesURI: imagesUri,
         day: dayObject,
       });
 
@@ -215,17 +215,25 @@ const NewEntryImageScreen = () => {
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-              <ImageGallery
-                imagesURI={imagesURI}
+              <EditableImageGrid
+                imagesUri={imagesUri}
                 optionsCallbacks={{
                   onDeletePress: handleOnDeletePress,
                   onMoveLeftPress: handleMoveLeftPress,
                   onMoveRightPress: handleMoveRightPress,
                 }}
-                addButtons={{
-                  onCameraPress: openCamera,
-                  onImageLibraryPress: openImageLibrary,
-                }}
+                addButtons={[
+                  {
+                    leadingIcon: "camera",
+                    title: "Take a photo",
+                    onPress: openCamera,
+                  },
+                  {
+                    leadingIcon: "folder-multiple-image",
+                    title: "From gallery",
+                    onPress: openImageLibrary,
+                  },
+                ]}
               />
             </ScrollView>
             <CloseSaveButtons

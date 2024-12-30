@@ -30,7 +30,7 @@ export const borderTopRightRadius = {
   borderTopRightRadius: roundness,
 };
 
-const getBorderRadius = (
+export const getBorderRadius = (
   index: number,
   totalCount: number,
   columns: number = 4,
@@ -105,5 +105,3 @@ const getBorderRadius = (
   // Middle rows
   return borders;
 };
-
-export default getBorderRadius;

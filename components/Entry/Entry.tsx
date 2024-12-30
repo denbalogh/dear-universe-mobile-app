@@ -5,8 +5,8 @@ import { Card, MenuItemProps, Text, TouchableRipple } from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
 import { Feelings } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
-import ImageGallery from "../ImageGallery/ImageGallery";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
+import ImageGallery from "../MediaGallery/ImageGallery";
 
 type Props = {
   title?: {
@@ -35,7 +35,6 @@ const Entry = ({
   onFeelingsPress,
   recordingURI,
   imagesURI,
-  onImageLongPress,
   moveMenuItems,
   optionsMenuItems,
   addRemoveMenuItems,
@@ -65,12 +64,7 @@ const Entry = ({
           </TouchableRipple>
         )}
         {hasImages && (
-          <ImageGallery
-            imagesURI={imagesURI}
-            cols={5}
-            onImageLongPress={onImageLongPress}
-            style={styles.imageGallery}
-          />
+          <ImageGallery imagesUri={imagesURI} style={styles.imageGallery} />
         )}
         {recordingURI && (
           <AudioPlayer sourceURI={recordingURI} style={styles.recording} />

@@ -1,30 +1,28 @@
 import React, { useMemo } from "react";
-import getBorderRadius from "./getBorderRadius";
-import { useTheme } from "react-native-paper";
+import { MenuItemProps, useTheme } from "react-native-paper";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { sizing } from "@/constants/theme";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
+import { getBorderRadius } from "./utils";
 
 type Props = {
   imagesCount: number;
-  cols: number;
-  onCameraPress: () => void;
-  onImageLibraryPress: () => void;
+  gridSize: number;
+  addButtons: MenuItemProps[];
 } & ViewProps;
 
-const AddGalleryItem = ({
+const AddImageGridItem = ({
   imagesCount,
-  cols,
+  gridSize,
   style,
-  onCameraPress,
-  onImageLibraryPress,
+  addButtons,
   ...props
 }: Props) => {
   const theme = useTheme();
 
   const borderRadii = useMemo(
-    () => getBorderRadius(imagesCount - 1, imagesCount, cols),
-    [imagesCount, cols],
+    () => getBorderRadius(imagesCount - 1, imagesCount, gridSize),
+    [imagesCount, gridSize],
   );
 
   return (
@@ -38,24 +36,13 @@ const AddGalleryItem = ({
     >
       <IconButtonMenu
         iconButtonProps={{ icon: "plus", size: sizing.sizeLarge }}
-        menuItems={[
-          {
-            title: "Take a photo",
-            onPress: onCameraPress,
-            leadingIcon: "camera",
-          },
-          {
-            title: "From gallery",
-            onPress: onImageLibraryPress,
-            leadingIcon: "folder-multiple-image",
-          },
-        ]}
+        menuItems={addButtons}
       />
     </View>
   );
 };
 
-export default AddGalleryItem;
+export default AddImageGridItem;
 
 const styles = StyleSheet.create({
   wrapper: {
