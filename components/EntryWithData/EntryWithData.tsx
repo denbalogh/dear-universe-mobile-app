@@ -47,10 +47,13 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     ? {
         text: title || "",
         onPress: () =>
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/text`,
-            params: FOCUS_TITLE,
-          }),
+          router.navigate(
+            {
+              pathname: `./entry/${_id.toString()}/text`,
+              params: FOCUS_TITLE,
+            },
+            { relativeToDirectory: true },
+          ),
       }
     : undefined;
 
@@ -58,17 +61,21 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     ? {
         text: description || "",
         onPress: () =>
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/text`,
-            params: FOCUS_DESCRIPTION,
-          }),
+          router.navigate(
+            {
+              pathname: `./entry/${_id.toString()}/text`,
+              params: FOCUS_DESCRIPTION,
+            },
+            { relativeToDirectory: true },
+          ),
       }
     : undefined;
 
   const handleFeelingsPress = () => {
-    router.navigate({
-      pathname: `./entry/${_id.toString()}/feelings`,
-    });
+    router.navigate(
+      { pathname: `./entry/${_id.toString()}/feelings` },
+      { relativeToDirectory: true },
+    );
   };
 
   const moveMenuItems: MenuItemProps[] = useMemo(() => {
@@ -167,10 +174,13 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "format-title",
         title: "Add title",
         onPress: () =>
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/text`,
-            params: FOCUS_TITLE,
-          }),
+          router.navigate(
+            {
+              pathname: `./entry/${_id.toString()}/text`,
+              params: FOCUS_TITLE,
+            },
+            { relativeToDirectory: true },
+          ),
       });
     }
 
@@ -179,18 +189,20 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "image-plus",
         title: "Add images",
         onPress: () =>
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/image`,
-          }),
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}/image` },
+            { relativeToDirectory: true },
+          ),
       });
     } else {
       menuItems.push({
         leadingIcon: "image-edit",
         title: "Edit images",
         onPress: () => {
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/image`,
-          });
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}/image` },
+            { relativeToDirectory: true },
+          );
         },
       });
       menuItems.push({
@@ -219,10 +231,13 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "pen-plus",
         title: "Add description",
         onPress: () =>
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/text`,
-            params: FOCUS_DESCRIPTION,
-          }),
+          router.navigate(
+            {
+              pathname: `./entry/${_id.toString()}/text`,
+              params: FOCUS_DESCRIPTION,
+            },
+            { relativeToDirectory: true },
+          ),
       });
     }
 
@@ -249,9 +264,10 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "microphone-plus",
         title: "Add recording",
         onPress: () => {
-          router.navigate({
-            pathname: `./entry/${_id.toString()}/recording`,
-          });
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}/recording` },
+            { relativeToDirectory: true },
+          );
         },
       });
     }

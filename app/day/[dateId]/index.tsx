@@ -13,7 +13,7 @@ import CTAButtons from "@/components/CTAButtons/CTAButtons";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { DaySearchTermParams } from "@/types/dayScreen";
-import { COMING_FROM_DAY_SCREEN, FOCUS_DESCRIPTION } from "@/constants/screens";
+import { FOCUS_DESCRIPTION } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import BeginningHints from "@/components/BeginningHints/BeginningHints";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
@@ -154,6 +154,7 @@ const DayScreen = () => {
               </Appbar.Header>
             ),
             animation: "fade",
+            navigationBarColor: theme.colors.surface,
           }}
         />
         <ScrollView
@@ -200,36 +201,34 @@ const DayScreen = () => {
           showText={!hasEntries}
           addImageEntryButton={{
             onPress: () =>
-              router.navigate({
-                pathname: "./entry/new/image",
-                params: COMING_FROM_DAY_SCREEN,
-              }),
+              router.navigate(
+                { pathname: "./entry/new/image" },
+                { relativeToDirectory: true },
+              ),
           }}
           addRecordingEntryButton={{
             onPress: () =>
-              router.navigate({
-                pathname: "./entry/new/recording",
-                params: COMING_FROM_DAY_SCREEN,
-              }),
+              router.navigate(
+                { pathname: "./entry/new/recording" },
+                { relativeToDirectory: true },
+              ),
           }}
           addTextEntryButton={{
             onPress: () =>
-              router.navigate({
-                pathname: "./entry/new/text",
-                params: {
-                  ...FOCUS_DESCRIPTION,
-                  ...COMING_FROM_DAY_SCREEN,
+              router.navigate(
+                {
+                  pathname: "./entry/new/text",
+                  params: FOCUS_DESCRIPTION,
                 },
-              }),
+                { relativeToDirectory: true },
+              ),
           }}
           addVideoEntryButton={{
             onPress: () =>
-              router.navigate({
-                pathname: "./entry/new/video",
-                params: {
-                  ...COMING_FROM_DAY_SCREEN,
-                },
-              }),
+              router.navigate(
+                { pathname: "./entry/new/video" },
+                { relativeToDirectory: true },
+              ),
           }}
         />
       </View>

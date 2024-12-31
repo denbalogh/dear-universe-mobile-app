@@ -70,6 +70,13 @@ module.exports = {
           initialOrientation: "PORTRAIT",
         },
       ],
+      [
+        "expo-video",
+        {
+          supportsBackgroundPlayback: true,
+          supportsPictureInPicture: true,
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,

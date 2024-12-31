@@ -213,6 +213,7 @@ const EditEntryRecordingScreen = () => {
               <Appbar.BackAction onPress={() => handleBackPress(true)} />
             </Appbar.Header>
           ),
+          navigationBarColor: theme.colors.surface,
         }}
       />
       <View style={styles.contentWrapper}>

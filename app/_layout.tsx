@@ -16,6 +16,7 @@ import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import { DiscardDialogContextProvider } from "@/contexts/DiscardDialogContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
 
 registerTranslation("en", enGB);
 
@@ -46,6 +47,7 @@ const App = () => {
                 { backgroundColor: theme.colors.background },
               ]}
             />
+            <StatusBar translucent={true} />
             <GestureHandlerRootView>
               <Stack />
             </GestureHandlerRootView>

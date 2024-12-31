@@ -26,6 +26,7 @@ const App = () => {
               />
             </Appbar.Header>
           ),
+          navigationBarColor: theme.colors.background,
         }}
       />
       <InfiniteDaysList onMonthYearChange={setMonthYear} />
