@@ -7,7 +7,7 @@ import {
 } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { getBorderRadius } from "./utils";
-import { sizing } from "@/constants/theme";
+import { roundness, sizing, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 type Props = {
@@ -45,12 +45,19 @@ const ImageGridItem = ({
       <View>
         <Image style={[style, { ...borderRadii }]} {...props} />
         {showPlayIcon && (
-          <View style={[StyleSheet.absoluteFill, styles.playIcon]}>
-            <Icon
-              source="play"
-              size={sizing.sizeLarge}
-              color={theme.colors.surface}
-            />
+          <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
+            <View
+              style={[
+                styles.playIcon,
+                { backgroundColor: theme.colors.surface },
+              ]}
+            >
+              <Icon
+                source="play"
+                size={sizing.sizeMedium}
+                color={theme.colors.onSurface}
+              />
+            </View>
           </View>
         )}
       </View>
@@ -64,8 +71,12 @@ const styles = StyleSheet.create({
   touchable: {
     overflow: "hidden",
   },
+  playIconWrapper: {
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    padding: spacing.spaceSmall,
+  },
   playIcon: {
-    justifyContent: "center",
-    alignItems: "center",
+    borderRadius: roundness,
   },
 });

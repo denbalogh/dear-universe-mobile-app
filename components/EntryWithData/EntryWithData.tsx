@@ -32,16 +32,31 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     feelings,
     recordingURI,
     imagesURI = [],
+    videosWithThumbnail = [],
   } = entryObject;
 
   // Delete entry if it has no title, description, recording or images
   useEffect(() => {
-    if (!title && !description && !recordingURI && imagesURI.length === 0) {
+    if (
+      !title &&
+      !description &&
+      !recordingURI &&
+      imagesURI.length === 0 &&
+      videosWithThumbnail.length === 0
+    ) {
       realm.write(() => {
         realm.delete(entryObject);
       });
     }
-  }, [title, description, recordingURI, imagesURI, entryObject, realm]);
+  }, [
+    title,
+    description,
+    recordingURI,
+    imagesURI,
+    videosWithThumbnail,
+    entryObject,
+    realm,
+  ]);
 
   const titleProp = title
     ? {
@@ -184,6 +199,49 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
+    if (entryObject?.videosWithThumbnail?.length === 0) {
+      menuItems.push({
+        leadingIcon: "movie-open-plus",
+        title: "Add videos",
+        onPress: () =>
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}/video` },
+            { relativeToDirectory: true },
+          ),
+      });
+    } else {
+      menuItems.push({
+        leadingIcon: "movie-open-edit",
+        title: "Edit videos",
+        onPress: () => {
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}/video` },
+            { relativeToDirectory: true },
+          );
+        },
+      });
+      menuItems.push({
+        leadingIcon: "movie-open-minus",
+        title: "Remove videos",
+        onPress: () => {
+          showDiscardDialog({
+            message: "Do you wish to remove the videos?",
+            callback: async () => {
+              for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
+                await deleteAsync(videoUri);
+                await deleteAsync(thumbnailUri);
+              }
+
+              realm.write(() => {
+                entryObject.videosWithThumbnail = [];
+              });
+            },
+          });
+        },
+        titleStyle: { color: theme.colors.error },
+      });
+    }
+
     if (entryObject?.imagesURI?.length === 0) {
       menuItems.push({
         leadingIcon: "image-plus",
@@ -273,7 +331,16 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     }
 
     return menuItems;
-  }, [entryObject, _id, router, theme, realm, imagesURI, showDiscardDialog]);
+  }, [
+    entryObject,
+    _id,
+    router,
+    theme,
+    realm,
+    imagesURI,
+    showDiscardDialog,
+    videosWithThumbnail,
+  ]);
 
   return (
     <Entry
@@ -284,6 +351,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       onFeelingsPress={handleFeelingsPress}
       recordingURI={recordingURI}
       imagesURI={imagesURI}
+      videosWithThumbnail={videosWithThumbnail}
       optionsMenuItems={optionsMenuItem}
       moveMenuItems={moveMenuItems}
       addRemoveMenuItems={addRemoveMenuItems}
@@ -295,6 +363,6 @@ export default EntryWithData;
 
 const styles = StyleSheet.create({
   entry: {
-    marginBottom: spacing.spaceMedium,
+    marginBottom: spacing.spaceSmall,
   },
 });

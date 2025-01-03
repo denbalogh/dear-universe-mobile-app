@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleWrapper: {
-    marginBottom: spacing.spaceMedium,
+    marginBottom: spacing.spaceSmall,
   },
   scrollView: {
     flex: 1,

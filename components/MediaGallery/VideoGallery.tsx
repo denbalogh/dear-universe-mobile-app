@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ImageGrid from "./ImageGrid";
 import { ViewProps } from "react-native";
-import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import VideoPlayerModal from "./VideoPlayerModal";
 
 export type VideoWithThumbnail = {
@@ -22,14 +21,12 @@ const VideoGallery = ({
   const [isVideaPlayerVisible, setIsVideoPlayerVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
 
-  const onVideoPress = async (index: number) => {
-    await lockAsync(OrientationLock.ALL);
+  const onVideoPress = (index: number) => {
     setInitialIndex(index);
     setIsVideoPlayerVisible(true);
   };
 
-  const handleGalleryPreviewClose = async () => {
-    await lockAsync(OrientationLock.PORTRAIT);
+  const handleGalleryPreviewClose = () => {
     setIsVideoPlayerVisible(false);
   };
 

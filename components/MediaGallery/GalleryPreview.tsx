@@ -4,9 +4,9 @@ import {
   default as GalleryPreviewOriginal,
   GalleryOverlayProps,
 } from "react-native-gallery-preview";
-import { IconButton, Text } from "react-native-paper";
-import { roundness, spacing } from "@/constants/theme";
+import { Appbar } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { StatusBar } from "expo-status-bar";
 
 type Props = {
   imagesUri: string[];
@@ -32,34 +32,29 @@ const GalleryPreview = ({
       onRequestClose={onClose}
       images={imagesForGallery}
       initialIndex={initialIndex}
-      backgroundColor={theme.colors.surfaceVariant}
+      backgroundColor="black"
       OverlayComponent={({
         currentImageIndex,
         imagesLength,
         onClose,
-      }: GalleryOverlayProps) => (
-        <>
-          <IconButton
-            icon="close"
-            onPress={onClose}
-            style={styles.closeButton}
-            mode="contained-tonal"
-            accessibilityLabel="Close gallery"
-          />
-          <View style={styles.imagePositionWrapper}>
-            <Text
-              variant="bodyLarge"
-              style={[
-                styles.imagePosition,
-                {
-                  backgroundColor: theme.colors.surfaceVariant,
-                  color: theme.colors.onSurfaceVariant,
-                },
-              ]}
-            >{`${currentImageIndex + 1}/${imagesLength}`}</Text>
+        isFocused,
+      }: GalleryOverlayProps) =>
+        isFocused && (
+          <View style={styles.appBar}>
+            <StatusBar backgroundColor={theme.colors.surface} />
+            <Appbar.Header
+              style={{ backgroundColor: theme.colors.surface }}
+              statusBarHeight={0}
+              mode="center-aligned"
+            >
+              <Appbar.BackAction onPress={onClose} />
+              <Appbar.Content
+                title={`${currentImageIndex + 1} of ${imagesLength}`}
+              />
+            </Appbar.Header>
           </View>
-        </>
-      )}
+        )
+      }
     />
   );
 };
@@ -67,21 +62,10 @@ const GalleryPreview = ({
 export default GalleryPreview;
 
 const styles = StyleSheet.create({
-  closeButton: {
+  appBar: {
     position: "absolute",
-    top: spacing.spaceSmall,
-    left: spacing.spaceSmall,
-  },
-  imagePositionWrapper: {
-    position: "absolute",
-    bottom: spacing.spaceSmall,
-    right: 0,
     left: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imagePosition: {
-    padding: spacing.spaceSmall,
-    borderRadius: roundness,
+    right: 0,
+    top: 0,
   },
 });

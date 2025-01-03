@@ -38,7 +38,7 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} schemaVersion={6}>
+      <RealmProvider schema={schemas} schemaVersion={7}>
         <DiscardDialogContextProvider>
           <SnackbarContextProvider>
             <View

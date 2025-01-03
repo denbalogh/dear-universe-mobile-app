@@ -1,12 +1,19 @@
 import { roundness, spacing } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { Card, MenuItemProps, Text, TouchableRipple } from "react-native-paper";
+import {
+  Card,
+  Divider,
+  MenuItemProps,
+  Text,
+  TouchableRipple,
+} from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
 import { Feelings } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import ImageGallery from "../MediaGallery/ImageGallery";
+import VideoGallery, { VideoWithThumbnail } from "../MediaGallery/VideoGallery";
 
 type Props = {
   title?: {
@@ -21,7 +28,7 @@ type Props = {
   onFeelingsPress: () => void;
   recordingURI?: string;
   imagesURI: string[];
-  onImageLongPress?: (index: number) => void;
+  videosWithThumbnail: VideoWithThumbnail[];
   moveMenuItems: MenuItemProps[];
   optionsMenuItems: MenuItemProps[];
   addRemoveMenuItems: MenuItemProps[];
@@ -35,6 +42,7 @@ const Entry = ({
   onFeelingsPress,
   recordingURI,
   imagesURI,
+  videosWithThumbnail,
   moveMenuItems,
   optionsMenuItems,
   addRemoveMenuItems,
@@ -45,15 +53,11 @@ const Entry = ({
   const hasAddRemoveMenuItems = addRemoveMenuItems.length > 0;
 
   const hasImages = imagesURI.length > 0;
+  const hasVideos = videosWithThumbnail.length > 0;
 
   return (
     <Card style={[styles.wrapper, style]} mode="contained">
-      <Card.Content
-        style={{
-          paddingHorizontal: spacing.spaceSmall,
-          paddingVertical: spacing.spaceSmall,
-        }}
-      >
+      <Card.Content style={styles.cardContent}>
         {title && (
           <TouchableRipple
             onPress={title.onPress}
@@ -63,8 +67,14 @@ const Entry = ({
             <Text variant="titleLarge">{title.text}</Text>
           </TouchableRipple>
         )}
+        {hasVideos && (
+          <VideoGallery
+            videosWithThumbnail={videosWithThumbnail}
+            style={styles.mediaGallery}
+          />
+        )}
         {hasImages && (
-          <ImageGallery imagesUri={imagesURI} style={styles.imageGallery} />
+          <ImageGallery imagesUri={imagesURI} style={styles.mediaGallery} />
         )}
         {recordingURI && (
           <AudioPlayer sourceURI={recordingURI} style={styles.recording} />
@@ -78,6 +88,7 @@ const Entry = ({
             <Text variant="bodyMedium">{text.text}</Text>
           </TouchableRipple>
         )}
+        <Divider style={styles.bottomDivider} />
         <View style={styles.actionBarWrapper}>
           <FeelingsButton feelings={feelings} onPress={onFeelingsPress} />
           <View style={styles.actionBarMenusWrapper}>
@@ -112,17 +123,27 @@ const styles = StyleSheet.create({
   wrapper: {
     borderRadius: roundness,
   },
+  cardContent: {
+    paddingHorizontal: spacing.spaceSmall,
+    paddingBottom: spacing.spaceSmall,
+    paddingTop: spacing.spaceExtraSmall,
+  },
   titleWrapper: {
     paddingVertical: spacing.spaceExtraSmall,
+    marginVertical: spacing.spaceExtraSmall,
+  },
+  mediaGallery: {
+    marginVertical: spacing.spaceExtraSmall,
   },
   recording: {
-    marginVertical: spacing.spaceSmall,
-  },
-  imageGallery: {
-    marginVertical: spacing.spaceSmall,
+    marginTop: spacing.spaceSmall,
   },
   textWrapper: {
     paddingVertical: spacing.spaceExtraSmall,
+    marginVertical: spacing.spaceExtraSmall,
+  },
+  bottomDivider: {
+    marginTop: spacing.spaceExtraSmall,
   },
   actionBarWrapper: {
     flexDirection: "row",

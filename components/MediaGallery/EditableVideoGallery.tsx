@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View, ViewProps } from "react-native";
 import ImageGridItem from "./ImageGridItem";
 import { MenuItemProps } from "react-native-paper";
-import AddImageGridItem from "./AddImageGridItem";
-import { lockAsync, OrientationLock } from "expo-screen-orientation";
-import GalleryPreview from "./GalleryPreview";
+import AddImageGridItem from "./ImageGridAddItem";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { sizing } from "@/constants/theme";
+import { VideoWithThumbnail } from "./VideoGallery";
+import VideoPlayerModal from "./VideoPlayerModal";
 
 type Props = {
-  imagesUri: string[];
+  videosWithThumbnail: VideoWithThumbnail[];
   gridSize?: number;
   addButtons: MenuItemProps[];
   optionsCallbacks?: {
@@ -20,8 +20,8 @@ type Props = {
   };
 } & ViewProps;
 
-const EditableImageGrid = ({
-  imagesUri,
+const EditableVideoGallery = ({
+  videosWithThumbnail,
   gridSize = 3,
   style,
   addButtons,
@@ -31,18 +31,16 @@ const EditableImageGrid = ({
   const theme = useCustomTheme();
 
   const [gridWidth, setGridWidth] = useState(0);
-  const [isGalleryVisible, setIsGalleryVisible] = useState(false);
+  const [isVideaPlayerVisible, setIsVideoPlayerVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
 
-  const onImagePress = async (index: number) => {
-    await lockAsync(OrientationLock.ALL);
+  const onVideoPress = (index: number) => {
     setInitialIndex(index);
-    setIsGalleryVisible(true);
+    setIsVideoPlayerVisible(true);
   };
 
-  const handleGalleryPreviewClose = async () => {
-    await lockAsync(OrientationLock.PORTRAIT);
-    setIsGalleryVisible(false);
+  const handleGalleryPreviewClose = () => {
+    setIsVideoPlayerVisible(false);
   };
 
   const handleOnLayout = ({
@@ -54,7 +52,9 @@ const EditableImageGrid = ({
   };
 
   const imageSize = gridWidth / gridSize;
-  const imagesCount = addButtons ? imagesUri.length + 1 : imagesUri.length;
+  const imagesCount = videosWithThumbnail.length + 1; // Add button
+
+  const videosUri = videosWithThumbnail.map(({ videoUri }) => videoUri);
 
   return (
     <>
@@ -63,7 +63,7 @@ const EditableImageGrid = ({
         style={[style, styles.wrapper]}
         onLayout={handleOnLayout}
       >
-        {imagesUri.map((item, index) => {
+        {videosWithThumbnail.map((item, index) => {
           const menuItems = [];
 
           if (optionsCallbacks && index > 0) {
@@ -74,7 +74,7 @@ const EditableImageGrid = ({
             });
           }
 
-          if (optionsCallbacks && index < imagesUri.length - 1) {
+          if (optionsCallbacks && index < videosWithThumbnail.length - 1) {
             menuItems.push({
               leadingIcon: "arrow-right",
               onPress: () => optionsCallbacks.onMoveRightPress(index),
@@ -94,14 +94,15 @@ const EditableImageGrid = ({
           return (
             <View key={`${item}-${index}`}>
               <ImageGridItem
-                source={{ uri: item }}
+                source={{ uri: item.thumbnailUri }}
                 index={index}
                 imagesCount={imagesCount}
                 gridSize={gridSize}
                 style={{ width: imageSize, height: imageSize }}
                 touchableProps={{
-                  onPress: () => onImagePress(index),
+                  onPress: () => onVideoPress(index),
                 }}
+                showPlayIcon={true}
               />
               {optionsCallbacks && (
                 <View style={styles.buttons}>
@@ -125,17 +126,17 @@ const EditableImageGrid = ({
           style={{ width: imageSize, height: imageSize }}
         />
       </View>
-      <GalleryPreview
-        imagesUri={imagesUri}
+      <VideoPlayerModal
+        videosUri={videosUri}
         initialIndex={initialIndex}
-        isVisible={isGalleryVisible}
+        isVisible={isVideaPlayerVisible}
         onClose={handleGalleryPreviewClose}
       />
     </>
   );
 };
 
-export default EditableImageGrid;
+export default EditableVideoGallery;
 
 const styles = StyleSheet.create({
   wrapper: {

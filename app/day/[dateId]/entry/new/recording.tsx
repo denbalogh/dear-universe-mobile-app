@@ -21,14 +21,8 @@ import { normalizeMeteringForScale } from "@/components/RecordingControls/utils"
 import { format } from "date-fns";
 import { Entry } from "@/models/Entry";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import {
-  documentDirectory,
-  getInfoAsync,
-  makeDirectoryAsync,
-  moveAsync,
-} from "expo-file-system";
-
-export const RECORDINGS_DIR = `${documentDirectory}recordings/`;
+import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
+import { RECORDINGS_DIR } from "@/constants/files";
 
 const NewEntryRecordingScreen = () => {
   const theme = useTheme();

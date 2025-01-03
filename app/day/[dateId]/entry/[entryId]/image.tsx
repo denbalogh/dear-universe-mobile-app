@@ -14,7 +14,6 @@ import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
-import { IMAGES_DIR } from "../new/image";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { BSON } from "realm";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
@@ -26,7 +25,8 @@ import {
 } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
 import { isEqual } from "lodash";
-import EditableImageGrid from "@/components/MediaGallery/EditableImageGrid";
+import EditableImageGallery from "@/components/MediaGallery/EditableImageGallery";
+import { IMAGES_DIR } from "@/constants/files";
 
 const EditEntryImagesScreen = () => {
   const theme = useTheme();
@@ -223,7 +223,7 @@ const EditEntryImagesScreen = () => {
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-              <EditableImageGrid
+              <EditableImageGallery
                 imagesUri={imagesUri}
                 optionsCallbacks={{
                   onDeletePress: handleOnDeletePress,

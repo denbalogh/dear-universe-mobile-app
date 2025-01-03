@@ -4,47 +4,50 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, FAB, Text, useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
-import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
-import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
-import { ImagePickerAsset } from "expo-image-picker";
-import { getThumbnailAsync } from "expo-video-thumbnails";
-import { VideoWithThumbnail as VideoWithThumbnailType } from "@/components/MediaGallery/VideoGallery";
-import EditableVideoGallery from "@/components/MediaGallery/EditableVideoGallery";
-import { THUMBNAILS_DIR, VIDEOS_DIR } from "@/constants/files";
 import { Entry, VideoWithThumbnail } from "@/models/Entry";
+import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { BSON } from "realm";
+import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import {
+  deleteAsync,
+  getInfoAsync,
+  makeDirectoryAsync,
+  moveAsync,
+} from "expo-file-system";
+import { ImagePickerAsset } from "expo-image-picker";
+import { isEqual } from "lodash";
+import { THUMBNAILS_DIR, VIDEOS_DIR } from "@/constants/files";
+import { VideoWithThumbnail as VideoWithThumbnailType } from "@/components/MediaGallery/VideoGallery";
+import { getThumbnailAsync } from "expo-video-thumbnails";
+import EditableVideoGallery from "@/components/MediaGallery/EditableVideoGallery";
 
-const NewEntryVideoScreen = () => {
+const EditEntryVideosScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId } = useLocalSearchParams<NewEntrySearchTermParams>();
-  const dayObject = useObject(Day, dateId);
+  const { dateId, entryId } = useLocalSearchParams<EntrySearchTermParams>();
 
-  useEffect(() => {
-    if (dayObject === null) {
-      realm.write(() => {
-        realm.create(Day, {
-          _id: dateId,
-        });
-      });
-    }
-  }, [dateId, dayObject, realm]);
+  const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
+
+  const { videosWithThumbnail: initialVideosWithThumbnail = [] } =
+    entryObject || {};
+
+  const hasInitialImages = initialVideosWithThumbnail.length > 0;
 
   const [videosWithThumbnail, setVideosWithThumbnail] = useState<
     VideoWithThumbnailType[]
-  >([]);
+  >(initialVideosWithThumbnail);
+  const videosToDelete = useRef<VideoWithThumbnailType[]>([]);
 
   const handleAddVideos = async (newVideos: ImagePickerAsset[]) => {
     const videosWithThumbnails: VideoWithThumbnailType[] = [];
@@ -76,6 +79,8 @@ const NewEntryVideoScreen = () => {
   const hasVideos = videosWithThumbnail.length > 0;
 
   const handleOnDeletePress = (index: number) => {
+    videosToDelete.current.push(videosWithThumbnail[index]);
+
     setVideosWithThumbnail((prevVideosWithThumbnail) =>
       prevVideosWithThumbnail.filter((_, i) => i !== index),
     );
@@ -99,17 +104,19 @@ const NewEntryVideoScreen = () => {
     });
   };
 
+  const isEdited = !isEqual(videosWithThumbnail, initialVideosWithThumbnail);
+
   const { showDiscardDialog } = useDiscardDialog();
 
   const handleShowDiscardDialog = useCallback(() => {
     showDiscardDialog({
-      message: "Do you wish to discard the videos?",
+      message: "Do you wish to discard the changes?",
       callback: router.back,
     });
   }, [showDiscardDialog, router.back]);
 
   const handleBackPress = () => {
-    if (hasVideos) {
+    if (isEdited) {
       handleShowDiscardDialog();
     } else {
       router.back();
@@ -119,7 +126,7 @@ const NewEntryVideoScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (hasVideos) {
+        if (isEdited) {
           handleShowDiscardDialog();
           return true;
         } else {
@@ -133,7 +140,7 @@ const NewEntryVideoScreen = () => {
       );
 
       return () => subscription.remove();
-    }, [hasVideos, handleShowDiscardDialog]),
+    }, [isEdited, handleShowDiscardDialog]),
   );
 
   const handleSavePress = async () => {
@@ -147,51 +154,58 @@ const NewEntryVideoScreen = () => {
       await makeDirectoryAsync(THUMBNAILS_DIR);
     }
 
+    // Delete videos and thumbnails that were removed
+    for (const { videoUri, thumbnailUri } of videosToDelete.current) {
+      await deleteAsync(videoUri);
+      await deleteAsync(thumbnailUri);
+    }
+
     const newVideos = [];
 
     for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
-      const videoFilename = videoUri.split("/").pop();
-      const thumbnailFilename = thumbnailUri.split("/").pop();
-
-      const videoDest = `${VIDEOS_DIR}${videoFilename}`;
-      const thumbnailDest = `${THUMBNAILS_DIR}${thumbnailFilename}`;
-
-      await moveAsync({
-        from: videoUri,
-        to: videoDest,
+      const isVideoNew = !initialVideosWithThumbnail.some((item) => {
+        return item.videoUri === videoUri && item.thumbnailUri === thumbnailUri;
       });
 
-      await moveAsync({
-        from: thumbnailUri,
-        to: thumbnailDest,
-      });
+      if (isVideoNew) {
+        const videoFilename = videoUri.split("/").pop();
+        const thumbnailFilename = thumbnailUri.split("/").pop();
 
-      newVideos.push({ videoUri: videoDest, thumbnailUri: thumbnailDest });
+        const videoDest = `${VIDEOS_DIR}${videoFilename}`;
+        const thumbnailDest = `${THUMBNAILS_DIR}${thumbnailFilename}`;
+
+        await moveAsync({
+          from: videoUri,
+          to: videoDest,
+        });
+
+        await moveAsync({
+          from: thumbnailUri,
+          to: thumbnailDest,
+        });
+
+        newVideos.push({ videoUri: videoDest, thumbnailUri: thumbnailDest });
+      } else {
+        newVideos.push({ videoUri, thumbnailUri });
+      }
     }
 
-    createEntryWithVideos(newVideos);
+    updateEntryWithVideos(newVideos);
   };
 
-  const createEntryWithVideos = (
+  const updateEntryWithVideos = (
     videosWithThumbnail: VideoWithThumbnailType[],
   ) => {
-    if (dayObject === null) {
+    if (entryObject === null) {
       return;
     }
 
     realm.write(() => {
-      const entry = realm.create(Entry, {
-        videosWithThumbnail: videosWithThumbnail as VideoWithThumbnail[],
-        day: dayObject,
-      });
-
-      dayObject.entryObjects.push(entry);
+      entryObject.videosWithThumbnail =
+        videosWithThumbnail as VideoWithThumbnail[];
     });
 
-    router.dismissTo({
-      pathname: "/day/[dateId]",
-      params: { dateId },
-    });
+    router.back();
   };
 
   return (
@@ -211,7 +225,7 @@ const NewEntryVideoScreen = () => {
           {formatFullDate(parseDateId(dateId))}
         </Text>
         <Text variant="headlineLarge" style={styles.headline}>
-          Creating new entry with videos
+          {hasInitialImages ? "Editing videos" : "Adding videos"}
         </Text>
         {!hasVideos ? (
           <View style={styles.videoSourceWrapper}>
@@ -232,6 +246,13 @@ const NewEntryVideoScreen = () => {
                 onPress={openImageLibrary}
               />
             </View>
+            {hasInitialImages && (
+              <CloseSaveButtons
+                style={styles.bottomButtons}
+                closeButton={{ onPress: handleBackPress }}
+                saveButton={{ onPress: handleSavePress, disabled: !isEdited }}
+              />
+            )}
           </View>
         ) : (
           <>
@@ -260,7 +281,7 @@ const NewEntryVideoScreen = () => {
             <CloseSaveButtons
               style={styles.bottomButtons}
               closeButton={{ onPress: handleBackPress }}
-              saveButton={{ onPress: handleSavePress }}
+              saveButton={{ onPress: handleSavePress, disabled: !isEdited }}
             />
           </>
         )}
@@ -269,7 +290,7 @@ const NewEntryVideoScreen = () => {
   );
 };
 
-export default NewEntryVideoScreen;
+export default EditEntryVideosScreen;
 
 const styles = StyleSheet.create({
   flex: {
@@ -284,7 +305,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     margin: spacing.spaceMedium,
-    marginTop: spacing.spaceExtraSmall,
+    marginTop: 0,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,
@@ -299,13 +320,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-end",
     alignItems: "stretch",
-    paddingBottom: spacing.spaceLarge,
     marginTop: spacing.spaceMedium,
   },
   videoSourceButtonsWrapper: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+    marginBottom: spacing.spaceLarge,
   },
   videoSourceTitle: {
     marginBottom: spacing.spaceMedium,
@@ -313,12 +334,5 @@ const styles = StyleSheet.create({
   },
   bottomButtons: {
     padding: spacing.spaceMedium,
-  },
-  backgroundVideo: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
   },
 });

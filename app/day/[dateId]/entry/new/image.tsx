@@ -17,16 +17,10 @@ import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import {
-  documentDirectory,
-  getInfoAsync,
-  makeDirectoryAsync,
-  moveAsync,
-} from "expo-file-system";
+import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
-import EditableImageGrid from "@/components/MediaGallery/EditableImageGrid";
-
-export const IMAGES_DIR = `${documentDirectory}images/`;
+import EditableImageGallery from "@/components/MediaGallery/EditableImageGallery";
+import { IMAGES_DIR } from "@/constants/files";
 
 const NewEntryImageScreen = () => {
   const theme = useTheme();
@@ -211,7 +205,7 @@ const NewEntryImageScreen = () => {
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-              <EditableImageGrid
+              <EditableImageGallery
                 imagesUri={imagesUri}
                 optionsCallbacks={{
                   onDeletePress: handleOnDeletePress,

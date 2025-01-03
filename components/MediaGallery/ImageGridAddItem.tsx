@@ -11,7 +11,7 @@ type Props = {
   addButtons: MenuItemProps[];
 } & ViewProps;
 
-const AddImageGridItem = ({
+const ImageGridAddItem = ({
   imagesCount,
   gridSize,
   style,
@@ -20,10 +20,10 @@ const AddImageGridItem = ({
 }: Props) => {
   const theme = useTheme();
 
-  const borderRadii = useMemo(
-    () => getBorderRadius(imagesCount - 1, imagesCount, gridSize),
-    [imagesCount, gridSize],
-  );
+  const borderRadii = useMemo(() => {
+    const lastItemIndex = imagesCount - 1;
+    return getBorderRadius(lastItemIndex, imagesCount, gridSize);
+  }, [imagesCount, gridSize]);
 
   return (
     <View
@@ -42,7 +42,7 @@ const AddImageGridItem = ({
   );
 };
 
-export default AddImageGridItem;
+export default ImageGridAddItem;
 
 const styles = StyleSheet.create({
   wrapper: {
