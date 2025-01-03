@@ -51,7 +51,7 @@ const EditableVideoGallery = ({
     setGridWidth(width);
   };
 
-  const imageSize = gridWidth / gridSize;
+  const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
   const imagesCount = videosWithThumbnail.length + 1; // Add button
 
   const videosUri = videosWithThumbnail.map(({ videoUri }) => videoUri);

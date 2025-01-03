@@ -13,21 +13,21 @@ module.exports = {
       backgroundColor: "#ffffff",
     },
     ios: {
-      supportsTablet: false,
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
+      requireFullScreen: true,
+      supportsTablet: false,
       googleServicesFile: "./GoogleService-Info.plist",
       infoPlist: {
         NSMicrophoneUsageDescription:
           "The app needs access to your microphone in order to record audio for your entry.",
       },
-      requireFullScreen: true,
     },
     android: {
+      package: "com.denbalogh.dearuniverseapp",
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
-      package: "com.denbalogh.dearuniverseapp",
       googleServicesFile: "./google-services.json",
     },
     web: {
@@ -88,5 +88,6 @@ module.exports = {
       storybookEnabled: process.env.STORYBOOK_ENABLED,
     },
     owner: "denbalogh",
+    newArchEnabled: true,
   },
 };

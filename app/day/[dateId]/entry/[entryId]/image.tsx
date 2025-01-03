@@ -72,19 +72,19 @@ const EditEntryImagesScreen = () => {
 
   const handleMoveLeftPress = (index: number) => {
     setImagesUri((prevImagesUri) => {
-      const newImages = [...prevImagesUri];
-      const [removedImage] = newImages.splice(index, 1);
-      newImages.splice(index - 1, 0, removedImage);
-      return newImages;
+      const newImagesUri = [...prevImagesUri];
+      const [removedImageUri] = newImagesUri.splice(index, 1);
+      newImagesUri.splice(index - 1, 0, removedImageUri);
+      return newImagesUri;
     });
   };
 
   const handleMoveRightPress = (index: number) => {
     setImagesUri((prevImagesUri) => {
-      const newImages = [...prevImagesUri];
-      const [removedImage] = newImages.splice(index, 1);
-      newImages.splice(index + 1, 0, removedImage);
-      return newImages;
+      const newImagesUri = [...prevImagesUri];
+      const [removedImageUri] = newImagesUri.splice(index, 1);
+      newImagesUri.splice(index + 1, 0, removedImageUri);
+      return newImagesUri;
     });
   };
 

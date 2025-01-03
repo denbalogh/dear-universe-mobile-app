@@ -83,19 +83,19 @@ const NewEntryVideoScreen = () => {
 
   const handleMoveLeftPress = (index: number) => {
     setVideosWithThumbnail((prevVideosWithThumbnail) => {
-      const newVideosU = [...prevVideosWithThumbnail];
-      const [removedImage] = newVideosU.splice(index, 1);
-      newVideosU.splice(index - 1, 0, removedImage);
-      return newVideosU;
+      const newVideos = [...prevVideosWithThumbnail];
+      const [removedVideo] = newVideos.splice(index, 1);
+      newVideos.splice(index - 1, 0, removedVideo);
+      return newVideos;
     });
   };
 
   const handleMoveRightPress = (index: number) => {
     setVideosWithThumbnail((prevVideosWithThumbnail) => {
-      const newVideosURI = [...prevVideosWithThumbnail];
-      const [removedVideoURI] = newVideosURI.splice(index, 1);
-      newVideosURI.splice(index + 1, 0, removedVideoURI);
-      return newVideosURI;
+      const newVideos = [...prevVideosWithThumbnail];
+      const [removedVideo] = newVideos.splice(index, 1);
+      newVideos.splice(index + 1, 0, removedVideo);
+      return newVideos;
     });
   };
 

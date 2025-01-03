@@ -66,19 +66,19 @@ const NewEntryImageScreen = () => {
 
   const handleMoveLeftPress = (index: number) => {
     setImagesUri((prevImages) => {
-      const newImages = [...prevImages];
-      const [removedImage] = newImages.splice(index, 1);
-      newImages.splice(index - 1, 0, removedImage);
-      return newImages;
+      const newImagesUri = [...prevImages];
+      const [removedImageUri] = newImagesUri.splice(index, 1);
+      newImagesUri.splice(index - 1, 0, removedImageUri);
+      return newImagesUri;
     });
   };
 
   const handleMoveRightPress = (index: number) => {
     setImagesUri((prevImages) => {
-      const newImages = [...prevImages];
-      const [removedImage] = newImages.splice(index, 1);
-      newImages.splice(index + 1, 0, removedImage);
-      return newImages;
+      const newImagesUri = [...prevImages];
+      const [removedImageUri] = newImagesUri.splice(index, 1);
+      newImagesUri.splice(index + 1, 0, removedImageUri);
+      return newImagesUri;
     });
   };
 

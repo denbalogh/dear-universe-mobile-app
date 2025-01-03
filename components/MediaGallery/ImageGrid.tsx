@@ -27,7 +27,7 @@ const ImageGrid = ({
     setGridWidth(width);
   };
 
-  const imageSize = gridWidth / gridSize;
+  const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
 
   return (
     <View onLayout={handleOnLayout} style={[styles.wrapper, style]} {...props}>
