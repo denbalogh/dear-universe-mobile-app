@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import {
   default as GalleryPreviewOriginal,
   GalleryOverlayProps,
@@ -44,7 +44,7 @@ const GalleryPreview = ({
             <StatusBar backgroundColor={theme.colors.surface} />
             <Appbar.Header
               style={{ backgroundColor: theme.colors.surface }}
-              statusBarHeight={0}
+              statusBarHeight={Platform.OS === "android" ? 0 : undefined}
               mode="center-aligned"
             >
               <Appbar.BackAction onPress={onClose} />
