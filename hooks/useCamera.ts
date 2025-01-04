@@ -7,7 +7,20 @@ import {
 } from "expo-image-picker";
 import { useMemo } from "react";
 
-const useCamera = (onSuccess: (images: ImagePickerAsset[]) => void) => {
+export type MediaType = "IMAGES" | "VIDEOS";
+
+export const defaultOptions = {
+  allowsMultipleSelection: true,
+  orderedSelection: true,
+};
+
+const useCamera = ({
+  onSuccess,
+  type,
+}: {
+  onSuccess: (images: ImagePickerAsset[]) => void;
+  type: MediaType;
+}) => {
   const { showSnackbar } = useSnackbar();
 
   const [cameraPermissions, requestCameraPermission] = useCameraPermissions();
@@ -17,11 +30,16 @@ const useCamera = (onSuccess: (images: ImagePickerAsset[]) => void) => {
     [cameraPermissions],
   );
 
+  const mediaType = useMemo(() => {
+    return type === "IMAGES"
+      ? MediaTypeOptions.Images
+      : MediaTypeOptions.Videos;
+  }, [type]);
+
   const handleOpenCamera = async () => {
     const selectedImages = await launchCameraAsync({
-      allowsMultipleSelection: true,
-      mediaTypes: MediaTypeOptions.Images,
-      quality: 0.5,
+      ...defaultOptions,
+      mediaTypes: mediaType,
     });
 
     if (!selectedImages.canceled) {

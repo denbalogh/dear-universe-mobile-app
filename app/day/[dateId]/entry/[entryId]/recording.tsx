@@ -19,10 +19,10 @@ import { normalizeMeteringForScale } from "@/components/RecordingControls/utils"
 import { format } from "date-fns";
 import { Entry } from "@/models/Entry";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import { RECORDINGS_DIR } from "../new/recording";
 import { BSON } from "realm";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
+import { RECORDINGS_DIR } from "@/constants/files";
 
 const EditEntryRecordingScreen = () => {
   const theme = useTheme();
@@ -213,6 +213,7 @@ const EditEntryRecordingScreen = () => {
               <Appbar.BackAction onPress={() => handleBackPress(true)} />
             </Appbar.Header>
           ),
+          navigationBarColor: theme.colors.surface,
         }}
       />
       <View style={styles.contentWrapper}>

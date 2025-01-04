@@ -23,8 +23,7 @@ const NewEntryTextScreen = () => {
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId, focus, comingFromScreen } =
-    useLocalSearchParams<NewEntrySearchTermParams>();
+  const { dateId, focus } = useLocalSearchParams<NewEntrySearchTermParams>();
   const dayObject = useObject(Day, dateId);
 
   useEffect(() => {
@@ -98,14 +97,10 @@ const NewEntryTextScreen = () => {
       dayObject.entryObjects.push(entry);
     });
 
-    if (comingFromScreen === "index") {
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: { dateId },
-      });
-    } else {
-      router.back();
-    }
+    router.dismissTo({
+      pathname: "/day/[dateId]",
+      params: { dateId },
+    });
   };
 
   return (
@@ -117,6 +112,7 @@ const NewEntryTextScreen = () => {
               <Appbar.BackAction onPress={handleBackPress} />
             </Appbar.Header>
           ),
+          navigationBarColor: theme.colors.surface,
         }}
       />
       <View style={styles.contentWrapper}>

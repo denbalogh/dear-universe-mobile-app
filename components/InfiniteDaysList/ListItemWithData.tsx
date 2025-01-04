@@ -3,10 +3,7 @@ import { useObject } from "@realm/react";
 import React from "react";
 import ListItem from "../ListItem/ListItem";
 import { useRouter } from "expo-router";
-import {
-  COMING_FROM_INDEX_SCREEN,
-  FOCUS_DESCRIPTION,
-} from "@/constants/screens";
+import { FOCUS_DESCRIPTION } from "@/constants/screens";
 
 const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const dayObject = useObject(Day, dateId);
@@ -19,15 +16,20 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   };
 
   const addEntryHandlers = {
+    onAddVideoEntryPress: () =>
+      router.navigate({
+        pathname: "/day/[dateId]/entry/new/video",
+        params: { dateId },
+      }),
     onAddImageEntryPress: () =>
       router.navigate({
         pathname: "/day/[dateId]/entry/new/image",
-        params: { dateId, ...COMING_FROM_INDEX_SCREEN },
+        params: { dateId },
       }),
     onAddRecordingEntryPress: () =>
       router.navigate({
         pathname: "/day/[dateId]/entry/new/recording",
-        params: { dateId, ...COMING_FROM_INDEX_SCREEN },
+        params: { dateId },
       }),
     onAddTextEntryPress: () =>
       router.navigate({
@@ -35,7 +37,6 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
         params: {
           dateId,
           ...FOCUS_DESCRIPTION,
-          ...COMING_FROM_INDEX_SCREEN,
         },
       }),
   };

@@ -1,6 +1,34 @@
 import Realm, { BSON } from "realm";
 import { Day } from "./Day";
-import { Feelings } from "./Feelings";
+import { FEELING_GROUP_NAMES } from "@/constants/feelings";
+
+export class Feelings extends Realm.Object {
+  name!: FEELING_GROUP_NAMES;
+  emotions!: string[];
+
+  static schema: Realm.ObjectSchema = {
+    name: "Feelings",
+    embedded: true,
+    properties: {
+      name: "string",
+      emotions: "string[]",
+    },
+  };
+}
+
+export class VideoWithThumbnail extends Realm.Object {
+  videoUri!: string;
+  thumbnailUri!: string;
+
+  static schema: Realm.ObjectSchema = {
+    name: "VideoWithThumbnail",
+    embedded: true,
+    properties: {
+      videoUri: "string",
+      thumbnailUri: "string",
+    },
+  };
+}
 
 export class Entry extends Realm.Object<Entry, "day"> {
   _id: BSON.ObjectId = new BSON.ObjectId();
@@ -10,6 +38,7 @@ export class Entry extends Realm.Object<Entry, "day"> {
   feelings?: Feelings;
   recordingURI?: string;
   imagesURI?: string[];
+  videosWithThumbnail?: VideoWithThumbnail[];
   day!: Day;
 
   static schema: Realm.ObjectSchema = {
@@ -31,6 +60,11 @@ export class Entry extends Realm.Object<Entry, "day"> {
       imagesURI: {
         type: "list",
         objectType: "string",
+        default: [],
+      },
+      videosWithThumbnail: {
+        type: "list",
+        objectType: "VideoWithThumbnail",
         default: [],
       },
       day: {

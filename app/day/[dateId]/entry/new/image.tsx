@@ -12,29 +12,22 @@ import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
-import ImageGallery from "@/components/ImageGallery/ImageGallery";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import {
-  documentDirectory,
-  getInfoAsync,
-  makeDirectoryAsync,
-  moveAsync,
-} from "expo-file-system";
+import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
-
-export const IMAGES_DIR = `${documentDirectory}images/`;
+import EditableImageGallery from "@/components/MediaGallery/EditableImageGallery";
+import { IMAGES_DIR } from "@/constants/files";
 
 const NewEntryImageScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId, comingFromScreen } =
-    useLocalSearchParams<NewEntrySearchTermParams>();
+  const { dateId } = useLocalSearchParams<NewEntrySearchTermParams>();
   const dayObject = useObject(Day, dateId);
 
   useEffect(() => {
@@ -47,38 +40,45 @@ const NewEntryImageScreen = () => {
     }
   }, [dateId, dayObject, realm]);
 
-  const [imagesURI, setImagesURI] = useState<string[]>([]);
+  const [imagesUri, setImagesUri] = useState<string[]>([]);
 
   const handleAddImages = (newImages: ImagePickerAsset[]) => {
-    const newImagesURI = newImages.map((image) => image.uri);
+    const newImagesUri = newImages.map((image) => image.uri);
 
-    setImagesURI((prevImagesURI) => [...prevImagesURI, ...newImagesURI]);
+    setImagesUri((prevImagesUri) => [...prevImagesUri, ...newImagesUri]);
   };
 
-  const openCamera = useCamera(handleAddImages);
-  const openImageLibrary = useImageLibrary(handleAddImages);
+  const openCamera = useCamera({
+    onSuccess: handleAddImages,
+    type: "IMAGES",
+  });
 
-  const hasImages = imagesURI.length > 0;
+  const openImageLibrary = useImageLibrary({
+    onSuccess: handleAddImages,
+    type: "IMAGES",
+  });
+
+  const hasImages = imagesUri.length > 0;
 
   const handleOnDeletePress = (index: number) => {
-    setImagesURI((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagesUri((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleMoveLeftPress = (index: number) => {
-    setImagesURI((prevImages) => {
-      const newImages = [...prevImages];
-      const [removedImage] = newImages.splice(index, 1);
-      newImages.splice(index - 1, 0, removedImage);
-      return newImages;
+    setImagesUri((prevImages) => {
+      const newImagesUri = [...prevImages];
+      const [removedImageUri] = newImagesUri.splice(index, 1);
+      newImagesUri.splice(index - 1, 0, removedImageUri);
+      return newImagesUri;
     });
   };
 
   const handleMoveRightPress = (index: number) => {
-    setImagesURI((prevImages) => {
-      const newImages = [...prevImages];
-      const [removedImage] = newImages.splice(index, 1);
-      newImages.splice(index + 1, 0, removedImage);
-      return newImages;
+    setImagesUri((prevImages) => {
+      const newImagesUri = [...prevImages];
+      const [removedImageUri] = newImagesUri.splice(index, 1);
+      newImagesUri.splice(index + 1, 0, removedImageUri);
+      return newImagesUri;
     });
   };
 
@@ -128,7 +128,7 @@ const NewEntryImageScreen = () => {
 
     const newImages = [];
 
-    for (const uri of imagesURI) {
+    for (const uri of imagesUri) {
       const filename = uri.split("/").pop();
       const dest = `${IMAGES_DIR}${filename}`;
 
@@ -143,28 +143,24 @@ const NewEntryImageScreen = () => {
     createEntryWithImages(newImages);
   };
 
-  const createEntryWithImages = (imagesURI: string[]) => {
+  const createEntryWithImages = (imagesUri: string[]) => {
     if (dayObject === null) {
       return;
     }
 
     realm.write(() => {
       const entry = realm.create(Entry, {
-        imagesURI,
+        imagesURI: imagesUri,
         day: dayObject,
       });
 
       dayObject.entryObjects.push(entry);
     });
 
-    if (comingFromScreen === "index") {
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: { dateId },
-      });
-    } else {
-      router.back();
-    }
+    router.dismissTo({
+      pathname: "/day/[dateId]",
+      params: { dateId },
+    });
   };
 
   return (
@@ -176,6 +172,7 @@ const NewEntryImageScreen = () => {
               <Appbar.BackAction onPress={handleBackPress} />
             </Appbar.Header>
           ),
+          navigationBarColor: theme.colors.surface,
         }}
       />
       <View style={styles.contentWrapper}>
@@ -183,7 +180,7 @@ const NewEntryImageScreen = () => {
           {formatFullDate(parseDateId(dateId))}
         </Text>
         <Text variant="headlineLarge" style={styles.headline}>
-          Creating new entry
+          Creating new entry with images
         </Text>
         {!hasImages ? (
           <View style={styles.imageSourceWrapper}>
@@ -208,17 +205,25 @@ const NewEntryImageScreen = () => {
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-              <ImageGallery
-                imagesURI={imagesURI}
+              <EditableImageGallery
+                imagesUri={imagesUri}
                 optionsCallbacks={{
                   onDeletePress: handleOnDeletePress,
                   onMoveLeftPress: handleMoveLeftPress,
                   onMoveRightPress: handleMoveRightPress,
                 }}
-                addButtons={{
-                  onCameraPress: openCamera,
-                  onImageLibraryPress: openImageLibrary,
-                }}
+                addButtons={[
+                  {
+                    leadingIcon: "camera",
+                    title: "Take a photo",
+                    onPress: openCamera,
+                  },
+                  {
+                    leadingIcon: "folder-multiple-image",
+                    title: "From gallery",
+                    onPress: openImageLibrary,
+                  },
+                ]}
               />
             </ScrollView>
             <CloseSaveButtons
@@ -248,7 +253,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     margin: spacing.spaceMedium,
-    marginTop: 0,
+    marginTop: spacing.spaceExtraSmall,
   },
   scrollViewContent: {
     padding: spacing.spaceMedium,

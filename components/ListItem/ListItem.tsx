@@ -16,6 +16,7 @@ type Props = {
     onAddTextEntryPress: () => void;
     onAddRecordingEntryPress: () => void;
     onAddImageEntryPress: () => void;
+    onAddVideoEntryPress: () => void;
   };
   isEmpty?: boolean;
   feelings: FEELING_GROUP_NAMES[];
@@ -93,6 +94,12 @@ const ListItem = ({
               icon="image-plus"
               onPress={addEntryHandlers.onAddImageEntryPress}
               accessibilityLabel="Add image entry"
+              size={sizing.sizeMedium}
+            />
+            <IconButton
+              icon="movie-open-plus"
+              onPress={addEntryHandlers.onAddVideoEntryPress}
+              accessibilityLabel="Add video entry"
               size={sizing.sizeMedium}
             />
           </View>

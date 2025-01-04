@@ -100,6 +100,7 @@ const EditedEntryTextScreen = () => {
               <Appbar.BackAction onPress={handleBackPress} />
             </Appbar.Header>
           ),
+          navigationBarColor: theme.colors.surface,
         }}
       />
       <View style={styles.contentWrapper}>
