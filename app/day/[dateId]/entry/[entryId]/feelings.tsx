@@ -16,7 +16,7 @@ import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import EmotionChips from "@/components/FeelingsScreen/EmotionChips";
 import { FEELING_GROUP_NAMES, feelings } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { isEqual, sortBy } from "lodash";
 
@@ -83,14 +83,12 @@ const FeelingsScreen = () => {
     !isEqual(activeGroup, initialActiveGroup) ||
     !isEqual(sortBy(activeEmotions), sortBy(initialActiveEmotions));
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
-  const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard the changes?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+  const handleShowDiscardDialog = useCallback(
+    () => showConfirmDialog("Do you wish to discard the changes?", router.back),
+    [showConfirmDialog, router.back],
+  );
 
   const handleBackPress = () => {
     if (isEdited) {

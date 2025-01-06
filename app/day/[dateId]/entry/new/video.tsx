@@ -15,7 +15,6 @@ import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
 import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
 import { getThumbnailAsync } from "expo-video-thumbnails";
@@ -23,6 +22,7 @@ import { VideoWithThumbnail as VideoWithThumbnailType } from "@/components/Media
 import EditableVideoGallery from "@/components/MediaGallery/EditableVideoGallery";
 import { THUMBNAILS_DIR, VIDEOS_DIR } from "@/constants/files";
 import { Entry, VideoWithThumbnail } from "@/models/Entry";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
 const NewEntryVideoScreen = () => {
   const theme = useTheme();
@@ -65,12 +65,12 @@ const NewEntryVideoScreen = () => {
 
   const openCamera = useCamera({
     onSuccess: handleAddVideos,
-    type: "VIDEOS",
+    mediaTypes: "videos",
   });
 
   const openImageLibrary = useImageLibrary({
     onSuccess: handleAddVideos,
-    type: "VIDEOS",
+    mediaTypes: "videos",
   });
 
   const hasVideos = videosWithThumbnail.length > 0;
@@ -99,14 +99,11 @@ const NewEntryVideoScreen = () => {
     });
   };
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard the videos?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+    showConfirmDialog("Do you wish to discard the videos?", router.back);
+  }, [showConfirmDialog, router.back]);
 
   const handleBackPress = () => {
     if (hasVideos) {

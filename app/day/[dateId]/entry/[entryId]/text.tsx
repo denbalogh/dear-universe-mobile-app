@@ -16,7 +16,7 @@ import { Entry } from "@/models/Entry";
 import { BSON } from "realm";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
 const EditedEntryTextScreen = () => {
   const theme = useTheme();
@@ -41,14 +41,11 @@ const EditedEntryTextScreen = () => {
   const isDescriptionEdited = description !== initialDescription;
   const isEdited = isTitleEdited || isDescriptionEdited;
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard the changes?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+    showConfirmDialog("Do you wish to discard the changes?", router.back);
+  }, [showConfirmDialog, router.back]);
 
   const handleBackPress = () => {
     if (isEdited) {

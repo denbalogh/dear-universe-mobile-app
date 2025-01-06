@@ -9,7 +9,7 @@ import { useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { MenuItemProps } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { deleteAsync } from "expo-file-system";
 
 type Props = {
@@ -23,7 +23,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
   const realm = useRealm();
   const theme = useCustomTheme();
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const {
     _id,
@@ -164,22 +164,19 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       leadingIcon: "delete",
       title: "Delete entry",
       onPress: () => {
-        showDiscardDialog({
-          message: "Do you wish to delete the entry?",
-          callback: async () => {
-            await handleDeleteFilesInEntry();
+        showConfirmDialog("Do you wish to delete the entry?", async () => {
+          await handleDeleteFilesInEntry();
 
-            realm.write(() => {
-              realm.delete(entryObject);
-            });
-          },
+          realm.write(() => {
+            realm.delete(entryObject);
+          });
         });
       },
       titleStyle: { color: theme.colors.error },
     });
 
     return menuItems;
-  }, [entryObject, realm, handleDeleteFilesInEntry, showDiscardDialog, theme]);
+  }, [entryObject, realm, handleDeleteFilesInEntry, showConfirmDialog, theme]);
 
   const addRemoveMenuItems = useMemo(() => {
     const menuItems = [];
@@ -224,18 +221,15 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "movie-open-minus",
         title: "Remove videos",
         onPress: () => {
-          showDiscardDialog({
-            message: "Do you wish to remove the videos?",
-            callback: async () => {
-              for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
-                await deleteAsync(videoUri);
-                await deleteAsync(thumbnailUri);
-              }
+          showConfirmDialog("Do you wish to remove the videos?", async () => {
+            for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
+              await deleteAsync(videoUri);
+              await deleteAsync(thumbnailUri);
+            }
 
-              realm.write(() => {
-                entryObject.videosWithThumbnail = [];
-              });
-            },
+            realm.write(() => {
+              entryObject.videosWithThumbnail = [];
+            });
           });
         },
         titleStyle: { color: theme.colors.error },
@@ -267,17 +261,14 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "image-minus",
         title: "Remove images",
         onPress: () => {
-          showDiscardDialog({
-            message: "Do you wish to remove the images?",
-            callback: async () => {
-              for (const imageURI of imagesURI) {
-                await deleteAsync(imageURI);
-              }
+          showConfirmDialog("Do you wish to remove the images?", async () => {
+            for (const imageURI of imagesURI) {
+              await deleteAsync(imageURI);
+            }
 
-              realm.write(() => {
-                entryObject.imagesURI = [];
-              });
-            },
+            realm.write(() => {
+              entryObject.imagesURI = [];
+            });
           });
         },
         titleStyle: { color: theme.colors.error },
@@ -304,16 +295,16 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         leadingIcon: "microphone-minus",
         title: "Remove recording",
         onPress: () => {
-          showDiscardDialog({
-            message: "Do you wish to remove the recording?",
-            callback: async () => {
+          showConfirmDialog(
+            "Do you wish to remove the recording?",
+            async () => {
               await deleteAsync(entryObject?.recordingURI || "");
 
               realm.write(() => {
                 entryObject.recordingURI = undefined;
               });
             },
-          });
+          );
         },
         titleStyle: { color: theme.colors.error },
       });
@@ -338,7 +329,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     theme,
     realm,
     imagesURI,
-    showDiscardDialog,
+    showConfirmDialog,
     videosWithThumbnail,
   ]);
 

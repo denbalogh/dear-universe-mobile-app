@@ -20,7 +20,7 @@ import { useSnackbar } from "@/contexts/SnackbarContext";
 import { normalizeMeteringForScale } from "@/components/RecordingControls/utils";
 import { format } from "date-fns";
 import { Entry } from "@/models/Entry";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { RECORDINGS_DIR } from "@/constants/files";
 
@@ -150,16 +150,15 @@ const NewEntryRecordingScreen = () => {
     [recording, router],
   );
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const handleShowDiscardDialog = useCallback(
     (back = true) => {
-      showDiscardDialog({
-        message: "Do you wish to discard the recording?",
-        callback: () => unloadRecording(back),
-      });
+      showConfirmDialog("Do you wish to discard the recording?", () =>
+        unloadRecording(back),
+      );
     },
-    [showDiscardDialog, unloadRecording],
+    [showConfirmDialog, unloadRecording],
   );
 
   const handleBackPress = (back = true) => {

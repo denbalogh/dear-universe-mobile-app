@@ -17,7 +17,7 @@ import { FOCUS_DESCRIPTION } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import BeginningHints from "@/components/BeginningHints/BeginningHints";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   Directions,
   Gesture,
@@ -66,14 +66,16 @@ const DayScreen = () => {
     });
   };
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
-  const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard changes to title?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+  const handleShowDiscardDialog = useCallback(
+    () =>
+      showConfirmDialog(
+        "Do you wish to discard changes to title?",
+        router.back,
+      ),
+    [showConfirmDialog, router.back],
+  );
 
   const handleGoBack = () => {
     if (isTitleEdited) {

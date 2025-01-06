@@ -8,9 +8,18 @@ type Props = {
   isVisible: boolean;
   hideDialog: () => void;
   onConfirm: () => void;
+  confirmLabel?: string;
+  cancelLabel?: string;
 };
 
-const DiscardDialog = ({ text, isVisible, hideDialog, onConfirm }: Props) => {
+const ConfirmDialog = ({
+  text,
+  isVisible,
+  hideDialog,
+  onConfirm,
+  confirmLabel = "Yes",
+  cancelLabel = "No",
+}: Props) => {
   const theme = useTheme();
 
   return (
@@ -20,7 +29,7 @@ const DiscardDialog = ({ text, isVisible, hideDialog, onConfirm }: Props) => {
           <Text variant="bodyLarge">{text}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={hideDialog}>No</Button>
+          <Button onPress={hideDialog}>{cancelLabel}</Button>
           <Button
             onPress={() => {
               onConfirm();
@@ -29,7 +38,7 @@ const DiscardDialog = ({ text, isVisible, hideDialog, onConfirm }: Props) => {
             textColor={theme.colors.error}
             style={styles.dialogConfirmButton}
           >
-            Yes
+            {confirmLabel}
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -37,7 +46,7 @@ const DiscardDialog = ({ text, isVisible, hideDialog, onConfirm }: Props) => {
   );
 };
 
-export default DiscardDialog;
+export default ConfirmDialog;
 
 const styles = StyleSheet.create({
   dialogConfirmButton: {

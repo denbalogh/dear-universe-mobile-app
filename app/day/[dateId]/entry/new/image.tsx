@@ -16,7 +16,7 @@ import useCamera from "@/hooks/useCamera";
 import useImageLibrary from "@/hooks/useImageLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
 import EditableImageGallery from "@/components/MediaGallery/EditableImageGallery";
@@ -50,12 +50,12 @@ const NewEntryImageScreen = () => {
 
   const openCamera = useCamera({
     onSuccess: handleAddImages,
-    type: "IMAGES",
+    mediaTypes: "images",
   });
 
   const openImageLibrary = useImageLibrary({
     onSuccess: handleAddImages,
-    type: "IMAGES",
+    mediaTypes: "images",
   });
 
   const hasImages = imagesUri.length > 0;
@@ -82,14 +82,11 @@ const NewEntryImageScreen = () => {
     });
   };
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard the images?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+    showConfirmDialog("Do you wish to discard the images?", router.back);
+  }, [showConfirmDialog, router.back]);
 
   const handleBackPress = () => {
     if (hasImages) {

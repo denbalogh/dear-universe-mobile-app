@@ -16,7 +16,7 @@ import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import { FOCUS_DESCRIPTION } from "@/constants/screens";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
 const NewEntryTextScreen = () => {
   const theme = useTheme();
@@ -45,14 +45,11 @@ const NewEntryTextScreen = () => {
   const isDescriptionEdited = description !== "";
   const isEdited = isTitleEdited || isDescriptionEdited;
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard the entry?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+    showConfirmDialog("Do you wish to discard the entry?", router.back);
+  }, [showConfirmDialog, router.back]);
 
   const handleBackPress = () => {
     if (isEdited) {

@@ -16,7 +16,7 @@ import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
 import { BSON } from "realm";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   deleteAsync,
   getInfoAsync,
@@ -52,12 +52,12 @@ const EditEntryImagesScreen = () => {
 
   const openCamera = useCamera({
     onSuccess: handleAddImages,
-    type: "IMAGES",
+    mediaTypes: "images",
   });
 
   const openImageLibrary = useImageLibrary({
     onSuccess: handleAddImages,
-    type: "IMAGES",
+    mediaTypes: "images",
   });
 
   const hasImages = imagesUri.length > 0;
@@ -90,14 +90,11 @@ const EditEntryImagesScreen = () => {
 
   const isEdited = !isEqual(imagesUri, initialImagesUri);
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard the changes?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+    showConfirmDialog("Do you wish to discard the changes?", router.back);
+  }, [showConfirmDialog, router.back]);
 
   const handleBackPress = () => {
     if (isEdited) {

@@ -1,4 +1,4 @@
-import DiscardDialog from "./DiscardDialog";
+import ConfirmDialog from "./ConfirmDialog";
 
 import type { Meta, StoryObj } from "@storybook/react";
 import { useArgs } from "@storybook/preview-api";
@@ -8,10 +8,10 @@ import { action } from "@storybook/addon-actions";
 import { FlexViewDecorator } from "../storybookDecorators";
 
 const meta = {
-  title: "DiscardDialog",
-  component: DiscardDialog,
+  title: "ConfirmDialog",
+  component: ConfirmDialog,
   decorators: [FlexViewDecorator],
-} satisfies Meta<typeof DiscardDialog>;
+} satisfies Meta<typeof ConfirmDialog>;
 
 export default meta;
 
@@ -38,7 +38,7 @@ export const Basic: Story = {
     return (
       <View>
         <Button onPress={showDialog}>Show Dialog</Button>
-        <DiscardDialog
+        <ConfirmDialog
           {...args}
           isVisible={isVisible}
           hideDialog={hideDialog}
