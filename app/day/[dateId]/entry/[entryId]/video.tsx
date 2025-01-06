@@ -11,7 +11,7 @@ import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import useCamera from "@/hooks/useCamera";
-import useImageLibrary from "@/hooks/useImageLibrary";
+import useMediaLibrary from "@/hooks/useMediaLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry, VideoWithThumbnail } from "@/models/Entry";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
@@ -66,15 +66,8 @@ const EditEntryVideosScreen = () => {
     ]);
   };
 
-  const openCamera = useCamera({
-    onSuccess: handleAddVideos,
-    mediaTypes: "videos",
-  });
-
-  const openImageLibrary = useImageLibrary({
-    onSuccess: handleAddVideos,
-    mediaTypes: "videos",
-  });
+  const openCamera = useCamera("videos", handleAddVideos);
+  const openImageLibrary = useMediaLibrary("videos", handleAddVideos);
 
   const hasVideos = videosWithThumbnail.length > 0;
 

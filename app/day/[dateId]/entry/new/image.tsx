@@ -13,7 +13,7 @@ import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import useCamera from "@/hooks/useCamera";
-import useImageLibrary from "@/hooks/useImageLibrary";
+import useMediaLibrary from "@/hooks/useMediaLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
@@ -48,15 +48,8 @@ const NewEntryImageScreen = () => {
     setImagesUri((prevImagesUri) => [...prevImagesUri, ...newImagesUri]);
   };
 
-  const openCamera = useCamera({
-    onSuccess: handleAddImages,
-    mediaTypes: "images",
-  });
-
-  const openImageLibrary = useImageLibrary({
-    onSuccess: handleAddImages,
-    mediaTypes: "images",
-  });
+  const openCamera = useCamera("images", handleAddImages);
+  const openImageLibrary = useMediaLibrary("images", handleAddImages);
 
   const hasImages = imagesUri.length > 0;
 

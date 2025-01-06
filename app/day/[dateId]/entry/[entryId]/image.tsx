@@ -11,7 +11,7 @@ import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import useCamera from "@/hooks/useCamera";
-import useImageLibrary from "@/hooks/useImageLibrary";
+import useMediaLibrary from "@/hooks/useMediaLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { EntrySearchTermParams } from "@/types/entryTextScreen";
@@ -50,15 +50,8 @@ const EditEntryImagesScreen = () => {
     setImagesUri((prevImagesUri) => [...prevImagesUri, ...newImagesUri]);
   };
 
-  const openCamera = useCamera({
-    onSuccess: handleAddImages,
-    mediaTypes: "images",
-  });
-
-  const openImageLibrary = useImageLibrary({
-    onSuccess: handleAddImages,
-    mediaTypes: "images",
-  });
+  const openCamera = useCamera("images", handleAddImages);
+  const openImageLibrary = useMediaLibrary("images", handleAddImages);
 
   const hasImages = imagesUri.length > 0;
 

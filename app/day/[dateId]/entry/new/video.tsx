@@ -13,7 +13,7 @@ import { Day } from "@/models/Day";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { NewEntrySearchTermParams } from "@/types/newEntryTextScreen";
 import useCamera from "@/hooks/useCamera";
-import useImageLibrary from "@/hooks/useImageLibrary";
+import useMediaLibrary from "@/hooks/useMediaLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { ImagePickerAsset } from "expo-image-picker";
@@ -63,15 +63,8 @@ const NewEntryVideoScreen = () => {
     ]);
   };
 
-  const openCamera = useCamera({
-    onSuccess: handleAddVideos,
-    mediaTypes: "videos",
-  });
-
-  const openImageLibrary = useImageLibrary({
-    onSuccess: handleAddVideos,
-    mediaTypes: "videos",
-  });
+  const openCamera = useCamera("videos", handleAddVideos);
+  const openImageLibrary = useMediaLibrary("videos", handleAddVideos);
 
   const hasVideos = videosWithThumbnail.length > 0;
 
