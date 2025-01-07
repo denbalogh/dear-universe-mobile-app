@@ -27,15 +27,15 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
 
   const {
     _id,
-    title,
-    description,
+    title = "",
+    description = "",
     feelings,
-    recordingURI,
+    recordingURI = "",
     imagesURI = [],
     videosWithThumbnail = [],
   } = entryObject;
 
-  // Delete entry if it has no title, description, recording or images
+  // Delete entry if it has no title, description, recording, images or videos
   useEffect(() => {
     if (
       !title &&
@@ -58,33 +58,23 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     realm,
   ]);
 
-  const titleProp = title
-    ? {
-        text: title || "",
-        onPress: () =>
-          router.navigate(
-            {
-              pathname: `./entry/${_id.toString()}/text`,
-              params: FOCUS_TITLE,
-            },
-            { relativeToDirectory: true },
-          ),
-      }
-    : undefined;
+  const handleOnTitlePress = () =>
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}/text`,
+        params: FOCUS_TITLE,
+      },
+      { relativeToDirectory: true },
+    );
 
-  const descriptionProp = description
-    ? {
-        text: description || "",
-        onPress: () =>
-          router.navigate(
-            {
-              pathname: `./entry/${_id.toString()}/text`,
-              params: FOCUS_DESCRIPTION,
-            },
-            { relativeToDirectory: true },
-          ),
-      }
-    : undefined;
+  const handleOnDescriptionPress = () =>
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}/text`,
+        params: FOCUS_DESCRIPTION,
+      },
+      { relativeToDirectory: true },
+    );
 
   const handleFeelingsPress = () => {
     router.navigate(
@@ -336,12 +326,15 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
   return (
     <Entry
       style={styles.entry}
-      title={titleProp}
-      text={descriptionProp}
-      feelings={feelings}
+      title={title}
+      onTitlePress={handleOnTitlePress}
+      description={description}
+      onDescriptionPress={handleOnDescriptionPress}
+      feelingsActiveGroup={feelings?.name || ""}
+      feelingsActiveEmotions={feelings?.emotions || []}
       onFeelingsPress={handleFeelingsPress}
-      recordingURI={recordingURI}
-      imagesURI={imagesURI}
+      recordingUri={recordingURI}
+      imagesUri={imagesURI}
       videosWithThumbnail={videosWithThumbnail}
       optionsMenuItems={optionsMenuItem}
       moveMenuItems={moveMenuItems}

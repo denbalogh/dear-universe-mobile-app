@@ -9,40 +9,43 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
-import { Feelings } from "@/constants/feelings";
+import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import ImageGallery from "../MediaGallery/ImageGallery";
 import VideoGallery, { VideoWithThumbnail } from "../MediaGallery/VideoGallery";
 
-type Props = {
-  title?: {
-    onPress: () => void;
-    text: string;
-  };
-  text?: {
-    onPress: () => void;
-    text: string;
-  };
-  feelings?: Feelings;
-  onFeelingsPress: () => void;
-  recordingURI?: string;
-  imagesURI: string[];
+export type EntryData = {
+  title: string;
+  description: string;
+  recordingUri: string;
+  imagesUri: string[];
   videosWithThumbnail: VideoWithThumbnail[];
+  feelingsActiveGroup: FEELING_GROUP_NAMES | "";
+  feelingsActiveEmotions: string[];
+};
+
+type Props = {
+  onTitlePress: () => void;
+  onDescriptionPress: () => void;
+  onFeelingsPress: () => void;
   moveMenuItems: MenuItemProps[];
   optionsMenuItems: MenuItemProps[];
   addRemoveMenuItems: MenuItemProps[];
   style: ViewProps["style"];
-};
+} & EntryData;
 
 const Entry = ({
   title,
-  text,
-  feelings,
-  onFeelingsPress,
-  recordingURI,
-  imagesURI,
+  description,
+  recordingUri,
+  imagesUri,
   videosWithThumbnail,
+  feelingsActiveGroup,
+  feelingsActiveEmotions,
+  onTitlePress,
+  onDescriptionPress,
+  onFeelingsPress,
   moveMenuItems,
   optionsMenuItems,
   addRemoveMenuItems,
@@ -52,7 +55,7 @@ const Entry = ({
   const hasOptionsMenuItems = optionsMenuItems.length > 0;
   const hasAddRemoveMenuItems = addRemoveMenuItems.length > 0;
 
-  const hasImages = imagesURI.length > 0;
+  const hasImages = imagesUri.length > 0;
   const hasVideos = videosWithThumbnail.length > 0;
 
   return (
@@ -60,11 +63,11 @@ const Entry = ({
       <Card.Content style={styles.cardContent}>
         {title && (
           <TouchableRipple
-            onPress={title.onPress}
+            onPress={onTitlePress}
             style={styles.titleWrapper}
             accessibilityLabel="Edit title"
           >
-            <Text variant="titleLarge">{title.text}</Text>
+            <Text variant="titleLarge">{title}</Text>
           </TouchableRipple>
         )}
         {hasVideos && (
@@ -74,23 +77,33 @@ const Entry = ({
           />
         )}
         {hasImages && (
-          <ImageGallery imagesUri={imagesURI} style={styles.mediaGallery} />
+          <ImageGallery imagesUri={imagesUri} style={styles.mediaGallery} />
         )}
-        {recordingURI && (
-          <AudioPlayer sourceURI={recordingURI} style={styles.recording} />
+        {recordingUri && (
+          <AudioPlayer sourceURI={recordingUri} style={styles.recording} />
         )}
-        {text && (
+        {description && (
           <TouchableRipple
-            onPress={text.onPress}
+            onPress={onDescriptionPress}
             style={styles.textWrapper}
             accessibilityLabel="Edit text"
           >
-            <Text variant="bodyMedium">{text.text}</Text>
+            <Text variant="bodyMedium">{description}</Text>
           </TouchableRipple>
         )}
         <Divider style={styles.bottomDivider} />
         <View style={styles.actionBarWrapper}>
-          <FeelingsButton feelings={feelings} onPress={onFeelingsPress} />
+          <FeelingsButton
+            feelings={
+              feelingsActiveGroup
+                ? {
+                    name: feelingsActiveGroup,
+                    emotions: feelingsActiveEmotions,
+                  }
+                : undefined
+            }
+            onPress={onFeelingsPress}
+          />
           <View style={styles.actionBarMenusWrapper}>
             {hasOptionsMenuItems && (
               <IconButtonMenu

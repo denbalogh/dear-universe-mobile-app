@@ -11,6 +11,7 @@ import { defaultOptions } from "./useCamera";
 const useMediaLibrary = (
   mediaTypes: ImagePickerOptions["mediaTypes"],
   onSuccess: (images: ImagePickerAsset[]) => void,
+  onCancel?: () => void,
 ) => {
   const { showSnackbar } = useSnackbar();
 
@@ -28,7 +29,11 @@ const useMediaLibrary = (
       mediaTypes,
     });
 
-    if (!selectedImages.canceled) {
+    if (selectedImages.canceled) {
+      if (onCancel) {
+        onCancel();
+      }
+    } else {
       onSuccess(selectedImages.assets);
     }
   };

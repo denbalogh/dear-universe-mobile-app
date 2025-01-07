@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { MenuItemProps, useTheme } from "react-native-paper";
+import { ActivityIndicator, MenuItemProps, useTheme } from "react-native-paper";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { sizing } from "@/constants/theme";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
@@ -9,6 +9,7 @@ type Props = {
   imagesCount: number;
   gridSize: number;
   addButtons: MenuItemProps[];
+  loading?: boolean;
 } & ViewProps;
 
 const ImageGridAddItem = ({
@@ -16,6 +17,7 @@ const ImageGridAddItem = ({
   gridSize,
   style,
   addButtons,
+  loading = false,
   ...props
 }: Props) => {
   const theme = useTheme();
@@ -34,10 +36,14 @@ const ImageGridAddItem = ({
       ]}
       {...props}
     >
-      <IconButtonMenu
-        iconButtonProps={{ icon: "plus", size: sizing.sizeLarge }}
-        menuItems={addButtons}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <IconButtonMenu
+          iconButtonProps={{ icon: "plus", size: sizing.sizeLarge }}
+          menuItems={addButtons}
+        />
+      )}
     </View>
   );
 };

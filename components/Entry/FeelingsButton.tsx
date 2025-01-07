@@ -17,6 +17,8 @@ const FeelingsButton = ({ feelings, onPress }: Props) => {
   if (hasFeelings) {
     const { name, emotions } = feelings;
 
+    const hasEmotions = emotions.length > 0;
+
     return (
       <Card
         mode="elevated"
@@ -27,13 +29,17 @@ const FeelingsButton = ({ feelings, onPress }: Props) => {
         onPress={onPress}
       >
         <Card.Content style={styles.cardContent}>
-          <View style={styles.emotionsWrapper}>
-            {emotions.map((emotion, index) => (
-              <Text key={`${emotion}-${index}`} style={styles.emotion}>
-                {emotion}
-              </Text>
-            ))}
-          </View>
+          {hasEmotions ? (
+            <View style={styles.emotionsWrapper}>
+              {emotions.map((emotion, index) => (
+                <Text key={`${emotion}-${index}`} style={styles.emotion}>
+                  {emotion}
+                </Text>
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.emotion}>{name}</Text>
+          )}
         </Card.Content>
       </Card>
     );

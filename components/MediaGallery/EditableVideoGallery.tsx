@@ -13,6 +13,7 @@ type Props = {
   videosWithThumbnail: VideoWithThumbnail[];
   gridSize?: number;
   addButtons: MenuItemProps[];
+  addButtonsLoading?: boolean;
   optionsCallbacks?: {
     onDeletePress: (index: number) => void;
     onMoveLeftPress: (index: number) => void;
@@ -25,6 +26,7 @@ const EditableVideoGallery = ({
   gridSize = 3,
   style,
   addButtons,
+  addButtonsLoading = false,
   optionsCallbacks,
   ...props
 }: Props) => {
@@ -124,6 +126,7 @@ const EditableVideoGallery = ({
           gridSize={gridSize}
           addButtons={addButtons}
           style={{ width: imageSize, height: imageSize }}
+          loading={addButtonsLoading}
         />
       </View>
       <VideoPlayerModal

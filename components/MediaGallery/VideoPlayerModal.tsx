@@ -81,6 +81,12 @@ const VideoPlayerModal = ({
       .onEnd(() => runOnJS(switchToNextVideo)());
   }, [switchToNextVideo]);
 
+  const flingDown = useMemo(() => {
+    return Gesture.Fling()
+      .direction(Directions.DOWN)
+      .onEnd(() => runOnJS(onClose)());
+  }, [onClose]);
+
   return (
     <Portal>
       <Modal
@@ -108,7 +114,9 @@ const VideoPlayerModal = ({
           />
         </Appbar.Header>
         <GestureHandlerRootView>
-          <GestureDetector gesture={Gesture.Race(flingLeft, flingRight)}>
+          <GestureDetector
+            gesture={Gesture.Race(flingLeft, flingRight, flingDown)}
+          >
             <VideoView
               style={[styles.flex, styles.video]}
               player={player}

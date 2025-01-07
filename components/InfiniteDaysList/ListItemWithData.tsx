@@ -18,22 +18,22 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const addEntryHandlers = {
     onAddVideoEntryPress: () =>
       router.navigate({
-        pathname: "/day/[dateId]/entry/new/video",
+        pathname: "/day/[dateId]/entry/new",
         params: { dateId },
       }),
     onAddImageEntryPress: () =>
       router.navigate({
-        pathname: "/day/[dateId]/entry/new/image",
+        pathname: "/day/[dateId]/entry/new",
         params: { dateId },
       }),
     onAddRecordingEntryPress: () =>
       router.navigate({
-        pathname: "/day/[dateId]/entry/new/recording",
+        pathname: "/day/[dateId]/entry/new",
         params: { dateId },
       }),
     onAddTextEntryPress: () =>
       router.navigate({
-        pathname: "/day/[dateId]/entry/new/text",
+        pathname: "/day/[dateId]/entry/new",
         params: {
           dateId,
           ...FOCUS_DESCRIPTION,

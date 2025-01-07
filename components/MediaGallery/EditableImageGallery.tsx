@@ -13,6 +13,7 @@ type Props = {
   imagesUri: string[];
   gridSize?: number;
   addButtons: MenuItemProps[];
+  addButtonsLoading?: boolean;
   optionsCallbacks?: {
     onDeletePress: (index: number) => void;
     onMoveLeftPress: (index: number) => void;
@@ -25,6 +26,7 @@ const EditableImageGallery = ({
   gridSize = 3,
   style,
   addButtons,
+  addButtonsLoading = false,
   optionsCallbacks,
   ...props
 }: Props) => {
@@ -123,6 +125,7 @@ const EditableImageGallery = ({
           gridSize={gridSize}
           addButtons={addButtons}
           style={{ width: imageSize, height: imageSize }}
+          loading={addButtonsLoading}
         />
       </View>
       <GalleryPreview

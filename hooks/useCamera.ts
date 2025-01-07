@@ -15,6 +15,7 @@ export const defaultOptions = {
 const useCamera = (
   mediaTypes: ImagePickerOptions["mediaTypes"],
   onSuccess: (images: ImagePickerAsset[]) => void,
+  onCancel?: () => void,
 ) => {
   const { showSnackbar } = useSnackbar();
 
@@ -31,7 +32,11 @@ const useCamera = (
       mediaTypes,
     });
 
-    if (!selectedImages.canceled) {
+    if (selectedImages.canceled) {
+      if (onCancel) {
+        onCancel();
+      }
+    } else {
       onSuccess(selectedImages.assets);
     }
   };
