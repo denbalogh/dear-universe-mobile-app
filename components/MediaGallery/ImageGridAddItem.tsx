@@ -10,6 +10,7 @@ type Props = {
   gridSize: number;
   addButtons: MenuItemProps[];
   loading?: boolean;
+  disabled?: boolean;
 } & ViewProps;
 
 const ImageGridAddItem = ({
@@ -18,6 +19,7 @@ const ImageGridAddItem = ({
   style,
   addButtons,
   loading = false,
+  disabled = false,
   ...props
 }: Props) => {
   const theme = useTheme();
@@ -40,7 +42,7 @@ const ImageGridAddItem = ({
         <ActivityIndicator size="large" />
       ) : (
         <IconButtonMenu
-          iconButtonProps={{ icon: "plus", size: sizing.sizeLarge }}
+          iconButtonProps={{ icon: "plus", size: sizing.sizeLarge, disabled }}
           menuItems={addButtons}
         />
       )}

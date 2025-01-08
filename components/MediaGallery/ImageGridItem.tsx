@@ -16,6 +16,7 @@ type Props = {
   gridSize: number;
   touchableProps: Omit<TouchableRippleProps, "children">;
   showPlayIcon?: boolean;
+  playIconPosition?: "center" | "topLeft";
 } & ImageProps;
 
 const ImageGridItem = ({
@@ -25,6 +26,7 @@ const ImageGridItem = ({
   style,
   touchableProps,
   showPlayIcon = false,
+  playIconPosition = "center",
   ...props
 }: Props) => {
   const theme = useCustomTheme();
@@ -45,7 +47,14 @@ const ImageGridItem = ({
       <View>
         <Image style={[style, { ...borderRadii }]} {...props} />
         {showPlayIcon && (
-          <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              playIconPosition === "center"
+                ? styles.playIconWrapperCenter
+                : styles.playIconWrapperTopLeft,
+            ]}
+          >
             <View
               style={[
                 styles.playIcon,
@@ -71,12 +80,16 @@ const styles = StyleSheet.create({
   touchable: {
     overflow: "hidden",
   },
-  playIconWrapper: {
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    padding: spacing.spaceSmall,
+  playIconWrapperCenter: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playIconWrapperTopLeft: {
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
   playIcon: {
     borderRadius: roundness,
+    margin: spacing.spaceExtraSmall,
   },
 });

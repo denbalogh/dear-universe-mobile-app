@@ -42,6 +42,8 @@ const TextSection = ({
         contentStyle={styles.inputContentStyle}
         scrollEnabled={false}
         placeholder="Enter description"
+        submitBehavior="blurAndSubmit"
+        enterKeyHint="done"
         value={description}
         onChangeText={onDescriptionChange}
       />

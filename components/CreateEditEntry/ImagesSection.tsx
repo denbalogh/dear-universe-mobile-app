@@ -4,22 +4,27 @@ import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
 import React, { useState } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { ActivityIndicator, Button } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 import EditableImageGallery from "../MediaGallery/EditableImageGallery";
+import SelectableButtons from "./SelectableButtons";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
 type Props = {
   imagesUri: string[];
   onImagesChange: (imagesUri: string[]) => void;
-  onImageDelete?: (imageUri: string) => void;
+  onImagesDelete?: (imagesUri: string[]) => void;
 } & ViewProps;
 
 const ImagesSection = ({
   imagesUri,
   onImagesChange,
-  onImageDelete,
+  onImagesDelete,
   ...viewProps
 }: Props) => {
+  const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSelectable, setIsSelectable] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<number[]>([]);
 
   const handleAddImages = (newImages: ImagePickerAsset[]) => {
     const newImagesUri = newImages.map((image) => image.uri);
@@ -49,20 +54,17 @@ const ImagesSection = ({
 
   const hasImages = imagesUri.length > 0;
 
-  const handleOnDeletePress = (index: number) => {
-    const newImagesUri = imagesUri.filter((_, i) => i !== index);
-
-    if (onImageDelete) {
-      onImageDelete(imagesUri[index]);
-    }
-
-    onImagesChange(newImagesUri);
-  };
-
   const handleMoveLeftPress = (index: number) => {
     const newImagesUri = [...imagesUri];
     const [removedImageUri] = newImagesUri.splice(index, 1);
     newImagesUri.splice(index - 1, 0, removedImageUri);
+    onImagesChange(newImagesUri);
+  };
+
+  const handleMoveToStartPress = (index: number) => {
+    const newImagesUri = [...imagesUri];
+    const [removedImageUri] = newImagesUri.splice(index, 1);
+    newImagesUri.unshift(removedImageUri);
     onImagesChange(newImagesUri);
   };
 
@@ -71,6 +73,43 @@ const ImagesSection = ({
     const [removedImageUri] = newImagesUri.splice(index, 1);
     newImagesUri.splice(index + 1, 0, removedImageUri);
     onImagesChange(newImagesUri);
+  };
+
+  const handleMoveToEndPress = (index: number) => {
+    const newImagesUri = [...imagesUri];
+    const [removedImageUri] = newImagesUri.splice(index, 1);
+    newImagesUri.push(removedImageUri);
+    onImagesChange(newImagesUri);
+  };
+
+  const handleOnImageLongPress = (index: number) => {
+    setIsSelectable(true);
+    setSelectedImages([index]);
+  };
+
+  const handleSelectAll = () => {
+    setSelectedImages([...Array(imagesUri.length).keys()]);
+  };
+
+  const handleCancelSelection = () => {
+    setIsSelectable(false);
+    setSelectedImages([]);
+  };
+
+  const handleOnSelectedDelete = () => {
+    showConfirmDialog("Do you wish to delete the selected images?", () => {
+      const newImagesUri = imagesUri.filter(
+        (_, index) => !selectedImages.includes(index),
+      );
+
+      if (onImagesDelete) {
+        onImagesDelete(selectedImages.map((index) => imagesUri[index]));
+      }
+
+      onImagesChange(newImagesUri);
+      setSelectedImages([]);
+      setIsSelectable(false);
+    });
   };
 
   return (
@@ -106,27 +145,49 @@ const ImagesSection = ({
           </View>
         </>
       ) : (
-        <EditableImageGallery
-          imagesUri={imagesUri}
-          optionsCallbacks={{
-            onDeletePress: handleOnDeletePress,
-            onMoveLeftPress: handleMoveLeftPress,
-            onMoveRightPress: handleMoveRightPress,
-          }}
-          addButtons={[
-            {
-              leadingIcon: "camera",
-              title: "Take a photo",
-              onPress: handleOpenCamera,
-            },
-            {
-              leadingIcon: "folder-multiple-image",
-              title: "From gallery",
-              onPress: handleOpenImageLibrary,
-            },
-          ]}
-          addButtonsLoading={isLoading}
-        />
+        <>
+          {!isSelectable && (
+            <Text variant="labelMedium" style={styles.selectionInfoText}>
+              Long press image to enable selection
+            </Text>
+          )}
+          <EditableImageGallery
+            imagesUri={imagesUri}
+            onMoveLeftPress={handleMoveLeftPress}
+            onMoveToStartPress={handleMoveToStartPress}
+            onMoveRightPress={handleMoveRightPress}
+            onMoveToEndPress={handleMoveToEndPress}
+            addButtons={[
+              {
+                leadingIcon: "camera",
+                title: "Take a photo",
+                onPress: handleOpenCamera,
+              },
+              {
+                leadingIcon: "folder-multiple-image",
+                title: "From gallery",
+                onPress: handleOpenImageLibrary,
+              },
+            ]}
+            addButtonsLoading={isLoading}
+            onImageLongPress={handleOnImageLongPress}
+            selectable={
+              isSelectable
+                ? {
+                    selected: selectedImages,
+                    onSelectedChange: setSelectedImages,
+                  }
+                : undefined
+            }
+          />
+          {isSelectable && (
+            <SelectableButtons
+              selectAllButtonProps={{ onPress: handleSelectAll }}
+              deleteSelectedButtonProps={{ onPress: handleOnSelectedDelete }}
+              cancelButtonProps={{ onPress: handleCancelSelection }}
+            />
+          )}
+        </>
       )}
     </View>
   );
@@ -152,5 +213,8 @@ const styles = StyleSheet.create({
   buttonRight: {
     flex: 1,
     marginLeft: spacing.spaceExtraSmall,
+  },
+  selectionInfoText: {
+    marginBottom: spacing.spaceSmall,
   },
 });

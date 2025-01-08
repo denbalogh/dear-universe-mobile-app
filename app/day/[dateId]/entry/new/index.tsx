@@ -9,11 +9,13 @@ import CreateEditEntry from "@/components/CreateEditEntry/CreateEditEntry";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { EntryData } from "@/components/Entry/Entry";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
 const NewEntryScreen = () => {
   const theme = useCustomTheme();
   const realm = useRealm();
   const router = useRouter();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const { dateId } = useLocalSearchParams<NewEntrySearchTermParams>();
   const dayObject = useObject(Day, dateId);
@@ -31,7 +33,9 @@ const NewEntryScreen = () => {
   const formattedDate = formatFullDate(parseDateId(dateId));
 
   const handleOnEntrySave = (entryData: EntryData) => {
-    console.log(entryData);
+    showConfirmDialog("Do you wish to save this entry?", () => {
+      console.log(entryData);
+    });
   };
 
   return (

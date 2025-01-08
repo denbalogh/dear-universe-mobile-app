@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ImagesSection from "@/components/CreateEditEntry/ImagesSection";
 import RecordingSection from "@/components/CreateEditEntry/RecordingSection";
 import TextSection from "@/components/CreateEditEntry/TextSection";
@@ -6,7 +6,7 @@ import VideosSection from "@/components/CreateEditEntry/VideosSection";
 import SectionHeadline from "@/components/CreateEditEntry/SectionHeadline";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Keyboard, ScrollView, StyleSheet, View } from "react-native";
 import { FAB } from "react-native-paper";
 import FeelingsSection from "@/components/CreateEditEntry/FeelingsSection";
 import { EntryData } from "../Entry/Entry";
@@ -33,6 +33,22 @@ const CreateEditEntry = ({
 
   const isCreateMode = mode === "create";
   const isEditMode = mode === "edit";
+
+  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setIsKeyboardShown(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setIsKeyboardShown(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
@@ -104,9 +120,11 @@ const CreateEditEntry = ({
           style={styles.sectionWrapper}
         />
       </ScrollView>
-      <View style={styles.saveButtonWrapper}>
-        <FAB label="Save" variant="tertiary" onPress={handleOnSave} />
-      </View>
+      {!isKeyboardShown && (
+        <View style={styles.saveButtonWrapper}>
+          <FAB label="Save" variant="tertiary" onPress={handleOnSave} />
+        </View>
+      )}
     </View>
   );
 };

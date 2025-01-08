@@ -1,7 +1,7 @@
 import { spacing } from "@/constants/theme";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+import { Button, Dialog, Portal, Text } from "react-native-paper";
 
 type Props = {
   text: string;
@@ -20,8 +20,6 @@ const ConfirmDialog = ({
   confirmLabel = "Yes",
   cancelLabel = "No",
 }: Props) => {
-  const theme = useTheme();
-
   return (
     <Portal>
       <Dialog visible={isVisible} onDismiss={hideDialog}>
@@ -35,7 +33,6 @@ const ConfirmDialog = ({
               onConfirm();
               hideDialog();
             }}
-            textColor={theme.colors.error}
             style={styles.dialogConfirmButton}
           >
             {confirmLabel}
