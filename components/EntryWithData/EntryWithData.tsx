@@ -1,7 +1,7 @@
 import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
 import { Entry as EntryType } from "@/models/Entry";
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import Entry from "../Entry/Entry";
 import { StyleSheet } from "react-native";
 import { spacing } from "@/constants/theme";
@@ -11,6 +11,7 @@ import { MenuItemProps } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { deleteAsync } from "expo-file-system";
+import useDeleteEmptyEntry from "@/hooks/useDeleteEmptyEntry";
 
 type Props = {
   entryObject: EntryType;
@@ -25,6 +26,8 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
 
   const { showConfirmDialog } = useConfirmDialog();
 
+  useDeleteEmptyEntry(entryObject);
+
   const {
     _id,
     title = "",
@@ -34,29 +37,6 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     imagesURI = [],
     videosWithThumbnail = [],
   } = entryObject;
-
-  // Delete entry if it has no title, description, recording, images or videos
-  useEffect(() => {
-    if (
-      !title &&
-      !description &&
-      !recordingURI &&
-      imagesURI.length === 0 &&
-      videosWithThumbnail.length === 0
-    ) {
-      realm.write(() => {
-        realm.delete(entryObject);
-      });
-    }
-  }, [
-    title,
-    description,
-    recordingURI,
-    imagesURI,
-    videosWithThumbnail,
-    entryObject,
-    realm,
-  ]);
 
   const handleOnTitlePress = () =>
     router.navigate(

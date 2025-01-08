@@ -173,7 +173,7 @@ const DayScreen = () => {
               onChangeText={setTitle}
               multiline={true}
               enterKeyHint="done"
-              blurOnSubmit={true}
+              submitBehavior="blurAndSubmit"
               contentStyle={{ marginTop: 5 }}
               mode="outlined"
               onSubmitEditing={handleOnSubmit}
