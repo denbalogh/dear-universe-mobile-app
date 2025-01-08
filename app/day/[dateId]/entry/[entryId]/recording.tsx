@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { Entry } from "@/models/Entry";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { BSON } from "realm";
-import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import { getInfoAsync, makeDirectoryAsync, moveAsync } from "expo-file-system";
 import { RECORDINGS_DIR } from "@/constants/files";
 
@@ -31,7 +31,7 @@ const EditEntryRecordingScreen = () => {
 
   const { showSnackbar } = useSnackbar();
 
-  const { dateId, entryId } = useLocalSearchParams<EntrySearchTermParams>();
+  const { dateId, entryId } = useLocalSearchParams<EntrySearchParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 

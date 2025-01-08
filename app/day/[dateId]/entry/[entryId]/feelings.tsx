@@ -12,7 +12,7 @@ import { useObject, useRealm } from "@realm/react";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON, UpdateMode } from "realm";
-import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import EmotionChips from "@/components/FeelingsScreen/EmotionChips";
 import { FEELING_GROUP_NAMES, feelings } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
@@ -45,7 +45,7 @@ const FeelingsScreen = () => {
     }
   };
 
-  const { entryId, dateId } = useLocalSearchParams<EntrySearchTermParams>();
+  const { entryId, dateId } = useLocalSearchParams<EntrySearchParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 

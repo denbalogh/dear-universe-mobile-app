@@ -1,21 +1,17 @@
 import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, TextInputProps } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { spacing } from "@/constants/theme";
 
 type Props = {
-  title: string;
-  description: string;
-  onTitleChange: (title: string) => void;
-  onDescriptionChange: (description: string) => void;
+  titleInputProps: TextInputProps;
+  descriptionInputProps: TextInputProps;
 } & ViewProps;
 
 const TextSection = ({
-  title,
-  description,
-  onTitleChange,
-  onDescriptionChange,
+  titleInputProps,
+  descriptionInputProps,
   ...viewProps
 }: Props) => {
   const theme = useCustomTheme();
@@ -31,8 +27,7 @@ const TextSection = ({
         placeholder="Enter title"
         submitBehavior="blurAndSubmit"
         enterKeyHint="done"
-        value={title}
-        onChangeText={onTitleChange}
+        {...titleInputProps}
       />
       <TextInput
         label="Description"
@@ -44,8 +39,7 @@ const TextSection = ({
         placeholder="Enter description"
         submitBehavior="blurAndSubmit"
         enterKeyHint="done"
-        value={description}
-        onChangeText={onDescriptionChange}
+        {...descriptionInputProps}
       />
     </View>
   );

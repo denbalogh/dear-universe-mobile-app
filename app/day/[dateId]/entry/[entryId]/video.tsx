@@ -14,7 +14,7 @@ import useCamera from "@/hooks/useCamera";
 import useMediaLibrary from "@/hooks/useMediaLibrary";
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry, VideoWithThumbnail } from "@/models/Entry";
-import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import { BSON } from "realm";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
@@ -35,7 +35,7 @@ const EditEntryVideosScreen = () => {
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId, entryId } = useLocalSearchParams<EntrySearchTermParams>();
+  const { dateId, entryId } = useLocalSearchParams<EntrySearchParams>();
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 

@@ -14,7 +14,7 @@ import TitleDescriptionEditor from "@/components/TitleDescriptionEditor/TitleDes
 import CloseSaveButtons from "@/components/CloseSaveButtons/CloseSaveButtons";
 import { Entry } from "@/models/Entry";
 import { BSON } from "realm";
-import { EntrySearchTermParams } from "@/types/entryTextScreen";
+import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
@@ -23,8 +23,7 @@ const EditedEntryTextScreen = () => {
   const realm = useRealm();
   const router = useRouter();
 
-  const { dateId, entryId, focus } =
-    useLocalSearchParams<EntrySearchTermParams>();
+  const { dateId, entryId, focus } = useLocalSearchParams<EntrySearchParams>();
 
   const focusTitleInput = focus === FOCUS_TITLE.focus;
   const focusDescription = focus === FOCUS_DESCRIPTION.focus;
