@@ -15,13 +15,13 @@ const SectionHeadline = ({
   headline,
   superHeadline,
   headlineVariant = "headlineLarge",
-  ...props
+  ...viewProps
 }: Props) => {
   const theme = useCustomTheme();
 
   return (
     <View
-      {...props}
+      {...viewProps}
       style={[styles.wrapper, { backgroundColor: theme.colors.surface }]}
     >
       <Text variant="titleMedium">{superHeadline}</Text>

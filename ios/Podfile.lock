@@ -12,9 +12,9 @@ PODS:
   - EXJSONUtils (0.14.0)
   - EXManifests (0.15.4):
     - ExpoModulesCore
-  - Expo (52.0.23):
+  - Expo (52.0.24):
     - ExpoModulesCore
-  - expo-dev-client (5.0.7):
+  - expo-dev-client (5.0.8):
     - EXManifests
     - expo-dev-launcher
     - expo-dev-menu
@@ -228,7 +228,7 @@ PODS:
     - ExpoModulesCore
   - ExpoFont (13.0.2):
     - ExpoModulesCore
-  - ExpoHead (4.0.15):
+  - ExpoHead (4.0.16):
     - ExpoModulesCore
   - ExpoImage (2.0.3):
     - ExpoModulesCore
@@ -265,7 +265,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoScreenOrientation (8.0.2):
+  - ExpoScreenOrientation (8.0.3):
     - DoubleConversion
     - ExpoModulesCore
     - glog
@@ -287,11 +287,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoSplashScreen (0.29.18):
+  - ExpoSplashScreen (0.29.19):
     - ExpoModulesCore
   - ExpoSystemUI (4.0.6):
     - ExpoModulesCore
-  - ExpoVideo (2.0.3):
+  - ExpoVideo (2.0.4):
     - ExpoModulesCore
   - ExpoVideoThumbnails (9.0.2):
     - ExpoModulesCore
@@ -2545,24 +2545,24 @@ SPEC CHECKSUMS:
   EXImageLoader: 759063a65ab016b836f73972d3bb25404888713d
   EXJSONUtils: 01fc7492b66c234e395dcffdd5f53439c5c29c93
   EXManifests: f30a0c5d3d6cad8db9c01bab579e0aa0df5d3cb2
-  Expo: 37cea4167605a3a1b88fa0caf8349ae76c0d389c
-  expo-dev-client: 4cc2c40efd66b42fc6f3d14a52435c2de431e9bd
+  Expo: c754038e8ff39caaa945f88e937314818f64228f
+  expo-dev-client: ec22c0535228bbf784a4fa7c40f90d3944d7724e
   expo-dev-launcher: 0366222193a8423bfd7e4fa592fc39baf370126b
   expo-dev-menu: d770b290f8f3a4affb738fbdee371f085c4db287
   expo-dev-menu-interface: 4baf2f8b3b79ce37cf4b900e4b3ba6df3384f0a1
   ExpoAsset: 8138f2a9ec55ae1ad7c3871448379f7d97692d15
   ExpoFileSystem: 179a0661fd6d3c4e5d7e500a99a9cd8b295d9566
   ExpoFont: 260fb85279912421894060d9aea453cee4ffc01c
-  ExpoHead: 83465614d1af3df77a0db724a24a43648e3daefa
+  ExpoHead: 9ea4e125f3aafd23e56f7feb4942c7b595889610
   ExpoImage: 9cdae70d80c8a59cbfb51a475fc820172fa71666
   ExpoImagePicker: 440a560c9bfc63edae854d08b9f12f75bd11c112
   ExpoKeepAwake: 783e68647b969b210a786047c3daa7b753dcac1f
   ExpoLinking: a8332a219379ba80f8e612d5a5de4a3da446886e
   ExpoModulesCore: 755e9c03bfe099eae7833d8f8b56118b2fc1107f
-  ExpoScreenOrientation: 164a4d1c05122d0101c4e740eb7f675c5276e744
-  ExpoSplashScreen: 5818efe67bdbcc862b97fef589571c5b4d53fa7d
+  ExpoScreenOrientation: 4974ca14da47f1c86acc72dd9d72c0a015dad3ab
+  ExpoSplashScreen: 3c0c5f1c9c382f7474807dc007e4e72f4d7b674e
   ExpoSystemUI: 2d729aea8219f03af1b1996c1d14488a01fea94a
-  ExpoVideo: d630401195169343272d9d48800e0b38d9c39974
+  ExpoVideo: 4c9405e0dcb36dcc38dc8518eba18f49743795eb
   ExpoVideoThumbnails: 8b6bbe3cb76dd2225910667b896b27855bbda694
   ExpoWebBrowser: f08aaf1c8a02af8a768d83793186cb6d2c69f529
   EXUpdatesInterface: 1dcebac98ac5dad4289e6ff2bd5616822e894397
