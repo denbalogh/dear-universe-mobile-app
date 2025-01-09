@@ -2,16 +2,15 @@ import React, { useCallback, useMemo } from "react";
 import { formatFullDate, parseDateId } from "@/utils/date";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CreateEditEntry from "@/components/CreateEditEntry/CreateEditEntry";
-import { useObject, useRealm } from "@realm/react";
+import { useRealm } from "@realm/react";
 import { EntryData } from "@/components/Entry/Entry";
-import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
+import { Entry, Feelings, VideoWithThumbnail } from "@/models/Entry";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
   const router = useRouter();
-  const { showConfirmDialog } = useConfirmDialog();
 
   const { dateId, focus, scrollTo } = useLocalSearchParams<EntrySearchParams>();
   const dayObject = useInitiateDayObject(dateId);
@@ -23,11 +22,47 @@ const NewEntryScreen = () => {
 
   const handleOnEntrySave = useCallback(
     (entryData: EntryData) => {
-      showConfirmDialog("Do you wish to save this entry?", () => {
-        console.log(entryData);
+      if (dayObject === null) {
+        return;
+      }
+
+      const {
+        title,
+        description,
+        recordingUri,
+        imagesUri,
+        videosWithThumbnail,
+        feelingsActiveGroup,
+        feelingsActiveEmotions,
+      } = entryData;
+
+      const feelingsObject = feelingsActiveGroup
+        ? {
+            name: feelingsActiveGroup,
+            emotions: feelingsActiveEmotions,
+          }
+        : undefined;
+
+      realm.write(() => {
+        const entry = realm.create(Entry, {
+          title,
+          description,
+          recordingUri,
+          imagesUri,
+          videosWithThumbnail: videosWithThumbnail as VideoWithThumbnail[],
+          feelings: feelingsObject as Feelings,
+          day: dayObject,
+        });
+
+        dayObject.entryObjects.push(entry);
+      });
+
+      router.dismissTo({
+        pathname: "/day/[dateId]",
+        params: { dateId },
       });
     },
-    [showConfirmDialog],
+    [dayObject, realm, router, dateId],
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import RecordingControls, {
   UPDATE_INTERVAL,
 } from "../RecordingControls/RecordingControls";
@@ -108,6 +108,13 @@ const RecordingSection = ({
       setRecording(undefined);
     }
   }, [recording]);
+
+  // Unload recording when component unmounts
+  useEffect(() => {
+    return () => {
+      unloadRecording();
+    };
+  }, [unloadRecording]);
 
   const handleDiscardRecording = () => {
     showConfirmDialog("Do you want to discard the recording?", unloadRecording);

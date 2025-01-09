@@ -191,13 +191,13 @@ const EditEntryRecordingScreen = () => {
     ]),
   );
 
-  const handleUpdateEntry = (recordingURI: string) => {
+  const handleUpdateEntry = (recordingUri: string) => {
     if (entryObject === null) {
       return;
     }
 
     realm.write(() => {
-      entryObject.recordingURI = recordingURI;
+      entryObject.recordingUri = recordingUri;
     });
 
     router.back();

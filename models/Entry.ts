@@ -36,8 +36,8 @@ export class Entry extends Realm.Object<Entry, "day"> {
   title?: string = "";
   description?: string = "";
   feelings?: Feelings;
-  recordingURI?: string;
-  imagesURI?: string[];
+  recordingUri?: string;
+  imagesUri?: string[];
   videosWithThumbnail?: VideoWithThumbnail[];
   day!: Day;
 
@@ -56,8 +56,8 @@ export class Entry extends Realm.Object<Entry, "day"> {
       title: "string?",
       description: "string?",
       feelings: "Feelings?",
-      recordingURI: "string?",
-      imagesURI: {
+      recordingUri: "string?",
+      imagesUri: {
         type: "list",
         objectType: "string",
         default: [],

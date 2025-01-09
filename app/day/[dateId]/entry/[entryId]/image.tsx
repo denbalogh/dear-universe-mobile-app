@@ -37,7 +37,7 @@ const EditEntryImagesScreen = () => {
 
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
-  const { imagesURI: initialImagesUri = [] } = entryObject || {};
+  const { imagesUri: initialImagesUri = [] } = entryObject || {};
 
   const hasInitialImages = initialImagesUri.length > 0;
 
@@ -152,13 +152,13 @@ const EditEntryImagesScreen = () => {
     updateEntryWithImages(newImages);
   };
 
-  const updateEntryWithImages = (imagesURI: string[]) => {
+  const updateEntryWithImages = (imagesUri: string[]) => {
     if (entryObject === null) {
       return;
     }
 
     realm.write(() => {
-      entryObject.imagesURI = imagesURI;
+      entryObject.imagesUri = imagesUri;
     });
 
     router.back();

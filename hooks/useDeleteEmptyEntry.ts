@@ -10,8 +10,8 @@ const useDeleteEmptyEntry = (entryObject: Entry) => {
   const {
     title,
     description,
-    recordingURI,
-    imagesURI = [],
+    recordingUri,
+    imagesUri = [],
     videosWithThumbnail = [],
     feelings,
   } = entryObject;
@@ -21,8 +21,8 @@ const useDeleteEmptyEntry = (entryObject: Entry) => {
     if (
       !title &&
       !description &&
-      !recordingURI &&
-      imagesURI.length === 0 &&
+      !recordingUri &&
+      imagesUri.length === 0 &&
       videosWithThumbnail.length === 0 &&
       !feelings
     ) {
@@ -35,8 +35,8 @@ const useDeleteEmptyEntry = (entryObject: Entry) => {
   }, [
     title,
     description,
-    recordingURI,
-    imagesURI,
+    recordingUri,
+    imagesUri,
     videosWithThumbnail,
     feelings,
     entryObject,

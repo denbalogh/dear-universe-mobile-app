@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ImagesSection from "@/components/CreateEditEntry/ImagesSection";
 import RecordingSection from "@/components/CreateEditEntry/RecordingSection";
 import TextSection from "@/components/CreateEditEntry/TextSection";
@@ -6,13 +12,20 @@ import VideosSection from "@/components/CreateEditEntry/VideosSection";
 import SectionHeadline from "@/components/CreateEditEntry/SectionHeadline";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { LayoutChangeEvent, ScrollView, StyleSheet, View } from "react-native";
+import {
+  BackHandler,
+  LayoutChangeEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Appbar, FAB } from "react-native-paper";
 import FeelingsSection from "@/components/CreateEditEntry/FeelingsSection";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
-import { Stack } from "expo-router";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { isEqual } from "lodash";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 
 type LayoutParts =
   | "mainHeadline"
@@ -55,7 +68,9 @@ const CreateEditEntry = ({
   onSave,
 }: Props) => {
   const theme = useCustomTheme();
+  const router = useRouter();
   const isKeyboardOpen = useIsKeyboardOpen();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const isCreateMode = mode === "create";
   const isEditMode = mode === "edit";
@@ -99,9 +114,13 @@ const CreateEditEntry = ({
     };
 
   const scrollViewRef = useRef<ScrollView>(null);
+  const hasScrolledInitially = useRef(false);
 
-  const handleScrollToOffset = (offset: number) => {
-    scrollViewRef.current?.scrollTo({ y: offset, animated: true });
+  const handleInitialScrollToOffset = (offset: number) => {
+    if (!hasScrolledInitially.current) {
+      scrollViewRef.current?.scrollTo({ y: offset, animated: true });
+      hasScrolledInitially.current = true;
+    }
   };
 
   useEffect(() => {
@@ -123,32 +142,19 @@ const CreateEditEntry = ({
       videosSection,
     } = sectionsHeight;
 
+    const recordingOffset = mainHeadline + textSection;
+    const imagesOffset = recordingOffset + recordingHeadline + recordingSection;
+    const videosOffset = imagesOffset + imagesHeadline + imagesSection;
+    const feelingsOffset = videosOffset + videosHeadline + videosSection;
+
     if (scrollToRecording) {
-      handleScrollToOffset(mainHeadline + textSection);
+      handleInitialScrollToOffset(recordingOffset);
     } else if (scrollToImages) {
-      handleScrollToOffset(
-        mainHeadline + textSection + recordingHeadline + recordingSection,
-      );
+      handleInitialScrollToOffset(imagesOffset);
     } else if (scrollToVideos) {
-      handleScrollToOffset(
-        mainHeadline +
-          textSection +
-          recordingHeadline +
-          recordingSection +
-          imagesHeadline +
-          imagesSection,
-      );
+      handleInitialScrollToOffset(videosOffset);
     } else if (scrollToFeelings) {
-      handleScrollToOffset(
-        mainHeadline +
-          textSection +
-          recordingHeadline +
-          recordingSection +
-          imagesHeadline +
-          imagesSection +
-          videosHeadline +
-          videosSection,
-      );
+      handleInitialScrollToOffset(feelingsOffset);
     }
   }, [
     sectionsHeight,
@@ -159,25 +165,77 @@ const CreateEditEntry = ({
   ]);
 
   const handleOnSave = () => {
-    onSave({
+    showConfirmDialog("Do you wish to save the entry?", () => {
+      onSave({
+        title,
+        description,
+        recordingUri,
+        imagesUri,
+        videosWithThumbnail,
+        feelingsActiveGroup: activeGroup,
+        feelingsActiveEmotions: activeEmotions,
+      });
+    });
+  };
+
+  const isEdited = useMemo(
+    () =>
+      !isEqual(title, initialTitle) ||
+      !isEqual(description, initialDescription) ||
+      !isEqual(recordingUri, initialRecordingUri) ||
+      !isEqual(imagesUri, initialImagesUri) ||
+      !isEqual(videosWithThumbnail, initialVideosWithThumbnail) ||
+      !isEqual(activeGroup, initialFeelingsActiveGroup) ||
+      !isEqual(activeEmotions, initialFeelingsActiveEmotions),
+    [
       title,
       description,
       recordingUri,
       imagesUri,
       videosWithThumbnail,
-      feelingsActiveGroup: activeGroup,
-      feelingsActiveEmotions: activeEmotions,
-    });
+      activeGroup,
+      activeEmotions,
+      initialTitle,
+      initialDescription,
+      initialRecordingUri,
+      initialImagesUri,
+      initialVideosWithThumbnail,
+      initialFeelingsActiveGroup,
+      initialFeelingsActiveEmotions,
+    ],
+  );
+
+  const handleShowDiscardDialog = useCallback(() => {
+    showConfirmDialog("Do you wish to discard the entry?", router.back);
+  }, [showConfirmDialog, router]);
+
+  const handleBackPress = () => {
+    if (isEdited) {
+      handleShowDiscardDialog();
+    } else {
+      router.back();
+    }
   };
 
-  const isEdited =
-    !isEqual(title, initialTitle) ||
-    !isEqual(description, initialDescription) ||
-    !isEqual(recordingUri, initialRecordingUri) ||
-    !isEqual(imagesUri, initialImagesUri) ||
-    !isEqual(videosWithThumbnail, initialVideosWithThumbnail) ||
-    !isEqual(activeGroup, initialFeelingsActiveGroup) ||
-    !isEqual(activeEmotions, initialFeelingsActiveEmotions);
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (isEdited) {
+          handleShowDiscardDialog();
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => subscription.remove();
+    }, [isEdited, handleShowDiscardDialog]),
+  );
 
   return (
     <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
@@ -185,7 +243,7 @@ const CreateEditEntry = ({
         options={{
           header: () => (
             <Appbar.Header>
-              <Appbar.BackAction onPress={() => {}} />
+              <Appbar.BackAction onPress={handleBackPress} />
             </Appbar.Header>
           ),
           navigationBarColor: theme.colors.surface,

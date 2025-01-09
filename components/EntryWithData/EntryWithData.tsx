@@ -33,8 +33,8 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     title = "",
     description = "",
     feelings,
-    recordingURI = "",
-    imagesURI = [],
+    recordingUri = "",
+    imagesUri = [],
     videosWithThumbnail = [],
   } = entryObject;
 
@@ -118,14 +118,14 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
   }, [dayObject, index, realm]);
 
   const handleDeleteFilesInEntry = useCallback(async () => {
-    if (recordingURI) {
-      await deleteAsync(recordingURI);
+    if (recordingUri) {
+      await deleteAsync(recordingUri);
     }
 
-    for (const imageURI of imagesURI) {
+    for (const imageURI of imagesUri) {
       await deleteAsync(imageURI);
     }
-  }, [recordingURI, imagesURI]);
+  }, [recordingUri, imagesUri]);
 
   const optionsMenuItem = useMemo(() => {
     const menuItems = [];
@@ -206,7 +206,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
-    if (entryObject?.imagesURI?.length === 0) {
+    if (entryObject?.imagesUri?.length === 0) {
       menuItems.push({
         leadingIcon: "image-plus",
         title: "Add images",
@@ -232,12 +232,12 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
         title: "Remove images",
         onPress: () => {
           showConfirmDialog("Do you wish to remove the images?", async () => {
-            for (const imageURI of imagesURI) {
+            for (const imageURI of imagesUri) {
               await deleteAsync(imageURI);
             }
 
             realm.write(() => {
-              entryObject.imagesURI = [];
+              entryObject.imagesUri = [];
             });
           });
         },
@@ -260,7 +260,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
-    if (entryObject?.recordingURI) {
+    if (entryObject?.recordingUri) {
       menuItems.push({
         leadingIcon: "microphone-minus",
         title: "Remove recording",
@@ -268,10 +268,10 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
           showConfirmDialog(
             "Do you wish to remove the recording?",
             async () => {
-              await deleteAsync(entryObject?.recordingURI || "");
+              await deleteAsync(entryObject?.recordingUri || "");
 
               realm.write(() => {
-                entryObject.recordingURI = undefined;
+                entryObject.recordingUri = undefined;
               });
             },
           );
@@ -298,7 +298,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     router,
     theme,
     realm,
-    imagesURI,
+    imagesUri,
     showConfirmDialog,
     videosWithThumbnail,
   ]);
@@ -313,8 +313,8 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       feelingsActiveGroup={feelings?.name || ""}
       feelingsActiveEmotions={feelings?.emotions || []}
       onFeelingsPress={handleFeelingsPress}
-      recordingUri={recordingURI}
-      imagesUri={imagesURI}
+      recordingUri={recordingUri}
+      imagesUri={imagesUri}
       videosWithThumbnail={videosWithThumbnail}
       optionsMenuItems={optionsMenuItem}
       moveMenuItems={moveMenuItems}
