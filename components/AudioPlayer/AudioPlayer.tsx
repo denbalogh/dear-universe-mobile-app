@@ -14,10 +14,10 @@ import Controls from "./Controls";
 import { format } from "date-fns";
 
 type Props = {
-  sourceURI: string;
+  sourceUri: string;
 } & ViewProps;
 
-const AudioPlayer = ({ sourceURI, ...props }: Props) => {
+const AudioPlayer = ({ sourceUri, ...props }: Props) => {
   const theme = useTheme();
 
   const [isLoadingSound, setIsLoadingSound] = useState(true);
@@ -41,7 +41,7 @@ const AudioPlayer = ({ sourceURI, ...props }: Props) => {
     setIsLoadingSound(true);
 
     const { sound } = await Audio.Sound.createAsync(
-      { uri: sourceURI },
+      { uri: sourceUri },
       {},
       handleSetStatus,
     );
@@ -51,7 +51,7 @@ const AudioPlayer = ({ sourceURI, ...props }: Props) => {
     setSound(sound);
     handleSetStatus(status);
     setIsLoadingSound(false);
-  }, []);
+  }, [sourceUri]);
 
   useEffect(() => {
     loadSound();

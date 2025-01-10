@@ -6,7 +6,7 @@ import { useRealm } from "@realm/react";
 import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
-import { Entry, Feelings, VideoWithThumbnail } from "@/models/Entry";
+import { Entry, VideoWithThumbnail } from "@/models/Entry";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
@@ -36,13 +36,6 @@ const NewEntryScreen = () => {
         feelingsActiveEmotions,
       } = entryData;
 
-      const feelingsObject = feelingsActiveGroup
-        ? {
-            name: feelingsActiveGroup,
-            emotions: feelingsActiveEmotions,
-          }
-        : undefined;
-
       realm.write(() => {
         const entry = realm.create(Entry, {
           title,
@@ -50,7 +43,8 @@ const NewEntryScreen = () => {
           recordingUri,
           imagesUri,
           videosWithThumbnail: videosWithThumbnail as VideoWithThumbnail[],
-          feelings: feelingsObject as Feelings,
+          feelingsGroupName: feelingsActiveGroup,
+          feelingsEmotions: feelingsActiveEmotions,
           day: dayObject,
         });
 

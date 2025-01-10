@@ -80,7 +80,7 @@ const Entry = ({
           <ImageGallery imagesUri={imagesUri} style={styles.mediaGallery} />
         )}
         {recordingUri && (
-          <AudioPlayer sourceURI={recordingUri} style={styles.recording} />
+          <AudioPlayer sourceUri={recordingUri} style={styles.recording} />
         )}
         {description && (
           <TouchableRipple
@@ -94,14 +94,8 @@ const Entry = ({
         <Divider style={styles.bottomDivider} />
         <View style={styles.actionBarWrapper}>
           <FeelingsButton
-            feelings={
-              feelingsActiveGroup
-                ? {
-                    name: feelingsActiveGroup,
-                    emotions: feelingsActiveEmotions,
-                  }
-                : undefined
-            }
+            feelingsGroupName={feelingsActiveGroup}
+            feelingsEmotions={feelingsActiveEmotions}
             onPress={onFeelingsPress}
           />
           <View style={styles.actionBarMenusWrapper}>

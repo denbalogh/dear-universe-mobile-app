@@ -2,20 +2,6 @@ import Realm, { BSON } from "realm";
 import { Day } from "./Day";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 
-export class Feelings extends Realm.Object {
-  name!: FEELING_GROUP_NAMES;
-  emotions!: string[];
-
-  static schema: Realm.ObjectSchema = {
-    name: "Feelings",
-    embedded: true,
-    properties: {
-      name: "string",
-      emotions: "string[]",
-    },
-  };
-}
-
 export class VideoWithThumbnail extends Realm.Object {
   videoUri!: string;
   thumbnailUri!: string;
@@ -35,10 +21,11 @@ export class Entry extends Realm.Object<Entry, "day"> {
   createdAt: Date = new Date();
   title?: string = "";
   description?: string = "";
-  feelings?: Feelings;
-  recordingUri?: string;
-  imagesUri?: string[];
-  videosWithThumbnail?: VideoWithThumbnail[];
+  recordingUri?: string = "";
+  imagesUri?: string[] = [];
+  videosWithThumbnail?: VideoWithThumbnail[] = [];
+  feelingsGroupName?: FEELING_GROUP_NAMES | "" = "";
+  feelingsEmotions?: string[] = [];
   day!: Day;
 
   static schema: Realm.ObjectSchema = {
@@ -53,10 +40,18 @@ export class Entry extends Realm.Object<Entry, "day"> {
         type: "date",
         default: () => new Date(),
       },
-      title: "string?",
-      description: "string?",
-      feelings: "Feelings?",
-      recordingUri: "string?",
+      title: {
+        type: "string",
+        default: "",
+      },
+      description: {
+        type: "string",
+        default: "",
+      },
+      recordingUri: {
+        type: "string",
+        default: "",
+      },
       imagesUri: {
         type: "list",
         objectType: "string",
@@ -65,6 +60,15 @@ export class Entry extends Realm.Object<Entry, "day"> {
       videosWithThumbnail: {
         type: "list",
         objectType: "VideoWithThumbnail",
+        default: [],
+      },
+      feelingsGroupName: {
+        type: "string",
+        default: "",
+      },
+      feelingsEmotions: {
+        type: "list",
+        objectType: "string",
         default: [],
       },
       day: {

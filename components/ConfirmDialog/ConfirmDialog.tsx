@@ -1,7 +1,10 @@
 import { spacing } from "@/constants/theme";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Button, Dialog, Portal, Text } from "react-native-paper";
+
+export type ConfirmDialogButtonType = "positive" | "negative";
 
 type Props = {
   text: string;
@@ -10,6 +13,7 @@ type Props = {
   onConfirm: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
+  confirmType?: ConfirmDialogButtonType;
 };
 
 const ConfirmDialog = ({
@@ -19,7 +23,10 @@ const ConfirmDialog = ({
   onConfirm,
   confirmLabel = "Yes",
   cancelLabel = "No",
+  confirmType = "negative",
 }: Props) => {
+  const theme = useCustomTheme();
+
   return (
     <Portal>
       <Dialog visible={isVisible} onDismiss={hideDialog}>
@@ -27,13 +34,20 @@ const ConfirmDialog = ({
           <Text variant="bodyLarge">{text}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={hideDialog}>{cancelLabel}</Button>
+          <Button onPress={hideDialog} textColor={theme.colors.secondary}>
+            {cancelLabel}
+          </Button>
           <Button
             onPress={() => {
               onConfirm();
               hideDialog();
             }}
             style={styles.dialogConfirmButton}
+            textColor={
+              confirmType === "positive"
+                ? theme.colors.primary
+                : theme.colors.error
+            }
           >
             {confirmLabel}
           </Button>

@@ -2,43 +2,45 @@ import React from "react";
 import { Button, Card, Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { roundness, spacing } from "@/constants/theme";
-import { Feelings } from "@/constants/feelings";
+import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 type Props = {
-  feelings: Feelings | undefined;
+  feelingsGroupName: FEELING_GROUP_NAMES | "";
+  feelingsEmotions?: string[];
   onPress: () => void;
 };
 
-const FeelingsButton = ({ feelings, onPress }: Props) => {
+const FeelingsButton = ({
+  feelingsGroupName,
+  feelingsEmotions,
+  onPress,
+}: Props) => {
   const theme = useCustomTheme();
-  const hasFeelings = feelings;
 
-  if (hasFeelings) {
-    const { name, emotions } = feelings;
-
-    const hasEmotions = emotions.length > 0;
+  if (feelingsGroupName) {
+    const hasEmotions = feelingsEmotions && feelingsEmotions.length > 0;
 
     return (
       <Card
         mode="elevated"
         style={[
           styles.card,
-          { backgroundColor: theme.colors[`${name}Container`] },
+          { backgroundColor: theme.colors[`${feelingsGroupName}Container`] },
         ]}
         onPress={onPress}
       >
         <Card.Content style={styles.cardContent}>
           {hasEmotions ? (
             <View style={styles.emotionsWrapper}>
-              {emotions.map((emotion, index) => (
+              {feelingsEmotions.map((emotion, index) => (
                 <Text key={`${emotion}-${index}`} style={styles.emotion}>
                   {emotion}
                 </Text>
               ))}
             </View>
           ) : (
-            <Text style={styles.emotion}>{name}</Text>
+            <Text style={styles.emotion}>{feelingsGroupName}</Text>
           )}
         </Card.Content>
       </Card>

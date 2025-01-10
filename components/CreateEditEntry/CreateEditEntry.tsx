@@ -165,17 +165,21 @@ const CreateEditEntry = ({
   ]);
 
   const handleOnSave = () => {
-    showConfirmDialog("Do you wish to save the entry?", () => {
-      onSave({
-        title,
-        description,
-        recordingUri,
-        imagesUri,
-        videosWithThumbnail,
-        feelingsActiveGroup: activeGroup,
-        feelingsActiveEmotions: activeEmotions,
-      });
-    });
+    showConfirmDialog(
+      "Do you wish to save the entry?",
+      () => {
+        onSave({
+          title,
+          description,
+          recordingUri,
+          imagesUri,
+          videosWithThumbnail,
+          feelingsActiveGroup: activeGroup,
+          feelingsActiveEmotions: activeEmotions,
+        });
+      },
+      "positive",
+    );
   };
 
   const isEdited = useMemo(

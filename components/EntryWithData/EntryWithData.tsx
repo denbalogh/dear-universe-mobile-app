@@ -32,10 +32,11 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     _id,
     title = "",
     description = "",
-    feelings,
     recordingUri = "",
     imagesUri = [],
     videosWithThumbnail = [],
+    feelingsGroupName = "",
+    feelingsEmotions = [],
   } = entryObject;
 
   const handleOnTitlePress = () =>
@@ -310,8 +311,8 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       onTitlePress={handleOnTitlePress}
       description={description}
       onDescriptionPress={handleOnDescriptionPress}
-      feelingsActiveGroup={feelings?.name || ""}
-      feelingsActiveEmotions={feelings?.emotions || []}
+      feelingsActiveGroup={feelingsGroupName}
+      feelingsActiveEmotions={feelingsEmotions}
       onFeelingsPress={handleFeelingsPress}
       recordingUri={recordingUri}
       imagesUri={imagesUri}
