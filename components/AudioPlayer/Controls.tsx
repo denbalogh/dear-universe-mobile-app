@@ -89,7 +89,7 @@ const Controls = ({
         ) : failedToLoad ? (
           <IconButton
             icon="reload"
-            size={sizing.sizeLarge}
+            size={sizing.sizeMedium}
             onPress={onReloadPress}
             style={styles.playPauseIconButton}
             accessibilityLabel="Reload"
@@ -97,7 +97,7 @@ const Controls = ({
         ) : isPlaying ? (
           <IconButton
             icon="pause"
-            size={sizing.sizeLarge}
+            size={sizing.sizeMedium}
             onPress={onPausePress}
             style={styles.playPauseIconButton}
             accessibilityLabel="Pause"
@@ -105,7 +105,7 @@ const Controls = ({
         ) : (
           <IconButton
             icon="play"
-            size={sizing.sizeLarge}
+            size={sizing.sizeMedium}
             onPress={onPlayPress}
             style={styles.playPauseIconButton}
             accessibilityLabel="Play"

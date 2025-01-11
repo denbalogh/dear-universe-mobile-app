@@ -14,19 +14,27 @@ import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 type Props = {
   videosWithThumbnail: VideoWithThumbnail[];
   onVideosChange: (videosWithThumbnail: VideoWithThumbnail[]) => void;
-  onVideosDelete?: (videosWithThumbnail: VideoWithThumbnail[]) => void;
+  initialSelectedIndex?: string;
 } & ViewProps;
 
 const VideosSection = ({
   videosWithThumbnail,
   onVideosChange,
-  onVideosDelete,
+  initialSelectedIndex,
   ...viewProps
 }: Props) => {
   const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
-  const [isSelectable, setIsSelectable] = useState(false);
-  const [selectedVideos, setSelectedVideos] = useState<number[]>([]);
+
+  const initalSelectable = !!initialSelectedIndex;
+  const initialSelectedVideos = initialSelectedIndex
+    ? [parseInt(initialSelectedIndex)]
+    : [];
+
+  const [isSelectable, setIsSelectable] = useState(initalSelectable);
+  const [selectedVideos, setSelectedVideos] = useState<number[]>(
+    initialSelectedVideos,
+  );
 
   const handleAddVideos = async (newVideos: ImagePickerAsset[]) => {
     const newVideosWithThumbnail: VideoWithThumbnail[] = [];
@@ -112,12 +120,6 @@ const VideosSection = ({
       const newImagesUri = videosWithThumbnail.filter(
         (_, index) => !selectedVideos.includes(index),
       );
-
-      if (onVideosDelete) {
-        onVideosDelete(
-          selectedVideos.map((index) => videosWithThumbnail[index]),
-        );
-      }
 
       onVideosChange(newImagesUri);
       setSelectedVideos([]);

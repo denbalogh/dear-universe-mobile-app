@@ -12,19 +12,27 @@ import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 type Props = {
   imagesUri: string[];
   onImagesChange: (imagesUri: string[]) => void;
-  onImagesDelete?: (imagesUri: string[]) => void;
+  initialSelectedIndex?: string;
 } & ViewProps;
 
 const ImagesSection = ({
   imagesUri,
   onImagesChange,
-  onImagesDelete,
+  initialSelectedIndex,
   ...viewProps
 }: Props) => {
   const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
-  const [isSelectable, setIsSelectable] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<number[]>([]);
+
+  const initalSelectable = !!initialSelectedIndex;
+  const initialSelectedImages = initialSelectedIndex
+    ? [parseInt(initialSelectedIndex)]
+    : [];
+
+  const [isSelectable, setIsSelectable] = useState(initalSelectable);
+  const [selectedImages, setSelectedImages] = useState<number[]>(
+    initialSelectedImages,
+  );
 
   const handleAddImages = (newImages: ImagePickerAsset[]) => {
     const newImagesUri = newImages.map((image) => image.uri);
@@ -101,10 +109,6 @@ const ImagesSection = ({
       const newImagesUri = imagesUri.filter(
         (_, index) => !selectedImages.includes(index),
       );
-
-      if (onImagesDelete) {
-        onImagesDelete(selectedImages.map((index) => imagesUri[index]));
-      }
 
       onImagesChange(newImagesUri);
       setSelectedImages([]);

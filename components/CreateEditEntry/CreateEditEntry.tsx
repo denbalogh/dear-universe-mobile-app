@@ -26,6 +26,14 @@ import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { isEqual } from "lodash";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
+import {
+  moveAndDeleteUpdatedImagesAndGetPaths,
+  moveAndDeleteUpdatedRecordingAndGetPath,
+  moveAndDeleteUpdatedVideosAndGetPaths,
+  moveImagesToAppDirectoryAndGetPaths,
+  moveRecordingToAppDirectoryAndGetPath,
+  moveVideosToAppDirectoryAndGetPaths,
+} from "@/utils/files";
 
 type LayoutParts =
   | "mainHeadline"
@@ -47,6 +55,8 @@ type Props = {
   scrollToImages?: boolean;
   scrollToVideos?: boolean;
   scrollToFeelings?: boolean;
+  imagesSelectedIndex?: string;
+  videosSelectedIndex?: string;
 } & EntryData;
 
 const CreateEditEntry = ({
@@ -65,6 +75,8 @@ const CreateEditEntry = ({
   scrollToImages,
   scrollToRecording,
   scrollToVideos,
+  imagesSelectedIndex,
+  videosSelectedIndex,
   onSave,
 }: Props) => {
   const theme = useCustomTheme();
@@ -73,7 +85,6 @@ const CreateEditEntry = ({
   const { showConfirmDialog } = useConfirmDialog();
 
   const isCreateMode = mode === "create";
-  const isEditMode = mode === "edit";
 
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
@@ -164,20 +175,43 @@ const CreateEditEntry = ({
     scrollToFeelings,
   ]);
 
-  const handleOnSave = () => {
+  const handleSaveEntry = async () => {
+    const newImagesUri = isCreateMode
+      ? await moveImagesToAppDirectoryAndGetPaths(imagesUri)
+      : await moveAndDeleteUpdatedImagesAndGetPaths(
+          imagesUri,
+          initialImagesUri,
+        );
+
+    const newVideosWithThumbnail = isCreateMode
+      ? await moveVideosToAppDirectoryAndGetPaths(videosWithThumbnail)
+      : await moveAndDeleteUpdatedVideosAndGetPaths(
+          videosWithThumbnail,
+          initialVideosWithThumbnail,
+        );
+
+    const newRecordingUri = isCreateMode
+      ? await moveRecordingToAppDirectoryAndGetPath(recordingUri)
+      : await moveAndDeleteUpdatedRecordingAndGetPath(
+          recordingUri,
+          initialRecordingUri,
+        );
+
+    onSave({
+      title,
+      description,
+      recordingUri: newRecordingUri,
+      imagesUri: newImagesUri,
+      videosWithThumbnail: newVideosWithThumbnail,
+      feelingsActiveGroup: activeGroup,
+      feelingsActiveEmotions: activeEmotions,
+    });
+  };
+
+  const handleShowSaveConfirmDialog = () => {
     showConfirmDialog(
       "Do you wish to save the entry?",
-      () => {
-        onSave({
-          title,
-          description,
-          recordingUri,
-          imagesUri,
-          videosWithThumbnail,
-          feelingsActiveGroup: activeGroup,
-          feelingsActiveEmotions: activeEmotions,
-        });
-      },
+      handleSaveEntry,
       "positive",
     );
   };
@@ -300,6 +334,7 @@ const CreateEditEntry = ({
           onImagesChange={setImagesUri}
           style={styles.sectionWrapper}
           onLayout={handleSetSectionHeight("imagesSection")}
+          initialSelectedIndex={imagesSelectedIndex}
         />
         <SectionHeadline
           headline="Videos"
@@ -311,6 +346,7 @@ const CreateEditEntry = ({
           onVideosChange={setVideosWithThumbnail}
           style={styles.sectionWrapper}
           onLayout={handleSetSectionHeight("videosSection")}
+          initialSelectedIndex={videosSelectedIndex}
         />
         <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
         <FeelingsSection
@@ -326,7 +362,7 @@ const CreateEditEntry = ({
           <FAB
             label="Save"
             variant="tertiary"
-            onPress={handleOnSave}
+            onPress={handleShowSaveConfirmDialog}
             disabled={!isEdited}
           />
         </View>

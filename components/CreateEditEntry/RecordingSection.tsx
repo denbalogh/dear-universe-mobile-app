@@ -14,7 +14,6 @@ import { normalizeMeteringForScale } from "../RecordingControls/utils";
 import { StyleSheet, View, ViewProps } from "react-native";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { Button } from "react-native-paper";
-import { deleteAsync } from "expo-file-system";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
@@ -91,12 +90,9 @@ const RecordingSection = ({
   const normalizedMetering = normalizeMeteringForScale(metering);
 
   const handleRemoveRecording = () => {
-    if (recordingUri) {
-      showConfirmDialog("Do you want to discard the recording?", async () => {
-        await deleteAsync(recordingUri);
-        onRecordingDone("");
-      });
-    }
+    showConfirmDialog("Do you want to delete the recording?", () => {
+      onRecordingDone("");
+    });
   };
 
   const unloadRecording = useCallback(async () => {
@@ -124,11 +120,11 @@ const RecordingSection = ({
     <View {...viewProps}>
       {recordingUri ? (
         <>
-          <AudioPlayer sourceURI={recordingUri} />
+          <AudioPlayer sourceUri={recordingUri} />
           <Button
             style={styles.deleteButton}
             icon="delete"
-            mode="outlined"
+            mode="elevated"
             onPress={handleRemoveRecording}
             textColor={theme.colors.error}
           >
@@ -158,6 +154,6 @@ export default RecordingSection;
 
 const styles = StyleSheet.create({
   deleteButton: {
-    marginTop: spacing.spaceSmall,
+    marginTop: spacing.spaceMedium,
   },
 });
