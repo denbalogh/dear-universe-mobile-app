@@ -225,3 +225,22 @@ export const moveAndDeleteUpdatedRecordingAndGetPath = async (
 
   return dest;
 };
+
+export const deleteFilesInEntry = async (
+  imagesUri: string[],
+  videosWithThumbnail: VideoWithThumbnail[],
+  recordingUri: string,
+) => {
+  for (const uri of imagesUri) {
+    await deleteAsync(uri);
+  }
+
+  for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
+    await deleteAsync(videoUri);
+    await deleteAsync(thumbnailUri);
+  }
+
+  if (recordingUri) {
+    await deleteAsync(recordingUri);
+  }
+};

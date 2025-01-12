@@ -4,6 +4,7 @@ import { StyleSheet, View, ViewProps } from "react-native";
 import {
   Card,
   Divider,
+  IconButton,
   MenuItemProps,
   Text,
   TouchableRipple,
@@ -14,6 +15,7 @@ import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import ImageGallery from "../MediaGallery/ImageGallery";
 import VideoGallery, { VideoWithThumbnail } from "../MediaGallery/VideoGallery";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 export type EntryData = {
   title: string;
@@ -29,9 +31,10 @@ type Props = {
   onTitlePress: () => void;
   onDescriptionPress: () => void;
   onFeelingsPress: () => void;
+  onDeleteEntryPress: () => void;
+  onRecordingLongPress: () => void;
   moveMenuItems: MenuItemProps[];
-  optionsMenuItems: MenuItemProps[];
-  addRemoveMenuItems: MenuItemProps[];
+  addMenuItems: MenuItemProps[];
   style: ViewProps["style"];
 } & EntryData;
 
@@ -46,14 +49,16 @@ const Entry = ({
   onTitlePress,
   onDescriptionPress,
   onFeelingsPress,
+  onDeleteEntryPress,
+  onRecordingLongPress,
   moveMenuItems,
-  optionsMenuItems,
-  addRemoveMenuItems,
+  addMenuItems,
   style,
 }: Props) => {
+  const theme = useCustomTheme();
+
   const hasMoveMenuItems = moveMenuItems.length > 0;
-  const hasOptionsMenuItems = optionsMenuItems.length > 0;
-  const hasAddRemoveMenuItems = addRemoveMenuItems.length > 0;
+  const hasAddMenuItems = addMenuItems.length > 0;
 
   const hasImages = imagesUri.length > 0;
   const hasVideos = videosWithThumbnail.length > 0;
@@ -80,7 +85,11 @@ const Entry = ({
           <ImageGallery imagesUri={imagesUri} style={styles.mediaGallery} />
         )}
         {recordingUri && (
-          <AudioPlayer sourceUri={recordingUri} style={styles.recording} />
+          <AudioPlayer
+            sourceUri={recordingUri}
+            style={styles.recording}
+            onLongPress={onRecordingLongPress}
+          />
         )}
         {description && (
           <TouchableRipple
@@ -99,22 +108,21 @@ const Entry = ({
             onPress={onFeelingsPress}
           />
           <View style={styles.actionBarMenusWrapper}>
-            {hasOptionsMenuItems && (
-              <IconButtonMenu
-                menuItems={optionsMenuItems}
-                iconButtonProps={{ icon: "dots-vertical" }}
-              />
-            )}
+            <IconButton
+              icon="delete"
+              onPress={onDeleteEntryPress}
+              iconColor={theme.colors.error}
+            />
             {hasMoveMenuItems && (
               <IconButtonMenu
                 menuItems={moveMenuItems}
                 iconButtonProps={{ icon: "arrow-up-down" }}
               />
             )}
-            {hasAddRemoveMenuItems && (
+            {hasAddMenuItems && (
               <IconButtonMenu
-                menuItems={addRemoveMenuItems}
-                iconButtonProps={{ icon: "plus-minus" }}
+                menuItems={addMenuItems}
+                iconButtonProps={{ icon: "plus" }}
               />
             )}
           </View>

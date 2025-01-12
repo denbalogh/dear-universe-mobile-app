@@ -247,8 +247,13 @@ const CreateEditEntry = ({
   );
 
   const handleShowDiscardDialog = useCallback(() => {
-    showConfirmDialog("Do you wish to discard the entry?", router.back);
-  }, [showConfirmDialog, router]);
+    showConfirmDialog(
+      isCreateMode
+        ? "Do you wish to discard the entry?"
+        : "Do you wish to discard the changes?",
+      router.back,
+    );
+  }, [showConfirmDialog, isCreateMode, router]);
 
   const handleBackPress = () => {
     if (isEdited) {
