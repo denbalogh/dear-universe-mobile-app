@@ -24,7 +24,7 @@ import FeelingsSection from "@/components/CreateEditEntry/FeelingsSection";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
-import { isEqual } from "lodash";
+import { debounce, isEqual } from "lodash";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   moveAndDeleteUpdatedImagesAndGetPaths,
@@ -127,53 +127,56 @@ const CreateEditEntry = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const hasScrolledInitially = useRef(false);
 
-  const handleInitialScrollToOffset = (offset: number) => {
-    if (!hasScrolledInitially.current) {
-      scrollViewRef.current?.scrollTo({ y: offset, animated: true });
-      hasScrolledInitially.current = true;
-    }
-  };
+  const handleScrollToOffset = useCallback((offset: number) => {
+    scrollViewRef.current?.scrollTo({ y: offset, animated: true });
+  }, []);
+
+  const debouncedInitialScrollToSection = useMemo(
+    () =>
+      debounce((sectionsHeight: Record<LayoutParts, number>) => {
+        const {
+          mainHeadline,
+          textSection,
+          recordingHeadline,
+          recordingSection,
+          imagesHeadline,
+          imagesSection,
+          videosHeadline,
+          videosSection,
+        } = sectionsHeight;
+
+        const recordingOffset = mainHeadline + textSection;
+        const imagesOffset =
+          recordingOffset + recordingHeadline + recordingSection;
+        const videosOffset = imagesOffset + imagesHeadline + imagesSection;
+        const feelingsOffset = videosOffset + videosHeadline + videosSection;
+
+        if (scrollToRecording) {
+          handleScrollToOffset(recordingOffset);
+        } else if (scrollToImages) {
+          handleScrollToOffset(imagesOffset);
+        } else if (scrollToVideos) {
+          handleScrollToOffset(videosOffset);
+        } else if (scrollToFeelings) {
+          handleScrollToOffset(feelingsOffset);
+        }
+
+        hasScrolledInitially.current = true;
+      }, 100),
+    [
+      handleScrollToOffset,
+      scrollToFeelings,
+      scrollToImages,
+      scrollToRecording,
+      scrollToVideos,
+    ],
+  );
 
   useEffect(() => {
-    // Continue only if all sections have been measured
-    for (const value of Object.values(sectionsHeight)) {
-      if (value === 0) {
-        return;
-      }
+    if (!hasScrolledInitially.current) {
+      debouncedInitialScrollToSection(sectionsHeight);
     }
-
-    const {
-      mainHeadline,
-      textSection,
-      recordingHeadline,
-      recordingSection,
-      imagesHeadline,
-      imagesSection,
-      videosHeadline,
-      videosSection,
-    } = sectionsHeight;
-
-    const recordingOffset = mainHeadline + textSection;
-    const imagesOffset = recordingOffset + recordingHeadline + recordingSection;
-    const videosOffset = imagesOffset + imagesHeadline + imagesSection;
-    const feelingsOffset = videosOffset + videosHeadline + videosSection;
-
-    if (scrollToRecording) {
-      handleInitialScrollToOffset(recordingOffset);
-    } else if (scrollToImages) {
-      handleInitialScrollToOffset(imagesOffset);
-    } else if (scrollToVideos) {
-      handleInitialScrollToOffset(videosOffset);
-    } else if (scrollToFeelings) {
-      handleInitialScrollToOffset(feelingsOffset);
-    }
-  }, [
-    sectionsHeight,
-    scrollToRecording,
-    scrollToImages,
-    scrollToVideos,
-    scrollToFeelings,
-  ]);
+  }, [debouncedInitialScrollToSection, sectionsHeight]);
 
   const handleSaveEntry = async () => {
     const newImagesUri = isCreateMode
