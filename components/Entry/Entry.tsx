@@ -33,6 +33,8 @@ type Props = {
   onFeelingsPress: () => void;
   onDeleteEntryPress: () => void;
   onRecordingLongPress: () => void;
+  onImageLongPress?: (index: number) => void;
+  onVideoLongPress?: (index: number) => void;
   moveMenuItems: MenuItemProps[];
   addMenuItems: MenuItemProps[];
   style: ViewProps["style"];
@@ -51,6 +53,8 @@ const Entry = ({
   onFeelingsPress,
   onDeleteEntryPress,
   onRecordingLongPress,
+  onImageLongPress,
+  onVideoLongPress,
   moveMenuItems,
   addMenuItems,
   style,
@@ -79,10 +83,15 @@ const Entry = ({
           <VideoGallery
             videosWithThumbnail={videosWithThumbnail}
             style={styles.mediaGallery}
+            onVideoLongPress={onVideoLongPress}
           />
         )}
         {hasImages && (
-          <ImageGallery imagesUri={imagesUri} style={styles.mediaGallery} />
+          <ImageGallery
+            imagesUri={imagesUri}
+            style={styles.mediaGallery}
+            onImageLongPress={onImageLongPress}
+          />
         )}
         {recordingUri && (
           <AudioPlayer

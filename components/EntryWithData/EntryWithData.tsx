@@ -18,6 +18,10 @@ import { MenuItemProps } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import useDeleteEmptyEntry from "@/hooks/useDeleteEmptyEntry";
 import { deleteFilesInEntry } from "@/utils/files";
+import {
+  getImagesSelectedIndex,
+  getVideosSelectedIndex,
+} from "@/utils/screens";
 
 type Props = {
   entryObject: EntryType;
@@ -91,6 +95,26 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       {
         pathname: `./entry/${_id.toString()}`,
         params: SCROLL_TO_RECORDING,
+      },
+      { relativeToDirectory: true },
+    );
+  };
+
+  const handleOnImageLongsPress = (index: number) => {
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: { ...SCROLL_TO_IMAGES, ...getImagesSelectedIndex(index) },
+      },
+      { relativeToDirectory: true },
+    );
+  };
+
+  const handleOnVideoLongsPress = (index: number) => {
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: { ...SCROLL_TO_VIDEOS, ...getVideosSelectedIndex(index) },
       },
       { relativeToDirectory: true },
     );
@@ -247,6 +271,8 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       onFeelingsPress={handleFeelingsPress}
       onDeleteEntryPress={handleDeleteEntryPress}
       onRecordingLongPress={handleOnRecordingLongPress}
+      onImageLongPress={handleOnImageLongsPress}
+      onVideoLongPress={handleOnVideoLongsPress}
       recordingUri={recordingUri}
       imagesUri={imagesUri}
       videosWithThumbnail={videosWithThumbnail}
