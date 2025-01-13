@@ -36,7 +36,7 @@ type Props = {
   onImageLongPress?: (index: number) => void;
   onVideoLongPress?: (index: number) => void;
   moveMenuItems: MenuItemProps[];
-  addMenuItems: MenuItemProps[];
+  editMenuItems: MenuItemProps[];
   style: ViewProps["style"];
 } & EntryData;
 
@@ -56,13 +56,13 @@ const Entry = ({
   onImageLongPress,
   onVideoLongPress,
   moveMenuItems,
-  addMenuItems,
+  editMenuItems,
   style,
 }: Props) => {
   const theme = useCustomTheme();
 
   const hasMoveMenuItems = moveMenuItems.length > 0;
-  const hasAddMenuItems = addMenuItems.length > 0;
+  const hasEditMenuItems = editMenuItems.length > 0;
 
   const hasImages = imagesUri.length > 0;
   const hasVideos = videosWithThumbnail.length > 0;
@@ -128,10 +128,10 @@ const Entry = ({
                 iconButtonProps={{ icon: "arrow-up-down" }}
               />
             )}
-            {hasAddMenuItems && (
+            {hasEditMenuItems && (
               <IconButtonMenu
-                menuItems={addMenuItems}
-                iconButtonProps={{ icon: "plus" }}
+                menuItems={editMenuItems}
+                iconButtonProps={{ icon: "plus-minus" }}
               />
             )}
           </View>

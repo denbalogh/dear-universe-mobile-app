@@ -177,7 +177,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     return menuItems;
   }, [dayObject, index, realm]);
 
-  const addMenuItems = useMemo(() => {
+  const editMenuItems = useMemo(() => {
     const menuItems = [];
 
     const { title, description, videosWithThumbnail, imagesUri, recordingUri } =
@@ -256,6 +256,18 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
+    menuItems.push({
+      leadingIcon: "note-edit",
+      title: "Edit entry",
+      onPress: () =>
+        router.navigate(
+          {
+            pathname: `./entry/${_id.toString()}`,
+          },
+          { relativeToDirectory: true },
+        ),
+    });
+
     return menuItems;
   }, [entryObject, router, _id]);
 
@@ -277,7 +289,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       imagesUri={imagesUri}
       videosWithThumbnail={videosWithThumbnail}
       moveMenuItems={moveMenuItems}
-      addMenuItems={addMenuItems}
+      editMenuItems={editMenuItems}
     />
   );
 };
