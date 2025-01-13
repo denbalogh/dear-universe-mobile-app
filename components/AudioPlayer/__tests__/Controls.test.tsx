@@ -32,18 +32,18 @@ describe("AudioPlayer/Controls", () => {
     expect(screen.getByLabelText("Play")).toBeOnTheScreen();
     expect(screen.queryByLabelText("Pause")).not.toBeOnTheScreen();
 
-    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Rewind 5 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 5 seconds")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
     await user.press(screen.getByLabelText("Play"));
     expect(onPlayPressMock).toHaveBeenCalledTimes(1);
 
-    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    await user.press(screen.getByLabelText("Rewind 5 seconds"));
     expect(on5SecRewindPressMock).toHaveBeenCalledTimes(1);
 
-    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    await user.press(screen.getByLabelText("Forward 5 seconds"));
     expect(on5SecForwardPressMock).toHaveBeenCalledTimes(1);
   }, 10000);
 
@@ -73,18 +73,18 @@ describe("AudioPlayer/Controls", () => {
     expect(screen.queryByLabelText("Play")).not.toBeOnTheScreen();
     expect(screen.getByLabelText("Pause")).toBeOnTheScreen();
 
-    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Rewind 5 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 5 seconds")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
     await user.press(screen.getByLabelText("Pause"));
     expect(onPausePressMock).toHaveBeenCalledTimes(1);
 
-    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    await user.press(screen.getByLabelText("Rewind 5 seconds"));
     expect(on5SecRewindPressMock).toHaveBeenCalledTimes(1);
 
-    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    await user.press(screen.getByLabelText("Forward 5 seconds"));
     expect(on5SecForwardPressMock).toHaveBeenCalledTimes(1);
   });
 
@@ -119,15 +119,15 @@ describe("AudioPlayer/Controls", () => {
 
     expect(screen.getByLabelText("Loading the recording")).toBeOnTheScreen();
 
-    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Rewind 5 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 5 seconds")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
-    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    await user.press(screen.getByLabelText("Rewind 5 seconds"));
     expect(on5SecRewindPressMock).toHaveBeenCalledTimes(0);
 
-    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    await user.press(screen.getByLabelText("Forward 5 seconds"));
     expect(on5SecForwardPressMock).toHaveBeenCalledTimes(0);
   });
 
@@ -187,18 +187,18 @@ describe("AudioPlayer/Controls", () => {
     expect(screen.queryByLabelText("Pause")).not.toBeOnTheScreen();
     expect(screen.getByLabelText("Reload")).toBeOnTheScreen();
 
-    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Rewind 5 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 5 seconds")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
     await user.press(screen.getByLabelText("Reload"));
     expect(onReloadPressMock).toHaveBeenCalledTimes(1);
 
-    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    await user.press(screen.getByLabelText("Rewind 5 seconds"));
     expect(on5SecRewindPressMock).toHaveBeenCalledTimes(0);
 
-    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    await user.press(screen.getByLabelText("Forward 5 seconds"));
     expect(on5SecForwardPressMock).toHaveBeenCalledTimes(0);
   });
 
@@ -234,15 +234,15 @@ describe("AudioPlayer/Controls", () => {
 
     expect(screen.getByLabelText("Loading the recording")).toBeOnTheScreen();
 
-    expect(screen.getByLabelText("Rewind 10 seconds")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Forward 10 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Rewind 5 seconds")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Forward 5 seconds")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
-    await user.press(screen.getByLabelText("Rewind 10 seconds"));
+    await user.press(screen.getByLabelText("Rewind 5 seconds"));
     expect(on5SecRewindPressMock).toHaveBeenCalledTimes(0);
 
-    await user.press(screen.getByLabelText("Forward 10 seconds"));
+    await user.press(screen.getByLabelText("Forward 5 seconds"));
     expect(on5SecForwardPressMock).toHaveBeenCalledTimes(0);
   });
 });

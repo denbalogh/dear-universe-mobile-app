@@ -62,6 +62,7 @@ const Controls = ({
           icon="microphone-question"
           mode="outlined"
           style={styles.permissionButton}
+          accessibilityLabel="Request recording permission"
         >
           Request permission
         </Button>
@@ -91,6 +92,7 @@ const Controls = ({
               icon="record"
               mode="elevated"
               style={styles.recordButton}
+              accessibilityLabel="Start recording"
             >
               Record
             </Button>
@@ -100,6 +102,7 @@ const Controls = ({
               icon="pause"
               mode="elevated"
               style={styles.recordButton}
+              accessibilityLabel="Pause recording"
             >
               {`Pause | ${time}`}
             </Button>
@@ -109,6 +112,7 @@ const Controls = ({
               icon="record"
               mode="elevated"
               style={styles.recordButton}
+              accessibilityLabel="Continue recording"
             >
               {`Continue | ${time}`}
             </Button>
