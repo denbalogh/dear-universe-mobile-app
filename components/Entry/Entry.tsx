@@ -4,55 +4,67 @@ import { StyleSheet, View, ViewProps } from "react-native";
 import {
   Card,
   Divider,
+  IconButton,
   MenuItemProps,
   Text,
   TouchableRipple,
 } from "react-native-paper";
 import FeelingsButton from "./FeelingsButton";
-import { Feelings } from "@/constants/feelings";
+import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import ImageGallery from "../MediaGallery/ImageGallery";
 import VideoGallery, { VideoWithThumbnail } from "../MediaGallery/VideoGallery";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
+
+export type EntryData = {
+  title: string;
+  description: string;
+  recordingUri: string;
+  imagesUri: string[];
+  videosWithThumbnail: VideoWithThumbnail[];
+  feelingsActiveGroup: FEELING_GROUP_NAMES | "";
+  feelingsActiveEmotions: string[];
+};
 
 type Props = {
-  title?: {
-    onPress: () => void;
-    text: string;
-  };
-  text?: {
-    onPress: () => void;
-    text: string;
-  };
-  feelings?: Feelings;
+  onTitlePress: () => void;
+  onDescriptionPress: () => void;
   onFeelingsPress: () => void;
-  recordingURI?: string;
-  imagesURI: string[];
-  videosWithThumbnail: VideoWithThumbnail[];
+  onDeleteEntryPress: () => void;
+  onRecordingLongPress: () => void;
+  onImageLongPress?: (index: number) => void;
+  onVideoLongPress?: (index: number) => void;
   moveMenuItems: MenuItemProps[];
-  optionsMenuItems: MenuItemProps[];
-  addRemoveMenuItems: MenuItemProps[];
+  editMenuItems: MenuItemProps[];
   style: ViewProps["style"];
-};
+} & EntryData;
 
 const Entry = ({
   title,
-  text,
-  feelings,
-  onFeelingsPress,
-  recordingURI,
-  imagesURI,
+  description,
+  recordingUri,
+  imagesUri,
   videosWithThumbnail,
+  feelingsActiveGroup,
+  feelingsActiveEmotions,
+  onTitlePress,
+  onDescriptionPress,
+  onFeelingsPress,
+  onDeleteEntryPress,
+  onRecordingLongPress,
+  onImageLongPress,
+  onVideoLongPress,
   moveMenuItems,
-  optionsMenuItems,
-  addRemoveMenuItems,
+  editMenuItems,
   style,
 }: Props) => {
-  const hasMoveMenuItems = moveMenuItems.length > 0;
-  const hasOptionsMenuItems = optionsMenuItems.length > 0;
-  const hasAddRemoveMenuItems = addRemoveMenuItems.length > 0;
+  const theme = useCustomTheme();
 
-  const hasImages = imagesURI.length > 0;
+  const hasMoveMenuItems = moveMenuItems.length > 0;
+  const hasEditMenuItems = editMenuItems.length > 0;
+
+  const hasImages = imagesUri.length > 0;
   const hasVideos = videosWithThumbnail.length > 0;
 
   return (
@@ -60,53 +72,65 @@ const Entry = ({
       <Card.Content style={styles.cardContent}>
         {title && (
           <TouchableRipple
-            onPress={title.onPress}
+            onPress={onTitlePress}
             style={styles.titleWrapper}
             accessibilityLabel="Edit title"
           >
-            <Text variant="titleLarge">{title.text}</Text>
+            <Text variant="titleLarge">{title}</Text>
           </TouchableRipple>
         )}
         {hasVideos && (
           <VideoGallery
             videosWithThumbnail={videosWithThumbnail}
             style={styles.mediaGallery}
+            onVideoLongPress={onVideoLongPress}
           />
         )}
         {hasImages && (
-          <ImageGallery imagesUri={imagesURI} style={styles.mediaGallery} />
+          <ImageGallery
+            imagesUri={imagesUri}
+            style={styles.mediaGallery}
+            onImageLongPress={onImageLongPress}
+          />
         )}
-        {recordingURI && (
-          <AudioPlayer sourceURI={recordingURI} style={styles.recording} />
+        {recordingUri && (
+          <AudioPlayer
+            sourceUri={recordingUri}
+            style={styles.recording}
+            onLongPress={onRecordingLongPress}
+          />
         )}
-        {text && (
+        {description && (
           <TouchableRipple
-            onPress={text.onPress}
+            onPress={onDescriptionPress}
             style={styles.textWrapper}
             accessibilityLabel="Edit text"
           >
-            <Text variant="bodyMedium">{text.text}</Text>
+            <Text variant="bodyMedium">{description}</Text>
           </TouchableRipple>
         )}
         <Divider style={styles.bottomDivider} />
         <View style={styles.actionBarWrapper}>
-          <FeelingsButton feelings={feelings} onPress={onFeelingsPress} />
+          <FeelingsButton
+            feelingsGroupName={feelingsActiveGroup}
+            feelingsEmotions={feelingsActiveEmotions}
+            onPress={onFeelingsPress}
+          />
           <View style={styles.actionBarMenusWrapper}>
-            {hasOptionsMenuItems && (
-              <IconButtonMenu
-                menuItems={optionsMenuItems}
-                iconButtonProps={{ icon: "dots-vertical" }}
-              />
-            )}
+            <IconButton
+              icon="delete"
+              onPress={onDeleteEntryPress}
+              iconColor={theme.colors.error}
+            />
             {hasMoveMenuItems && (
               <IconButtonMenu
                 menuItems={moveMenuItems}
                 iconButtonProps={{ icon: "arrow-up-down" }}
               />
             )}
-            {hasAddRemoveMenuItems && (
+            {hasEditMenuItems && (
               <IconButtonMenu
-                menuItems={addRemoveMenuItems}
+                menuItems={editMenuItems}
                 iconButtonProps={{ icon: "plus-minus" }}
               />
             )}

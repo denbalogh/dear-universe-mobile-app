@@ -29,10 +29,11 @@ type Props = {
   onPlayPress: () => void;
   onPausePress: () => void;
   onReloadPress: () => void;
-  on10SecRewindPress: () => void;
-  on10SecForwardPress: () => void;
+  on5SecRewindPress: () => void;
+  on5SecForwardPress: () => void;
   currentTime?: string;
   maxTime?: string;
+  onLongPress?: () => void;
 };
 
 const Controls = ({
@@ -42,10 +43,11 @@ const Controls = ({
   onPausePress,
   onPlayPress,
   onReloadPress,
-  on10SecForwardPress,
-  on10SecRewindPress,
+  on5SecForwardPress,
+  on5SecRewindPress,
   currentTime = "--:--",
   maxTime = "--:--",
+  onLongPress,
 }: Props) => {
   return (
     <View style={styles.wrapper}>
@@ -75,11 +77,12 @@ const Controls = ({
       </View>
       <View style={styles.controlsWrapper}>
         <IconButton
-          icon="rewind-10"
+          icon="rewind-5"
           size={sizing.sizeMedium}
-          onPress={on10SecRewindPress}
+          onPress={on5SecRewindPress}
           disabled={isLoading || failedToLoad}
-          accessibilityLabel="Rewind 10 seconds"
+          accessibilityLabel="Rewind 5 seconds"
+          onLongPress={onLongPress}
         />
         {isLoading ? (
           <ActivityIndicator
@@ -89,34 +92,38 @@ const Controls = ({
         ) : failedToLoad ? (
           <IconButton
             icon="reload"
-            size={sizing.sizeLarge}
+            size={sizing.sizeMedium}
             onPress={onReloadPress}
             style={styles.playPauseIconButton}
             accessibilityLabel="Reload"
+            onLongPress={onLongPress}
           />
         ) : isPlaying ? (
           <IconButton
             icon="pause"
-            size={sizing.sizeLarge}
+            size={sizing.sizeMedium}
             onPress={onPausePress}
             style={styles.playPauseIconButton}
             accessibilityLabel="Pause"
+            onLongPress={onLongPress}
           />
         ) : (
           <IconButton
             icon="play"
-            size={sizing.sizeLarge}
+            size={sizing.sizeMedium}
             onPress={onPlayPress}
             style={styles.playPauseIconButton}
             accessibilityLabel="Play"
+            onLongPress={onLongPress}
           />
         )}
         <IconButton
-          icon="fast-forward-10"
+          icon="fast-forward-5"
           size={sizing.sizeMedium}
-          onPress={on10SecForwardPress}
+          onPress={on5SecForwardPress}
           disabled={isLoading || failedToLoad}
-          accessibilityLabel="Forward 10 seconds"
+          accessibilityLabel="Forward 5 seconds"
+          onLongPress={onLongPress}
         />
       </View>
     </View>

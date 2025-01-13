@@ -7,9 +7,15 @@ import GalleryPreview from "./GalleryPreview";
 type Props = {
   imagesUri: string[];
   gridSize?: number;
+  onImageLongPress?: (index: number) => void;
 } & ViewProps;
 
-const ImageGallery = ({ imagesUri, gridSize = 5, ...props }: Props) => {
+const ImageGallery = ({
+  imagesUri,
+  gridSize = 4,
+  onImageLongPress,
+  ...props
+}: Props) => {
   const [isGalleryVisible, setIsGalleryVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
 
@@ -31,6 +37,7 @@ const ImageGallery = ({ imagesUri, gridSize = 5, ...props }: Props) => {
         gridSize={gridSize}
         imagesUri={imagesUri}
         onImagePress={onImagePress}
+        onImageLongPress={onImageLongPress}
       />
       <GalleryPreview
         imagesUri={imagesUri}

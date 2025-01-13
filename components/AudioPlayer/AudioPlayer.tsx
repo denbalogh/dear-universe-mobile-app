@@ -14,10 +14,11 @@ import Controls from "./Controls";
 import { format } from "date-fns";
 
 type Props = {
-  sourceURI: string;
+  sourceUri: string;
+  onLongPress?: () => void;
 } & ViewProps;
 
-const AudioPlayer = ({ sourceURI, ...props }: Props) => {
+const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
   const theme = useTheme();
 
   const [isLoadingSound, setIsLoadingSound] = useState(true);
@@ -41,7 +42,7 @@ const AudioPlayer = ({ sourceURI, ...props }: Props) => {
     setIsLoadingSound(true);
 
     const { sound } = await Audio.Sound.createAsync(
-      { uri: sourceURI },
+      { uri: sourceUri },
       {},
       handleSetStatus,
     );
@@ -51,7 +52,7 @@ const AudioPlayer = ({ sourceURI, ...props }: Props) => {
     setSound(sound);
     handleSetStatus(status);
     setIsLoadingSound(false);
-  }, []);
+  }, [sourceUri]);
 
   useEffect(() => {
     loadSound();
@@ -96,15 +97,15 @@ const AudioPlayer = ({ sourceURI, ...props }: Props) => {
     }
   };
 
-  const handleOn10SecForwardPress = () => {
+  const handleOn5SecForwardPress = () => {
     if (sound) {
-      sound.setPositionAsync(Math.min(positionMillis + 10000, durationMillis));
+      sound.setPositionAsync(Math.min(positionMillis + 5000, durationMillis));
     }
   };
 
-  const handleOn10SecRewindPress = () => {
+  const handleOn5SecRewindPress = () => {
     if (sound) {
-      sound.setPositionAsync(Math.max(positionMillis - 10000, 0));
+      sound.setPositionAsync(Math.max(positionMillis - 5000, 0));
     }
   };
 
@@ -129,12 +130,13 @@ const AudioPlayer = ({ sourceURI, ...props }: Props) => {
         isPlaying={isPlaying}
         onPlayPress={playSound}
         onPausePress={pauseSound}
-        on10SecForwardPress={handleOn10SecForwardPress}
-        on10SecRewindPress={handleOn10SecRewindPress}
+        on5SecForwardPress={handleOn5SecForwardPress}
+        on5SecRewindPress={handleOn5SecRewindPress}
         failedToLoad={soundStatusError !== undefined}
         onReloadPress={loadSound}
         currentTime={currentTime}
         maxTime={maxTime}
+        onLongPress={onLongPress}
       />
     </View>
   );

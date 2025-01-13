@@ -27,14 +27,12 @@ describe("AudioRecorder/Controls", () => {
       />,
     );
 
-    expect(screen.queryByText("00:00")).not.toBeOnTheScreen();
+    expect(screen.queryByText("Pause | 00:00")).not.toBeOnTheScreen();
     expect(screen.queryByTestId("metering-animated")).not.toBeOnTheScreen();
 
     expect(screen.getByLabelText("Start recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
-
-    expect(screen.getByText("Press to start recording")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
@@ -70,14 +68,12 @@ describe("AudioRecorder/Controls", () => {
       />,
     );
 
-    expect(screen.getByText("00:00")).toBeOnTheScreen();
+    expect(screen.getByText("Pause | 00:00")).toBeOnTheScreen();
     expect(screen.getByTestId("metering-animated")).toBeOnTheScreen();
 
     expect(screen.getByLabelText("Pause recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
-
-    expect(screen.getByText("Press to pause recording")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
@@ -113,14 +109,12 @@ describe("AudioRecorder/Controls", () => {
       />,
     );
 
-    expect(screen.getByText("00:00")).toBeOnTheScreen();
+    expect(screen.queryByText("Pause | 00:00")).not.toBeOnTheScreen();
     expect(screen.getByTestId("metering-animated")).toBeOnTheScreen();
 
     expect(screen.getByLabelText("Continue recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
     expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
-
-    expect(screen.getByText("Press to continue recording")).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
@@ -156,27 +150,16 @@ describe("AudioRecorder/Controls", () => {
       />,
     );
 
-    expect(screen.queryByText("00:00")).not.toBeOnTheScreen();
     expect(screen.queryByTestId("metering-animated")).not.toBeOnTheScreen();
 
     expect(
       screen.getByLabelText("Request recording permission"),
     ).toBeOnTheScreen();
-    expect(screen.getByLabelText("Stop recording")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Discard recording")).toBeOnTheScreen();
-
-    expect(
-      screen.getByText("Press to request recording permissions"),
-    ).toBeOnTheScreen();
 
     const user = userEvent.setup();
 
     await user.press(screen.getByLabelText("Request recording permission"));
-    await user.press(screen.getByLabelText("Stop recording"));
-    await user.press(screen.getByLabelText("Discard recording"));
 
     expect(onRequestPermissionsPressMock).toHaveBeenCalledTimes(1);
-    expect(onStopPressMock).toHaveBeenCalledTimes(0);
-    expect(onDiscardPressMock).toHaveBeenCalledTimes(0);
   });
 });

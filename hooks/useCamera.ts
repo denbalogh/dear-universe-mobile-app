@@ -1,26 +1,22 @@
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import {
   ImagePickerAsset,
+  ImagePickerOptions,
   launchCameraAsync,
-  MediaTypeOptions,
   useCameraPermissions,
 } from "expo-image-picker";
 import { useMemo } from "react";
-
-export type MediaType = "IMAGES" | "VIDEOS";
 
 export const defaultOptions = {
   allowsMultipleSelection: true,
   orderedSelection: true,
 };
 
-const useCamera = ({
-  onSuccess,
-  type,
-}: {
-  onSuccess: (images: ImagePickerAsset[]) => void;
-  type: MediaType;
-}) => {
+const useCamera = (
+  mediaTypes: ImagePickerOptions["mediaTypes"],
+  onSuccess: (images: ImagePickerAsset[]) => void,
+  onCancel?: () => void,
+) => {
   const { showSnackbar } = useSnackbar();
 
   const [cameraPermissions, requestCameraPermission] = useCameraPermissions();
@@ -30,19 +26,17 @@ const useCamera = ({
     [cameraPermissions],
   );
 
-  const mediaType = useMemo(() => {
-    return type === "IMAGES"
-      ? MediaTypeOptions.Images
-      : MediaTypeOptions.Videos;
-  }, [type]);
-
   const handleOpenCamera = async () => {
     const selectedImages = await launchCameraAsync({
       ...defaultOptions,
-      mediaTypes: mediaType,
+      mediaTypes,
     });
 
-    if (!selectedImages.canceled) {
+    if (selectedImages.canceled) {
+      if (onCancel) {
+        onCancel();
+      }
+    } else {
       onSuccess(selectedImages.assets);
     }
   };

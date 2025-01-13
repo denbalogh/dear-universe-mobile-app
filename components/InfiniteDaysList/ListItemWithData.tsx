@@ -3,7 +3,12 @@ import { useObject } from "@realm/react";
 import React from "react";
 import ListItem from "../ListItem/ListItem";
 import { useRouter } from "expo-router";
-import { FOCUS_DESCRIPTION } from "@/constants/screens";
+import {
+  FOCUS_DESCRIPTION,
+  SCROLL_TO_IMAGES,
+  SCROLL_TO_RECORDING,
+  SCROLL_TO_VIDEOS,
+} from "@/constants/screens";
 
 const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const dayObject = useObject(Day, dateId);
@@ -16,28 +21,28 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   };
 
   const addEntryHandlers = {
-    onAddVideoEntryPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new/video",
-        params: { dateId },
-      }),
-    onAddImageEntryPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new/image",
-        params: { dateId },
-      }),
-    onAddRecordingEntryPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new/recording",
-        params: { dateId },
-      }),
     onAddTextEntryPress: () =>
       router.navigate({
-        pathname: "/day/[dateId]/entry/new/text",
+        pathname: "/day/[dateId]/entry/new",
         params: {
           dateId,
           ...FOCUS_DESCRIPTION,
         },
+      }),
+    onAddRecordingEntryPress: () =>
+      router.navigate({
+        pathname: "/day/[dateId]/entry/new",
+        params: { dateId, ...SCROLL_TO_RECORDING },
+      }),
+    onAddImageEntryPress: () =>
+      router.navigate({
+        pathname: "/day/[dateId]/entry/new",
+        params: { dateId, ...SCROLL_TO_IMAGES },
+      }),
+    onAddVideoEntryPress: () =>
+      router.navigate({
+        pathname: "/day/[dateId]/entry/new",
+        params: { dateId, ...SCROLL_TO_VIDEOS },
       }),
   };
 

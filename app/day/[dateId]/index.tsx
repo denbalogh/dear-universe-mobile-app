@@ -4,20 +4,24 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, HelperText, TextInput, useTheme } from "react-native-paper";
 import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
-import { useObject, useRealm } from "@realm/react";
-import { Day } from "@/models/Day";
+import { useRealm } from "@realm/react";
 import { DaySearchTermParams } from "@/types/dayScreen";
-import { FOCUS_DESCRIPTION } from "@/constants/screens";
+import {
+  FOCUS_DESCRIPTION,
+  SCROLL_TO_IMAGES,
+  SCROLL_TO_RECORDING,
+  SCROLL_TO_VIDEOS,
+} from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import BeginningHints from "@/components/BeginningHints/BeginningHints";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   Directions,
   Gesture,
@@ -25,6 +29,7 @@ import {
 } from "react-native-gesture-handler";
 import { addDays, isToday, subDays } from "date-fns";
 import { runOnJS } from "react-native-reanimated";
+import useInitiateDayObject from "@/hooks/useInitiateDayObject";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -32,7 +37,7 @@ const DayScreen = () => {
   const router = useRouter();
 
   const { dateId } = useLocalSearchParams<DaySearchTermParams>();
-  const dayObject = useObject(Day, dateId);
+  const dayObject = useInitiateDayObject(dateId);
 
   const { entryObjects = [], title: initialTitle = "" } = dayObject || {};
   const hasEntries = entryObjects.length > 0;
@@ -44,36 +49,26 @@ const DayScreen = () => {
     ? theme.colors.tertiary
     : undefined;
 
-  useEffect(() => {
-    if (dayObject === null) {
-      realm.write(() => {
-        realm.create(Day, {
-          _id: dateId,
-        });
-      });
-    }
-  }, [dateId, dayObject, realm]);
-
   const handleOnSubmit = () => {
-    if (!isTitleEdited) {
+    if (!isTitleEdited || dayObject === null) {
       return;
     }
 
     realm.write(() => {
-      if (dayObject !== null) {
-        dayObject.title = title;
-      }
+      dayObject.title = title;
     });
   };
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
 
-  const handleShowDiscardDialog = useCallback(() => {
-    showDiscardDialog({
-      message: "Do you wish to discard changes to title?",
-      callback: router.back,
-    });
-  }, [showDiscardDialog, router.back]);
+  const handleShowDiscardDialog = useCallback(
+    () =>
+      showConfirmDialog(
+        "Do you wish to discard changes to the title?",
+        router.back,
+      ),
+    [showConfirmDialog, router.back],
+  );
 
   const handleGoBack = () => {
     if (isTitleEdited) {
@@ -171,7 +166,7 @@ const DayScreen = () => {
               onChangeText={setTitle}
               multiline={true}
               enterKeyHint="done"
-              blurOnSubmit={true}
+              submitBehavior="blurAndSubmit"
               contentStyle={{ marginTop: 5 }}
               mode="outlined"
               onSubmitEditing={handleOnSubmit}
@@ -199,34 +194,34 @@ const DayScreen = () => {
         <CTAButtons
           style={styles.bottomButtons}
           showText={!hasEntries}
-          addImageEntryButton={{
+          addTextEntryButton={{
             onPress: () =>
               router.navigate(
-                { pathname: "./entry/new/image" },
+                {
+                  pathname: "./entry/new",
+                  params: FOCUS_DESCRIPTION,
+                },
                 { relativeToDirectory: true },
               ),
           }}
           addRecordingEntryButton={{
             onPress: () =>
               router.navigate(
-                { pathname: "./entry/new/recording" },
+                { pathname: "./entry/new", params: SCROLL_TO_RECORDING },
                 { relativeToDirectory: true },
               ),
           }}
-          addTextEntryButton={{
+          addImageEntryButton={{
             onPress: () =>
               router.navigate(
-                {
-                  pathname: "./entry/new/text",
-                  params: FOCUS_DESCRIPTION,
-                },
+                { pathname: "./entry/new", params: SCROLL_TO_IMAGES },
                 { relativeToDirectory: true },
               ),
           }}
           addVideoEntryButton={{
             onPress: () =>
               router.navigate(
-                { pathname: "./entry/new/video" },
+                { pathname: "./entry/new", params: SCROLL_TO_VIDEOS },
                 { relativeToDirectory: true },
               ),
           }}

@@ -11,11 +11,13 @@ export type VideoWithThumbnail = {
 type Props = {
   videosWithThumbnail: VideoWithThumbnail[];
   gridSize?: number;
+  onVideoLongPress?: (index: number) => void;
 } & ViewProps;
 
 const VideoGallery = ({
   videosWithThumbnail,
-  gridSize = 5,
+  gridSize = 4,
+  onVideoLongPress,
   ...props
 }: Props) => {
   const [isVideaPlayerVisible, setIsVideoPlayerVisible] = useState(false);
@@ -40,6 +42,7 @@ const VideoGallery = ({
         gridSize={gridSize}
         imagesUri={thumbnailsUri}
         onImagePress={onVideoPress}
+        onImageLongPress={onVideoLongPress}
         showPlayIcon={true}
       />
       <VideoPlayerModal

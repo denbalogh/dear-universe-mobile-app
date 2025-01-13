@@ -10,6 +10,10 @@ export const formatDateId = (date: Date): string => {
   return format(date, ID_DATE_FORMAT);
 };
 
+export const isDateIdFormat = (date: string): boolean => {
+  return isMatch(date, ID_DATE_FORMAT);
+};
+
 const MONTH_YEAR_FORMAT = "MMMM y";
 
 export const formatMonthYear = (date: Date): string => {

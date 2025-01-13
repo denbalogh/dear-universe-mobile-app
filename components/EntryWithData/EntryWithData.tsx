@@ -1,16 +1,27 @@
-import { FOCUS_DESCRIPTION, FOCUS_TITLE } from "@/constants/screens";
+import {
+  FOCUS_DESCRIPTION,
+  FOCUS_TITLE,
+  SCROLL_TO_FEELINGS,
+  SCROLL_TO_IMAGES,
+  SCROLL_TO_RECORDING,
+  SCROLL_TO_VIDEOS,
+} from "@/constants/screens";
 import { Entry as EntryType } from "@/models/Entry";
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import Entry from "../Entry/Entry";
 import { StyleSheet } from "react-native";
 import { spacing } from "@/constants/theme";
 import { useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { MenuItemProps } from "react-native-paper";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { useDiscardDialog } from "@/contexts/DiscardDialogContext";
-import { deleteAsync } from "expo-file-system";
+import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
+import useDeleteEmptyEntry from "@/hooks/useDeleteEmptyEntry";
+import { deleteFilesInEntry } from "@/utils/files";
+import {
+  getImagesSelectedIndex,
+  getVideosSelectedIndex,
+} from "@/utils/screens";
 
 type Props = {
   entryObject: EntryType;
@@ -21,74 +32,90 @@ type Props = {
 const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
   const router = useRouter();
   const realm = useRealm();
-  const theme = useCustomTheme();
 
-  const { showDiscardDialog } = useDiscardDialog();
+  const { showConfirmDialog } = useConfirmDialog();
+
+  useDeleteEmptyEntry(entryObject);
 
   const {
     _id,
-    title,
-    description,
-    feelings,
-    recordingURI,
-    imagesURI = [],
+    title = "",
+    description = "",
+    recordingUri = "",
+    imagesUri = [],
     videosWithThumbnail = [],
+    feelingsGroupName = "",
+    feelingsEmotions = [],
   } = entryObject;
 
-  // Delete entry if it has no title, description, recording or images
-  useEffect(() => {
-    if (
-      !title &&
-      !description &&
-      !recordingURI &&
-      imagesURI.length === 0 &&
-      videosWithThumbnail.length === 0
-    ) {
-      realm.write(() => {
-        realm.delete(entryObject);
-      });
-    }
-  }, [
-    title,
-    description,
-    recordingURI,
-    imagesURI,
-    videosWithThumbnail,
-    entryObject,
-    realm,
-  ]);
+  const handleOnTitlePress = () =>
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: FOCUS_TITLE,
+      },
+      { relativeToDirectory: true },
+    );
 
-  const titleProp = title
-    ? {
-        text: title || "",
-        onPress: () =>
-          router.navigate(
-            {
-              pathname: `./entry/${_id.toString()}/text`,
-              params: FOCUS_TITLE,
-            },
-            { relativeToDirectory: true },
-          ),
-      }
-    : undefined;
-
-  const descriptionProp = description
-    ? {
-        text: description || "",
-        onPress: () =>
-          router.navigate(
-            {
-              pathname: `./entry/${_id.toString()}/text`,
-              params: FOCUS_DESCRIPTION,
-            },
-            { relativeToDirectory: true },
-          ),
-      }
-    : undefined;
+  const handleOnDescriptionPress = () =>
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: FOCUS_DESCRIPTION,
+      },
+      { relativeToDirectory: true },
+    );
 
   const handleFeelingsPress = () => {
     router.navigate(
-      { pathname: `./entry/${_id.toString()}/feelings` },
+      { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_FEELINGS },
+      { relativeToDirectory: true },
+    );
+  };
+
+  const handleDeleteEntryPress = useCallback(async () => {
+    showConfirmDialog("Do you wish to delete this entry?", async () => {
+      await deleteFilesInEntry(imagesUri, videosWithThumbnail, recordingUri);
+
+      realm.write(() => {
+        realm.delete(entryObject);
+      });
+    });
+  }, [
+    entryObject,
+    imagesUri,
+    videosWithThumbnail,
+    recordingUri,
+    realm,
+    showConfirmDialog,
+  ]);
+
+  const handleOnRecordingLongPress = () => {
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: SCROLL_TO_RECORDING,
+      },
+      { relativeToDirectory: true },
+    );
+  };
+
+  const handleOnImageLongsPress = (index: number) => {
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: { ...SCROLL_TO_IMAGES, ...getImagesSelectedIndex(index) },
+      },
+      { relativeToDirectory: true },
+    );
+  };
+
+  const handleOnVideoLongsPress = (index: number) => {
+    router.navigate(
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: { ...SCROLL_TO_VIDEOS, ...getVideosSelectedIndex(index) },
+      },
       { relativeToDirectory: true },
     );
   };
@@ -100,9 +127,12 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
 
     const { entryObjects } = dayObject;
 
+    const isFirst = index === 0;
+    const isLast = index === entryObjects.length - 1;
+
     const menuItems = [];
 
-    if (index !== 0) {
+    if (!isFirst) {
       menuItems.push({
         leadingIcon: "arrow-collapse-up",
         title: "Move to top",
@@ -123,7 +153,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
-    if (index !== entryObjects?.length - 1) {
+    if (!isLast) {
       menuItems.push({
         leadingIcon: "arrow-down",
         title: "Move down",
@@ -147,51 +177,23 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     return menuItems;
   }, [dayObject, index, realm]);
 
-  const handleDeleteFilesInEntry = useCallback(async () => {
-    if (recordingURI) {
-      await deleteAsync(recordingURI);
-    }
-
-    for (const imageURI of imagesURI) {
-      await deleteAsync(imageURI);
-    }
-  }, [recordingURI, imagesURI]);
-
-  const optionsMenuItem = useMemo(() => {
+  const editMenuItems = useMemo(() => {
     const menuItems = [];
 
-    menuItems.push({
-      leadingIcon: "delete",
-      title: "Delete entry",
-      onPress: () => {
-        showDiscardDialog({
-          message: "Do you wish to delete the entry?",
-          callback: async () => {
-            await handleDeleteFilesInEntry();
+    const { title, description, videosWithThumbnail, imagesUri, recordingUri } =
+      entryObject;
 
-            realm.write(() => {
-              realm.delete(entryObject);
-            });
-          },
-        });
-      },
-      titleStyle: { color: theme.colors.error },
-    });
+    const hasVideos = videosWithThumbnail && videosWithThumbnail.length > 0;
+    const hasImages = imagesUri && imagesUri.length > 0;
 
-    return menuItems;
-  }, [entryObject, realm, handleDeleteFilesInEntry, showDiscardDialog, theme]);
-
-  const addRemoveMenuItems = useMemo(() => {
-    const menuItems = [];
-
-    if (!entryObject.title) {
+    if (!title) {
       menuItems.push({
         leadingIcon: "format-title",
         title: "Add title",
         onPress: () =>
           router.navigate(
             {
-              pathname: `./entry/${_id.toString()}/text`,
+              pathname: `./entry/${_id.toString()}`,
               params: FOCUS_TITLE,
             },
             { relativeToDirectory: true },
@@ -199,13 +201,13 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
-    if (entryObject?.videosWithThumbnail?.length === 0) {
+    if (!hasVideos) {
       menuItems.push({
         leadingIcon: "movie-open-plus",
         title: "Add videos",
         onPress: () =>
           router.navigate(
-            { pathname: `./entry/${_id.toString()}/video` },
+            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_VIDEOS },
             { relativeToDirectory: true },
           ),
       });
@@ -213,42 +215,21 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       menuItems.push({
         leadingIcon: "movie-open-edit",
         title: "Edit videos",
-        onPress: () => {
+        onPress: () =>
           router.navigate(
-            { pathname: `./entry/${_id.toString()}/video` },
+            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_VIDEOS },
             { relativeToDirectory: true },
-          );
-        },
-      });
-      menuItems.push({
-        leadingIcon: "movie-open-minus",
-        title: "Remove videos",
-        onPress: () => {
-          showDiscardDialog({
-            message: "Do you wish to remove the videos?",
-            callback: async () => {
-              for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
-                await deleteAsync(videoUri);
-                await deleteAsync(thumbnailUri);
-              }
-
-              realm.write(() => {
-                entryObject.videosWithThumbnail = [];
-              });
-            },
-          });
-        },
-        titleStyle: { color: theme.colors.error },
+          ),
       });
     }
 
-    if (entryObject?.imagesURI?.length === 0) {
+    if (!hasImages) {
       menuItems.push({
         leadingIcon: "image-plus",
         title: "Add images",
         onPress: () =>
           router.navigate(
-            { pathname: `./entry/${_id.toString()}/image` },
+            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_IMAGES },
             { relativeToDirectory: true },
           ),
       });
@@ -256,42 +237,52 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       menuItems.push({
         leadingIcon: "image-edit",
         title: "Edit images",
+        onPress: () =>
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_IMAGES },
+            { relativeToDirectory: true },
+          ),
+      });
+    }
+
+    if (!recordingUri) {
+      menuItems.push({
+        leadingIcon: "microphone-plus",
+        title: "Add recording",
         onPress: () => {
           router.navigate(
-            { pathname: `./entry/${_id.toString()}/image` },
+            {
+              pathname: `./entry/${_id.toString()}`,
+              params: SCROLL_TO_RECORDING,
+            },
             { relativeToDirectory: true },
           );
         },
       });
+    } else {
       menuItems.push({
-        leadingIcon: "image-minus",
-        title: "Remove images",
+        leadingIcon: "microphone",
+        title: "Edit recording",
         onPress: () => {
-          showDiscardDialog({
-            message: "Do you wish to remove the images?",
-            callback: async () => {
-              for (const imageURI of imagesURI) {
-                await deleteAsync(imageURI);
-              }
-
-              realm.write(() => {
-                entryObject.imagesURI = [];
-              });
+          router.navigate(
+            {
+              pathname: `./entry/${_id.toString()}`,
+              params: SCROLL_TO_RECORDING,
             },
-          });
+            { relativeToDirectory: true },
+          );
         },
-        titleStyle: { color: theme.colors.error },
       });
     }
 
-    if (!entryObject.description) {
+    if (!description) {
       menuItems.push({
         leadingIcon: "pen-plus",
         title: "Add description",
         onPress: () =>
           router.navigate(
             {
-              pathname: `./entry/${_id.toString()}/text`,
+              pathname: `./entry/${_id.toString()}`,
               params: FOCUS_DESCRIPTION,
             },
             { relativeToDirectory: true },
@@ -299,62 +290,28 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
-    if (entryObject?.recordingURI) {
-      menuItems.push({
-        leadingIcon: "microphone-minus",
-        title: "Remove recording",
-        onPress: () => {
-          showDiscardDialog({
-            message: "Do you wish to remove the recording?",
-            callback: async () => {
-              await deleteAsync(entryObject?.recordingURI || "");
-
-              realm.write(() => {
-                entryObject.recordingURI = undefined;
-              });
-            },
-          });
-        },
-        titleStyle: { color: theme.colors.error },
-      });
-    } else {
-      menuItems.push({
-        leadingIcon: "microphone-plus",
-        title: "Add recording",
-        onPress: () => {
-          router.navigate(
-            { pathname: `./entry/${_id.toString()}/recording` },
-            { relativeToDirectory: true },
-          );
-        },
-      });
-    }
-
     return menuItems;
-  }, [
-    entryObject,
-    _id,
-    router,
-    theme,
-    realm,
-    imagesURI,
-    showDiscardDialog,
-    videosWithThumbnail,
-  ]);
+  }, [entryObject, router, _id]);
 
   return (
     <Entry
       style={styles.entry}
-      title={titleProp}
-      text={descriptionProp}
-      feelings={feelings}
+      title={title}
+      onTitlePress={handleOnTitlePress}
+      description={description}
+      onDescriptionPress={handleOnDescriptionPress}
+      feelingsActiveGroup={feelingsGroupName}
+      feelingsActiveEmotions={feelingsEmotions}
       onFeelingsPress={handleFeelingsPress}
-      recordingURI={recordingURI}
-      imagesURI={imagesURI}
+      onDeleteEntryPress={handleDeleteEntryPress}
+      onRecordingLongPress={handleOnRecordingLongPress}
+      onImageLongPress={handleOnImageLongsPress}
+      onVideoLongPress={handleOnVideoLongsPress}
+      recordingUri={recordingUri}
+      imagesUri={imagesUri}
       videosWithThumbnail={videosWithThumbnail}
-      optionsMenuItems={optionsMenuItem}
       moveMenuItems={moveMenuItems}
-      addRemoveMenuItems={addRemoveMenuItems}
+      editMenuItems={editMenuItems}
     />
   );
 };

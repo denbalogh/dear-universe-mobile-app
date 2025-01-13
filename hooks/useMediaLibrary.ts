@@ -1,20 +1,18 @@
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import {
   ImagePickerAsset,
+  ImagePickerOptions,
   launchImageLibraryAsync,
-  MediaTypeOptions,
   useMediaLibraryPermissions,
 } from "expo-image-picker";
 import { useMemo } from "react";
-import { defaultOptions, MediaType } from "./useCamera";
+import { defaultOptions } from "./useCamera";
 
-const useImageLibrary = ({
-  onSuccess,
-  type,
-}: {
-  onSuccess: (images: ImagePickerAsset[]) => void;
-  type: MediaType;
-}) => {
+const useMediaLibrary = (
+  mediaTypes: ImagePickerOptions["mediaTypes"],
+  onSuccess: (images: ImagePickerAsset[]) => void,
+  onCancel?: () => void,
+) => {
   const { showSnackbar } = useSnackbar();
 
   const [libraryPermissions, requestLibraryPermission] =
@@ -25,19 +23,17 @@ const useImageLibrary = ({
     [libraryPermissions],
   );
 
-  const mediaType = useMemo(() => {
-    return type === "IMAGES"
-      ? MediaTypeOptions.Images
-      : MediaTypeOptions.Videos;
-  }, [type]);
-
   const handleOpenLibrary = async () => {
     const selectedImages = await launchImageLibraryAsync({
       ...defaultOptions,
-      mediaTypes: mediaType,
+      mediaTypes,
     });
 
-    if (!selectedImages.canceled) {
+    if (selectedImages.canceled) {
+      if (onCancel) {
+        onCancel();
+      }
+    } else {
       onSuccess(selectedImages.assets);
     }
   };
@@ -62,4 +58,4 @@ const useImageLibrary = ({
   };
 };
 
-export default useImageLibrary;
+export default useMediaLibrary;

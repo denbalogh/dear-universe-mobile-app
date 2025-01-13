@@ -5,6 +5,7 @@ import ImageGridItem from "./ImageGridItem";
 type Props = {
   imagesUri: string[];
   onImagePress: (index: number) => void;
+  onImageLongPress?: (index: number) => void;
   gridSize?: number;
   showPlayIcon?: boolean;
 } & ViewProps;
@@ -12,6 +13,7 @@ type Props = {
 const ImageGrid = ({
   imagesUri,
   onImagePress,
+  onImageLongPress,
   gridSize = 3,
   showPlayIcon = false,
   style,
@@ -42,6 +44,7 @@ const ImageGrid = ({
             style={{ width: imageSize, height: imageSize }}
             touchableProps={{
               onPress: () => onImagePress(index),
+              onLongPress: () => onImageLongPress?.(index),
             }}
             showPlayIcon={showPlayIcon}
           />

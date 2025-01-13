@@ -7,11 +7,6 @@ module.exports = {
     icon: "./assets/images/icon.png",
     scheme: "myapp",
     userInterfaceStyle: "automatic",
-    splash: {
-      image: "./assets/images/splash.png",
-      resizeMode: "contain",
-      backgroundColor: "#ffffff",
-    },
     ios: {
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
       requireFullScreen: true,
@@ -75,6 +70,17 @@ module.exports = {
         {
           supportsBackgroundPlayback: true,
           supportsPictureInPicture: true,
+        },
+      ],
+      [
+        "expo-splash-screen",
+        {
+          backgroundColor: "#ffffff",
+          image: "./assets/images/splash.png",
+          dark: {
+            image: "./assets/images/splash.png",
+            backgroundColor: "#ffffff",
+          },
         },
       ],
     ],

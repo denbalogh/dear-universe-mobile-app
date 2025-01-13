@@ -14,11 +14,20 @@ import { useEffect, useState } from "react";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 import { setBackgroundColorAsync } from "expo-system-ui";
-import { DiscardDialogContextProvider } from "@/contexts/DiscardDialogContext";
+import { ConfirmDialogContextProvider } from "@/contexts/ConfirmDialogContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 registerTranslation("en", enGB);
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false, // Reanimated runs in strict mode by default
+});
 
 const App = () => {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
@@ -38,8 +47,8 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} schemaVersion={7}>
-        <DiscardDialogContextProvider>
+      <RealmProvider schema={schemas} schemaVersion={3}>
+        <ConfirmDialogContextProvider>
           <SnackbarContextProvider>
             <View
               style={[
@@ -52,7 +61,7 @@ const App = () => {
               <Stack />
             </GestureHandlerRootView>
           </SnackbarContextProvider>
-        </DiscardDialogContextProvider>
+        </ConfirmDialogContextProvider>
       </RealmProvider>
     </PaperProvider>
   );
