@@ -211,6 +211,16 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
             { relativeToDirectory: true },
           ),
       });
+    } else {
+      menuItems.push({
+        leadingIcon: "movie-open-edit",
+        title: "Edit videos",
+        onPress: () =>
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_VIDEOS },
+            { relativeToDirectory: true },
+          ),
+      });
     }
 
     if (!hasImages) {
@@ -223,12 +233,36 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
             { relativeToDirectory: true },
           ),
       });
+    } else {
+      menuItems.push({
+        leadingIcon: "image-edit",
+        title: "Edit images",
+        onPress: () =>
+          router.navigate(
+            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_IMAGES },
+            { relativeToDirectory: true },
+          ),
+      });
     }
 
     if (!recordingUri) {
       menuItems.push({
         leadingIcon: "microphone-plus",
         title: "Add recording",
+        onPress: () => {
+          router.navigate(
+            {
+              pathname: `./entry/${_id.toString()}`,
+              params: SCROLL_TO_RECORDING,
+            },
+            { relativeToDirectory: true },
+          );
+        },
+      });
+    } else {
+      menuItems.push({
+        leadingIcon: "microphone",
+        title: "Edit recording",
         onPress: () => {
           router.navigate(
             {
@@ -255,18 +289,6 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
           ),
       });
     }
-
-    menuItems.push({
-      leadingIcon: "note-edit",
-      title: "Edit entry",
-      onPress: () =>
-        router.navigate(
-          {
-            pathname: `./entry/${_id.toString()}`,
-          },
-          { relativeToDirectory: true },
-        ),
-    });
 
     return menuItems;
   }, [entryObject, router, _id]);

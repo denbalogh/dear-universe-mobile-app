@@ -10,8 +10,7 @@ import { Appbar, HelperText, TextInput, useTheme } from "react-native-paper";
 import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
-import { useObject, useRealm } from "@realm/react";
-import { Day } from "@/models/Day";
+import { useRealm } from "@realm/react";
 import { DaySearchTermParams } from "@/types/dayScreen";
 import {
   FOCUS_DESCRIPTION,
@@ -38,9 +37,7 @@ const DayScreen = () => {
   const router = useRouter();
 
   const { dateId } = useLocalSearchParams<DaySearchTermParams>();
-  const dayObject = useObject(Day, dateId);
-
-  useInitiateDayObject(dateId);
+  const dayObject = useInitiateDayObject(dateId);
 
   const { entryObjects = [], title: initialTitle = "" } = dayObject || {};
   const hasEntries = entryObjects.length > 0;
@@ -67,7 +64,7 @@ const DayScreen = () => {
   const handleShowDiscardDialog = useCallback(
     () =>
       showConfirmDialog(
-        "Do you wish to discard changes to title?",
+        "Do you wish to discard changes to the title?",
         router.back,
       ),
     [showConfirmDialog, router.back],

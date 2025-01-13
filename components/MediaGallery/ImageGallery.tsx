@@ -12,7 +12,7 @@ type Props = {
 
 const ImageGallery = ({
   imagesUri,
-  gridSize = 5,
+  gridSize = 4,
   onImageLongPress,
   ...props
 }: Props) => {

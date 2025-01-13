@@ -16,7 +16,7 @@ type Props = {
 
 const VideoGallery = ({
   videosWithThumbnail,
-  gridSize = 5,
+  gridSize = 4,
   onVideoLongPress,
   ...props
 }: Props) => {

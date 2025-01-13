@@ -23,12 +23,7 @@ const FeelingsSection = ({
   const theme = useCustomTheme();
 
   const handleActiveGroupChange = (name: FEELING_GROUP_NAMES) => {
-    if (activeGroup === name) {
-      onActiveGroupChange("");
-    } else {
-      onActiveGroupChange(name);
-    }
-
+    onActiveGroupChange(name === activeGroup ? "" : name);
     onActiveEmotionsChange([]);
   };
 

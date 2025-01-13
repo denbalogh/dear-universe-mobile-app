@@ -17,8 +17,17 @@ import { setBackgroundColorAsync } from "expo-system-ui";
 import { ConfirmDialogContextProvider } from "@/contexts/ConfirmDialogContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 registerTranslation("en", enGB);
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false, // Reanimated runs in strict mode by default
+});
 
 const App = () => {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
