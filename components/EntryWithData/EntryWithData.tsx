@@ -18,10 +18,7 @@ import { MenuItemProps } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import useDeleteEmptyEntry from "@/hooks/useDeleteEmptyEntry";
 import { deleteFilesInEntry } from "@/utils/files";
-import {
-  getImagesSelectedIndex,
-  getVideosSelectedIndex,
-} from "@/utils/screens";
+import { getImagesSelectedUri, getVideosSelectedUri } from "@/utils/screens";
 
 type Props = {
   entryObject: EntryType;
@@ -100,21 +97,21 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     );
   };
 
-  const handleOnImageLongsPress = (index: number) => {
+  const handleOnImageLongsPress = (uri: string) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: { ...SCROLL_TO_IMAGES, ...getImagesSelectedIndex(index) },
+        params: { ...SCROLL_TO_IMAGES, ...getImagesSelectedUri(uri) },
       },
       { relativeToDirectory: true },
     );
   };
 
-  const handleOnVideoLongsPress = (index: number) => {
+  const handleOnVideoLongsPress = (uri: string) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: { ...SCROLL_TO_VIDEOS, ...getVideosSelectedIndex(index) },
+        params: { ...SCROLL_TO_VIDEOS, ...getVideosSelectedUri(uri) },
       },
       { relativeToDirectory: true },
     );

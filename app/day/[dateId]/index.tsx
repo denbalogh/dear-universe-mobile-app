@@ -148,7 +148,6 @@ const DayScreen = () => {
                 <Appbar.Content title={fullDate} />
               </Appbar.Header>
             ),
-            animation: "fade",
             navigationBarColor: theme.colors.surface,
           }}
         />

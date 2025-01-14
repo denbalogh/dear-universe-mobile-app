@@ -55,8 +55,8 @@ type Props = {
   scrollToImages?: boolean;
   scrollToVideos?: boolean;
   scrollToFeelings?: boolean;
-  imagesSelectedIndex?: string;
-  videosSelectedIndex?: string;
+  imagesSelectedUri?: string;
+  videosSelectedThumbnailUri?: string;
 } & EntryData;
 
 const CreateEditEntry = ({
@@ -75,8 +75,8 @@ const CreateEditEntry = ({
   scrollToImages,
   scrollToRecording,
   scrollToVideos,
-  imagesSelectedIndex,
-  videosSelectedIndex,
+  imagesSelectedUri,
+  videosSelectedThumbnailUri,
   onSave,
 }: Props) => {
   const theme = useCustomTheme();
@@ -342,7 +342,7 @@ const CreateEditEntry = ({
           onImagesChange={setImagesUri}
           style={styles.sectionWrapper}
           onLayout={handleSetSectionHeight("imagesSection")}
-          initialSelectedIndex={imagesSelectedIndex}
+          initialSelectedImageUri={imagesSelectedUri}
         />
         <SectionHeadline
           headline="Videos"
@@ -354,7 +354,7 @@ const CreateEditEntry = ({
           onVideosChange={setVideosWithThumbnail}
           style={styles.sectionWrapper}
           onLayout={handleSetSectionHeight("videosSection")}
-          initialSelectedIndex={videosSelectedIndex}
+          initialSelectedThumbnailUri={videosSelectedThumbnailUri}
         />
         <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
         <FeelingsSection

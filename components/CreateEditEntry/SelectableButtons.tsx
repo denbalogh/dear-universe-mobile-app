@@ -11,7 +11,7 @@ import {
 } from "react-native-paper";
 
 type Props = {
-  selectAllButtonProps: Omit<ButtonProps, "children">;
+  selectAllButtonProps: Omit<IconButtonProps, "icon">;
   deleteSelectedButtonProps: Omit<ButtonProps, "children">;
   cancelButtonProps: Omit<IconButtonProps, "icon">;
 };
@@ -25,13 +25,8 @@ const SelectableButtons = ({
 
   return (
     <View style={styles.selectionButtonsWrapper}>
-      <Button
-        style={styles.selectionButton}
-        mode="outlined"
-        {...selectAllButtonProps}
-      >
-        Select all
-      </Button>
+      <IconButton {...selectAllButtonProps} icon="check-all" />
+      <IconButton {...cancelButtonProps} icon="cancel" />
       <Button
         style={styles.selectionButton}
         mode="outlined"
@@ -40,7 +35,6 @@ const SelectableButtons = ({
       >
         Delete selected
       </Button>
-      <IconButton {...cancelButtonProps} icon="cancel" />
     </View>
   );
 };
@@ -56,6 +50,6 @@ const styles = StyleSheet.create({
   },
   selectionButton: {
     flex: 1,
-    marginRight: spacing.spaceSmall,
+    marginLeft: spacing.spaceSmall,
   },
 });

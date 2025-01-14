@@ -18,11 +18,9 @@ type Props = {
   onMoveToStartPress: (index: number) => void;
   onMoveRightPress: (index: number) => void;
   onMoveToEndPress: (index: number) => void;
-  onVideoLongPress: (index: number) => void;
-  selectable?: {
-    selected: number[];
-    onSelectedChange: (selected: number[]) => void;
-  };
+  onVideoLongPress: (thumbnailUri: string) => void;
+  selectedVideosThumbnailUri: string[];
+  onSelectedVideosThumbnailUriChange: (selected: string[]) => void;
 } & ViewProps;
 
 const EditableVideoGallery = ({
@@ -36,7 +34,8 @@ const EditableVideoGallery = ({
   onMoveRightPress,
   onMoveToEndPress,
   onVideoLongPress,
-  selectable,
+  selectedVideosThumbnailUri,
+  onSelectedVideosThumbnailUriChange,
   ...props
 }: Props) => {
   const theme = useCustomTheme();
@@ -67,16 +66,13 @@ const EditableVideoGallery = ({
 
   const videosUri = videosWithThumbnail.map(({ videoUri }) => videoUri);
 
-  const handleOnSelect = (index: number) => {
-    if (selectable) {
-      const { selected, onSelectedChange } = selectable;
-      const isSelected = selected.includes(index);
-      onSelectedChange(
-        isSelected
-          ? selected.filter((item) => item !== index)
-          : [...selected, index],
-      );
-    }
+  const handleOnSelect = (thumbnailUri: string) => {
+    const isSelected = selectedVideosThumbnailUri.includes(thumbnailUri);
+    onSelectedVideosThumbnailUriChange(
+      isSelected
+        ? selectedVideosThumbnailUri.filter((item) => item !== thumbnailUri)
+        : [...selectedVideosThumbnailUri, thumbnailUri],
+    );
   };
 
   return (
@@ -115,7 +111,9 @@ const EditableVideoGallery = ({
             });
           }
 
-          const isSelected = selectable?.selected.includes(index);
+          const isSelected = selectedVideosThumbnailUri.includes(
+            item.thumbnailUri,
+          );
 
           return (
             <View key={`${item}-${index}`}>
@@ -127,35 +125,32 @@ const EditableVideoGallery = ({
                 style={{ width: imageSize, height: imageSize }}
                 touchableProps={{
                   onPress: () => onVideoPress(index),
-                  onLongPress: () => onVideoLongPress(index),
+                  onLongPress: () => onVideoLongPress(item.thumbnailUri),
                 }}
                 showPlayIcon={true}
-                playIconPosition="topLeft"
+                playIconPosition="bottomLeft"
               />
-              {selectable ? (
-                <View
-                  style={[
-                    styles.select,
-                    { backgroundColor: theme.colors.background },
-                  ]}
-                >
-                  <Checkbox
-                    status={isSelected ? "checked" : "unchecked"}
-                    onPress={() => handleOnSelect(index)}
-                  />
-                </View>
-              ) : (
-                <View style={styles.buttons}>
-                  <IconButtonMenu
-                    iconButtonProps={{
-                      icon: "arrow-left-right",
-                      mode: "contained-tonal",
-                      size: sizing.sizeSmall,
-                    }}
-                    menuItems={menuItems}
-                  />
-                </View>
-              )}
+              <View
+                style={[
+                  styles.select,
+                  { backgroundColor: theme.colors.background },
+                ]}
+              >
+                <Checkbox
+                  status={isSelected ? "checked" : "unchecked"}
+                  onPress={() => handleOnSelect(item.thumbnailUri)}
+                />
+              </View>
+              <View style={styles.buttons}>
+                <IconButtonMenu
+                  iconButtonProps={{
+                    icon: "arrow-left-right",
+                    mode: "contained-tonal",
+                    size: sizing.sizeSmall,
+                  }}
+                  menuItems={menuItems}
+                />
+              </View>
             </View>
           );
         })}
@@ -165,7 +160,6 @@ const EditableVideoGallery = ({
           addButtons={addButtons}
           style={{ width: imageSize, height: imageSize }}
           loading={addButtonsLoading}
-          disabled={!!selectable}
         />
       </View>
       <VideoPlayerModal
@@ -193,8 +187,8 @@ const styles = StyleSheet.create({
   },
   select: {
     position: "absolute",
-    bottom: spacing.spaceSmall,
-    right: spacing.spaceSmall,
+    top: spacing.spaceSmall,
+    left: spacing.spaceSmall,
     borderRadius: roundness,
   },
 });

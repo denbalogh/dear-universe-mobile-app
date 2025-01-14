@@ -4,7 +4,7 @@ import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
 import React, { useState } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { ActivityIndicator, Button, Text } from "react-native-paper";
+import { ActivityIndicator, Button } from "react-native-paper";
 import EditableImageGallery from "../MediaGallery/EditableImageGallery";
 import SelectableButtons from "./SelectableButtons";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
@@ -12,26 +12,24 @@ import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 type Props = {
   imagesUri: string[];
   onImagesChange: (imagesUri: string[]) => void;
-  initialSelectedIndex?: string;
+  initialSelectedImageUri?: string;
 } & ViewProps;
 
 const ImagesSection = ({
   imagesUri,
   onImagesChange,
-  initialSelectedIndex,
+  initialSelectedImageUri,
   ...viewProps
 }: Props) => {
   const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
 
-  const initalSelectable = !!initialSelectedIndex;
-  const initialSelectedImages = initialSelectedIndex
-    ? [parseInt(initialSelectedIndex)]
+  const initialSelectedImagesUri = initialSelectedImageUri
+    ? [initialSelectedImageUri]
     : [];
 
-  const [isSelectable, setIsSelectable] = useState(initalSelectable);
-  const [selectedImages, setSelectedImages] = useState<number[]>(
-    initialSelectedImages,
+  const [selectedImagesUri, setSelectedImagesUri] = useState<string[]>(
+    initialSelectedImagesUri,
   );
 
   const handleAddImages = (newImages: ImagePickerAsset[]) => {
@@ -90,29 +88,26 @@ const ImagesSection = ({
     onImagesChange(newImagesUri);
   };
 
-  const handleOnImageLongPress = (index: number) => {
-    setIsSelectable(true);
-    setSelectedImages([index]);
+  const handleSelectSingle = (uri: string) => {
+    setSelectedImagesUri([uri]);
   };
 
   const handleSelectAll = () => {
-    setSelectedImages([...Array(imagesUri.length).keys()]);
+    setSelectedImagesUri([...imagesUri]);
   };
 
   const handleCancelSelection = () => {
-    setIsSelectable(false);
-    setSelectedImages([]);
+    setSelectedImagesUri([]);
   };
 
   const handleOnSelectedDelete = () => {
     showConfirmDialog("Do you wish to delete the selected images?", () => {
       const newImagesUri = imagesUri.filter(
-        (_, index) => !selectedImages.includes(index),
+        (uri) => !selectedImagesUri.includes(uri),
       );
 
       onImagesChange(newImagesUri);
-      setSelectedImages([]);
-      setIsSelectable(false);
+      handleCancelSelection();
     });
   };
 
@@ -150,11 +145,6 @@ const ImagesSection = ({
         </>
       ) : (
         <>
-          {!isSelectable && (
-            <Text variant="labelMedium" style={styles.selectionInfoText}>
-              Long press image to enable selection
-            </Text>
-          )}
           <EditableImageGallery
             imagesUri={imagesUri}
             onMoveLeftPress={handleMoveLeftPress}
@@ -174,23 +164,21 @@ const ImagesSection = ({
               },
             ]}
             addButtonsLoading={isLoading}
-            onImageLongPress={handleOnImageLongPress}
-            selectable={
-              isSelectable
-                ? {
-                    selected: selectedImages,
-                    onSelectedChange: setSelectedImages,
-                  }
-                : undefined
-            }
+            onImageLongPress={handleSelectSingle}
+            selectedImagesUri={selectedImagesUri}
+            onSelectedImagesUriChange={setSelectedImagesUri}
           />
-          {isSelectable && (
-            <SelectableButtons
-              selectAllButtonProps={{ onPress: handleSelectAll }}
-              deleteSelectedButtonProps={{ onPress: handleOnSelectedDelete }}
-              cancelButtonProps={{ onPress: handleCancelSelection }}
-            />
-          )}
+          <SelectableButtons
+            selectAllButtonProps={{ onPress: handleSelectAll }}
+            deleteSelectedButtonProps={{
+              onPress: handleOnSelectedDelete,
+              disabled: !selectedImagesUri.length,
+            }}
+            cancelButtonProps={{
+              onPress: handleCancelSelection,
+              disabled: !selectedImagesUri.length,
+            }}
+          />
         </>
       )}
     </View>

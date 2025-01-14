@@ -6,6 +6,6 @@ export type EntrySearchParams = {
   entryId?: string;
   focus?: FocusTypes;
   scrollTo?: ScrollToTypes;
-  imagesSelectedIndex?: string;
-  videosSelectedIndex?: string;
+  imagesSelectedUri?: string;
+  videosSelectedThumbnailUri?: string;
 };

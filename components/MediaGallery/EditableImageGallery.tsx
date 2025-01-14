@@ -18,11 +18,9 @@ type Props = {
   onMoveToStartPress: (index: number) => void;
   onMoveRightPress: (index: number) => void;
   onMoveToEndPress: (index: number) => void;
-  onImageLongPress: (index: number) => void;
-  selectable?: {
-    selected: number[];
-    onSelectedChange: (selected: number[]) => void;
-  };
+  onImageLongPress: (uri: string) => void;
+  selectedImagesUri: string[];
+  onSelectedImagesUriChange: (selectedUri: string[]) => void;
 } & ViewProps;
 
 const EditableImageGallery = ({
@@ -36,7 +34,8 @@ const EditableImageGallery = ({
   onMoveRightPress,
   onMoveToEndPress,
   onImageLongPress,
-  selectable,
+  selectedImagesUri,
+  onSelectedImagesUriChange,
   ...props
 }: Props) => {
   const theme = useCustomTheme();
@@ -67,16 +66,13 @@ const EditableImageGallery = ({
   const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
   const imagesCount = addButtons ? imagesUri.length + 1 : imagesUri.length;
 
-  const handleOnSelect = (index: number) => {
-    if (selectable) {
-      const { selected, onSelectedChange } = selectable;
-      const isSelected = selected.includes(index);
-      onSelectedChange(
-        isSelected
-          ? selected.filter((item) => item !== index)
-          : [...selected, index],
-      );
-    }
+  const handleOnSelect = (uri: string) => {
+    const isSelected = selectedImagesUri.includes(uri);
+    onSelectedImagesUriChange(
+      isSelected
+        ? selectedImagesUri.filter((item) => item !== uri)
+        : [...selectedImagesUri, uri],
+    );
   };
 
   return (
@@ -86,7 +82,7 @@ const EditableImageGallery = ({
         style={[style, styles.wrapper]}
         onLayout={handleOnLayout}
       >
-        {imagesUri.map((item, index) => {
+        {imagesUri.map((uri, index) => {
           const menuItems = [];
 
           if (index > 0) {
@@ -115,45 +111,42 @@ const EditableImageGallery = ({
             });
           }
 
-          const isSelected = selectable?.selected.includes(index);
+          const isSelected = selectedImagesUri.includes(uri);
 
           return (
-            <View key={`${item}-${index}`}>
+            <View key={`${uri}-${index}`}>
               <ImageGridItem
-                source={{ uri: item }}
+                source={{ uri }}
                 index={index}
                 imagesCount={imagesCount}
                 gridSize={gridSize}
                 style={{ width: imageSize, height: imageSize }}
                 touchableProps={{
                   onPress: () => onImagePress(index),
-                  onLongPress: () => onImageLongPress(index),
+                  onLongPress: () => onImageLongPress(uri),
                 }}
               />
-              {selectable ? (
-                <View
-                  style={[
-                    styles.select,
-                    { backgroundColor: theme.colors.background },
-                  ]}
-                >
-                  <Checkbox
-                    status={isSelected ? "checked" : "unchecked"}
-                    onPress={() => handleOnSelect(index)}
-                  />
-                </View>
-              ) : (
-                <View style={styles.buttons}>
-                  <IconButtonMenu
-                    iconButtonProps={{
-                      icon: "arrow-left-right",
-                      mode: "contained-tonal",
-                      size: sizing.sizeSmall,
-                    }}
-                    menuItems={menuItems}
-                  />
-                </View>
-              )}
+              <View
+                style={[
+                  styles.select,
+                  { backgroundColor: theme.colors.background },
+                ]}
+              >
+                <Checkbox
+                  status={isSelected ? "checked" : "unchecked"}
+                  onPress={() => handleOnSelect(uri)}
+                />
+              </View>
+              <View style={styles.buttons}>
+                <IconButtonMenu
+                  iconButtonProps={{
+                    icon: "arrow-left-right",
+                    mode: "contained-tonal",
+                    size: sizing.sizeSmall,
+                  }}
+                  menuItems={menuItems}
+                />
+              </View>
             </View>
           );
         })}
@@ -163,7 +156,6 @@ const EditableImageGallery = ({
           addButtons={addButtons}
           style={{ width: imageSize, height: imageSize }}
           loading={addButtonsLoading}
-          disabled={!!selectable}
         />
       </View>
       <GalleryPreview
@@ -191,8 +183,8 @@ const styles = StyleSheet.create({
   },
   select: {
     position: "absolute",
-    bottom: spacing.spaceSmall,
-    right: spacing.spaceSmall,
+    top: spacing.spaceSmall,
+    left: spacing.spaceSmall,
     borderRadius: roundness,
   },
 });

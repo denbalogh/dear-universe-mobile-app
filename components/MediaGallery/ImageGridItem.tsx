@@ -16,7 +16,7 @@ type Props = {
   gridSize: number;
   touchableProps: Omit<TouchableRippleProps, "children">;
   showPlayIcon?: boolean;
-  playIconPosition?: "center" | "topLeft";
+  playIconPosition?: "center" | "bottomLeft";
 } & ImageProps;
 
 const ImageGridItem = ({
@@ -52,7 +52,7 @@ const ImageGridItem = ({
               StyleSheet.absoluteFill,
               playIconPosition === "center"
                 ? styles.playIconWrapperCenter
-                : styles.playIconWrapperTopLeft,
+                : styles.playIconWrapperBottomLeft,
             ]}
           >
             <View
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  playIconWrapperTopLeft: {
-    justifyContent: "flex-start",
+  playIconWrapperBottomLeft: {
+    justifyContent: "flex-end",
     alignItems: "flex-start",
   },
   playIcon: {
     borderRadius: roundness,
-    margin: spacing.spaceExtraSmall,
+    margin: spacing.spaceSmall,
   },
 });

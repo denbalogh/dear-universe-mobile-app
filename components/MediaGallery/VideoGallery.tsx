@@ -11,7 +11,7 @@ export type VideoWithThumbnail = {
 type Props = {
   videosWithThumbnail: VideoWithThumbnail[];
   gridSize?: number;
-  onVideoLongPress?: (index: number) => void;
+  onVideoLongPress?: (uri: string) => void;
 } & ViewProps;
 
 const VideoGallery = ({

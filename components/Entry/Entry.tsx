@@ -33,8 +33,8 @@ type Props = {
   onFeelingsPress: () => void;
   onDeleteEntryPress: () => void;
   onRecordingLongPress: () => void;
-  onImageLongPress?: (index: number) => void;
-  onVideoLongPress?: (index: number) => void;
+  onImageLongPress?: (uri: string) => void;
+  onVideoLongPress?: (uri: string) => void;
   moveMenuItems: MenuItemProps[];
   editMenuItems: MenuItemProps[];
   style: ViewProps["style"];

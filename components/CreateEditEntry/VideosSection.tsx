@@ -4,7 +4,7 @@ import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
 import React, { useState } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { ActivityIndicator, Button, Text } from "react-native-paper";
+import { ActivityIndicator, Button } from "react-native-paper";
 import { VideoWithThumbnail } from "../MediaGallery/VideoGallery";
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import EditableVideoGallery from "../MediaGallery/EditableVideoGallery";
@@ -14,25 +14,23 @@ import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 type Props = {
   videosWithThumbnail: VideoWithThumbnail[];
   onVideosChange: (videosWithThumbnail: VideoWithThumbnail[]) => void;
-  initialSelectedIndex?: string;
+  initialSelectedThumbnailUri?: string;
 } & ViewProps;
 
 const VideosSection = ({
   videosWithThumbnail,
   onVideosChange,
-  initialSelectedIndex,
+  initialSelectedThumbnailUri,
   ...viewProps
 }: Props) => {
   const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
 
-  const initalSelectable = !!initialSelectedIndex;
-  const initialSelectedVideos = initialSelectedIndex
-    ? [parseInt(initialSelectedIndex)]
+  const initialSelectedVideos = initialSelectedThumbnailUri
+    ? [initialSelectedThumbnailUri]
     : [];
 
-  const [isSelectable, setIsSelectable] = useState(initalSelectable);
-  const [selectedVideos, setSelectedVideos] = useState<number[]>(
+  const [selectedVideos, setSelectedVideos] = useState<string[]>(
     initialSelectedVideos,
   );
 
@@ -101,29 +99,26 @@ const VideosSection = ({
     onVideosChange(newVideos);
   };
 
-  const handleOnVideoLongPress = (index: number) => {
-    setIsSelectable(true);
-    setSelectedVideos([index]);
+  const handleOnVideoLongPress = (thumbnailUri: string) => {
+    setSelectedVideos([thumbnailUri]);
   };
 
   const handleSelectAll = () => {
-    setSelectedVideos([...Array(videosWithThumbnail.length).keys()]);
+    setSelectedVideos(videosWithThumbnail.map((video) => video.thumbnailUri));
   };
 
   const handleCancelSelection = () => {
-    setIsSelectable(false);
     setSelectedVideos([]);
   };
 
   const handleOnSelectedDelete = () => {
     showConfirmDialog("Do you wish to delete the selected videos?", () => {
-      const newImagesUri = videosWithThumbnail.filter(
-        (_, index) => !selectedVideos.includes(index),
+      const newVideos = videosWithThumbnail.filter(
+        (video) => !selectedVideos.includes(video.thumbnailUri),
       );
 
-      onVideosChange(newImagesUri);
+      onVideosChange(newVideos);
       setSelectedVideos([]);
-      setIsSelectable(false);
     });
   };
 
@@ -159,11 +154,6 @@ const VideosSection = ({
         </>
       ) : (
         <>
-          {!isSelectable && (
-            <Text variant="labelMedium" style={styles.selectionInfoText}>
-              Long press video to enable selection
-            </Text>
-          )}
           <EditableVideoGallery
             videosWithThumbnail={videosWithThumbnail}
             onMoveLeftPress={handleMoveLeftPress}
@@ -184,22 +174,20 @@ const VideosSection = ({
             ]}
             addButtonsLoading={isLoading}
             onVideoLongPress={handleOnVideoLongPress}
-            selectable={
-              isSelectable
-                ? {
-                    selected: selectedVideos,
-                    onSelectedChange: setSelectedVideos,
-                  }
-                : undefined
-            }
+            selectedVideosThumbnailUri={selectedVideos}
+            onSelectedVideosThumbnailUriChange={setSelectedVideos}
           />
-          {isSelectable && (
-            <SelectableButtons
-              selectAllButtonProps={{ onPress: handleSelectAll }}
-              deleteSelectedButtonProps={{ onPress: handleOnSelectedDelete }}
-              cancelButtonProps={{ onPress: handleCancelSelection }}
-            />
-          )}
+          <SelectableButtons
+            selectAllButtonProps={{ onPress: handleSelectAll }}
+            deleteSelectedButtonProps={{
+              onPress: handleOnSelectedDelete,
+              disabled: !selectedVideos.length,
+            }}
+            cancelButtonProps={{
+              onPress: handleCancelSelection,
+              disabled: !selectedVideos.length,
+            }}
+          />
         </>
       )}
     </View>

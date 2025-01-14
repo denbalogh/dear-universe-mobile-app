@@ -2,14 +2,14 @@
 
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 
-export const getImagesSelectedIndex = (
-  index: number,
-): Pick<EntrySearchParams, "imagesSelectedIndex"> => ({
-  imagesSelectedIndex: index.toString(),
+export const getImagesSelectedUri = (
+  uri: string,
+): Pick<EntrySearchParams, "imagesSelectedUri"> => ({
+  imagesSelectedUri: uri,
 });
 
-export const getVideosSelectedIndex = (
-  index: number,
-): Pick<EntrySearchParams, "videosSelectedIndex"> => ({
-  videosSelectedIndex: index.toString(),
+export const getVideosSelectedUri = (
+  uri: string,
+): Pick<EntrySearchParams, "videosSelectedThumbnailUri"> => ({
+  videosSelectedThumbnailUri: uri,
 });

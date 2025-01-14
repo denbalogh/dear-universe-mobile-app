@@ -7,7 +7,7 @@ import GalleryPreview from "./GalleryPreview";
 type Props = {
   imagesUri: string[];
   gridSize?: number;
-  onImageLongPress?: (index: number) => void;
+  onImageLongPress?: (uri: string) => void;
 } & ViewProps;
 
 const ImageGallery = ({

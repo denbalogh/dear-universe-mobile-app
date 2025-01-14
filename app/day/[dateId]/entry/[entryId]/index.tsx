@@ -18,8 +18,8 @@ const EditEntryScreen = () => {
     entryId,
     focus,
     scrollTo,
-    imagesSelectedIndex,
-    videosSelectedIndex,
+    imagesSelectedUri,
+    videosSelectedThumbnailUri,
   } = useLocalSearchParams<EntrySearchParams>();
   const dayObject = useInitiateDayObject(dateId);
 
@@ -93,8 +93,8 @@ const EditEntryScreen = () => {
       scrollToImages={scrollTo === "images"}
       scrollToVideos={scrollTo === "videos"}
       scrollToFeelings={scrollTo === "feelings"}
-      imagesSelectedIndex={imagesSelectedIndex}
-      videosSelectedIndex={videosSelectedIndex}
+      imagesSelectedUri={imagesSelectedUri}
+      videosSelectedThumbnailUri={videosSelectedThumbnailUri}
     />
   );
 };
