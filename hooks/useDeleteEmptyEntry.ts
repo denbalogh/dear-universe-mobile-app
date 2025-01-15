@@ -7,23 +7,11 @@ const useDeleteEmptyEntry = (entryObject: Entry) => {
   const realm = useRealm();
   const { showSnackbar } = useSnackbar();
 
-  const {
-    title,
-    description,
-    recordingUri,
-    imagesUri = [],
-    videosWithThumbnail = [],
-  } = entryObject;
+  const { title, description, recordingUri, media } = entryObject;
 
   // Delete entry if it has no content
   useEffect(() => {
-    if (
-      !title &&
-      !description &&
-      !recordingUri &&
-      imagesUri.length === 0 &&
-      videosWithThumbnail.length === 0
-    ) {
+    if (!title && !description && !recordingUri && media.length === 0) {
       realm.write(() => {
         realm.delete(entryObject);
       });
@@ -34,8 +22,7 @@ const useDeleteEmptyEntry = (entryObject: Entry) => {
     title,
     description,
     recordingUri,
-    imagesUri,
-    videosWithThumbnail,
+    media,
     entryObject,
     realm,
     showSnackbar,

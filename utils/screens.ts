@@ -2,14 +2,8 @@
 
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 
-export const getImagesSelectedUri = (
+export const getSelectedMediaImageUri = (
   uri: string,
-): Pick<EntrySearchParams, "imagesSelectedUri"> => ({
-  imagesSelectedUri: uri,
-});
-
-export const getVideosSelectedUri = (
-  uri: string,
-): Pick<EntrySearchParams, "videosSelectedThumbnailUri"> => ({
-  videosSelectedThumbnailUri: uri,
+): Pick<EntrySearchParams, "selectedMediaImageUri"> => ({
+  selectedMediaImageUri: uri,
 });

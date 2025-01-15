@@ -6,11 +6,14 @@ import AddImageGridItem from "./ImageGridAddItem";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { roundness, sizing, spacing } from "@/constants/theme";
-import { VideoWithThumbnail } from "./VideoGallery";
-import VideoPlayerModal from "./VideoPlayerModal";
+
+export type Media = {
+  imageUri: string;
+  videoUri?: string;
+};
 
 type Props = {
-  videosWithThumbnail: VideoWithThumbnail[];
+  media: Media[];
   gridSize?: number;
   addButtons: MenuItemProps[];
   addButtonsLoading?: boolean;
@@ -18,13 +21,13 @@ type Props = {
   onMoveToStartPress: (index: number) => void;
   onMoveRightPress: (index: number) => void;
   onMoveToEndPress: (index: number) => void;
-  onVideoLongPress: (thumbnailUri: string) => void;
-  selectedVideosThumbnailUri: string[];
-  onSelectedVideosThumbnailUriChange: (selected: string[]) => void;
+  onMediaLongPress: (imageUri: string) => void;
+  selectedMediaImagesUri: string[];
+  onSelectedMediaImagesUriChange: (selectedUri: string[]) => void;
 } & ViewProps;
 
-const EditableVideoGallery = ({
-  videosWithThumbnail,
+const EditableMediaGallery = ({
+  media,
   gridSize = 3,
   style,
   addButtons,
@@ -33,25 +36,14 @@ const EditableVideoGallery = ({
   onMoveToStartPress,
   onMoveRightPress,
   onMoveToEndPress,
-  onVideoLongPress,
-  selectedVideosThumbnailUri,
-  onSelectedVideosThumbnailUriChange,
+  onMediaLongPress,
+  selectedMediaImagesUri,
+  onSelectedMediaImagesUriChange,
   ...props
 }: Props) => {
   const theme = useCustomTheme();
 
   const [gridWidth, setGridWidth] = useState(0);
-  const [isVideaPlayerVisible, setIsVideoPlayerVisible] = useState(false);
-  const [initialIndex, setInitialIndex] = useState(0);
-
-  const onVideoPress = (index: number) => {
-    setInitialIndex(index);
-    setIsVideoPlayerVisible(true);
-  };
-
-  const handleGalleryPreviewClose = () => {
-    setIsVideoPlayerVisible(false);
-  };
 
   const handleOnLayout = ({
     nativeEvent: {
@@ -62,16 +54,14 @@ const EditableVideoGallery = ({
   };
 
   const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
-  const imagesCount = videosWithThumbnail.length + 1; // Add button
+  const itemCountPlusAddButton = media.length + 1;
 
-  const videosUri = videosWithThumbnail.map(({ videoUri }) => videoUri);
-
-  const handleOnSelect = (thumbnailUri: string) => {
-    const isSelected = selectedVideosThumbnailUri.includes(thumbnailUri);
-    onSelectedVideosThumbnailUriChange(
+  const handleOnSelect = (imageUri: string) => {
+    const isSelected = selectedMediaImagesUri.includes(imageUri);
+    onSelectedMediaImagesUriChange(
       isSelected
-        ? selectedVideosThumbnailUri.filter((item) => item !== thumbnailUri)
-        : [...selectedVideosThumbnailUri, thumbnailUri],
+        ? selectedMediaImagesUri.filter((item) => item !== imageUri)
+        : [...selectedMediaImagesUri, imageUri],
     );
   };
 
@@ -82,7 +72,7 @@ const EditableVideoGallery = ({
         style={[style, styles.wrapper]}
         onLayout={handleOnLayout}
       >
-        {videosWithThumbnail.map((item, index) => {
+        {media.map(({ imageUri, videoUri }, index) => {
           const menuItems = [];
 
           if (index > 0) {
@@ -98,7 +88,7 @@ const EditableVideoGallery = ({
             });
           }
 
-          if (index < videosWithThumbnail.length - 1) {
+          if (index < media.length - 1) {
             menuItems.push({
               leadingIcon: "arrow-right",
               onPress: () => onMoveRightPress(index),
@@ -111,34 +101,33 @@ const EditableVideoGallery = ({
             });
           }
 
-          const isSelected = selectedVideosThumbnailUri.includes(
-            item.thumbnailUri,
-          );
+          const isSelected = selectedMediaImagesUri.includes(imageUri);
 
           return (
-            <View key={`${item}-${index}`}>
+            <View key={`${imageUri}-${index}`}>
               <ImageGridItem
-                source={{ uri: item.thumbnailUri }}
+                source={{ uri: imageUri }}
                 index={index}
-                imagesCount={imagesCount}
+                imagesCount={itemCountPlusAddButton}
                 gridSize={gridSize}
                 style={{ width: imageSize, height: imageSize }}
                 touchableProps={{
-                  onPress: () => onVideoPress(index),
-                  onLongPress: () => onVideoLongPress(item.thumbnailUri),
+                  onPress: () => {},
+                  onLongPress: () => onMediaLongPress(imageUri),
                 }}
-                showPlayIcon={true}
+                showPlayIcon={!!videoUri}
                 playIconPosition="bottomLeft"
               />
               <View
                 style={[
                   styles.select,
-                  { backgroundColor: theme.colors.background },
+                  { backgroundColor: `${theme.colors.primaryContainer}96` },
                 ]}
               >
                 <Checkbox
                   status={isSelected ? "checked" : "unchecked"}
-                  onPress={() => handleOnSelect(item.thumbnailUri)}
+                  onPress={() => handleOnSelect(imageUri)}
+                  color={theme.colors.onPrimaryContainer}
                 />
               </View>
               <View style={styles.buttons}>
@@ -155,24 +144,18 @@ const EditableVideoGallery = ({
           );
         })}
         <AddImageGridItem
-          imagesCount={imagesCount}
+          imagesCount={itemCountPlusAddButton}
           gridSize={gridSize}
           addButtons={addButtons}
           style={{ width: imageSize, height: imageSize }}
           loading={addButtonsLoading}
         />
       </View>
-      <VideoPlayerModal
-        videosUri={videosUri}
-        initialIndex={initialIndex}
-        isVisible={isVideaPlayerVisible}
-        onClose={handleGalleryPreviewClose}
-      />
     </>
   );
 };
 
-export default EditableVideoGallery;
+export default EditableMediaGallery;
 
 const styles = StyleSheet.create({
   wrapper: {

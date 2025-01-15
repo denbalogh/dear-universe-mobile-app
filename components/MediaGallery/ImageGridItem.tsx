@@ -58,13 +58,13 @@ const ImageGridItem = ({
             <View
               style={[
                 styles.playIcon,
-                { backgroundColor: theme.colors.surface },
+                { backgroundColor: `${theme.colors.background}96` },
               ]}
             >
               <Icon
                 source="play"
                 size={sizing.sizeMedium}
-                color={theme.colors.onSurface}
+                color={theme.colors.onBackground}
               />
             </View>
           </View>

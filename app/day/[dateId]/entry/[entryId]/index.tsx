@@ -6,21 +6,15 @@ import { useObject, useRealm } from "@realm/react";
 import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
-import { Entry, VideoWithThumbnail } from "@/models/Entry";
+import { Entry, Media } from "@/models/Entry";
 import { BSON } from "realm";
 
 const EditEntryScreen = () => {
   const realm = useRealm();
   const router = useRouter();
 
-  const {
-    dateId,
-    entryId,
-    focus,
-    scrollTo,
-    imagesSelectedUri,
-    videosSelectedThumbnailUri,
-  } = useLocalSearchParams<EntrySearchParams>();
+  const { dateId, entryId, focus, scrollTo, selectedMediaImageUri } =
+    useLocalSearchParams<EntrySearchParams>();
   const dayObject = useInitiateDayObject(dateId);
 
   const formattedDate = useMemo(
@@ -34,8 +28,7 @@ const EditEntryScreen = () => {
     title = "",
     description = "",
     recordingUri = "",
-    imagesUri = [],
-    videosWithThumbnail = [],
+    media = [],
     feelingsGroupName = "",
     feelingsEmotions = [],
   } = entryObject || {};
@@ -50,8 +43,7 @@ const EditEntryScreen = () => {
         title,
         description,
         recordingUri,
-        imagesUri,
-        videosWithThumbnail,
+        media,
         feelingsActiveGroup,
         feelingsActiveEmotions,
       } = entryData;
@@ -60,9 +52,7 @@ const EditEntryScreen = () => {
         entryObject.title = title;
         entryObject.description = description;
         entryObject.recordingUri = recordingUri;
-        entryObject.imagesUri = imagesUri;
-        entryObject.videosWithThumbnail =
-          videosWithThumbnail as VideoWithThumbnail[];
+        entryObject.media = media as Media[];
         entryObject.feelingsGroupName = feelingsActiveGroup;
         entryObject.feelingsEmotions = feelingsActiveEmotions;
       });
@@ -82,19 +72,16 @@ const EditEntryScreen = () => {
       title={title}
       description={description}
       recordingUri={recordingUri}
-      imagesUri={imagesUri}
-      videosWithThumbnail={videosWithThumbnail}
+      media={media}
       feelingsActiveGroup={feelingsGroupName}
       feelingsActiveEmotions={feelingsEmotions}
       onSave={handleOnEntrySave}
       focusTitle={focus === "title"}
       focusDescription={focus === "description"}
       scrollToRecording={scrollTo === "recording"}
-      scrollToImages={scrollTo === "images"}
-      scrollToVideos={scrollTo === "videos"}
+      scrollToMedia={scrollTo === "media"}
       scrollToFeelings={scrollTo === "feelings"}
-      imagesSelectedUri={imagesSelectedUri}
-      videosSelectedThumbnailUri={videosSelectedThumbnailUri}
+      selectedMediaImageUri={selectedMediaImageUri}
     />
   );
 };

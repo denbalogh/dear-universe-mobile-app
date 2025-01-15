@@ -1,10 +1,5 @@
-import { VideoWithThumbnail } from "@/components/MediaGallery/VideoGallery";
-import {
-  IMAGES_DIR,
-  RECORDINGS_DIR,
-  THUMBNAILS_DIR,
-  VIDEOS_DIR,
-} from "@/constants/files";
+import { Media } from "@/components/MediaGallery/EditableMediaGallery";
+import { IMAGES_DIR, RECORDINGS_DIR, VIDEOS_DIR } from "@/constants/files";
 import {
   deleteAsync,
   getInfoAsync,
@@ -20,68 +15,39 @@ const createDirectoryIfNotExists = async (directory: string) => {
   }
 };
 
-export const moveImagesToAppDirectoryAndGetPaths = async (
-  imagesUri: string[],
-) => {
-  if (imagesUri.length === 0) {
-    return [];
-  }
+export const moveMediaToAppDirectoryAndGetPaths = async (media: Media[]) => {
+  const newFiles: Media[] = [];
 
   await createDirectoryIfNotExists(IMAGES_DIR);
+  await createDirectoryIfNotExists(VIDEOS_DIR);
 
-  const newFiles: string[] = [];
-
-  for (const uri of imagesUri) {
-    const filename = uri.split("/").pop();
+  for (const { imageUri, videoUri } of media) {
+    const filename = imageUri.split("/").pop();
     const dest = `${IMAGES_DIR}${filename}`;
 
     await moveAsync({
-      from: uri,
+      from: imageUri,
       to: dest,
     });
 
-    newFiles.push(dest);
+    const newMedia: Media = { imageUri: dest };
+
+    if (videoUri) {
+      const videoFilename = videoUri.split("/").pop();
+      const videoDest = `${VIDEOS_DIR}${videoFilename}`;
+
+      await moveAsync({
+        from: videoUri,
+        to: videoDest,
+      });
+
+      newMedia.videoUri = videoDest;
+    }
+
+    newFiles.push(newMedia);
   }
 
   return newFiles;
-};
-
-export const moveVideosToAppDirectoryAndGetPaths = async (
-  videosWithThumbnail: VideoWithThumbnail[],
-) => {
-  if (videosWithThumbnail.length === 0) {
-    return [];
-  }
-
-  await createDirectoryIfNotExists(VIDEOS_DIR);
-  await createDirectoryIfNotExists(THUMBNAILS_DIR);
-
-  const newVideosWithThumbnail: VideoWithThumbnail[] = [];
-
-  for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
-    const videoFilename = videoUri.split("/").pop();
-    const thumbnailFilename = thumbnailUri.split("/").pop();
-
-    const videoDest = `${VIDEOS_DIR}${videoFilename}`;
-    const thumbnailDest = `${THUMBNAILS_DIR}${thumbnailFilename}`;
-
-    await moveAsync({
-      from: videoUri,
-      to: videoDest,
-    });
-
-    await moveAsync({
-      from: thumbnailUri,
-      to: thumbnailDest,
-    });
-
-    newVideosWithThumbnail.push({
-      videoUri: videoDest,
-      thumbnailUri: thumbnailDest,
-    });
-  }
-
-  return newVideosWithThumbnail;
 };
 
 export const moveRecordingToAppDirectoryAndGetPath = async (
@@ -104,100 +70,68 @@ export const moveRecordingToAppDirectoryAndGetPath = async (
   return dest;
 };
 
-export const moveAndDeleteUpdatedImagesAndGetPaths = async (
-  imagesUri: string[],
-  initialImagesUri: string[],
+export const moveAndDeleteUpdatedMediaAndGetPaths = async (
+  media: Media[],
+  initialMedia: Media[],
 ) => {
-  const deletedImagesUri = initialImagesUri.filter(
-    (initialImageUri) => !imagesUri.includes(initialImageUri),
-  );
-
-  await createDirectoryIfNotExists(IMAGES_DIR);
-
-  // Remove deleted images from phone storage
-  for (const uri of deletedImagesUri) {
-    await deleteAsync(uri);
-  }
-
-  const newImagesUri: string[] = [];
-
-  for (const uri of imagesUri) {
-    const isNewImageUri = !initialImagesUri.includes(uri);
-
-    if (isNewImageUri) {
-      const filename = uri.split("/").pop();
-      const dest = `${IMAGES_DIR}${filename}`;
-
-      await moveAsync({
-        from: uri,
-        to: dest,
-      });
-
-      newImagesUri.push(dest);
-    } else {
-      newImagesUri.push(uri);
-    }
-  }
-
-  return newImagesUri;
-};
-
-export const moveAndDeleteUpdatedVideosAndGetPaths = async (
-  videosWithThumbnail: VideoWithThumbnail[],
-  initialVideosWithThumbnail: VideoWithThumbnail[],
-) => {
-  const deletedVideosWithThumbnail = initialVideosWithThumbnail.filter(
-    ({ videoUri, thumbnailUri }) =>
-      !videosWithThumbnail.some(
-        ({ videoUri: newVideoUri, thumbnailUri: newThumbnailUri }) =>
-          videoUri === newVideoUri && thumbnailUri === newThumbnailUri,
+  const deletedMedia = initialMedia.filter(
+    ({ imageUri, videoUri }) =>
+      !media.some(
+        ({ imageUri: newImageUri, videoUri: newVideoUri }) =>
+          imageUri === newImageUri && videoUri === newVideoUri,
       ),
   );
 
+  await createDirectoryIfNotExists(IMAGES_DIR);
   await createDirectoryIfNotExists(VIDEOS_DIR);
-  await createDirectoryIfNotExists(THUMBNAILS_DIR);
 
-  // Remove deleted videos and thumbnails from phone storage
-  for (const { videoUri, thumbnailUri } of deletedVideosWithThumbnail) {
-    await deleteAsync(videoUri);
-    await deleteAsync(thumbnailUri);
-  }
+  // Remove deleted media from phone storage
+  for (const { imageUri, videoUri } of deletedMedia) {
+    await deleteAsync(imageUri);
 
-  const newVideosWithThumbnail: VideoWithThumbnail[] = [];
-
-  for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
-    const isNewVideoWithThumbnail = !initialVideosWithThumbnail.some(
-      ({ videoUri: initialVideoUri, thumbnailUri: initialThumbnailUri }) =>
-        videoUri === initialVideoUri && thumbnailUri === initialThumbnailUri,
-    );
-
-    if (isNewVideoWithThumbnail) {
-      const videoFilename = videoUri.split("/").pop();
-      const thumbnailFilename = thumbnailUri.split("/").pop();
-
-      const videoDest = `${VIDEOS_DIR}${videoFilename}`;
-      const thumbnailDest = `${THUMBNAILS_DIR}${thumbnailFilename}`;
-
-      await moveAsync({
-        from: videoUri,
-        to: videoDest,
-      });
-
-      await moveAsync({
-        from: thumbnailUri,
-        to: thumbnailDest,
-      });
-
-      newVideosWithThumbnail.push({
-        videoUri: videoDest,
-        thumbnailUri: thumbnailDest,
-      });
-    } else {
-      newVideosWithThumbnail.push({ videoUri, thumbnailUri });
+    if (videoUri) {
+      await deleteAsync(videoUri);
     }
   }
 
-  return newVideosWithThumbnail;
+  const newMedia: Media[] = [];
+
+  for (const { imageUri, videoUri } of media) {
+    const isNewMedia = !initialMedia.some(
+      ({ imageUri: initialImageUri, videoUri: initialVideoUri }) =>
+        imageUri === initialImageUri && videoUri === initialVideoUri,
+    );
+
+    if (isNewMedia) {
+      const imageFilename = imageUri.split("/").pop();
+      const imageDest = `${IMAGES_DIR}${imageFilename}`;
+
+      await moveAsync({
+        from: imageUri,
+        to: imageDest,
+      });
+
+      const newMediaItem: Media = { imageUri: imageDest };
+
+      if (videoUri) {
+        const videoFilename = videoUri.split("/").pop();
+        const videoDest = `${VIDEOS_DIR}${videoFilename}`;
+
+        await moveAsync({
+          from: videoUri,
+          to: videoDest,
+        });
+
+        newMediaItem.videoUri = videoDest;
+      }
+
+      newMedia.push(newMediaItem);
+    } else {
+      newMedia.push({ imageUri, videoUri });
+    }
+  }
+
+  return newMedia;
 };
 
 export const moveAndDeleteUpdatedRecordingAndGetPath = async (
@@ -227,17 +161,15 @@ export const moveAndDeleteUpdatedRecordingAndGetPath = async (
 };
 
 export const deleteFilesInEntry = async (
-  imagesUri: string[],
-  videosWithThumbnail: VideoWithThumbnail[],
+  media: Media[],
   recordingUri: string,
 ) => {
-  for (const uri of imagesUri) {
-    await deleteAsync(uri);
-  }
+  for (const { imageUri, videoUri } of media) {
+    await deleteAsync(imageUri);
 
-  for (const { videoUri, thumbnailUri } of videosWithThumbnail) {
-    await deleteAsync(videoUri);
-    await deleteAsync(thumbnailUri);
+    if (videoUri) {
+      await deleteAsync(videoUri);
+    }
   }
 
   if (recordingUri) {

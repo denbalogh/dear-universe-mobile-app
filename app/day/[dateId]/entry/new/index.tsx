@@ -6,7 +6,7 @@ import { useRealm } from "@realm/react";
 import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
-import { Entry, VideoWithThumbnail } from "@/models/Entry";
+import { Entry, Media } from "@/models/Entry";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
@@ -30,8 +30,7 @@ const NewEntryScreen = () => {
         title,
         description,
         recordingUri,
-        imagesUri,
-        videosWithThumbnail,
+        media,
         feelingsActiveGroup,
         feelingsActiveEmotions,
       } = entryData;
@@ -41,8 +40,7 @@ const NewEntryScreen = () => {
           title,
           description,
           recordingUri,
-          imagesUri,
-          videosWithThumbnail: videosWithThumbnail as VideoWithThumbnail[],
+          media: media as Media[],
           feelingsGroupName: feelingsActiveGroup,
           feelingsEmotions: feelingsActiveEmotions,
           day: dayObject,
@@ -66,16 +64,14 @@ const NewEntryScreen = () => {
       title=""
       description=""
       recordingUri=""
-      imagesUri={[]}
-      videosWithThumbnail={[]}
+      media={[]}
       feelingsActiveGroup=""
       feelingsActiveEmotions={[]}
       onSave={handleOnEntrySave}
       focusTitle={focus === "title"}
       focusDescription={focus === "description"}
       scrollToRecording={scrollTo === "recording"}
-      scrollToImages={scrollTo === "images"}
-      scrollToVideos={scrollTo === "videos"}
+      scrollToMedia={scrollTo === "media"}
       scrollToFeelings={scrollTo === "feelings"}
     />
   );

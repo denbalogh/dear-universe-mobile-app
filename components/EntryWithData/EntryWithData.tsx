@@ -1,10 +1,9 @@
 import {
   FOCUS_DESCRIPTION,
   FOCUS_TITLE,
-  SCROLL_TO_FEELINGS,
-  SCROLL_TO_IMAGES,
   SCROLL_TO_RECORDING,
-  SCROLL_TO_VIDEOS,
+  SCROLL_TO_MEDIA,
+  SCROLL_TO_FEELINGS,
 } from "@/constants/screens";
 import { Entry as EntryType } from "@/models/Entry";
 import { useRouter } from "expo-router";
@@ -18,7 +17,7 @@ import { MenuItemProps } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import useDeleteEmptyEntry from "@/hooks/useDeleteEmptyEntry";
 import { deleteFilesInEntry } from "@/utils/files";
-import { getImagesSelectedUri, getVideosSelectedUri } from "@/utils/screens";
+import { getSelectedMediaImageUri } from "@/utils/screens";
 
 type Props = {
   entryObject: EntryType;
@@ -39,8 +38,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     title = "",
     description = "",
     recordingUri = "",
-    imagesUri = [],
-    videosWithThumbnail = [],
+    media = [],
     feelingsGroupName = "",
     feelingsEmotions = [],
   } = entryObject;
@@ -72,20 +70,13 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
 
   const handleDeleteEntryPress = useCallback(async () => {
     showConfirmDialog("Do you wish to delete this entry?", async () => {
-      await deleteFilesInEntry(imagesUri, videosWithThumbnail, recordingUri);
+      await deleteFilesInEntry(media, recordingUri);
 
       realm.write(() => {
         realm.delete(entryObject);
       });
     });
-  }, [
-    entryObject,
-    imagesUri,
-    videosWithThumbnail,
-    recordingUri,
-    realm,
-    showConfirmDialog,
-  ]);
+  }, [entryObject, media, recordingUri, realm, showConfirmDialog]);
 
   const handleOnRecordingLongPress = () => {
     router.navigate(
@@ -97,21 +88,11 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     );
   };
 
-  const handleOnImageLongsPress = (uri: string) => {
+  const handleOnMediaLongPress = (uri: string) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: { ...SCROLL_TO_IMAGES, ...getImagesSelectedUri(uri) },
-      },
-      { relativeToDirectory: true },
-    );
-  };
-
-  const handleOnVideoLongsPress = (uri: string) => {
-    router.navigate(
-      {
-        pathname: `./entry/${_id.toString()}`,
-        params: { ...SCROLL_TO_VIDEOS, ...getVideosSelectedUri(uri) },
+        params: { ...SCROLL_TO_MEDIA, ...getSelectedMediaImageUri(uri) },
       },
       { relativeToDirectory: true },
     );
@@ -177,11 +158,9 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
   const editMenuItems = useMemo(() => {
     const menuItems = [];
 
-    const { title, description, videosWithThumbnail, imagesUri, recordingUri } =
-      entryObject;
+    const { title, description, media, recordingUri } = entryObject;
 
-    const hasVideos = videosWithThumbnail && videosWithThumbnail.length > 0;
-    const hasImages = imagesUri && imagesUri.length > 0;
+    const hasMedia = media && media.length > 0;
 
     if (!title) {
       menuItems.push({
@@ -198,79 +177,29 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       });
     }
 
-    if (!hasVideos) {
-      menuItems.push({
-        leadingIcon: "movie-open-plus",
-        title: "Add videos",
-        onPress: () =>
-          router.navigate(
-            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_VIDEOS },
-            { relativeToDirectory: true },
-          ),
-      });
-    } else {
-      menuItems.push({
-        leadingIcon: "movie-open-edit",
-        title: "Edit videos",
-        onPress: () =>
-          router.navigate(
-            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_VIDEOS },
-            { relativeToDirectory: true },
-          ),
-      });
-    }
+    menuItems.push({
+      leadingIcon: hasMedia ? "image-edit" : "image-plus",
+      title: hasMedia ? "Edit media" : "Add media",
+      onPress: () =>
+        router.navigate(
+          { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_MEDIA },
+          { relativeToDirectory: true },
+        ),
+    });
 
-    if (!hasImages) {
-      menuItems.push({
-        leadingIcon: "image-plus",
-        title: "Add images",
-        onPress: () =>
-          router.navigate(
-            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_IMAGES },
-            { relativeToDirectory: true },
-          ),
-      });
-    } else {
-      menuItems.push({
-        leadingIcon: "image-edit",
-        title: "Edit images",
-        onPress: () =>
-          router.navigate(
-            { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_IMAGES },
-            { relativeToDirectory: true },
-          ),
-      });
-    }
-
-    if (!recordingUri) {
-      menuItems.push({
-        leadingIcon: "microphone-plus",
-        title: "Add recording",
-        onPress: () => {
-          router.navigate(
-            {
-              pathname: `./entry/${_id.toString()}`,
-              params: SCROLL_TO_RECORDING,
-            },
-            { relativeToDirectory: true },
-          );
-        },
-      });
-    } else {
-      menuItems.push({
-        leadingIcon: "microphone",
-        title: "Edit recording",
-        onPress: () => {
-          router.navigate(
-            {
-              pathname: `./entry/${_id.toString()}`,
-              params: SCROLL_TO_RECORDING,
-            },
-            { relativeToDirectory: true },
-          );
-        },
-      });
-    }
+    menuItems.push({
+      leadingIcon: recordingUri ? "microphone" : "microphone-plus",
+      title: recordingUri ? "Edit recording" : "Add recording",
+      onPress: () => {
+        router.navigate(
+          {
+            pathname: `./entry/${_id.toString()}`,
+            params: SCROLL_TO_RECORDING,
+          },
+          { relativeToDirectory: true },
+        );
+      },
+    });
 
     if (!description) {
       menuItems.push({
@@ -302,11 +231,9 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       onFeelingsPress={handleFeelingsPress}
       onDeleteEntryPress={handleDeleteEntryPress}
       onRecordingLongPress={handleOnRecordingLongPress}
-      onImageLongPress={handleOnImageLongsPress}
-      onVideoLongPress={handleOnVideoLongsPress}
+      onMediaLongPress={handleOnMediaLongPress}
       recordingUri={recordingUri}
-      imagesUri={imagesUri}
-      videosWithThumbnail={videosWithThumbnail}
+      media={media}
       moveMenuItems={moveMenuItems}
       editMenuItems={editMenuItems}
     />
