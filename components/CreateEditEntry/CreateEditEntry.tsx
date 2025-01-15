@@ -18,7 +18,6 @@ import {
   View,
 } from "react-native";
 import { Appbar, FAB } from "react-native-paper";
-import FeelingsSection from "@/components/CreateEditEntry/FeelingsSection";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
@@ -31,6 +30,7 @@ import {
   moveRecordingToAppDirectoryAndGetPath,
 } from "@/utils/files";
 import MediaSection from "./MediaSection";
+import FeelingsSection from "./FeelingsSection/FeelingsSection";
 
 type LayoutParts =
   | "mainHeadline"

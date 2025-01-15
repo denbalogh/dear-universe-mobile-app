@@ -4,13 +4,18 @@ import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
 import React, { useState } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import { ActivityIndicator, Button, Menu } from "react-native-paper";
-import SelectableButtons from "./SelectableButtons";
+import {
+  ActivityIndicator,
+  Button,
+  IconButton,
+  Menu,
+} from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
+import { getThumbnailAsync } from "expo-video-thumbnails";
 import EditableMediaGallery, {
   Media,
-} from "../MediaGallery/EditableMediaGallery";
-import { getThumbnailAsync } from "expo-video-thumbnails";
+} from "@/components/MediaGallery/EditableMediaGallery";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 type Props = {
   media: Media[];
@@ -24,6 +29,7 @@ const MediaSection = ({
   initialSelectedMediaImageUri,
   ...viewProps
 }: Props) => {
+  const theme = useCustomTheme();
   const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraMenuOpen, setIsCameraMenuOpen] = useState(false);
@@ -236,17 +242,23 @@ const MediaSection = ({
             selectedMediaImagesUri={selectedMediaImagesUri}
             onSelectedMediaImagesUriChange={setSelectedMediaImagesUri}
           />
-          <SelectableButtons
-            selectAllButtonProps={{ onPress: handleSelectAll }}
-            deleteSelectedButtonProps={{
-              onPress: handleOnSelectedDelete,
-              disabled: !selectedMediaImagesUri.length,
-            }}
-            cancelButtonProps={{
-              onPress: handleCancelSelection,
-              disabled: !selectedMediaImagesUri.length,
-            }}
-          />
+          <View style={styles.selectionButtonsWrapper}>
+            <IconButton onPress={handleSelectAll} icon="check-all" />
+            <IconButton
+              onPress={handleCancelSelection}
+              disabled={!selectedMediaImagesUri.length}
+              icon="cancel"
+            />
+            <Button
+              style={styles.selectionButton}
+              mode="outlined"
+              textColor={theme.colors.error}
+              onPress={handleOnSelectedDelete}
+              disabled={!selectedMediaImagesUri.length}
+            >
+              Delete selected
+            </Button>
+          </View>
         </>
       )}
     </View>
@@ -275,7 +287,14 @@ const styles = StyleSheet.create({
   buttonRight: {
     marginLeft: spacing.spaceExtraSmall,
   },
-  selectionInfoText: {
-    marginBottom: spacing.spaceSmall,
+  selectionButtonsWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: spacing.spaceMedium,
+  },
+  selectionButton: {
+    flex: 1,
+    marginLeft: spacing.spaceSmall,
   },
 });
