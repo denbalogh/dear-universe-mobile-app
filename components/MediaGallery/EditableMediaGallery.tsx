@@ -65,7 +65,7 @@ const EditableMediaGallery = ({
     setGridWidth(width);
   };
 
-  const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
+  const imageSize = gridWidth / gridSize - 0.001; // to prevent incorrent wrapping
   const itemCountPlusAddButton = media.length + 1;
 
   const handleOnSelect = (imageUri: string) => {
@@ -133,7 +133,7 @@ const EditableMediaGallery = ({
               <View
                 style={[
                   styles.select,
-                  { backgroundColor: `${theme.colors.background}96` },
+                  { backgroundColor: `${theme.colors.background}96` }, // 60% opacity
                 ]}
               >
                 <Checkbox

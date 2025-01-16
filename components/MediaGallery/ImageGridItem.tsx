@@ -58,7 +58,7 @@ const ImageGridItem = ({
             <View
               style={[
                 styles.playIcon,
-                { backgroundColor: `${theme.colors.background}96` },
+                { backgroundColor: `${theme.colors.background}96` }, // 60% opacity
               ]}
             >
               <Icon

@@ -30,7 +30,7 @@ const MediaGallery = ({
     setGridWidth(width);
   };
 
-  const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
+  const imageSize = gridWidth / gridSize - 0.001; // to prevent incorrent wrapping
 
   const handleOnImagePress = (index: number) => {
     setInitialIndex(index);
