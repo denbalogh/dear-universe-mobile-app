@@ -10,7 +10,7 @@ import { getBorderRadius } from "./utils";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
-type Props = {
+export type ImageGridItemProps = {
   index: number;
   imagesCount: number;
   gridSize: number;
@@ -28,7 +28,7 @@ const ImageGridItem = ({
   showPlayIcon = false,
   playIconPosition = "center",
   ...props
-}: Props) => {
+}: ImageGridItemProps) => {
   const theme = useCustomTheme();
   const borderRadii = useMemo(
     () => getBorderRadius(index, imagesCount, gridSize),

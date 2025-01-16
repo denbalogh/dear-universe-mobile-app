@@ -5,7 +5,7 @@ import { sizing } from "@/constants/theme";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { getBorderRadius } from "./utils";
 
-type Props = {
+export type ImageGridAddItemProps = {
   imagesCount: number;
   gridSize: number;
   addButtons: MenuItemProps[];
@@ -21,7 +21,7 @@ const ImageGridAddItem = ({
   loading = false,
   disabled = false,
   ...props
-}: Props) => {
+}: ImageGridAddItemProps) => {
   const theme = useTheme();
 
   const borderRadii = useMemo(() => {

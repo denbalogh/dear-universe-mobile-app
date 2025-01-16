@@ -3,7 +3,6 @@ import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
 import {
   Card,
-  Divider,
   IconButton,
   MenuItemProps,
   Text,
@@ -13,16 +12,15 @@ import FeelingsButton from "./FeelingsButton";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
-import ImageGallery from "../MediaGallery/ImageGallery";
-import VideoGallery, { VideoWithThumbnail } from "../MediaGallery/VideoGallery";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import MediaGallery from "../MediaGallery/MediaGallery";
+import { Media } from "../MediaGallery/EditableMediaGallery";
 
 export type EntryData = {
   title: string;
   description: string;
   recordingUri: string;
-  imagesUri: string[];
-  videosWithThumbnail: VideoWithThumbnail[];
+  media: Media[];
   feelingsActiveGroup: FEELING_GROUP_NAMES | "";
   feelingsActiveEmotions: string[];
 };
@@ -33,8 +31,7 @@ type Props = {
   onFeelingsPress: () => void;
   onDeleteEntryPress: () => void;
   onRecordingLongPress: () => void;
-  onImageLongPress?: (uri: string) => void;
-  onVideoLongPress?: (uri: string) => void;
+  onMediaLongPress?: (uri: string) => void;
   moveMenuItems: MenuItemProps[];
   editMenuItems: MenuItemProps[];
   style: ViewProps["style"];
@@ -44,8 +41,7 @@ const Entry = ({
   title,
   description,
   recordingUri,
-  imagesUri,
-  videosWithThumbnail,
+  media,
   feelingsActiveGroup,
   feelingsActiveEmotions,
   onTitlePress,
@@ -53,8 +49,7 @@ const Entry = ({
   onFeelingsPress,
   onDeleteEntryPress,
   onRecordingLongPress,
-  onImageLongPress,
-  onVideoLongPress,
+  onMediaLongPress,
   moveMenuItems,
   editMenuItems,
   style,
@@ -64,8 +59,7 @@ const Entry = ({
   const hasMoveMenuItems = moveMenuItems.length > 0;
   const hasEditMenuItems = editMenuItems.length > 0;
 
-  const hasImages = imagesUri.length > 0;
-  const hasVideos = videosWithThumbnail.length > 0;
+  const hasMedia = media.length > 0;
 
   return (
     <Card style={[styles.wrapper, style]} mode="contained">
@@ -79,18 +73,11 @@ const Entry = ({
             <Text variant="titleLarge">{title}</Text>
           </TouchableRipple>
         )}
-        {hasVideos && (
-          <VideoGallery
-            videosWithThumbnail={videosWithThumbnail}
+        {hasMedia && (
+          <MediaGallery
+            media={media}
             style={styles.mediaGallery}
-            onVideoLongPress={onVideoLongPress}
-          />
-        )}
-        {hasImages && (
-          <ImageGallery
-            imagesUri={imagesUri}
-            style={styles.mediaGallery}
-            onImageLongPress={onImageLongPress}
+            onMediaLongPress={onMediaLongPress}
           />
         )}
         {recordingUri && (
@@ -109,7 +96,6 @@ const Entry = ({
             <Text variant="bodyMedium">{description}</Text>
           </TouchableRipple>
         )}
-        <Divider style={styles.bottomDivider} />
         <View style={styles.actionBarWrapper}>
           <FeelingsButton
             feelingsGroupName={feelingsActiveGroup}
@@ -165,9 +151,6 @@ const styles = StyleSheet.create({
   textWrapper: {
     paddingVertical: spacing.spaceExtraSmall,
     marginVertical: spacing.spaceExtraSmall,
-  },
-  bottomDivider: {
-    marginTop: spacing.spaceExtraSmall,
   },
   actionBarWrapper: {
     flexDirection: "row",

@@ -6,6 +6,7 @@ import AddImageGridItem from "./ImageGridAddItem";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { roundness, sizing, spacing } from "@/constants/theme";
+import MediaGalleryPreview from "./MediaGalleryPreview";
 
 export type Media = {
   imageUri: string;
@@ -43,7 +44,18 @@ const EditableMediaGallery = ({
 }: Props) => {
   const theme = useCustomTheme();
 
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [initialIndex, setInitialIndex] = useState(0);
   const [gridWidth, setGridWidth] = useState(0);
+
+  const handleOnImagePress = (index: number) => {
+    setInitialIndex(index);
+    setIsPreviewVisible(true);
+  };
+
+  const handleOnPreviewClose = () => {
+    setIsPreviewVisible(false);
+  };
 
   const handleOnLayout = ({
     nativeEvent: {
@@ -112,7 +124,7 @@ const EditableMediaGallery = ({
                 gridSize={gridSize}
                 style={{ width: imageSize, height: imageSize }}
                 touchableProps={{
-                  onPress: () => {},
+                  onPress: () => handleOnImagePress(index),
                   onLongPress: () => onMediaLongPress(imageUri),
                 }}
                 showPlayIcon={!!videoUri}
@@ -121,13 +133,13 @@ const EditableMediaGallery = ({
               <View
                 style={[
                   styles.select,
-                  { backgroundColor: `${theme.colors.primaryContainer}96` },
+                  { backgroundColor: `${theme.colors.background}96` },
                 ]}
               >
                 <Checkbox
                   status={isSelected ? "checked" : "unchecked"}
                   onPress={() => handleOnSelect(imageUri)}
-                  color={theme.colors.onPrimaryContainer}
+                  color={theme.colors.onBackground}
                 />
               </View>
               <View style={styles.buttons}>
@@ -151,6 +163,12 @@ const EditableMediaGallery = ({
           loading={addButtonsLoading}
         />
       </View>
+      <MediaGalleryPreview
+        media={media}
+        isVisible={isPreviewVisible}
+        initialIndex={initialIndex}
+        onClose={handleOnPreviewClose}
+      />
     </>
   );
 };
