@@ -1,4 +1,4 @@
 import { Day } from "./Day";
-import { Entry, VideoWithThumbnail } from "./Entry";
+import { Entry, Media } from "./Entry";
 
-export const schemas = [Entry, Day, VideoWithThumbnail];
+export const schemas = [Entry, Day, Media];

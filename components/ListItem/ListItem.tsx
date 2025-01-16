@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Text, IconButton, Card, useTheme, Icon } from "react-native-paper";
+import { Text, IconButton, Card, useTheme } from "react-native-paper";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { format, getDate, isToday as isTodayDateFns } from "date-fns";
 import { parseDateId } from "@/utils/date";
@@ -13,10 +13,9 @@ type Props = {
   dateId: string;
   onPress: () => void;
   addEntryHandlers: {
-    onAddTextEntryPress: () => void;
-    onAddRecordingEntryPress: () => void;
-    onAddImageEntryPress: () => void;
-    onAddVideoEntryPress: () => void;
+    onAddTextPress: () => void;
+    onAddRecordingPress: () => void;
+    onAddMediaPress: () => void;
   };
   isEmpty?: boolean;
   feelings: FEELING_GROUP_NAMES[];
@@ -80,26 +79,20 @@ const ListItem = ({
           <View style={styles.addEntryButtonsWrapper}>
             <IconButton
               icon="pen-plus"
-              onPress={addEntryHandlers.onAddTextEntryPress}
-              accessibilityLabel="Add text entry"
+              onPress={addEntryHandlers.onAddTextPress}
+              accessibilityLabel="Add text"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="microphone-plus"
-              onPress={addEntryHandlers.onAddRecordingEntryPress}
-              accessibilityLabel="Add recording entry"
+              onPress={addEntryHandlers.onAddRecordingPress}
+              accessibilityLabel="Add recording"
               size={sizing.sizeMedium}
             />
             <IconButton
               icon="image-plus"
-              onPress={addEntryHandlers.onAddImageEntryPress}
-              accessibilityLabel="Add image entry"
-              size={sizing.sizeMedium}
-            />
-            <IconButton
-              icon="movie-open-plus"
-              onPress={addEntryHandlers.onAddVideoEntryPress}
-              accessibilityLabel="Add video entry"
+              onPress={addEntryHandlers.onAddMediaPress}
+              accessibilityLabel="Add media"
               size={sizing.sizeMedium}
             />
           </View>

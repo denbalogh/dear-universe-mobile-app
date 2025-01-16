@@ -57,8 +57,8 @@ export const Empty: Story = {
     moods: [],
     empty: {
       onAddImageEntryPress: action("onAddImageEntryPress"),
-      onAddRecordingEntryPress: action("onAddRecordingEntryPress"),
-      onAddTextEntryPress: action("onAddTextEntryPress"),
+      onAddRecordingPress: action("onAddRecordingPress"),
+      onAddTextPress: action("onAddTextPress"),
     },
   },
 };

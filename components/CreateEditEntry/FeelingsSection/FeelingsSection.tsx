@@ -4,7 +4,7 @@ import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { roundness, spacing } from "@/constants/theme";
 import { FEELING_GROUP_NAMES, feelings } from "@/constants/feelings";
 import { Card, Text } from "react-native-paper";
-import EmotionChips from "../FeelingsScreen/EmotionChips";
+import EmotionChips from "./EmotionChips";
 
 type Props = {
   activeGroup: FEELING_GROUP_NAMES | "";

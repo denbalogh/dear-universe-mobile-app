@@ -5,10 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import ImagesSection from "@/components/CreateEditEntry/ImagesSection";
 import RecordingSection from "@/components/CreateEditEntry/RecordingSection";
 import TextSection from "@/components/CreateEditEntry/TextSection";
-import VideosSection from "@/components/CreateEditEntry/VideosSection";
 import SectionHeadline from "@/components/CreateEditEntry/SectionHeadline";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
@@ -20,30 +18,27 @@ import {
   View,
 } from "react-native";
 import { Appbar, FAB } from "react-native-paper";
-import FeelingsSection from "@/components/CreateEditEntry/FeelingsSection";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
-import { debounce, isEqual } from "lodash";
+import { debounce, isEqual, sortBy } from "lodash";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
-  moveAndDeleteUpdatedImagesAndGetPaths,
+  moveAndDeleteUpdatedMediaAndGetPaths,
   moveAndDeleteUpdatedRecordingAndGetPath,
-  moveAndDeleteUpdatedVideosAndGetPaths,
-  moveImagesToAppDirectoryAndGetPaths,
+  moveMediaToAppDirectoryAndGetPaths,
   moveRecordingToAppDirectoryAndGetPath,
-  moveVideosToAppDirectoryAndGetPaths,
 } from "@/utils/files";
+import MediaSection from "./MediaSection";
+import FeelingsSection from "./FeelingsSection/FeelingsSection";
 
 type LayoutParts =
   | "mainHeadline"
   | "textSection"
   | "recordingHeadline"
   | "recordingSection"
-  | "imagesHeadline"
-  | "imagesSection"
-  | "videosHeadline"
-  | "videosSection";
+  | "mediaHeadline"
+  | "mediaSection";
 
 type Props = {
   mode: "create" | "edit";
@@ -52,11 +47,9 @@ type Props = {
   focusTitle?: boolean;
   focusDescription?: boolean;
   scrollToRecording?: boolean;
-  scrollToImages?: boolean;
-  scrollToVideos?: boolean;
+  scrollToMedia?: boolean;
   scrollToFeelings?: boolean;
-  imagesSelectedIndex?: string;
-  videosSelectedIndex?: string;
+  selectedMediaImageUri?: string;
 } & EntryData;
 
 const CreateEditEntry = ({
@@ -65,18 +58,15 @@ const CreateEditEntry = ({
   title: initialTitle,
   description: initialDescription,
   recordingUri: initialRecordingUri,
-  imagesUri: initialImagesUri,
-  videosWithThumbnail: initialVideosWithThumbnail,
+  media: initialMedia,
   feelingsActiveGroup: initialFeelingsActiveGroup,
   feelingsActiveEmotions: initialFeelingsActiveEmotions,
   focusTitle,
   focusDescription,
   scrollToFeelings,
-  scrollToImages,
+  scrollToMedia,
   scrollToRecording,
-  scrollToVideos,
-  imagesSelectedIndex,
-  videosSelectedIndex,
+  selectedMediaImageUri,
   onSave,
 }: Props) => {
   const theme = useCustomTheme();
@@ -89,10 +79,7 @@ const CreateEditEntry = ({
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [recordingUri, setRecordingUri] = useState(initialRecordingUri);
-  const [imagesUri, setImagesUri] = useState(initialImagesUri);
-  const [videosWithThumbnail, setVideosWithThumbnail] = useState(
-    initialVideosWithThumbnail,
-  );
+  const [media, setMedia] = useState(initialMedia);
   const [activeGroup, setActiveGroup] = useState(initialFeelingsActiveGroup);
   const [activeEmotions, setActiveEmotions] = useState(
     initialFeelingsActiveEmotions,
@@ -105,10 +92,8 @@ const CreateEditEntry = ({
     textSection: 0,
     recordingHeadline: 0,
     recordingSection: 0,
-    imagesHeadline: 0,
-    imagesSection: 0,
-    videosHeadline: 0,
-    videosSection: 0,
+    mediaHeadline: 0,
+    mediaSection: 0,
   });
 
   const handleSetSectionHeight =
@@ -139,37 +124,26 @@ const CreateEditEntry = ({
           textSection,
           recordingHeadline,
           recordingSection,
-          imagesHeadline,
-          imagesSection,
-          videosHeadline,
-          videosSection,
+          mediaHeadline,
+          mediaSection,
         } = sectionsHeight;
 
         const recordingOffset = mainHeadline + textSection;
-        const imagesOffset =
+        const mediaOffset =
           recordingOffset + recordingHeadline + recordingSection;
-        const videosOffset = imagesOffset + imagesHeadline + imagesSection;
-        const feelingsOffset = videosOffset + videosHeadline + videosSection;
+        const feelingsOffset = mediaOffset + mediaHeadline + mediaSection;
 
         if (scrollToRecording) {
           handleScrollToOffset(recordingOffset);
-        } else if (scrollToImages) {
-          handleScrollToOffset(imagesOffset);
-        } else if (scrollToVideos) {
-          handleScrollToOffset(videosOffset);
+        } else if (scrollToMedia) {
+          handleScrollToOffset(mediaOffset);
         } else if (scrollToFeelings) {
           handleScrollToOffset(feelingsOffset);
         }
 
         hasScrolledInitially.current = true;
       }, 100),
-    [
-      handleScrollToOffset,
-      scrollToFeelings,
-      scrollToImages,
-      scrollToRecording,
-      scrollToVideos,
-    ],
+    [handleScrollToOffset, scrollToFeelings, scrollToRecording, scrollToMedia],
   );
 
   useEffect(() => {
@@ -179,20 +153,6 @@ const CreateEditEntry = ({
   }, [debouncedInitialScrollToSection, sectionsHeight]);
 
   const handleSaveEntry = async () => {
-    const newImagesUri = isCreateMode
-      ? await moveImagesToAppDirectoryAndGetPaths(imagesUri)
-      : await moveAndDeleteUpdatedImagesAndGetPaths(
-          imagesUri,
-          initialImagesUri,
-        );
-
-    const newVideosWithThumbnail = isCreateMode
-      ? await moveVideosToAppDirectoryAndGetPaths(videosWithThumbnail)
-      : await moveAndDeleteUpdatedVideosAndGetPaths(
-          videosWithThumbnail,
-          initialVideosWithThumbnail,
-        );
-
     const newRecordingUri = isCreateMode
       ? await moveRecordingToAppDirectoryAndGetPath(recordingUri)
       : await moveAndDeleteUpdatedRecordingAndGetPath(
@@ -200,14 +160,17 @@ const CreateEditEntry = ({
           initialRecordingUri,
         );
 
+    const newMedia = isCreateMode
+      ? await moveMediaToAppDirectoryAndGetPaths(media)
+      : await moveAndDeleteUpdatedMediaAndGetPaths(media, initialMedia);
+
     onSave({
       title,
       description,
       recordingUri: newRecordingUri,
-      imagesUri: newImagesUri,
-      videosWithThumbnail: newVideosWithThumbnail,
+      media: newMedia,
       feelingsActiveGroup: activeGroup,
-      feelingsActiveEmotions: activeEmotions,
+      feelingsActiveEmotions: [...activeEmotions], // Copy the array because it's a reference
     });
   };
 
@@ -224,23 +187,20 @@ const CreateEditEntry = ({
       !isEqual(title, initialTitle) ||
       !isEqual(description, initialDescription) ||
       !isEqual(recordingUri, initialRecordingUri) ||
-      !isEqual(imagesUri, initialImagesUri) ||
-      !isEqual(videosWithThumbnail, initialVideosWithThumbnail) ||
+      !isEqual([...media], [...initialMedia]) ||
       !isEqual(activeGroup, initialFeelingsActiveGroup) ||
-      !isEqual(activeEmotions, initialFeelingsActiveEmotions),
+      !isEqual(sortBy(activeEmotions), sortBy(initialFeelingsActiveEmotions)),
     [
       title,
       description,
       recordingUri,
-      imagesUri,
-      videosWithThumbnail,
+      media,
       activeGroup,
       activeEmotions,
       initialTitle,
       initialDescription,
       initialRecordingUri,
-      initialImagesUri,
-      initialVideosWithThumbnail,
+      initialMedia,
       initialFeelingsActiveGroup,
       initialFeelingsActiveEmotions,
     ],
@@ -333,28 +293,16 @@ const CreateEditEntry = ({
           onLayout={handleSetSectionHeight("recordingSection")}
         />
         <SectionHeadline
-          headline="Images"
+          headline="Media"
           superHeadline={formattedDate}
-          onLayout={handleSetSectionHeight("imagesHeadline")}
+          onLayout={handleSetSectionHeight("mediaHeadline")}
         />
-        <ImagesSection
-          imagesUri={imagesUri}
-          onImagesChange={setImagesUri}
+        <MediaSection
+          media={media}
+          onMediaChange={setMedia}
           style={styles.sectionWrapper}
-          onLayout={handleSetSectionHeight("imagesSection")}
-          initialSelectedIndex={imagesSelectedIndex}
-        />
-        <SectionHeadline
-          headline="Videos"
-          superHeadline={formattedDate}
-          onLayout={handleSetSectionHeight("videosHeadline")}
-        />
-        <VideosSection
-          videosWithThumbnail={videosWithThumbnail}
-          onVideosChange={setVideosWithThumbnail}
-          style={styles.sectionWrapper}
-          onLayout={handleSetSectionHeight("videosSection")}
-          initialSelectedIndex={videosSelectedIndex}
+          onLayout={handleSetSectionHeight("mediaSection")}
+          initialSelectedMediaImageUri={selectedMediaImageUri}
         />
         <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
         <FeelingsSection

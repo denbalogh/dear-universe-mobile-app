@@ -6,18 +6,16 @@ import { FAB, FABProps, Text } from "react-native-paper";
 type FABPropsWithoutIconAndLabel = Omit<FABProps, "icon" | "label">;
 
 type Props = {
-  addTextEntryButton: FABPropsWithoutIconAndLabel;
-  addRecordingEntryButton: FABPropsWithoutIconAndLabel;
-  addImageEntryButton: FABPropsWithoutIconAndLabel;
-  addVideoEntryButton: FABPropsWithoutIconAndLabel;
+  addTextButton: FABPropsWithoutIconAndLabel;
+  addRecordingButton: FABPropsWithoutIconAndLabel;
+  addMediaButton: FABPropsWithoutIconAndLabel;
   showText?: boolean;
 } & ViewProps;
 
 const CTAButtons = ({
-  addImageEntryButton,
-  addRecordingEntryButton,
-  addTextEntryButton,
-  addVideoEntryButton,
+  addRecordingButton,
+  addTextButton,
+  addMediaButton,
   showText,
   style,
   ...props
@@ -34,25 +32,19 @@ const CTAButtons = ({
           icon="pen-plus"
           variant="tertiary"
           style={styles.button}
-          {...addTextEntryButton}
+          {...addTextButton}
         />
         <FAB
           icon="microphone-plus"
           variant="tertiary"
           style={styles.button}
-          {...addRecordingEntryButton}
+          {...addRecordingButton}
         />
         <FAB
           icon="image-plus"
           variant="tertiary"
           style={styles.button}
-          {...addImageEntryButton}
-        />
-        <FAB
-          icon="movie-open-plus"
-          variant="tertiary"
-          style={styles.button}
-          {...addVideoEntryButton}
+          {...addMediaButton}
         />
       </View>
     </View>

@@ -14,9 +14,8 @@ import { useRealm } from "@realm/react";
 import { DaySearchTermParams } from "@/types/dayScreen";
 import {
   FOCUS_DESCRIPTION,
-  SCROLL_TO_IMAGES,
   SCROLL_TO_RECORDING,
-  SCROLL_TO_VIDEOS,
+  SCROLL_TO_MEDIA,
 } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import BeginningHints from "@/components/BeginningHints/BeginningHints";
@@ -148,7 +147,6 @@ const DayScreen = () => {
                 <Appbar.Content title={fullDate} />
               </Appbar.Header>
             ),
-            animation: "fade",
             navigationBarColor: theme.colors.surface,
           }}
         />
@@ -194,7 +192,7 @@ const DayScreen = () => {
         <CTAButtons
           style={styles.bottomButtons}
           showText={!hasEntries}
-          addTextEntryButton={{
+          addTextButton={{
             onPress: () =>
               router.navigate(
                 {
@@ -204,24 +202,17 @@ const DayScreen = () => {
                 { relativeToDirectory: true },
               ),
           }}
-          addRecordingEntryButton={{
+          addRecordingButton={{
             onPress: () =>
               router.navigate(
                 { pathname: "./entry/new", params: SCROLL_TO_RECORDING },
                 { relativeToDirectory: true },
               ),
           }}
-          addImageEntryButton={{
+          addMediaButton={{
             onPress: () =>
               router.navigate(
-                { pathname: "./entry/new", params: SCROLL_TO_IMAGES },
-                { relativeToDirectory: true },
-              ),
-          }}
-          addVideoEntryButton={{
-            onPress: () =>
-              router.navigate(
-                { pathname: "./entry/new", params: SCROLL_TO_VIDEOS },
+                { pathname: "./entry/new", params: SCROLL_TO_MEDIA },
                 { relativeToDirectory: true },
               ),
           }}

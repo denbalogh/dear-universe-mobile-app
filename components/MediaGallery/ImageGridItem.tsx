@@ -10,13 +10,13 @@ import { getBorderRadius } from "./utils";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
-type Props = {
+export type ImageGridItemProps = {
   index: number;
   imagesCount: number;
   gridSize: number;
   touchableProps: Omit<TouchableRippleProps, "children">;
   showPlayIcon?: boolean;
-  playIconPosition?: "center" | "topLeft";
+  playIconPosition?: "center" | "bottomLeft";
 } & ImageProps;
 
 const ImageGridItem = ({
@@ -28,7 +28,7 @@ const ImageGridItem = ({
   showPlayIcon = false,
   playIconPosition = "center",
   ...props
-}: Props) => {
+}: ImageGridItemProps) => {
   const theme = useCustomTheme();
   const borderRadii = useMemo(
     () => getBorderRadius(index, imagesCount, gridSize),
@@ -52,19 +52,19 @@ const ImageGridItem = ({
               StyleSheet.absoluteFill,
               playIconPosition === "center"
                 ? styles.playIconWrapperCenter
-                : styles.playIconWrapperTopLeft,
+                : styles.playIconWrapperBottomLeft,
             ]}
           >
             <View
               style={[
                 styles.playIcon,
-                { backgroundColor: theme.colors.surface },
+                { backgroundColor: `${theme.colors.background}96` },
               ]}
             >
               <Icon
                 source="play"
                 size={sizing.sizeMedium}
-                color={theme.colors.onSurface}
+                color={theme.colors.onBackground}
               />
             </View>
           </View>
@@ -84,12 +84,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  playIconWrapperTopLeft: {
-    justifyContent: "flex-start",
+  playIconWrapperBottomLeft: {
+    justifyContent: "flex-end",
     alignItems: "flex-start",
   },
   playIcon: {
     borderRadius: roundness,
-    margin: spacing.spaceExtraSmall,
+    margin: spacing.spaceSmall,
   },
 });

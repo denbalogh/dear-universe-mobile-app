@@ -3,14 +3,18 @@ import { LayoutChangeEvent, StyleSheet, View, ViewProps } from "react-native";
 import ImageGridItem from "./ImageGridItem";
 import { Checkbox, MenuItemProps } from "react-native-paper";
 import AddImageGridItem from "./ImageGridAddItem";
-import { lockAsync, OrientationLock } from "expo-screen-orientation";
-import GalleryPreview from "./GalleryPreview";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { roundness, sizing, spacing } from "@/constants/theme";
+import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
+
+export type Media = {
+  imageUri: string;
+  videoUri?: string;
+};
 
 type Props = {
-  imagesUri: string[];
+  media: Media[];
   gridSize?: number;
   addButtons: MenuItemProps[];
   addButtonsLoading?: boolean;
@@ -18,15 +22,13 @@ type Props = {
   onMoveToStartPress: (index: number) => void;
   onMoveRightPress: (index: number) => void;
   onMoveToEndPress: (index: number) => void;
-  onImageLongPress: (index: number) => void;
-  selectable?: {
-    selected: number[];
-    onSelectedChange: (selected: number[]) => void;
-  };
+  onMediaLongPress: (imageUri: string) => void;
+  selectedMediaImagesUri: string[];
+  onSelectedMediaImagesUriChange: (selectedUri: string[]) => void;
 } & ViewProps;
 
-const EditableImageGallery = ({
-  imagesUri,
+const EditableMediaGallery = ({
+  media,
   gridSize = 3,
   style,
   addButtons,
@@ -35,25 +37,24 @@ const EditableImageGallery = ({
   onMoveToStartPress,
   onMoveRightPress,
   onMoveToEndPress,
-  onImageLongPress,
-  selectable,
+  onMediaLongPress,
+  selectedMediaImagesUri,
+  onSelectedMediaImagesUriChange,
   ...props
 }: Props) => {
   const theme = useCustomTheme();
 
-  const [gridWidth, setGridWidth] = useState(0);
-  const [isGalleryVisible, setIsGalleryVisible] = useState(false);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
+  const [gridWidth, setGridWidth] = useState(0);
 
-  const onImagePress = async (index: number) => {
-    await lockAsync(OrientationLock.ALL);
+  const handleOnImagePress = (index: number) => {
     setInitialIndex(index);
-    setIsGalleryVisible(true);
+    setIsPreviewVisible(true);
   };
 
-  const handleGalleryPreviewClose = async () => {
-    await lockAsync(OrientationLock.PORTRAIT);
-    setIsGalleryVisible(false);
+  const handleOnPreviewClose = () => {
+    setIsPreviewVisible(false);
   };
 
   const handleOnLayout = ({
@@ -65,18 +66,15 @@ const EditableImageGallery = ({
   };
 
   const imageSize = Math.floor((gridWidth / gridSize) * 1000) / 1000; // Floor to 3 decimal places, because it was wrapping incorrectly
-  const imagesCount = addButtons ? imagesUri.length + 1 : imagesUri.length;
+  const itemCountPlusAddButton = media.length + 1;
 
-  const handleOnSelect = (index: number) => {
-    if (selectable) {
-      const { selected, onSelectedChange } = selectable;
-      const isSelected = selected.includes(index);
-      onSelectedChange(
-        isSelected
-          ? selected.filter((item) => item !== index)
-          : [...selected, index],
-      );
-    }
+  const handleOnSelect = (imageUri: string) => {
+    const isSelected = selectedMediaImagesUri.includes(imageUri);
+    onSelectedMediaImagesUriChange(
+      isSelected
+        ? selectedMediaImagesUri.filter((item) => item !== imageUri)
+        : [...selectedMediaImagesUri, imageUri],
+    );
   };
 
   return (
@@ -86,7 +84,7 @@ const EditableImageGallery = ({
         style={[style, styles.wrapper]}
         onLayout={handleOnLayout}
       >
-        {imagesUri.map((item, index) => {
+        {media.map(({ imageUri, videoUri }, index) => {
           const menuItems = [];
 
           if (index > 0) {
@@ -102,7 +100,7 @@ const EditableImageGallery = ({
             });
           }
 
-          if (index < imagesUri.length - 1) {
+          if (index < media.length - 1) {
             menuItems.push({
               leadingIcon: "arrow-right",
               onPress: () => onMoveRightPress(index),
@@ -115,68 +113,67 @@ const EditableImageGallery = ({
             });
           }
 
-          const isSelected = selectable?.selected.includes(index);
+          const isSelected = selectedMediaImagesUri.includes(imageUri);
 
           return (
-            <View key={`${item}-${index}`}>
+            <View key={`${imageUri}-${index}`}>
               <ImageGridItem
-                source={{ uri: item }}
+                source={{ uri: imageUri }}
                 index={index}
-                imagesCount={imagesCount}
+                imagesCount={itemCountPlusAddButton}
                 gridSize={gridSize}
                 style={{ width: imageSize, height: imageSize }}
                 touchableProps={{
-                  onPress: () => onImagePress(index),
-                  onLongPress: () => onImageLongPress(index),
+                  onPress: () => handleOnImagePress(index),
+                  onLongPress: () => onMediaLongPress(imageUri),
                 }}
+                showPlayIcon={!!videoUri}
+                playIconPosition="bottomLeft"
               />
-              {selectable ? (
-                <View
-                  style={[
-                    styles.select,
-                    { backgroundColor: theme.colors.background },
-                  ]}
-                >
-                  <Checkbox
-                    status={isSelected ? "checked" : "unchecked"}
-                    onPress={() => handleOnSelect(index)}
-                  />
-                </View>
-              ) : (
-                <View style={styles.buttons}>
-                  <IconButtonMenu
-                    iconButtonProps={{
-                      icon: "arrow-left-right",
-                      mode: "contained-tonal",
-                      size: sizing.sizeSmall,
-                    }}
-                    menuItems={menuItems}
-                  />
-                </View>
-              )}
+              <View
+                style={[
+                  styles.select,
+                  { backgroundColor: `${theme.colors.background}96` },
+                ]}
+              >
+                <Checkbox
+                  status={isSelected ? "checked" : "unchecked"}
+                  onPress={() => handleOnSelect(imageUri)}
+                  color={theme.colors.onBackground}
+                />
+              </View>
+              <View style={styles.buttons}>
+                <IconButtonMenu
+                  iconButtonProps={{
+                    icon: "arrow-left-right",
+                    mode: "contained-tonal",
+                    size: sizing.sizeSmall,
+                  }}
+                  menuItems={menuItems}
+                />
+              </View>
             </View>
           );
         })}
         <AddImageGridItem
-          imagesCount={imagesCount}
+          imagesCount={itemCountPlusAddButton}
           gridSize={gridSize}
           addButtons={addButtons}
           style={{ width: imageSize, height: imageSize }}
           loading={addButtonsLoading}
-          disabled={!!selectable}
         />
       </View>
-      <GalleryPreview
-        imagesUri={imagesUri}
+      <MediaGalleryPreview
+        media={media}
+        isVisible={isPreviewVisible}
         initialIndex={initialIndex}
-        isVisible={isGalleryVisible}
-        onClose={handleGalleryPreviewClose}
+        onClose={handleOnPreviewClose}
       />
     </>
   );
 };
 
-export default EditableImageGallery;
+export default EditableMediaGallery;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -191,8 +188,8 @@ const styles = StyleSheet.create({
   },
   select: {
     position: "absolute",
-    bottom: spacing.spaceSmall,
-    right: spacing.spaceSmall,
+    top: spacing.spaceSmall,
+    left: spacing.spaceSmall,
     borderRadius: roundness,
   },
 });

@@ -3,40 +3,40 @@ import CTAButtons from "../CTAButtons";
 
 describe("CTAButtons", () => {
   test("renders correctly", async () => {
-    const addTextEntryMock = jest.fn();
-    const addRecordingEntryMock = jest.fn();
-    const addImageEntryMock = jest.fn();
+    const addTextMock = jest.fn();
+    const addRecordingMock = jest.fn();
+    const addMediaMock = jest.fn();
 
     render(
       <CTAButtons
-        addTextEntryButton={{
-          onPress: addTextEntryMock,
-          accessibilityLabel: "Add text entry",
+        addTextButton={{
+          onPress: addTextMock,
+          accessibilityLabel: "Add text",
         }}
-        addRecordingEntryButton={{
-          onPress: addRecordingEntryMock,
-          accessibilityLabel: "Add recording entry",
+        addRecordingButton={{
+          onPress: addRecordingMock,
+          accessibilityLabel: "Add recording",
         }}
-        addImageEntryButton={{
-          onPress: addImageEntryMock,
-          accessibilityLabel: "Add image entry",
+        addMediaButton={{
+          onPress: addMediaMock,
+          accessibilityLabel: "Add media",
         }}
         accessibilityLabel="CTA buttons"
       />,
     );
 
     expect(screen.getByLabelText("CTA buttons")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Add text entry")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Add recording entry")).toBeOnTheScreen();
-    expect(screen.getByLabelText("Add image entry")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Add text")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Add recording")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Add media")).toBeOnTheScreen();
 
     const user = userEvent.setup();
-    await user.press(screen.getByLabelText("Add text entry"));
-    await user.press(screen.getByLabelText("Add recording entry"));
-    await user.press(screen.getByLabelText("Add image entry"));
+    await user.press(screen.getByLabelText("Add text"));
+    await user.press(screen.getByLabelText("Add recording "));
+    await user.press(screen.getByLabelText("Add media"));
 
-    expect(addTextEntryMock).toHaveBeenCalledTimes(1);
-    expect(addRecordingEntryMock).toHaveBeenCalledTimes(1);
-    expect(addImageEntryMock).toHaveBeenCalledTimes(1);
+    expect(addTextMock).toHaveBeenCalledTimes(1);
+    expect(addRecordingMock).toHaveBeenCalledTimes(1);
+    expect(addMediaMock).toHaveBeenCalledTimes(1);
   });
 });

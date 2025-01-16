@@ -5,9 +5,8 @@ import ListItem from "../ListItem/ListItem";
 import { useRouter } from "expo-router";
 import {
   FOCUS_DESCRIPTION,
-  SCROLL_TO_IMAGES,
   SCROLL_TO_RECORDING,
-  SCROLL_TO_VIDEOS,
+  SCROLL_TO_MEDIA,
 } from "@/constants/screens";
 
 const ListItemWithData = ({ dateId }: { dateId: string }) => {
@@ -21,7 +20,7 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   };
 
   const addEntryHandlers = {
-    onAddTextEntryPress: () =>
+    onAddTextPress: () =>
       router.navigate({
         pathname: "/day/[dateId]/entry/new",
         params: {
@@ -29,27 +28,22 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
           ...FOCUS_DESCRIPTION,
         },
       }),
-    onAddRecordingEntryPress: () =>
+    onAddRecordingPress: () =>
       router.navigate({
         pathname: "/day/[dateId]/entry/new",
         params: { dateId, ...SCROLL_TO_RECORDING },
       }),
-    onAddImageEntryPress: () =>
+    onAddMediaPress: () =>
       router.navigate({
         pathname: "/day/[dateId]/entry/new",
-        params: { dateId, ...SCROLL_TO_IMAGES },
-      }),
-    onAddVideoEntryPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new",
-        params: { dateId, ...SCROLL_TO_VIDEOS },
+        params: { dateId, ...SCROLL_TO_MEDIA },
       }),
   };
 
   const isEmpty = !title && (!dayObject || dayObject.entryObjects.length === 0);
 
   const feelings = entryObjects
-    .map((entry) => entry?.feelings?.name)
+    .map((entry) => entry?.feelingsGroupName)
     .filter((feeling) => !!feeling);
 
   return (
