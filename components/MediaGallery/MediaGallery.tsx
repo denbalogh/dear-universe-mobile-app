@@ -3,7 +3,7 @@ import { LayoutChangeEvent, StyleSheet, ViewProps } from "react-native";
 import { Media } from "./EditableMediaGallery";
 import ImageGridItem from "./ImageGridItem";
 import { View } from "react-native";
-import MediaGalleryPreview from "./MediaGalleryPreview";
+import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
 
 type Props = {
   media: Media[];
@@ -65,7 +65,6 @@ const MediaGallery = ({
         );
       })}
       <MediaGalleryPreview
-        key={initialIndex}
         media={media}
         onClose={handleOnPreviewClose}
         isVisible={isPreviewVisible}

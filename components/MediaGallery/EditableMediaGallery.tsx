@@ -6,7 +6,7 @@ import AddImageGridItem from "./ImageGridAddItem";
 import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { roundness, sizing, spacing } from "@/constants/theme";
-import MediaGalleryPreview from "./MediaGalleryPreview";
+import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
 
 export type Media = {
   imageUri: string;
