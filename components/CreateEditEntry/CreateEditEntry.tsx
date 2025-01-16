@@ -21,7 +21,7 @@ import { Appbar, FAB } from "react-native-paper";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
-import { debounce, isEqual } from "lodash";
+import { debounce, isEqual, sortBy } from "lodash";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   moveAndDeleteUpdatedMediaAndGetPaths,
@@ -170,7 +170,7 @@ const CreateEditEntry = ({
       recordingUri: newRecordingUri,
       media: newMedia,
       feelingsActiveGroup: activeGroup,
-      feelingsActiveEmotions: activeEmotions,
+      feelingsActiveEmotions: [...activeEmotions], // Copy the array because it's a reference
     });
   };
 
@@ -187,9 +187,9 @@ const CreateEditEntry = ({
       !isEqual(title, initialTitle) ||
       !isEqual(description, initialDescription) ||
       !isEqual(recordingUri, initialRecordingUri) ||
-      !isEqual(media, initialMedia) ||
+      !isEqual([...media], [...initialMedia]) ||
       !isEqual(activeGroup, initialFeelingsActiveGroup) ||
-      !isEqual(activeEmotions, initialFeelingsActiveEmotions),
+      !isEqual(sortBy(activeEmotions), sortBy(initialFeelingsActiveEmotions)),
     [
       title,
       description,
