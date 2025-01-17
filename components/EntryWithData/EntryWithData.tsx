@@ -244,6 +244,6 @@ export default EntryWithData;
 
 const styles = StyleSheet.create({
   entry: {
-    marginBottom: spacing.spaceSmall,
+    marginBottom: spacing.spaceMedium,
   },
 });
