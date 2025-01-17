@@ -90,7 +90,7 @@ const Entry = ({
         {description && (
           <TouchableRipple
             onPress={onDescriptionPress}
-            style={styles.textWrapper}
+            style={styles.descriptionWrapper}
             accessibilityLabel="Edit text"
           >
             <Text variant="bodyMedium">{description}</Text>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   recording: {
     marginTop: spacing.spaceSmall,
   },
-  textWrapper: {
+  descriptionWrapper: {
     paddingVertical: spacing.spaceExtraSmall,
     marginVertical: spacing.spaceExtraSmall,
   },

@@ -18,7 +18,6 @@ import {
   SCROLL_TO_MEDIA,
 } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
-import BeginningHints from "@/components/BeginningHints/BeginningHints";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
@@ -29,11 +28,15 @@ import {
 import { addDays, isToday, subDays } from "date-fns";
 import { runOnJS } from "react-native-reanimated";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
+import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
+import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 
 const DayScreen = () => {
   const theme = useTheme();
   const realm = useRealm();
   const router = useRouter();
+
+  const isKeyboardOpen = useIsKeyboardOpen();
 
   const { dateId } = useLocalSearchParams<DaySearchTermParams>();
   const dayObject = useInitiateDayObject(dateId);
@@ -178,45 +181,52 @@ const DayScreen = () => {
               </HelperText>
             )}
           </View>
-          {!hasEntries && <BeginningHints />}
-          {entryObjects.map((entryObject, index) => (
-            <EntryWithData
-              entryObject={entryObject}
-              dayObject={dayObject}
-              key={entryObject._id.toString()}
-              index={index}
-            />
-          ))}
-          {hasEntries && <AfterEntriesMessage />}
+          {hasEntries ? (
+            <>
+              {entryObjects.map((entryObject, index) => (
+                <EntryWithData
+                  entryObject={entryObject}
+                  dayObject={dayObject}
+                  key={entryObject._id.toString()}
+                  index={index}
+                />
+              ))}
+              <AfterEntriesMessage />
+            </>
+          ) : (
+            <EntryPlaceholder />
+          )}
         </ScrollView>
-        <CTAButtons
-          style={styles.bottomButtons}
-          showText={!hasEntries}
-          addTextButton={{
-            onPress: () =>
-              router.navigate(
-                {
-                  pathname: "./entry/new",
-                  params: FOCUS_DESCRIPTION,
-                },
-                { relativeToDirectory: true },
-              ),
-          }}
-          addRecordingButton={{
-            onPress: () =>
-              router.navigate(
-                { pathname: "./entry/new", params: SCROLL_TO_RECORDING },
-                { relativeToDirectory: true },
-              ),
-          }}
-          addMediaButton={{
-            onPress: () =>
-              router.navigate(
-                { pathname: "./entry/new", params: SCROLL_TO_MEDIA },
-                { relativeToDirectory: true },
-              ),
-          }}
-        />
+        {!isKeyboardOpen && (
+          <CTAButtons
+            style={styles.bottomButtons}
+            showText={!hasEntries}
+            addTextButton={{
+              onPress: () =>
+                router.navigate(
+                  {
+                    pathname: "./entry/new",
+                    params: FOCUS_DESCRIPTION,
+                  },
+                  { relativeToDirectory: true },
+                ),
+            }}
+            addRecordingButton={{
+              onPress: () =>
+                router.navigate(
+                  { pathname: "./entry/new", params: SCROLL_TO_RECORDING },
+                  { relativeToDirectory: true },
+                ),
+            }}
+            addMediaButton={{
+              onPress: () =>
+                router.navigate(
+                  { pathname: "./entry/new", params: SCROLL_TO_MEDIA },
+                  { relativeToDirectory: true },
+                ),
+            }}
+          />
+        )}
       </View>
     </GestureDetector>
   );
@@ -229,7 +239,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleWrapper: {
-    marginBottom: spacing.spaceSmall,
+    marginBottom: spacing.spaceMedium,
   },
   scrollView: {
     flex: 1,
