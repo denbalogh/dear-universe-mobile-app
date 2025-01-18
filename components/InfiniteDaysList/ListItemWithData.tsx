@@ -1,6 +1,6 @@
 import { Day } from "@/models/Day";
 import { useObject } from "@realm/react";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import ListItem from "../ListItem/ListItem";
 import { useRouter } from "expo-router";
 import {
@@ -8,6 +8,8 @@ import {
   SCROLL_TO_RECORDING,
   SCROLL_TO_MEDIA,
 } from "@/constants/screens";
+import { Media } from "../MediaGallery/EditableMediaGallery";
+import { EntryData } from "../Entry/Entry";
 
 const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const dayObject = useObject(Day, dateId);
@@ -15,36 +17,55 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
 
   const { title = "", entryObjects = [] } = dayObject || {};
 
-  const onPressHandler = () => {
+  const onPressHandler = useCallback(() => {
     router.navigate({ pathname: "/day/[dateId]", params: { dateId } });
-  };
+  }, [dateId, router]);
 
-  const addEntryHandlers = {
-    onAddTextPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new",
-        params: {
-          dateId,
-          ...FOCUS_DESCRIPTION,
-        },
-      }),
-    onAddRecordingPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new",
-        params: { dateId, ...SCROLL_TO_RECORDING },
-      }),
-    onAddMediaPress: () =>
-      router.navigate({
-        pathname: "/day/[dateId]/entry/new",
-        params: { dateId, ...SCROLL_TO_MEDIA },
-      }),
-  };
+  const addEntryHandlers = useMemo(
+    () => ({
+      onAddTextPress: () =>
+        router.navigate({
+          pathname: "/day/[dateId]/entry/new",
+          params: {
+            dateId,
+            ...FOCUS_DESCRIPTION,
+          },
+        }),
+      onAddRecordingPress: () =>
+        router.navigate({
+          pathname: "/day/[dateId]/entry/new",
+          params: { dateId, ...SCROLL_TO_RECORDING },
+        }),
+      onAddMediaPress: () =>
+        router.navigate({
+          pathname: "/day/[dateId]/entry/new",
+          params: { dateId, ...SCROLL_TO_MEDIA },
+        }),
+    }),
+    [dateId, router],
+  );
 
-  const isEmpty = !title && (!dayObject || dayObject.entryObjects.length === 0);
+  const isEmpty = useMemo(
+    () => !title && (!dayObject || entryObjects.length === 0),
+    [title, dayObject, entryObjects],
+  );
 
-  const feelings = entryObjects
-    .map((entry) => entry?.feelingsGroupName)
-    .filter((feeling) => !!feeling);
+  const feelings = useMemo(
+    () =>
+      entryObjects
+        .map((entry) => entry?.feelingsGroupName)
+        .filter((feeling) => !!feeling),
+    [entryObjects],
+  );
+
+  const media = useMemo(
+    () =>
+      (entryObjects as EntryData[]).reduce(
+        (acc, entry) => (entry?.media ? [...acc, ...entry.media] : acc),
+        [] as Media[],
+      ),
+    [entryObjects],
+  );
 
   return (
     <ListItem
@@ -54,6 +75,7 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
       addEntryHandlers={addEntryHandlers}
       isEmpty={isEmpty}
       feelings={feelings}
+      media={media}
     />
   );
 };

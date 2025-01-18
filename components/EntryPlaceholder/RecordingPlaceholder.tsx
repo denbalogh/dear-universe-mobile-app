@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     height: 2,
     width: "100%",
     borderRadius: 2,
-    backgroundColor: "red",
   },
   sliderDot: {
     position: "absolute",
@@ -78,7 +77,6 @@ const styles = StyleSheet.create({
     height: 12,
     width: 12,
     borderRadius: 12,
-    backgroundColor: "red",
   },
   bottomWrapper: {
     flexDirection: "row",
@@ -89,7 +87,6 @@ const styles = StyleSheet.create({
   timePlaceholder: {
     height: 10,
     width: 35,
-    backgroundColor: "red",
     borderRadius: 10,
   },
   controlButtonWrapper: {

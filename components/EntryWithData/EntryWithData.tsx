@@ -11,37 +11,41 @@ import React, { useCallback, useMemo } from "react";
 import Entry from "../Entry/Entry";
 import { StyleSheet } from "react-native";
 import { spacing } from "@/constants/theme";
-import { useRealm } from "@realm/react";
+import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { MenuItemProps } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import useDeleteEmptyEntry from "@/hooks/useDeleteEmptyEntry";
 import { deleteFilesInEntry } from "@/utils/files";
 import { getSelectedMediaImageUri } from "@/utils/screens";
+import { useSnackbar } from "@/contexts/SnackbarContext";
+import { BSON } from "realm";
 
 type Props = {
-  entryObject: EntryType;
+  entryId: string;
   dayObject: Day | null;
   index: number;
 };
 
-const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
+const EntryWithData = ({ entryId, dayObject, index }: Props) => {
   const router = useRouter();
   const realm = useRealm();
-
+  const { showSnackbar } = useSnackbar();
   const { showConfirmDialog } = useConfirmDialog();
 
-  useDeleteEmptyEntry(entryObject);
+  useDeleteEmptyEntry(entryId);
+
+  const entryObject = useObject(EntryType, new BSON.ObjectId(entryId));
 
   const {
-    _id,
+    _id = new BSON.ObjectId(),
     title = "",
     description = "",
     recordingUri = "",
     media = [],
     feelingsGroupName = "",
     feelingsEmotions = [],
-  } = entryObject;
+  } = entryObject || {};
 
   const handleOnTitlePress = () =>
     router.navigate(
@@ -75,8 +79,17 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
       realm.write(() => {
         realm.delete(entryObject);
       });
+
+      showSnackbar("Entry was deleted.");
     });
-  }, [entryObject, media, recordingUri, realm, showConfirmDialog]);
+  }, [
+    entryObject,
+    media,
+    recordingUri,
+    realm,
+    showConfirmDialog,
+    showSnackbar,
+  ]);
 
   const handleOnRecordingLongPress = () => {
     router.navigate(
@@ -158,8 +171,6 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
   const editMenuItems = useMemo(() => {
     const menuItems = [];
 
-    const { title, description, media, recordingUri } = entryObject;
-
     const hasMedia = media && media.length > 0;
 
     if (!title) {
@@ -217,7 +228,7 @@ const EntryWithData = ({ entryObject, dayObject, index }: Props) => {
     }
 
     return menuItems;
-  }, [entryObject, router, _id]);
+  }, [router, _id, media, recordingUri, title, description]);
 
   return (
     <Entry

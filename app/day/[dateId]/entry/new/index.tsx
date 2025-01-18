@@ -7,10 +7,12 @@ import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
 import { Entry, Media } from "@/models/Entry";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
   const router = useRouter();
+  const { showSnackbar } = useSnackbar();
 
   const { dateId, focus, scrollTo } = useLocalSearchParams<EntrySearchParams>();
   const dayObject = useInitiateDayObject(dateId);
@@ -49,12 +51,14 @@ const NewEntryScreen = () => {
         dayObject.entryObjects.push(entry);
       });
 
+      showSnackbar("Entry was created.");
+
       router.dismissTo({
         pathname: "/day/[dateId]",
         params: { dateId },
       });
     },
-    [dayObject, realm, router, dateId],
+    [dayObject, realm, router, dateId, showSnackbar],
   );
 
   return (
