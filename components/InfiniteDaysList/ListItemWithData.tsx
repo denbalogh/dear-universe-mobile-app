@@ -46,8 +46,8 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
   );
 
   const isEmpty = useMemo(
-    () => !title && (!dayObject || dayObject.entryObjects.length === 0),
-    [title, dayObject],
+    () => !title && (!dayObject || entryObjects.length === 0),
+    [title, dayObject, entryObjects],
   );
 
   const feelings = useMemo(
@@ -60,12 +60,10 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
 
   const media = useMemo(
     () =>
-      (entryObjects as EntryData[]).reduce((acc: Media[], entry: EntryData) => {
-        if (entry?.media) {
-          return [...acc, ...entry.media];
-        }
-        return acc;
-      }, []),
+      (entryObjects as EntryData[]).reduce(
+        (acc, entry) => (entry?.media ? [...acc, ...entry.media] : acc),
+        [] as Media[],
+      ),
     [entryObjects],
   );
 
