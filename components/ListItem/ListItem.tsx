@@ -7,6 +7,8 @@ import { parseDateId } from "@/utils/date";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import FeelingsIndicator from "../FeelingsIndicator/FeelingsIndicator";
+import { Media } from "../MediaGallery/EditableMediaGallery";
+import MediaPreview from "./MediaPreview";
 
 type Props = {
   title: string;
@@ -19,6 +21,7 @@ type Props = {
   };
   isEmpty?: boolean;
   feelings: FEELING_GROUP_NAMES[];
+  media?: Media[];
 };
 
 const ListItem = ({
@@ -28,6 +31,7 @@ const ListItem = ({
   isEmpty,
   onPress,
   feelings,
+  media,
 }: Props) => {
   const theme = useTheme();
 
@@ -41,6 +45,8 @@ const ListItem = ({
   const textColor = isEmpty
     ? theme.colors.onBackground
     : theme.colors.onSurfaceVariant;
+
+  const hasMedia = media && media.length > 0;
 
   return (
     <Card testID="ListItemPressable" style={styles.card} onPress={onPress}>
@@ -97,13 +103,16 @@ const ListItem = ({
             />
           </View>
         ) : (
-          <Text
-            style={[styles.title, { color: textColor }]}
-            variant="bodyMedium"
-            numberOfLines={3}
-          >
-            {title || "No title for the day"}
-          </Text>
+          <View style={styles.contentWrapper}>
+            <Text
+              style={[styles.title, { color: textColor }]}
+              variant="bodyMedium"
+              numberOfLines={4}
+            >
+              {title || "No title for the day"}
+            </Text>
+            {hasMedia && <MediaPreview media={media} key={media.length} />}
+          </View>
         )}
         <FeelingsIndicator
           style={styles.feelingsIndicator}
@@ -126,19 +135,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "stretch",
     borderRadius: roundness,
+    height: "100%",
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   dayWrapper: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     minWidth: 50,
+    padding: spacing.spaceSmall,
+    paddingHorizontal: spacing.spaceMedium,
   },
   today: {
     fontWeight: "bold",
   },
+  contentWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   title: {
     flexShrink: 1,
-    paddingHorizontal: spacing.spaceSmall,
+    marginVertical: spacing.spaceSmall,
+    marginRight: spacing.spaceMedium,
+    width: "100%",
+    lineHeight: 18,
   },
   feelingsIndicator: {
     position: "absolute",
@@ -152,5 +174,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     height: "100%",
+    paddingRight: spacing.spaceSmall,
   },
 });

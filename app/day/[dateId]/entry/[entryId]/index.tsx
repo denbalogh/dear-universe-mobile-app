@@ -8,10 +8,12 @@ import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { BSON } from "realm";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 
 const EditEntryScreen = () => {
   const realm = useRealm();
   const router = useRouter();
+  const { showSnackbar } = useSnackbar();
 
   const { dateId, entryId, focus, scrollTo, selectedMediaImageUri } =
     useLocalSearchParams<EntrySearchParams>();
@@ -57,12 +59,14 @@ const EditEntryScreen = () => {
         entryObject.feelingsEmotions = feelingsActiveEmotions;
       });
 
+      showSnackbar("Entry was updated.");
+
       router.dismissTo({
         pathname: "/day/[dateId]",
         params: { dateId },
       });
     },
-    [dayObject, entryObject, realm, router, dateId],
+    [dayObject, entryObject, realm, router, dateId, showSnackbar],
   );
 
   return (

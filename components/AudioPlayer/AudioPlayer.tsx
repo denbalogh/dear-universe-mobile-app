@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, View, ViewProps } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useTheme } from "react-native-paper";
@@ -22,7 +22,8 @@ const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
   const theme = useTheme();
 
   const [isLoadingSound, setIsLoadingSound] = useState(true);
-  const [sound, setSound] = useState<Sound>();
+  const sound = useRef<Sound>();
+
   const [soundStatusSuccess, setSoundStatusSuccess] =
     useState<AVPlaybackStatusSuccess>();
   const [soundStatusError, setSoundStatusError] =
@@ -41,15 +42,21 @@ const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
   const loadSound = useCallback(async () => {
     setIsLoadingSound(true);
 
-    const { sound } = await Audio.Sound.createAsync(
+    if (sound.current) {
+      await sound.current.unloadAsync();
+    }
+
+    const defaultStatus = {};
+
+    const { sound: newSound } = await Audio.Sound.createAsync(
       { uri: sourceUri },
-      {},
+      defaultStatus,
       handleSetStatus,
     );
 
-    const status = await sound.getStatusAsync();
+    const status = await newSound.getStatusAsync();
 
-    setSound(sound);
+    sound.current = newSound;
     handleSetStatus(status);
     setIsLoadingSound(false);
   }, [sourceUri]);
@@ -60,11 +67,12 @@ const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
 
   useEffect(() => {
     return () => {
-      const unloadSound = async () => sound?.unloadAsync();
-
-      if (sound) {
-        unloadSound();
-      }
+      const unloadSound = async () => {
+        if (sound.current) {
+          await sound.current.unloadAsync();
+        }
+      };
+      unloadSound();
     };
   }, [sound]);
 
@@ -76,36 +84,40 @@ const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
   } = soundStatusSuccess || {};
 
   const playSound = async () => {
-    if (sound) {
-      if (didJustFinish) {
-        await sound.replayAsync();
-      } else {
-        await sound.playAsync();
-      }
+    if (!sound.current) {
+      return;
+    }
+
+    if (didJustFinish) {
+      await sound.current.replayAsync();
+    } else {
+      await sound.current.playAsync();
     }
   };
 
   const setSoundPosition = async (positionMillis: number) => {
-    if (sound) {
-      await sound.setPositionAsync(positionMillis);
+    if (sound.current) {
+      await sound.current.setPositionAsync(positionMillis);
     }
   };
 
   const pauseSound = async () => {
-    if (sound) {
-      await sound.pauseAsync();
+    if (sound.current) {
+      await sound.current.pauseAsync();
     }
   };
 
   const handleOn5SecForwardPress = () => {
-    if (sound) {
-      sound.setPositionAsync(Math.min(positionMillis + 5000, durationMillis));
+    if (sound.current) {
+      sound.current.setPositionAsync(
+        Math.min(positionMillis + 5000, durationMillis),
+      );
     }
   };
 
   const handleOn5SecRewindPress = () => {
-    if (sound) {
-      sound.setPositionAsync(Math.max(positionMillis - 5000, 0));
+    if (sound.current) {
+      sound.current.setPositionAsync(Math.max(positionMillis - 5000, 0));
     }
   };
 

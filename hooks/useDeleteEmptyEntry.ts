@@ -1,16 +1,28 @@
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import { Entry } from "@/models/Entry";
-import { useRealm } from "@realm/react";
+import { useObject, useRealm } from "@realm/react";
 import { useEffect } from "react";
+import { BSON } from "realm";
 
-const useDeleteEmptyEntry = (entryObject: Entry) => {
+const useDeleteEmptyEntry = (entryId: string) => {
   const realm = useRealm();
   const { showSnackbar } = useSnackbar();
 
-  const { title, description, recordingUri, media } = entryObject;
+  const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
+
+  const {
+    title = "",
+    description = "",
+    recordingUri = "",
+    media = [],
+  } = entryObject || {};
 
   // Delete entry if it has no content
   useEffect(() => {
+    if (!entryObject) {
+      return;
+    }
+
     if (!title && !description && !recordingUri && media.length === 0) {
       realm.write(() => {
         realm.delete(entryObject);

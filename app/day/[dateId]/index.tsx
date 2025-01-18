@@ -183,14 +183,18 @@ const DayScreen = () => {
           </View>
           {hasEntries ? (
             <>
-              {entryObjects.map((entryObject, index) => (
-                <EntryWithData
-                  entryObject={entryObject}
-                  dayObject={dayObject}
-                  key={entryObject._id.toString()}
-                  index={index}
-                />
-              ))}
+              {entryObjects.map(({ _id }, index) => {
+                const entryId = _id.toString();
+
+                return (
+                  <EntryWithData
+                    entryId={entryId}
+                    dayObject={dayObject}
+                    key={entryId}
+                    index={index}
+                  />
+                );
+              })}
               <AfterEntriesMessage />
             </>
           ) : (

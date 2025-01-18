@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: spacing.spaceSmall,
+    marginTop: spacing.spaceExtraSmall,
   },
   actionBarMenusWrapper: {
     flexDirection: "row",
