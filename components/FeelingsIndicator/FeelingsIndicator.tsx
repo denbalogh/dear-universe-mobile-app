@@ -6,9 +6,17 @@ import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 type Props = {
   feelings: FEELING_GROUP_NAMES[];
+  height?: number;
+  borderRadius?: "bottomOnly" | "full";
 } & ViewProps;
 
-const FeelingsIndicator = ({ feelings, style, ...props }: Props) => {
+const FeelingsIndicator = ({
+  feelings,
+  style,
+  height = spacing.spaceExtraSmall,
+  borderRadius = "bottomOnly",
+  ...props
+}: Props) => {
   const theme = useCustomTheme();
 
   if (feelings.length === 0) {
@@ -18,8 +26,10 @@ const FeelingsIndicator = ({ feelings, style, ...props }: Props) => {
   const totalCount = feelings.length;
   const width = 100 / totalCount;
 
+  const isBorderRadiusFull = borderRadius === "full";
+
   return (
-    <View style={[styles.wrapper, style]} {...props}>
+    <View style={[styles.wrapper, { height }, style]} {...props}>
       {feelings.map((feeling, index) => {
         const isLeftEnd = index === 0;
         const isRightEnd = index === totalCount - 1;
@@ -28,8 +38,14 @@ const FeelingsIndicator = ({ feelings, style, ...props }: Props) => {
           <View
             key={`${feelings}-${index}`}
             style={[
-              isLeftEnd && styles.leftEnd,
-              isRightEnd && styles.rightEnd,
+              isLeftEnd &&
+                (isBorderRadiusFull
+                  ? styles.leftEndFull
+                  : styles.leftEndBottomOnly),
+              isRightEnd &&
+                (isBorderRadiusFull
+                  ? styles.rightEndFull
+                  : styles.rightEndBottomOnly),
               {
                 backgroundColor: theme.colors[`${feeling}base`],
                 width: `${width}%`,
@@ -48,13 +64,20 @@ export default FeelingsIndicator;
 
 const styles = StyleSheet.create({
   wrapper: {
-    height: spacing.spaceExtraSmall,
     flexDirection: "row",
   },
-  leftEnd: {
+  leftEndFull: {
+    borderBottomStartRadius: roundness,
+    borderTopStartRadius: roundness,
+  },
+  leftEndBottomOnly: {
     borderBottomStartRadius: roundness,
   },
-  rightEnd: {
+  rightEndFull: {
+    borderBottomEndRadius: roundness,
+    borderTopEndRadius: roundness,
+  },
+  rightEndBottomOnly: {
     borderBottomEndRadius: roundness,
   },
 });

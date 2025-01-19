@@ -7,6 +7,7 @@ import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { Realm } from "realm";
+import FeelingsIndicator from "../FeelingsIndicator/FeelingsIndicator";
 
 export const DAY_HEIGHT = 50;
 
@@ -24,9 +25,14 @@ const CustomDay = ({
   const dayObject = realm.objectForPrimaryKey(Day, formatDateId(day));
   const { title = "", entryObjects = [] } = dayObject || {};
 
-  const isDayEmpty = useMemo(
-    () => !title && (!dayObject || entryObjects.length === 0),
-    [dayObject, title, entryObjects],
+  const isDayEmpty = !title && (!dayObject || entryObjects.length === 0);
+
+  const feelings = useMemo(
+    () =>
+      entryObjects
+        .map((entry) => entry?.feelingsGroupName)
+        .filter((feeling) => !!feeling),
+    [entryObjects],
   );
 
   const textColor = useMemo(() => {
@@ -43,24 +49,22 @@ const CustomDay = ({
       : theme.colors.surfaceDisabled;
   }, [isToday, state, theme.colors, isDayEmpty]);
 
+  const backgroundColor = isDayEmpty
+    ? theme.colors.background
+    : theme.colors.surfaceVariant;
+
   return (
-    <View style={styles.wrapper}>
-      <View
-        style={[
-          styles.innerWrapper,
-          {
-            backgroundColor: isDayEmpty
-              ? theme.colors.background
-              : theme.colors.surfaceVariant,
-          },
-        ]}
-      >
+    <View style={[styles.wrapper, { backgroundColor }]}>
+      <FeelingsIndicator
+        feelings={feelings}
+        style={[StyleSheet.absoluteFill, { height: DAY_HEIGHT }]}
+        borderRadius="full"
+      />
+      <View style={[styles.innerWrapper, { backgroundColor }]}>
         <Text
           style={[
             styles.text,
-            {
-              color: textColor,
-            },
+            { color: textColor, fontWeight: isToday ? "bold" : "normal" },
           ]}
           variant="bodyLarge"
         >
@@ -76,7 +80,9 @@ export default CustomDay;
 const styles = StyleSheet.create({
   wrapper: {
     height: DAY_HEIGHT,
-    paddingRight: spacing.spaceExtraSmall,
+    marginRight: spacing.spaceExtraSmall,
+    padding: spacing.spaceExtraSmall,
+    borderRadius: roundness,
   },
   innerWrapper: {
     flex: 1,
