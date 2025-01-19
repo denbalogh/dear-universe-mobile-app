@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Media } from "../EditableMediaGallery";
 import { Appbar, Modal, Portal } from "react-native-paper";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { StyleSheet } from "react-native";
 import {
   Directions,
   Gesture,
@@ -30,7 +30,6 @@ const MediaGalleryPreview = ({
   onClose,
 }: Props) => {
   const theme = useCustomTheme();
-  const { width, height } = useWindowDimensions();
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [appearFrom, setAppearFrom] = useState<AppearFrom>("bottom");
 
@@ -91,9 +90,13 @@ const MediaGalleryPreview = ({
 
   return (
     <Portal>
-      <Modal visible={isVisible} onDismiss={handleOnClose}>
+      <Modal
+        visible={isVisible}
+        onDismiss={handleOnClose}
+        contentContainerStyle={styles.modalContentContainer}
+      >
         <StatusBar backgroundColor={theme.colors.surface} />
-        <GestureHandlerRootView style={[{ width, height }]}>
+        <GestureHandlerRootView>
           <Appbar.Header statusBarHeight={0} mode="center-aligned">
             <Appbar.BackAction onPress={handleOnClose} />
             <Appbar.Content title={`${activeIndex + 1} of ${media.length}`} />
@@ -102,7 +105,11 @@ const MediaGalleryPreview = ({
             gesture={Gesture.Race(flingDown, flingLeft, flingRight)}
           >
             <View collapsable={false} style={styles.itemWrapper}>
-              <PreviewItem item={media[activeIndex]} appearFrom={appearFrom} />
+              <PreviewItem
+                item={media[activeIndex]}
+                appearFrom={appearFrom}
+                key={activeIndex}
+              />
             </View>
           </GestureDetector>
         </GestureHandlerRootView>
@@ -114,6 +121,9 @@ const MediaGalleryPreview = ({
 export default MediaGalleryPreview;
 
 const styles = StyleSheet.create({
+  modalContentContainer: {
+    flex: 1,
+  },
   itemWrapper: {
     flex: 1,
   },

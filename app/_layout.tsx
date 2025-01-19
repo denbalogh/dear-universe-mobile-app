@@ -11,7 +11,6 @@ import { schemas } from "@/models";
 import { themeDark, themeLight } from "@/constants/theme";
 import { Appearance, StyleSheet, View } from "react-native";
 import { useEffect, useState } from "react";
-import { enGB, registerTranslation } from "react-native-paper-dates";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import { ConfirmDialogContextProvider } from "@/contexts/ConfirmDialogContext";
@@ -21,8 +20,6 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-
-registerTranslation("en", enGB);
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
