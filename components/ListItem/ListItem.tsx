@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     left: 0,
-    bottom: 0,
+    bottom: -1, // To hide overflow of media preview on android
   },
   addEntryButtonsWrapper: {
     flex: 1,

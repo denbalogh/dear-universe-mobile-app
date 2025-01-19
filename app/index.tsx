@@ -14,7 +14,10 @@ const App = () => {
       <Stack.Screen
         options={{
           header: () => (
-            <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
+            <Appbar.Header
+              style={{ backgroundColor: theme.colors.background }}
+              elevated={true}
+            >
               <Appbar.Content
                 title={monthYear}
                 titleStyle={{ color: theme.colors.onBackground }}
