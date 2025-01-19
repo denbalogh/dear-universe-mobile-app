@@ -23,6 +23,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import DatePickerModal from "../DatePickerModal/DatePickerModal";
+import { useRealm } from "@realm/react";
 
 const EXTEND_LIST_OFFSET = 10;
 const BOTTOM_BUTTON_HEIGHT = 60;
@@ -35,6 +36,7 @@ type Props = {
 
 const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
   const theme = useTheme();
+  const realm = useRealm();
   const [days, setDays] = useState(createDaysUntilDate());
   const scrollDir = useRef<"up" | "down">("down");
   const currentOffset = useRef(0);
@@ -85,10 +87,10 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
       }
 
       const newDays = createDaysUntilDate(date);
-      const index = newDays.indexOf(formatDateId(date));
+      const index = Math.max(newDays.indexOf(formatDateId(date)) - 1, 0); // -1 to show the selected date above bottom buttons
 
       setDays(newDays);
-      setActiveIndex(index - 1); // -1 to show the selected date above bottom buttons
+      setActiveIndex(index);
       setActiveDate(date);
 
       onMonthYearChange(formatMonthYear(date));
@@ -247,6 +249,7 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
         isVisible={isDatePickerVisible}
         onDismiss={handleDismissDatePicker}
         onConfirm={handleConfirmDate}
+        realm={realm}
       />
     </View>
   );

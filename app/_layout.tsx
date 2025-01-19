@@ -44,7 +44,7 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <RealmProvider schema={schemas} schemaVersion={1}>
+      <RealmProvider schema={schemas} schemaVersion={1} path="default.realm">
         <ConfirmDialogContextProvider>
           <SnackbarContextProvider>
             <View
