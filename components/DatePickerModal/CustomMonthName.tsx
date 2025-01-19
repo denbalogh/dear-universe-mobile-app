@@ -12,6 +12,7 @@ export type MonthNameProps = {
 
 const CustomMonthName = ({ month }: MonthNameProps) => {
   const formattedMonth = formatMonthYear(month);
+
   return (
     <View style={styles.wrapper}>
       <Text style={styles.text} variant="titleMedium">

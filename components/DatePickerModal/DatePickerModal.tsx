@@ -27,7 +27,7 @@ type Props = {
   isVisible: boolean;
   onDismiss: () => void;
   onConfirm: (date: Date) => void;
-  realm: Realm;
+  realm: Realm; // Need to pass realm instance because modal is outside RealmProvider
 };
 
 const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {

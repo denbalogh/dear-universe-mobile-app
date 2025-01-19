@@ -9,17 +9,15 @@ export type CustomWeekDayNameProps = {
   weekDays: string[];
 };
 
-const CustomWeekDayName = ({ weekDays }: CustomWeekDayNameProps) => {
-  return (
-    <View style={styles.wrapper}>
-      {weekDays.map((dayName, index) => (
-        <Text style={styles.dayName} key={index} variant="bodySmall">
-          {dayName}
-        </Text>
-      ))}
-    </View>
-  );
-};
+const CustomWeekDayName = ({ weekDays }: CustomWeekDayNameProps) => (
+  <View style={styles.wrapper}>
+    {weekDays.map((dayName, index) => (
+      <Text style={styles.dayName} key={index} variant="bodySmall">
+        {dayName}
+      </Text>
+    ))}
+  </View>
+);
 
 export default CustomWeekDayName;
 

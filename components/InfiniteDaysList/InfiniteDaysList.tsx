@@ -87,7 +87,7 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
       }
 
       const newDays = createDaysUntilDate(date);
-      const index = Math.max(newDays.indexOf(formatDateId(date)) - 1, 0); // -1 to show the selected date above bottom buttons
+      const index = Math.max(newDays.indexOf(formatDateId(date)) - 1, 0); // -1 to show the selected date above bottom buttons (Search date / To today)
 
       setDays(newDays);
       setActiveIndex(index);
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   flatListContentContainer: {
-    paddingTop: spacing.spaceSmall,
+    paddingTop: spacing.spaceSmall, // Flatlist is inverted so it's bottom padding
   },
   bottomButtonWrapper: {
     position: "absolute",

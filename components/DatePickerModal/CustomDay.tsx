@@ -35,6 +35,10 @@ const CustomDay = ({
     [entryObjects],
   );
 
+  const backgroundColor = isDayEmpty
+    ? theme.colors.background
+    : theme.colors.surfaceVariant;
+
   const textColor = useMemo(() => {
     if (isToday) {
       return theme.colors.tertiary;
@@ -49,9 +53,7 @@ const CustomDay = ({
       : theme.colors.surfaceDisabled;
   }, [isToday, state, theme.colors, isDayEmpty]);
 
-  const backgroundColor = isDayEmpty
-    ? theme.colors.background
-    : theme.colors.surfaceVariant;
+  const fontWeight = isToday ? "bold" : "normal";
 
   return (
     <View style={[styles.wrapper, { backgroundColor }]}>
@@ -62,10 +64,7 @@ const CustomDay = ({
       />
       <View style={[styles.innerWrapper, { backgroundColor }]}>
         <Text
-          style={[
-            styles.text,
-            { color: textColor, fontWeight: isToday ? "bold" : "normal" },
-          ]}
+          style={[styles.text, { color: textColor, fontWeight }]}
           variant="bodyLarge"
         >
           {dayFormatted}
