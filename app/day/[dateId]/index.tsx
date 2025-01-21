@@ -6,7 +6,7 @@ import {
 } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, HelperText, TextInput, useTheme } from "react-native-paper";
+import { Appbar, useTheme } from "react-native-paper";
 import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
@@ -30,6 +30,8 @@ import { runOnJS } from "react-native-reanimated";
 import useInitiateDayObject from "@/hooks/useInitiateDayObject";
 import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
+import DayTitle from "@/components/DayTitle/DayTitle";
+import { isEqual } from "lodash";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -41,15 +43,16 @@ const DayScreen = () => {
   const { dateId } = useLocalSearchParams<DaySearchTermParams>();
   const dayObject = useInitiateDayObject(dateId);
 
-  const { entryObjects = [], title: initialTitle = "" } = dayObject || {};
+  const {
+    entryObjects = [],
+    title: initialTitle = "",
+    locked = false,
+  } = dayObject || {};
   const hasEntries = entryObjects.length > 0;
 
   const [title, setTitle] = useState(initialTitle);
 
-  const isTitleEdited = title !== initialTitle;
-  const editedUnderlineColor = isTitleEdited
-    ? theme.colors.tertiary
-    : undefined;
+  const isTitleEdited = !isEqual(title, initialTitle);
 
   const handleOnSubmit = () => {
     if (!isTitleEdited || dayObject === null) {
@@ -139,6 +142,16 @@ const DayScreen = () => {
       .onEnd(() => runOnJS(goToNextDay)());
   }, [dateId, router]);
 
+  const toggleLocked = () => {
+    if (dayObject === null) {
+      return;
+    }
+
+    realm.write(() => {
+      dayObject.locked = !locked;
+    });
+  };
+
   return (
     <GestureDetector gesture={Gesture.Race(flingLeft, flingRight)}>
       <View style={[styles.wrapper, { backgroundColor: theme.colors.surface }]}>
@@ -148,6 +161,11 @@ const DayScreen = () => {
               <Appbar.Header>
                 <Appbar.BackAction onPress={handleGoBack} />
                 <Appbar.Content title={fullDate} />
+                <Appbar.Action
+                  icon={locked ? "lock" : "lock-open-variant"}
+                  onPress={toggleLocked}
+                  disabled={!hasEntries}
+                />
               </Appbar.Header>
             ),
             navigationBarColor: theme.colors.surface,
@@ -157,30 +175,16 @@ const DayScreen = () => {
           style={styles.scrollView}
           contentContainerStyle={[
             styles.scrollContentWrapper,
-            styles.bottomPadding,
+            !locked && styles.bottomPadding,
           ]}
         >
-          <View style={styles.titleWrapper}>
-            <TextInput
-              label="Title for the day"
-              value={title}
-              onChangeText={setTitle}
-              multiline={true}
-              enterKeyHint="done"
-              submitBehavior="blurAndSubmit"
-              contentStyle={{ marginTop: 5 }}
-              mode="outlined"
-              onSubmitEditing={handleOnSubmit}
-              outlineColor={editedUnderlineColor}
-              activeOutlineColor={editedUnderlineColor}
-              style={{ backgroundColor: theme.colors.surface }}
-            />
-            {isTitleEdited && (
-              <HelperText type="info" visible={true}>
-                To save the title, press done on the keyboard.
-              </HelperText>
-            )}
-          </View>
+          <DayTitle
+            title={title}
+            onTitleChange={setTitle}
+            isTitleEdited={isTitleEdited}
+            onSubmit={handleOnSubmit}
+            locked={locked}
+          />
           {hasEntries ? (
             <>
               {entryObjects.map(({ _id }, index) => {
@@ -192,16 +196,17 @@ const DayScreen = () => {
                     dayObject={dayObject}
                     key={entryId}
                     index={index}
+                    locked={locked}
                   />
                 );
               })}
-              <AfterEntriesMessage />
+              {!locked && <AfterEntriesMessage />}
             </>
           ) : (
             <EntryPlaceholder />
           )}
         </ScrollView>
-        {!isKeyboardOpen && (
+        {!isKeyboardOpen && !locked && (
           <CTAButtons
             style={styles.bottomButtons}
             showText={!hasEntries}
@@ -241,9 +246,6 @@ export default DayScreen;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-  },
-  titleWrapper: {
-    marginBottom: spacing.spaceMedium,
   },
   scrollView: {
     flex: 1,

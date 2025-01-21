@@ -9,6 +9,7 @@ type Props = {
   media: Media[];
   gridSize?: number;
   onMediaLongPress?: (uri: string) => void;
+  locked?: boolean;
 } & ViewProps;
 
 const MediaGallery = ({
@@ -16,6 +17,7 @@ const MediaGallery = ({
   gridSize = 4,
   onMediaLongPress,
   style,
+  locked = false,
   ...viewProps
 }: Props) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
@@ -41,6 +43,16 @@ const MediaGallery = ({
     setIsPreviewVisible(false);
   };
 
+  const handleOnMediaLongPress = (imageUri: string) => {
+    if (!locked && onMediaLongPress) {
+      onMediaLongPress(imageUri);
+    }
+  };
+
+  if (!media.length) {
+    return null;
+  }
+
   return (
     <View
       onLayout={handleOnLayout}
@@ -58,7 +70,7 @@ const MediaGallery = ({
             style={{ width: imageSize, height: imageSize }}
             touchableProps={{
               onPress: () => handleOnImagePress(index),
-              onLongPress: () => onMediaLongPress?.(imageUri),
+              onLongPress: () => handleOnMediaLongPress(imageUri),
             }}
             showPlayIcon={!!videoUri}
           />
