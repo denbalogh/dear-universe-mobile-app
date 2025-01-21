@@ -9,8 +9,6 @@ import { Entry as EntryType } from "@/models/Entry";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import Entry from "../Entry/Entry";
-import { StyleSheet } from "react-native";
-import { spacing } from "@/constants/theme";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { MenuItemProps } from "react-native-paper";
@@ -25,9 +23,10 @@ type Props = {
   entryId: string;
   dayObject: Day | null;
   index: number;
+  locked: boolean;
 };
 
-const EntryWithData = ({ entryId, dayObject, index }: Props) => {
+const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
   const router = useRouter();
   const realm = useRealm();
   const { showSnackbar } = useSnackbar();
@@ -232,7 +231,6 @@ const EntryWithData = ({ entryId, dayObject, index }: Props) => {
 
   return (
     <Entry
-      style={styles.entry}
       title={title}
       onTitlePress={handleOnTitlePress}
       description={description}
@@ -247,14 +245,9 @@ const EntryWithData = ({ entryId, dayObject, index }: Props) => {
       media={media}
       moveMenuItems={moveMenuItems}
       editMenuItems={editMenuItems}
+      locked={locked}
     />
   );
 };
 
 export default EntryWithData;
-
-const styles = StyleSheet.create({
-  entry: {
-    marginBottom: spacing.spaceMedium,
-  },
-});

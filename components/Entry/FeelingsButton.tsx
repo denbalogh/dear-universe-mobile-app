@@ -5,17 +5,19 @@ import { roundness, spacing } from "@/constants/theme";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
-type Props = {
+export type FeelingsButtonProps = {
   feelingsGroupName: FEELING_GROUP_NAMES | "";
   feelingsEmotions?: string[];
   onPress: () => void;
+  locked?: boolean;
 };
 
 const FeelingsButton = ({
   feelingsGroupName,
   feelingsEmotions,
   onPress,
-}: Props) => {
+  locked = false,
+}: FeelingsButtonProps) => {
   const theme = useCustomTheme();
 
   if (feelingsGroupName) {
@@ -23,9 +25,10 @@ const FeelingsButton = ({
 
     return (
       <Card
-        mode="elevated"
+        mode={locked ? "contained" : "elevated"}
         style={[
           styles.card,
+          locked ? styles.lockedCard : styles.unlockedCard,
           { backgroundColor: theme.colors[`${feelingsGroupName}Container`] },
         ]}
         onPress={onPress}
@@ -59,6 +62,12 @@ export default FeelingsButton;
 const styles = StyleSheet.create({
   card: {
     borderRadius: roundness,
+  },
+  lockedCard: {
+    flex: 1,
+    alignItems: "center",
+  },
+  unlockedCard: {
     flexShrink: 1,
   },
   cardContent: {

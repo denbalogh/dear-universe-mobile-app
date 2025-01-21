@@ -16,9 +16,15 @@ import { format } from "date-fns";
 type Props = {
   sourceUri: string;
   onLongPress?: () => void;
+  locked?: boolean;
 } & ViewProps;
 
-const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
+const AudioPlayer = ({
+  sourceUri,
+  onLongPress,
+  locked = false,
+  ...props
+}: Props) => {
   const theme = useTheme();
 
   const [isLoadingSound, setIsLoadingSound] = useState(true);
@@ -124,6 +130,16 @@ const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
   const currentTime = format(new Date(positionMillis), "mm:ss");
   const maxTime = format(new Date(durationMillis), "mm:ss");
 
+  const handleOnRecordingLongPress = () => {
+    if (!locked && onLongPress) {
+      onLongPress();
+    }
+  };
+
+  if (!sourceUri) {
+    return null;
+  }
+
   return (
     <View {...props}>
       <Slider
@@ -148,7 +164,7 @@ const AudioPlayer = ({ sourceUri, onLongPress, ...props }: Props) => {
         onReloadPress={loadSound}
         currentTime={currentTime}
         maxTime={maxTime}
-        onLongPress={onLongPress}
+        onLongPress={handleOnRecordingLongPress}
       />
     </View>
   );
