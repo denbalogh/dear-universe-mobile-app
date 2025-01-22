@@ -4,10 +4,12 @@ import { StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import InfiniteDaysList from "@/components/InfiniteDaysList/InfiniteDaysList";
 import { formatMonthYear } from "@/utils/date";
+import { useSettingsDrawer } from "@/contexts/SettingsDrawerContext";
 
 const App = () => {
   const theme = useTheme();
   const [monthYear, setMonthYear] = useState(formatMonthYear(new Date()));
+  const { showSettingsDrawer } = useSettingsDrawer();
 
   return (
     <View style={styles.wrapper}>
@@ -24,7 +26,7 @@ const App = () => {
               />
               <Appbar.Action
                 icon="cog"
-                onPress={() => console.log("open settings")}
+                onPress={showSettingsDrawer}
                 color={theme.colors.onBackground}
               />
             </Appbar.Header>

@@ -10,7 +10,6 @@ import { Appbar, useTheme } from "react-native-paper";
 import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
-import { useRealm } from "@realm/react";
 import { DaySearchTermParams } from "@/types/dayScreen";
 import {
   FOCUS_DESCRIPTION,
@@ -27,21 +26,22 @@ import {
 } from "react-native-gesture-handler";
 import { addDays, isToday, subDays } from "date-fns";
 import { runOnJS } from "react-native-reanimated";
-import useInitiateDayObject from "@/hooks/useInitiateDayObject";
+import useDayObject from "@/hooks/useDayObject";
 import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import DayTitle from "@/components/DayTitle/DayTitle";
 import { isEqual } from "lodash";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 
 const DayScreen = () => {
   const theme = useTheme();
-  const realm = useRealm();
   const router = useRouter();
 
   const isKeyboardOpen = useIsKeyboardOpen();
+  const { showSnackbar } = useSnackbar();
 
   const { dateId } = useLocalSearchParams<DaySearchTermParams>();
-  const dayObject = useInitiateDayObject(dateId);
+  const { dayObject, updateDayObject } = useDayObject(dateId);
 
   const {
     entryObjects = [],
@@ -59,9 +59,8 @@ const DayScreen = () => {
       return;
     }
 
-    realm.write(() => {
-      dayObject.title = title;
-    });
+    updateDayObject({ title });
+    showSnackbar("Title for the day was updated.");
   };
 
   const { showConfirmDialog } = useConfirmDialog();
@@ -147,9 +146,8 @@ const DayScreen = () => {
       return;
     }
 
-    realm.write(() => {
-      dayObject.locked = !locked;
-    });
+    updateDayObject({ locked: !locked });
+    showSnackbar(locked ? "Day was unlocked." : "Day was locked.");
   };
 
   return (
@@ -169,6 +167,7 @@ const DayScreen = () => {
               </Appbar.Header>
             ),
             navigationBarColor: theme.colors.surface,
+            animation: "fade",
           }}
         />
         <ScrollView

@@ -2,8 +2,14 @@ import { Day } from "@/models/Day";
 import { isDateIdFormat } from "@/utils/date";
 import { useObject, useRealm } from "@realm/react";
 import { useEffect } from "react";
+import { UpdateMode } from "realm";
 
-const useInitiateDayObject = (dateId: string) => {
+type ReturnType = {
+  dayObject: Day | null;
+  updateDayObject: (data: Partial<Day>) => void;
+};
+
+const useDayObject = (dateId: string): ReturnType => {
   if (!isDateIdFormat(dateId)) {
     throw new Error("Invalid dateId format");
   }
@@ -21,7 +27,20 @@ const useInitiateDayObject = (dateId: string) => {
     }
   }, [dateId, dayObject, realm]);
 
-  return dayObject;
+  const updateDayObject = (data: Partial<Day>) => {
+    realm.write(() => {
+      realm.create(
+        Day,
+        {
+          _id: dateId,
+          ...data,
+        },
+        UpdateMode.Modified,
+      );
+    });
+  };
+
+  return { dayObject, updateDayObject };
 };
 
-export default useInitiateDayObject;
+export default useDayObject;

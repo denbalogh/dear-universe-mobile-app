@@ -5,7 +5,7 @@ import CreateEditEntry from "@/components/CreateEditEntry/CreateEditEntry";
 import { useRealm } from "@realm/react";
 import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
-import useInitiateDayObject from "@/hooks/useInitiateDayObject";
+import useDayObject from "@/hooks/useDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 
@@ -15,7 +15,7 @@ const NewEntryScreen = () => {
   const { showSnackbar } = useSnackbar();
 
   const { dateId, focus, scrollTo } = useLocalSearchParams<EntrySearchParams>();
-  const dayObject = useInitiateDayObject(dateId);
+  const { dayObject } = useDayObject(dateId);
 
   const formattedDate = useMemo(
     () => formatFullDate(parseDateId(dateId)),

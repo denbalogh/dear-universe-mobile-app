@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
   lockedCard: {
     flex: 1,
     alignItems: "center",
+    marginHorizontal: -spacing.spaceSmall,
+    marginBottom: -spacing.spaceSmall,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
   unlockedCard: {
     flexShrink: 1,
