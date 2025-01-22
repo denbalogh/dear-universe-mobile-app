@@ -167,6 +167,7 @@ const DayScreen = () => {
               </Appbar.Header>
             ),
             navigationBarColor: theme.colors.surface,
+            animation: "fade",
           }}
         />
         <ScrollView

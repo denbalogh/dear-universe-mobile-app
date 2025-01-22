@@ -253,6 +253,7 @@ const CreateEditEntry = ({
             </Appbar.Header>
           ),
           navigationBarColor: theme.colors.surface,
+          animation: "fade_from_bottom",
         }}
       />
       <ScrollView
