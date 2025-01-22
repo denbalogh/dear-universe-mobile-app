@@ -105,8 +105,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     paddingHorizontal: spacing.spaceSmall,
-    paddingBottom: spacing.spaceSmall,
-    paddingTop: spacing.spaceExtraSmall,
+    paddingVertical: spacing.spaceExtraSmall,
   },
   mediaGallery: {
     marginVertical: spacing.spaceExtraSmall,

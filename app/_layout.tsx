@@ -20,6 +20,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -55,7 +56,9 @@ const App = () => {
             />
             <StatusBar translucent={true} />
             <GestureHandlerRootView>
-              <Stack />
+              <SettingsDrawerContextProvider>
+                <Stack />
+              </SettingsDrawerContextProvider>
             </GestureHandlerRootView>
           </SnackbarContextProvider>
         </ConfirmDialogContextProvider>
