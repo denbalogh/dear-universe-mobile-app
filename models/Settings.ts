@@ -3,7 +3,7 @@ import Realm from "realm";
 
 export class Settings extends Realm.Object {
   _id!: string;
-  theme: SettingsTheme = "light";
+  theme: SettingsTheme = "system";
 
   static schema: Realm.ObjectSchema = {
     name: "Settings",
@@ -12,7 +12,7 @@ export class Settings extends Realm.Object {
       _id: "string",
       theme: {
         type: "string",
-        default: "light",
+        default: "system",
       },
     },
   };

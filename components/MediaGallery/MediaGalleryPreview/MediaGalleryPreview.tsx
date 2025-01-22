@@ -14,7 +14,7 @@ import PreviewItem, { AppearFrom } from "./PreviewItem";
 import { View } from "react-native";
 import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import { spacing } from "@/constants/theme";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
+import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 
 type Props = {
   media: Media[];
@@ -29,7 +29,7 @@ const MediaGalleryPreview = ({
   isVisible,
   onClose,
 }: Props) => {
-  const theme = useCustomTheme();
+  const { theme, statusBarStyle } = useActiveColorScheme();
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [appearFrom, setAppearFrom] = useState<AppearFrom>("bottom");
 
@@ -95,7 +95,10 @@ const MediaGalleryPreview = ({
         onDismiss={handleOnClose}
         contentContainerStyle={styles.modalContentContainer}
       >
-        <StatusBar backgroundColor={theme.colors.surface} />
+        <StatusBar
+          backgroundColor={theme.colors.surface}
+          style={statusBarStyle}
+        />
         <GestureHandlerRootView>
           <Appbar.Header statusBarHeight={0} mode="center-aligned">
             <Appbar.BackAction onPress={handleOnClose} />
