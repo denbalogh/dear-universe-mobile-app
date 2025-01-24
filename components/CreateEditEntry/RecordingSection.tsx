@@ -17,6 +17,7 @@ import { Button } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import useAppState from "@/hooks/useAppState";
 
 type Props = {
   onRecordingDone: (recordingUri: string) => void;
@@ -77,6 +78,14 @@ const RecordingSection = ({
       }
     }
   };
+
+  const appState = useAppState();
+
+  useEffect(() => {
+    if (appState !== "active") {
+      pauseRecording();
+    }
+  }, [appState, pauseRecording]);
 
   const {
     durationMillis = 1,
