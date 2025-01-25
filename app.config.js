@@ -83,6 +83,13 @@ module.exports = {
           },
         },
       ],
+      [
+        "expo-local-authentication",
+        {
+          faceIDPermission:
+            "The app needs access to FaceID in order to authenticate you.",
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,

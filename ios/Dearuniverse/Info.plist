@@ -55,6 +55,8 @@
     </dict>
     <key>NSCameraUsageDescription</key>
     <string>The app needs access to your camera in order to take photos for your entry.</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>The app needs access to FaceID in order to authenticate you.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>The app needs access to your microphone in order to record audio for your entry.</string>
     <key>NSPhotoLibraryUsageDescription</key>
