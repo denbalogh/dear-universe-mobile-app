@@ -174,14 +174,6 @@ const CreateEditEntry = ({
     });
   };
 
-  const handleShowSaveConfirmDialog = () => {
-    showConfirmDialog(
-      "Do you wish to save the entry?",
-      handleSaveEntry,
-      "positive",
-    );
-  };
-
   const isEdited = useMemo(
     () =>
       !isEqual(title, initialTitle) ||
@@ -319,7 +311,7 @@ const CreateEditEntry = ({
           <FAB
             label="Save"
             variant="tertiary"
-            onPress={handleShowSaveConfirmDialog}
+            onPress={handleSaveEntry}
             disabled={!isEdited}
           />
         </View>

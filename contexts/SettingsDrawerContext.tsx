@@ -12,10 +12,12 @@ import { Drawer } from "react-native-drawer-layout";
 
 type SettingsDrawerContextType = {
   showSettingsDrawer: () => void;
+  closeSettingsDrawer: () => void;
 };
 
 const SettingsDrawerContext = createContext<SettingsDrawerContextType>({
   showSettingsDrawer: () => {},
+  closeSettingsDrawer: () => {},
 });
 
 const SettingsDrawerContextProvider = ({
@@ -45,13 +47,17 @@ const SettingsDrawerContextProvider = ({
     return () => backHandler.remove();
   }, [isOpen]);
 
-  const renderDrawerContent = useCallback(
-    () => <SettingsDrawerContent closeDrawer={closeDrawer} />,
-    [],
-  );
+  const renderDrawerContent = useCallback(() => {
+    return <SettingsDrawerContent closeDrawer={closeDrawer} />;
+  }, []);
 
   return (
-    <SettingsDrawerContext.Provider value={{ showSettingsDrawer: openDrawer }}>
+    <SettingsDrawerContext.Provider
+      value={{
+        showSettingsDrawer: openDrawer,
+        closeSettingsDrawer: closeDrawer,
+      }}
+    >
       <Drawer
         open={isOpen}
         onOpen={openDrawer}

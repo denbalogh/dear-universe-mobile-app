@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View, ViewProps } from "react-native";
 import ImageGridItem from "./ImageGridItem";
-import { Checkbox, MenuItemProps } from "react-native-paper";
+import { Checkbox, IconButton, MenuItemProps } from "react-native-paper";
 import AddImageGridItem from "./ImageGridAddItem";
-import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
+import CustomMenu from "../CustomMenu/CustomMenu";
 
 export type Media = {
   imageUri: string;
@@ -143,14 +143,16 @@ const EditableMediaGallery = ({
                 />
               </View>
               <View style={styles.buttons}>
-                <IconButtonMenu
-                  iconButtonProps={{
-                    icon: "arrow-left-right",
-                    mode: "contained-tonal",
-                    size: sizing.sizeSmall,
-                  }}
-                  menuItems={menuItems}
-                />
+                <CustomMenu menuItems={menuItems}>
+                  {({ openMenu }) => (
+                    <IconButton
+                      icon="arrow-left-right"
+                      mode="contained-tonal"
+                      size={sizing.sizeSmall}
+                      onPress={openMenu}
+                    />
+                  )}
+                </CustomMenu>
               </View>
             </View>
           );

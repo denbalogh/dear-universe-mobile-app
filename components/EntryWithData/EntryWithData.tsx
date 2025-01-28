@@ -1,9 +1,9 @@
 import {
-  FOCUS_DESCRIPTION,
-  FOCUS_TITLE,
-  SCROLL_TO_RECORDING,
-  SCROLL_TO_MEDIA,
-  SCROLL_TO_FEELINGS,
+  ENTRY_SCREEN_FOCUS_DESCRIPTION,
+  ENTRY_SCREEN_FOCUS_TITLE,
+  ENTRY_SCREEN_SCROLL_TO_RECORDING,
+  ENTRY_SCREEN_SCROLL_TO_MEDIA,
+  ENTRY_SCREEN_SCROLL_TO_FEELINGS,
 } from "@/constants/screens";
 import { Entry as EntryType } from "@/models/Entry";
 import { useRouter } from "expo-router";
@@ -50,7 +50,7 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: FOCUS_TITLE,
+        params: ENTRY_SCREEN_FOCUS_TITLE,
       },
       { relativeToDirectory: true },
     );
@@ -59,14 +59,17 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: FOCUS_DESCRIPTION,
+        params: ENTRY_SCREEN_FOCUS_DESCRIPTION,
       },
       { relativeToDirectory: true },
     );
 
   const handleFeelingsPress = () => {
     router.navigate(
-      { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_FEELINGS },
+      {
+        pathname: `./entry/${_id.toString()}`,
+        params: ENTRY_SCREEN_SCROLL_TO_FEELINGS,
+      },
       { relativeToDirectory: true },
     );
   };
@@ -79,7 +82,7 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
         realm.delete(entryObject);
       });
 
-      showSnackbar("Entry was deleted.");
+      showSnackbar("Entry was deleted");
     });
   }, [
     entryObject,
@@ -94,7 +97,7 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: SCROLL_TO_RECORDING,
+        params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
       },
       { relativeToDirectory: true },
     );
@@ -104,7 +107,10 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
     router.navigate(
       {
         pathname: `./entry/${_id.toString()}`,
-        params: { ...SCROLL_TO_MEDIA, ...getSelectedMediaImageUri(uri) },
+        params: {
+          ...ENTRY_SCREEN_SCROLL_TO_MEDIA,
+          ...getSelectedMediaImageUri(uri),
+        },
       },
       { relativeToDirectory: true },
     );
@@ -180,7 +186,7 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
           router.navigate(
             {
               pathname: `./entry/${_id.toString()}`,
-              params: FOCUS_TITLE,
+              params: ENTRY_SCREEN_FOCUS_TITLE,
             },
             { relativeToDirectory: true },
           ),
@@ -192,7 +198,10 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
       title: hasMedia ? "Edit media" : "Add media",
       onPress: () =>
         router.navigate(
-          { pathname: `./entry/${_id.toString()}`, params: SCROLL_TO_MEDIA },
+          {
+            pathname: `./entry/${_id.toString()}`,
+            params: ENTRY_SCREEN_SCROLL_TO_MEDIA,
+          },
           { relativeToDirectory: true },
         ),
     });
@@ -204,7 +213,7 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
         router.navigate(
           {
             pathname: `./entry/${_id.toString()}`,
-            params: SCROLL_TO_RECORDING,
+            params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
           },
           { relativeToDirectory: true },
         );
@@ -219,7 +228,7 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
           router.navigate(
             {
               pathname: `./entry/${_id.toString()}`,
-              params: FOCUS_DESCRIPTION,
+              params: ENTRY_SCREEN_FOCUS_DESCRIPTION,
             },
             { relativeToDirectory: true },
           ),

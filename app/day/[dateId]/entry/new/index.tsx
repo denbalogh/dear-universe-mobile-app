@@ -51,7 +51,7 @@ const NewEntryScreen = () => {
         dayObject.entryObjects.push(entry);
       });
 
-      showSnackbar("Entry was created.");
+      showSnackbar("Entry was created");
 
       router.dismissTo({
         pathname: "/day/[dateId]",

@@ -2,10 +2,10 @@ import React from "react";
 import FeelingsButton, { FeelingsButtonProps } from "./FeelingsButton";
 import { IconButton, MenuItemProps } from "react-native-paper";
 import { View } from "react-native";
-import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { StyleSheet } from "react-native";
 import { spacing } from "@/constants/theme";
+import CustomMenu from "../CustomMenu/CustomMenu";
 
 type Props = {
   feelingsButtonProps: FeelingsButtonProps;
@@ -42,16 +42,18 @@ const BottomBar = ({
             iconColor={theme.colors.error}
           />
           {hasMoveMenuItems && (
-            <IconButtonMenu
-              menuItems={moveMenuItems}
-              iconButtonProps={{ icon: "arrow-up-down" }}
-            />
+            <CustomMenu menuItems={moveMenuItems}>
+              {({ openMenu }) => (
+                <IconButton icon="arrow-up-down" onPress={openMenu} />
+              )}
+            </CustomMenu>
           )}
           {hasEditMenuItems && (
-            <IconButtonMenu
-              menuItems={editMenuItems}
-              iconButtonProps={{ icon: "plus-minus" }}
-            />
+            <CustomMenu menuItems={editMenuItems}>
+              {({ openMenu }) => (
+                <IconButton icon="plus-minus" onPress={openMenu} />
+              )}
+            </CustomMenu>
           )}
         </View>
       )}

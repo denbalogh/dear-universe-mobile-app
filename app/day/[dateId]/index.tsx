@@ -12,9 +12,9 @@ import { spacing } from "@/constants/theme";
 import CTAButtons from "@/components/CTAButtons/CTAButtons";
 import { DaySearchTermParams } from "@/types/dayScreen";
 import {
-  FOCUS_DESCRIPTION,
-  SCROLL_TO_RECORDING,
-  SCROLL_TO_MEDIA,
+  ENTRY_SCREEN_FOCUS_DESCRIPTION,
+  ENTRY_SCREEN_SCROLL_TO_RECORDING,
+  ENTRY_SCREEN_SCROLL_TO_MEDIA,
 } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
@@ -60,7 +60,7 @@ const DayScreen = () => {
     }
 
     updateDayObject({ title });
-    showSnackbar("Title for the day was updated.");
+    showSnackbar("Title for the day was updated");
   };
 
   const { showConfirmDialog } = useConfirmDialog();
@@ -147,7 +147,7 @@ const DayScreen = () => {
     }
 
     updateDayObject({ locked: !locked });
-    showSnackbar(locked ? "Day was unlocked." : "Day was locked.");
+    showSnackbar(locked ? "Day was unlocked" : "Day was locked");
   };
 
   return (
@@ -214,7 +214,7 @@ const DayScreen = () => {
                 router.navigate(
                   {
                     pathname: "./entry/new",
-                    params: FOCUS_DESCRIPTION,
+                    params: ENTRY_SCREEN_FOCUS_DESCRIPTION,
                   },
                   { relativeToDirectory: true },
                 ),
@@ -222,14 +222,20 @@ const DayScreen = () => {
             addRecordingButton={{
               onPress: () =>
                 router.navigate(
-                  { pathname: "./entry/new", params: SCROLL_TO_RECORDING },
+                  {
+                    pathname: "./entry/new",
+                    params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
+                  },
                   { relativeToDirectory: true },
                 ),
             }}
             addMediaButton={{
               onPress: () =>
                 router.navigate(
-                  { pathname: "./entry/new", params: SCROLL_TO_MEDIA },
+                  {
+                    pathname: "./entry/new",
+                    params: ENTRY_SCREEN_SCROLL_TO_MEDIA,
+                  },
                   { relativeToDirectory: true },
                 ),
             }}

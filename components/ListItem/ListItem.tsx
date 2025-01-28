@@ -49,15 +49,12 @@ const ListItem = ({
   const hasMedia = media && media.length > 0;
 
   return (
-    <Card testID="ListItemPressable" style={styles.card} onPress={onPress}>
-      <Card.Content
-        style={[
-          styles.cardContent,
-          {
-            backgroundColor,
-          },
-        ]}
-      >
+    <Card
+      testID="ListItemPressable"
+      style={[styles.card, { backgroundColor }]}
+      onPress={onPress}
+    >
+      <Card.Content style={styles.cardContent}>
         <View style={styles.dayWrapper}>
           <Text
             variant="displaySmall"

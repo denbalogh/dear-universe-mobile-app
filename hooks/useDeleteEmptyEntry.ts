@@ -28,7 +28,7 @@ const useDeleteEmptyEntry = (entryId: string) => {
         realm.delete(entryObject);
       });
 
-      showSnackbar("Entry was deleted because it was empty.");
+      showSnackbar("Entry was deleted because it was empty");
     }
   }, [
     title,

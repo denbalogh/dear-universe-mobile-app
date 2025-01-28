@@ -12,6 +12,7 @@ import {
 import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
 import { format } from "date-fns";
+import useAppState from "@/hooks/useAppState";
 
 type Props = {
   sourceUri: string;
@@ -112,6 +113,14 @@ const AudioPlayer = ({
       await sound.current.pauseAsync();
     }
   };
+
+  const appState = useAppState();
+
+  useEffect(() => {
+    if (appState !== "active") {
+      pauseSound();
+    }
+  }, [appState]);
 
   const handleOn5SecForwardPress = () => {
     if (sound.current) {

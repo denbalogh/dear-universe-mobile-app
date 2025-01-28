@@ -4,18 +4,14 @@ import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
 import React, { useState } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import {
-  ActivityIndicator,
-  Button,
-  IconButton,
-  Menu,
-} from "react-native-paper";
+import { ActivityIndicator, Button, IconButton } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { getThumbnailAsync } from "expo-video-thumbnails";
 import EditableMediaGallery, {
   Media,
 } from "@/components/MediaGallery/EditableMediaGallery";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import CustomMenu from "../CustomMenu/CustomMenu";
 
 type Props = {
   media: Media[];
@@ -32,15 +28,6 @@ const MediaSection = ({
   const theme = useCustomTheme();
   const { showConfirmDialog } = useConfirmDialog();
   const [isLoading, setIsLoading] = useState(false);
-  const [isCameraMenuOpen, setIsCameraMenuOpen] = useState(false);
-
-  const openCameraMenu = () => {
-    setIsCameraMenuOpen(true);
-  };
-
-  const closeCameraMenu = () => {
-    setIsCameraMenuOpen(false);
-  };
 
   const initialSelectedMediaImagesUri = initialSelectedMediaImageUri
     ? [initialSelectedMediaImageUri]
@@ -81,7 +68,6 @@ const MediaSection = ({
   );
   const handleOpenCameraForPhotos = () => {
     openCameraForPhotos();
-    setIsCameraMenuOpen(false);
     setIsLoading(true);
   };
 
@@ -92,7 +78,6 @@ const MediaSection = ({
   );
   const handleOpenCameraForVideos = () => {
     openCameraForVideos();
-    setIsCameraMenuOpen(false);
     setIsLoading(true);
   };
 
@@ -170,33 +155,33 @@ const MediaSection = ({
           )}
           <View style={styles.imageSourceWrapper}>
             <View style={styles.addMediaButtonWrapper}>
-              <Menu
-                visible={isCameraMenuOpen}
-                onDismiss={closeCameraMenu}
-                anchor={
+              <CustomMenu
+                menuItems={[
+                  {
+                    onPress: handleOpenCameraForPhotos,
+                    title: "Take a photo",
+                    leadingIcon: "image",
+                  },
+                  {
+                    onPress: handleOpenCameraForVideos,
+                    title: "Record a video",
+                    leadingIcon: "video",
+                  },
+                ]}
+              >
+                {({ openMenu }) => (
                   <Button
                     mode="elevated"
                     icon="camera"
-                    onPress={openCameraMenu}
+                    onPress={openMenu}
                     loading={isLoading}
                     style={styles.buttonLeft}
                     disabled={isLoading}
                   >
                     Use camera
                   </Button>
-                }
-              >
-                <Menu.Item
-                  onPress={handleOpenCameraForPhotos}
-                  title="Take a photo"
-                  leadingIcon="image"
-                />
-                <Menu.Item
-                  onPress={handleOpenCameraForVideos}
-                  title="Record a video"
-                  leadingIcon="video"
-                />
-              </Menu>
+                )}
+              </CustomMenu>
             </View>
             <View style={styles.addMediaButtonWrapper}>
               <Button

@@ -1,9 +1,14 @@
 import React, { useMemo } from "react";
-import { ActivityIndicator, MenuItemProps, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  IconButton,
+  MenuItemProps,
+  useTheme,
+} from "react-native-paper";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { sizing } from "@/constants/theme";
-import IconButtonMenu from "../IconButtonMenu/IconButtonMenu";
 import { getBorderRadius } from "./utils";
+import CustomMenu from "../CustomMenu/CustomMenu";
 
 export type ImageGridAddItemProps = {
   imagesCount: number;
@@ -41,10 +46,16 @@ const ImageGridAddItem = ({
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <IconButtonMenu
-          iconButtonProps={{ icon: "plus", size: sizing.sizeLarge, disabled }}
-          menuItems={addButtons}
-        />
+        <CustomMenu menuItems={addButtons}>
+          {({ openMenu }) => (
+            <IconButton
+              icon="plus"
+              size={sizing.sizeLarge}
+              disabled={disabled}
+              onPress={openMenu}
+            />
+          )}
+        </CustomMenu>
       )}
     </View>
   );

@@ -4,6 +4,8 @@ import Realm from "realm";
 export class Settings extends Realm.Object {
   _id!: string;
   theme: SettingsTheme = "system";
+  lockCodeHash: string = "";
+  lockUseBiometrics: boolean = false;
 
   static schema: Realm.ObjectSchema = {
     name: "Settings",
@@ -13,6 +15,14 @@ export class Settings extends Realm.Object {
       theme: {
         type: "string",
         default: "system",
+      },
+      lockCodeHash: {
+        type: "string",
+        default: "",
+      },
+      lockUseBiometrics: {
+        type: "bool",
+        default: false,
       },
     },
   };
