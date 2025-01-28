@@ -22,7 +22,7 @@ configureReanimatedLogger({
 });
 
 const App = () => (
-  <RealmProvider schema={schemas} schemaVersion={2} path="default.realm">
+  <RealmProvider schema={schemas} schemaVersion={3} path="default.realm">
     <PaperProviderWithTheme>
       <ConfirmDialogContextProvider>
         <SnackbarContextProvider>

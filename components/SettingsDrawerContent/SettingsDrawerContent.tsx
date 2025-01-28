@@ -1,9 +1,10 @@
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, Text } from "react-native-paper";
+import { Appbar } from "react-native-paper";
 import ThemeButton from "./ThemeButton";
 import { spacing } from "@/constants/theme";
+import LockButton from "./LockButton";
 
 type Props = {
   closeDrawer: () => void;
@@ -16,15 +17,13 @@ const SettingsDrawerContent = ({ closeDrawer }: Props) => {
     <View
       style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
     >
-      <Appbar.Header>
+      <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
         <Appbar.BackAction onPress={closeDrawer} />
         <Appbar.Content title="Settings" />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Text variant="labelMedium" style={styles.label}>
-          Color scheme:
-        </Text>
         <ThemeButton />
+        <LockButton closeSettingsDrawer={closeDrawer} />
       </ScrollView>
     </View>
   );

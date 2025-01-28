@@ -4,9 +4,9 @@ import React, { useCallback, useMemo } from "react";
 import ListItem from "../ListItem/ListItem";
 import { useRouter } from "expo-router";
 import {
-  FOCUS_DESCRIPTION,
-  SCROLL_TO_RECORDING,
-  SCROLL_TO_MEDIA,
+  ENTRY_SCREEN_FOCUS_DESCRIPTION,
+  ENTRY_SCREEN_SCROLL_TO_RECORDING,
+  ENTRY_SCREEN_SCROLL_TO_MEDIA,
 } from "@/constants/screens";
 import { Media } from "../MediaGallery/EditableMediaGallery";
 import { EntryData } from "../Entry/Entry";
@@ -28,18 +28,18 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
           pathname: "/day/[dateId]/entry/new",
           params: {
             dateId,
-            ...FOCUS_DESCRIPTION,
+            ...ENTRY_SCREEN_FOCUS_DESCRIPTION,
           },
         }),
       onAddRecordingPress: () =>
         router.navigate({
           pathname: "/day/[dateId]/entry/new",
-          params: { dateId, ...SCROLL_TO_RECORDING },
+          params: { dateId, ...ENTRY_SCREEN_SCROLL_TO_RECORDING },
         }),
       onAddMediaPress: () =>
         router.navigate({
           pathname: "/day/[dateId]/entry/new",
-          params: { dateId, ...SCROLL_TO_MEDIA },
+          params: { dateId, ...ENTRY_SCREEN_SCROLL_TO_MEDIA },
         }),
     }),
     [dateId, router],

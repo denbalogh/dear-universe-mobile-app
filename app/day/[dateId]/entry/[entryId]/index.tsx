@@ -59,7 +59,7 @@ const EditEntryScreen = () => {
         entryObject.feelingsEmotions = feelingsActiveEmotions;
       });
 
-      showSnackbar("Entry was updated.");
+      showSnackbar("Entry was updated");
 
       router.dismissTo({
         pathname: "/day/[dateId]",
