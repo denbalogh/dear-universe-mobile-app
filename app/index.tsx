@@ -30,7 +30,6 @@ const LoadingScreen = () => {
   return (
     <Stack.Screen
       options={{
-        header: () => null,
         navigationBarColor: theme.colors.background,
       }}
     />

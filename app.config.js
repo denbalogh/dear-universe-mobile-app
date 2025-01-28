@@ -21,7 +21,7 @@ module.exports = {
       package: "com.denbalogh.dearuniverseapp",
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#FEF9DE",
       },
       googleServicesFile: "./google-services.json",
     },
@@ -75,12 +75,13 @@ module.exports = {
       [
         "expo-splash-screen",
         {
-          backgroundColor: "#ffffff",
-          image: "./assets/images/splash.png",
+          backgroundColor: "#FDF8FF",
+          image: "./assets/images/splash-light.png",
           dark: {
-            image: "./assets/images/splash.png",
-            backgroundColor: "#ffffff",
+            image: "./assets/images/splash-dark.png",
+            backgroundColor: "#141318",
           },
+          imageWidth: 100,
         },
       ],
       [
