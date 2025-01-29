@@ -9,14 +9,12 @@ export type FeelingsButtonProps = {
   feelingsGroupName: FEELING_GROUP_NAMES | "";
   feelingsEmotions?: string[];
   onPress: () => void;
-  locked?: boolean;
 };
 
 const FeelingsButton = ({
   feelingsGroupName,
   feelingsEmotions,
   onPress,
-  locked = false,
 }: FeelingsButtonProps) => {
   const theme = useCustomTheme();
 
@@ -25,10 +23,9 @@ const FeelingsButton = ({
 
     return (
       <Card
-        mode={locked ? "contained" : "elevated"}
+        mode="elevated"
         style={[
           styles.card,
-          locked ? styles.lockedCard : styles.unlockedCard,
           { backgroundColor: theme.colors[`${feelingsGroupName}Container`] },
         ]}
         onPress={onPress}
@@ -62,16 +59,6 @@ export default FeelingsButton;
 const styles = StyleSheet.create({
   card: {
     borderRadius: roundness,
-  },
-  lockedCard: {
-    flex: 1,
-    alignItems: "center",
-    marginHorizontal: -spacing.spaceSmall,
-    marginBottom: -spacing.spaceSmall,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-  },
-  unlockedCard: {
     flexShrink: 1,
   },
   cardContent: {
