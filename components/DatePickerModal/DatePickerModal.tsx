@@ -1,4 +1,3 @@
-import { useCustomTheme } from "@/hooks/useCustomTheme";
 import {
   CalendarList,
   dateStringToDate,
@@ -19,6 +18,7 @@ import CustomWeekDayName, {
   WEEK_DAY_NAME_HEIGHT,
 } from "./CustomWeekDayName";
 import { Realm } from "@realm/react";
+import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 
 const APPBAR_HEIGHT = 70;
 const WEEKS_HEIGHT = 290;
@@ -31,8 +31,8 @@ type Props = {
 };
 
 const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {
-  const theme = useCustomTheme();
   const { height } = useWindowDimensions();
+  const { theme, statusBarStyle } = useActiveColorScheme();
 
   const calendarSize = useMemo(
     () => ({
@@ -86,7 +86,10 @@ const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {
           { backgroundColor: theme.colors.background },
         ]}
       >
-        <StatusBar backgroundColor={theme.colors.background} />
+        <StatusBar
+          backgroundColor={theme.colors.background}
+          style={statusBarStyle}
+        />
         <Appbar.Header
           statusBarHeight={0}
           style={[

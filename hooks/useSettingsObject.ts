@@ -1,7 +1,7 @@
 import { SETTINGS_ID } from "@/constants/settings";
 import { Settings } from "@/models/Settings";
 import { useObject, useRealm } from "@realm/react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { UpdateMode } from "realm";
 
 type ReturnType = {
@@ -23,18 +23,21 @@ const useSettingsObject = (): ReturnType => {
     }
   }, [settingsObject, realm]);
 
-  const updateSettingsObject = (data: Partial<Settings>) => {
-    realm.write(() => {
-      realm.create(
-        Settings,
-        {
-          _id: SETTINGS_ID,
-          ...data,
-        },
-        UpdateMode.Modified,
-      );
-    });
-  };
+  const updateSettingsObject = useCallback(
+    (data: Partial<Settings>) => {
+      realm.write(() => {
+        realm.create(
+          Settings,
+          {
+            _id: SETTINGS_ID,
+            ...data,
+          },
+          UpdateMode.Modified,
+        );
+      });
+    },
+    [realm],
+  );
 
   return { settingsObject, updateSettingsObject };
 };

@@ -53,13 +53,7 @@ const Entry = ({
 
   return (
     <Card
-      style={[
-        styles.wrapper,
-        {
-          backgroundColor: theme.colors.surfaceVariant,
-          marginBottom: locked ? spacing.spaceMedium : spacing.spaceSmall,
-        },
-      ]}
+      style={[styles.wrapper, { backgroundColor: theme.colors.surfaceVariant }]}
       mode={locked ? "outlined" : "contained"}
     >
       <Card.Content style={styles.cardContent}>
@@ -102,6 +96,7 @@ export default Entry;
 const styles = StyleSheet.create({
   wrapper: {
     borderRadius: roundness,
+    marginBottom: spacing.spaceSmall,
   },
   cardContent: {
     paddingHorizontal: spacing.spaceSmall,

@@ -1,7 +1,7 @@
 import { Day } from "@/models/Day";
 import { isDateIdFormat } from "@/utils/date";
 import { useObject, useRealm } from "@realm/react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { UpdateMode } from "realm";
 
 type ReturnType = {
@@ -27,18 +27,21 @@ const useDayObject = (dateId: string): ReturnType => {
     }
   }, [dateId, dayObject, realm]);
 
-  const updateDayObject = (data: Partial<Day>) => {
-    realm.write(() => {
-      realm.create(
-        Day,
-        {
-          _id: dateId,
-          ...data,
-        },
-        UpdateMode.Modified,
-      );
-    });
-  };
+  const updateDayObject = useCallback(
+    (data: Partial<Day>) => {
+      realm.write(() => {
+        realm.create(
+          Day,
+          {
+            _id: dateId,
+            ...data,
+          },
+          UpdateMode.Modified,
+        );
+      });
+    },
+    [dateId, realm],
+  );
 
   return { dayObject, updateDayObject };
 };

@@ -15,9 +15,9 @@ import useBiometrics from "@/hooks/useBiometrics";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import useSettingsObject from "@/hooks/useSettingsObject";
 import { Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, Card, HelperText, Text } from "react-native-paper";
+import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
 
 const LockDeleteScreen = () => {
   const theme = useCustomTheme();
@@ -30,8 +30,9 @@ const LockDeleteScreen = () => {
 
   const [currentCode, setCurrentCode] = useState("");
   const [currentCodeStatus, setCurrentCodeStatus] = useState("");
+  const [isCurrentCodeValid, setIsCurrentCodeValid] = useState(false);
 
-  const handleConfirm = async () => {
+  const handleConfirm = useCallback(async () => {
     updateSettingsObject({
       lockCodeHash: "",
       lockUseBiometrics: false,
@@ -39,27 +40,45 @@ const LockDeleteScreen = () => {
 
     showSnackbar("Lock was deleted");
     router.back();
-  };
+  }, [router, showSnackbar, updateSettingsObject]);
 
-  const handleCurrentCodeEndEditing = async () => {
+  const validateCode = async (onSuccess?: () => void) => {
     if (isCodeLengthValid(currentCode)) {
       if (await isCodeHashValid(currentCode, lockCodeHash)) {
-        handleConfirm();
+        setIsCurrentCodeValid(true);
+        setCurrentCodeStatus("");
+        onSuccess?.();
       } else {
         setCurrentCodeStatus(INVALID_CODE_ERROR_MSG);
+        setIsCurrentCodeValid(false);
       }
     } else {
       setCurrentCodeStatus(INVALID_LENGTH_ERROR_MSG);
+      setIsCurrentCodeValid(false);
     }
   };
 
-  const handleUseBiometricsToDelete = async () => {
+  const handleCurrentCodeEndEditing = () => {
+    validateCode();
+  };
+
+  const handleCurrentCodeSubmit = () => {
+    validateCode(handleConfirm);
+  };
+
+  const handleUseBiometricsToDelete = useCallback(async () => {
     const { success } = await authenticate("Authenticate to delete lock");
 
     if (success) {
       handleConfirm();
     }
-  };
+  }, [authenticate, handleConfirm]);
+
+  useEffect(() => {
+    if (lockUseBiometrics) {
+      handleUseBiometricsToDelete();
+    }
+  }, [lockUseBiometrics, handleUseBiometricsToDelete]);
 
   return (
     <View
@@ -87,9 +106,10 @@ const LockDeleteScreen = () => {
           code={currentCode}
           onCodeChange={setCurrentCode}
           textInputProps={{
-            autoFocus: true,
+            autoFocus: !lockUseBiometrics,
             style: styles.input,
             onEndEditing: handleCurrentCodeEndEditing,
+            onSubmitEditing: handleCurrentCodeSubmit,
           }}
         />
         <HelperText type="error" visible={currentCodeStatus !== ""}>
@@ -115,6 +135,16 @@ const LockDeleteScreen = () => {
           </Card>
         )}
       </ScrollView>
+      <Button
+        disabled={!isCurrentCodeValid}
+        style={styles.confirmButton}
+        mode="contained"
+        onPress={handleCurrentCodeSubmit}
+        textColor={theme.colors.onError}
+        buttonColor={theme.colors.error}
+      >
+        Confirm
+      </Button>
     </View>
   );
 };
@@ -143,5 +173,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  confirmButton: {
+    margin: spacing.spaceMedium,
   },
 });

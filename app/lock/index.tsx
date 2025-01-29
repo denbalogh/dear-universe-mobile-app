@@ -2,28 +2,22 @@ import CodeInput from "@/components/CodeInput/CodeInput";
 import {
   INVALID_CODE_ERROR_MSG,
   INVALID_LENGTH_ERROR_MSG,
+  LOCK_LENGTH,
 } from "@/components/CodeInput/constants";
 import {
   isCodeHashValid,
   isCodeLengthValid,
 } from "@/components/CodeInput/utils";
 import BiometricsIcons from "@/components/LockScreens/BiometricsIcons";
-import { LOCK_SCREEN_NAVIGATE_TO_APP } from "@/constants/screens";
 import { spacing } from "@/constants/theme";
 import useAppState from "@/hooks/useAppState";
 import useBiometrics from "@/hooks/useBiometrics";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import useSettingsObject from "@/hooks/useSettingsObject";
-import { LockSearchTermParams } from "@/types/lockScreen";
-import {
-  Stack,
-  useFocusEffect,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, Card, HelperText, Text } from "react-native-paper";
+import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
 
 const LockScreen = () => {
   const theme = useCustomTheme();
@@ -31,43 +25,53 @@ const LockScreen = () => {
   const appState = useAppState();
   const { authenticate } = useBiometrics();
 
-  const { navigateTo } = useLocalSearchParams<LockSearchTermParams>();
-
   const { settingsObject } = useSettingsObject();
   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
 
   const [code, setCode] = useState("");
   const [codeStatus, setCodeStatus] = useState("");
+  const [isCodeValid, setIsCodeValid] = useState(false);
 
   // Prevent going back from lock screen with hardware back button
   useFocusEffect(
     React.useCallback(() => {
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
-        () => true,
+        () => {
+          BackHandler.exitApp();
+          return true;
+        },
       );
       return () => subscription.remove();
     }, []),
   );
 
   const handleConfirm = useCallback(async () => {
-    if (navigateTo === LOCK_SCREEN_NAVIGATE_TO_APP.navigateTo) {
-      router.replace({ pathname: "/app" });
-    } else {
-      router.back();
-    }
-  }, [navigateTo, router]);
+    router.back();
+  }, [router]);
 
-  const handleCodeEndEditing = async () => {
+  const validateCode = async (onSuccess?: () => void) => {
     if (isCodeLengthValid(code)) {
       if (await isCodeHashValid(code, lockCodeHash)) {
-        handleConfirm();
+        setIsCodeValid(true);
+        setCodeStatus("");
+        onSuccess?.();
       } else {
         setCodeStatus(INVALID_CODE_ERROR_MSG);
+        setIsCodeValid(false);
       }
     } else {
       setCodeStatus(INVALID_LENGTH_ERROR_MSG);
+      setIsCodeValid(false);
     }
+  };
+
+  const handleCodeEndEditing = () => {
+    validateCode();
+  };
+
+  const handleCodeSubmit = () => {
+    validateCode(handleConfirm);
   };
 
   const handleUseBiometricsToUnlock = useCallback(async () => {
@@ -102,7 +106,9 @@ const LockScreen = () => {
         <Text variant="displaySmall" style={styles.headline}>
           App is locked
         </Text>
-        <Text variant="titleMedium">Type 6-digit code to unlock</Text>
+        <Text variant="titleMedium">
+          Type {LOCK_LENGTH}-digit code to unlock
+        </Text>
         <CodeInput
           label="Code"
           code={code}
@@ -111,6 +117,7 @@ const LockScreen = () => {
             autoFocus: !lockUseBiometrics,
             style: styles.input,
             onEndEditing: handleCodeEndEditing,
+            onSubmitEditing: handleCodeSubmit,
           }}
         />
         <HelperText type="error" visible={codeStatus !== ""}>
@@ -137,6 +144,14 @@ const LockScreen = () => {
           </Card>
         )}
       </ScrollView>
+      <Button
+        disabled={!isCodeValid}
+        style={styles.confirmButton}
+        mode="contained"
+        onPress={handleCodeSubmit}
+      >
+        Confirm
+      </Button>
     </View>
   );
 };
@@ -164,5 +179,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  confirmButton: {
+    margin: spacing.spaceMedium,
   },
 });

@@ -1,9 +1,8 @@
+import EmotionChip from "@/components/EmotionChip/EmotionChip";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import { spacing } from "@/constants/theme";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Chip } from "react-native-paper";
 
 type Props = {
   emotions: string[];
@@ -17,49 +16,25 @@ const EmotionChips = ({
   activeEmotions,
   onEmotionPress,
   feelingsGroupName,
-}: Props) => {
-  const theme = useCustomTheme();
+}: Props) => (
+  <View style={styles.wrapper}>
+    {emotions.map((emotion) => {
+      const isActiveEmotion = activeEmotions?.includes(emotion);
 
-  return (
-    <View style={styles.wrapper}>
-      {emotions.map((emotion) => {
-        const isActiveEmotion = activeEmotions?.includes(emotion);
-
-        return (
-          <Chip
-            key={emotion}
-            style={[
-              styles.emotion,
-              isActiveEmotion
-                ? // Active styles
-                  {
-                    backgroundColor: theme.colors[feelingsGroupName],
-                  }
-                : // Inactive styles
-                  {
-                    backgroundColor:
-                      theme.colors[`${feelingsGroupName}Container`],
-                  },
-            ]}
-            onPress={() => onEmotionPress(emotion)}
-            selected={isActiveEmotion}
-            elevated={true}
-            textStyle={
-              isActiveEmotion
-                ? // Active styles
-                  { color: theme.colors[`on${feelingsGroupName}`] }
-                : // Inactive styles
-                  { color: theme.colors[`on${feelingsGroupName}Container`] }
-            }
-            selectedColor={theme.colors[`on${feelingsGroupName}`]}
-          >
-            {emotion}
-          </Chip>
-        );
-      })}
-    </View>
-  );
-};
+      return (
+        <EmotionChip
+          key={emotion}
+          feelingsGroupName={feelingsGroupName}
+          emotion={emotion}
+          style={styles.emotion}
+          onPress={() => onEmotionPress(emotion)}
+          selected={isActiveEmotion}
+          elevated={true}
+        />
+      );
+    })}
+  </View>
+);
 
 export default EmotionChips;
 

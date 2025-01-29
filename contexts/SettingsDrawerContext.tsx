@@ -1,10 +1,12 @@
 import SettingsDrawerContent from "@/components/SettingsDrawerContent/SettingsDrawerContent";
+import { useSegments } from "expo-router";
 import React, {
   createContext,
   ReactNode,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { BackHandler } from "react-native";
@@ -26,9 +28,14 @@ const SettingsDrawerContextProvider = ({
   children: ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const segments = useSegments();
 
-  const openDrawer = () => setIsOpen(true);
-  const closeDrawer = () => setIsOpen(false);
+  const isOnLockScreen = useMemo(() => {
+    return segments.length === 1 && segments[0] === "lock";
+  }, [segments]);
+
+  const openDrawer = useCallback(() => setIsOpen(true), []);
+  const closeDrawer = useCallback(() => setIsOpen(false), []);
 
   useEffect(() => {
     const backAction = () => {
@@ -45,11 +52,11 @@ const SettingsDrawerContextProvider = ({
     );
 
     return () => backHandler.remove();
-  }, [isOpen]);
+  }, [isOpen, closeDrawer]);
 
   const renderDrawerContent = useCallback(() => {
     return <SettingsDrawerContent closeDrawer={closeDrawer} />;
-  }, []);
+  }, [closeDrawer]);
 
   return (
     <SettingsDrawerContext.Provider
@@ -63,6 +70,7 @@ const SettingsDrawerContextProvider = ({
         onOpen={openDrawer}
         onClose={closeDrawer}
         renderDrawerContent={renderDrawerContent}
+        swipeEnabled={!isOnLockScreen}
       >
         {children}
       </Drawer>
