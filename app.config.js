@@ -21,7 +21,7 @@ module.exports = {
       package: "com.denbalogh.dearuniverseapp",
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
-        backgroundColor: "#FEF9DE",
+        backgroundColor: "#FDF8FF",
       },
       googleServicesFile: "./google-services.json",
     },

@@ -2,7 +2,7 @@ import { spacing } from "@/constants/theme";
 import useCamera from "@/hooks/useCamera";
 import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { ActivityIndicator, Button, IconButton } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
@@ -37,29 +37,32 @@ const MediaSection = ({
     string[]
   >(initialSelectedMediaImagesUri);
 
-  const handleAddMedia = async (assets: ImagePickerAsset[]) => {
-    const newMedia = [];
+  const handleAddMedia = useCallback(
+    async (assets: ImagePickerAsset[]) => {
+      const newMedia = [];
 
-    for (const { type, uri } of assets) {
-      if (type === "video") {
-        const { uri: thumbnailUri } = await getThumbnailAsync(uri, {
-          time: 0,
-        });
-        newMedia.push({ imageUri: thumbnailUri, videoUri: uri });
+      for (const { type, uri } of assets) {
+        if (type === "video") {
+          const { uri: thumbnailUri } = await getThumbnailAsync(uri, {
+            time: 0,
+          });
+          newMedia.push({ imageUri: thumbnailUri, videoUri: uri });
+        }
+
+        if (type === "image") {
+          newMedia.push({ imageUri: uri });
+        }
       }
 
-      if (type === "image") {
-        newMedia.push({ imageUri: uri });
-      }
-    }
+      onMediaChange([...media, ...newMedia]);
+      setIsLoading(false);
+    },
+    [media, onMediaChange],
+  );
 
-    onMediaChange([...media, ...newMedia]);
+  const handleOnCancel = useCallback(() => {
     setIsLoading(false);
-  };
-
-  const handleOnCancel = () => {
-    setIsLoading(false);
-  };
+  }, []);
 
   const openCameraForPhotos = useCamera(
     "images",

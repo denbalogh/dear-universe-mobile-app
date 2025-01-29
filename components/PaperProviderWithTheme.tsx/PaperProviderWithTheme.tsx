@@ -27,7 +27,7 @@ const PaperProviderWithTheme = ({ children }: Props) => {
           { backgroundColor: theme.colors.background },
         ]}
       />
-      <StatusBar style={statusBarStyle} />
+      <StatusBar translucent={true} style={statusBarStyle} />
       {children}
     </PaperProvider>
   );

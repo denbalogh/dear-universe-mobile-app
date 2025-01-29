@@ -5,7 +5,7 @@ import {
   launchImageLibraryAsync,
   useMediaLibraryPermissions,
 } from "expo-image-picker";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { defaultOptions } from "./useCamera";
 
 const useMediaLibrary = (
@@ -23,7 +23,7 @@ const useMediaLibrary = (
     [libraryPermissions],
   );
 
-  const handleOpenLibrary = async () => {
+  const handleOpenLibrary = useCallback(async () => {
     const selectedImages = await launchImageLibraryAsync({
       ...defaultOptions,
       mediaTypes,
@@ -36,9 +36,9 @@ const useMediaLibrary = (
     } else {
       onSuccess(selectedImages.assets);
     }
-  };
+  }, [mediaTypes, onCancel, onSuccess]);
 
-  const handleRequestLibraryPermissions = async () => {
+  const handleRequestLibraryPermissions = useCallback(async () => {
     const { canAskAgain, granted } = await requestLibraryPermission();
 
     if (granted) {
@@ -48,14 +48,15 @@ const useMediaLibrary = (
         "The media library permission has been denied. To grant it, go to system settings.",
       );
     }
-  };
-  return async () => {
+  }, [handleOpenLibrary, requestLibraryPermission, showSnackbar]);
+
+  return useCallback(async () => {
     if (!isLibraryAllowed) {
       await handleRequestLibraryPermissions();
     } else {
       await handleOpenLibrary();
     }
-  };
+  }, [handleOpenLibrary, handleRequestLibraryPermissions, isLibraryAllowed]);
 };
 
 export default useMediaLibrary;

@@ -28,7 +28,7 @@ const App = () => (
         <SnackbarContextProvider>
           <GestureHandlerRootView>
             <SettingsDrawerContextProvider>
-              <Stack screenOptions={{ header: () => null }} />
+              <Stack />
             </SettingsDrawerContextProvider>
           </GestureHandlerRootView>
         </SnackbarContextProvider>
