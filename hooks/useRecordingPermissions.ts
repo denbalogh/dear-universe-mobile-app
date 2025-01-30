@@ -4,7 +4,7 @@ import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 
 type ReturnType = {
   granted: boolean;
-  requestPermissions: (successCallback: () => void) => Promise<void>;
+  requestPermissions: () => Promise<void>;
 };
 
 const useRecordingPermissions = (): ReturnType => {
@@ -12,20 +12,13 @@ const useRecordingPermissions = (): ReturnType => {
 
   const [recordingPermissions, requestRecordingPermission] = usePermissions();
 
-  const handleRequestRecordingPermissions = useCallback(
-    async (successCallback: () => void) => {
-      const { canAskAgain, granted } = await requestRecordingPermission();
+  const handleRequestRecordingPermissions = useCallback(async () => {
+    const { canAskAgain, granted } = await requestRecordingPermission();
 
-      if (!granted && !canAskAgain) {
-        showPermissionDeniedSnackbar("microphone");
-      }
-
-      if (granted) {
-        successCallback();
-      }
-    },
-    [requestRecordingPermission, showPermissionDeniedSnackbar],
-  );
+    if (!granted && !canAskAgain) {
+      showPermissionDeniedSnackbar("microphone");
+    }
+  }, [requestRecordingPermission, showPermissionDeniedSnackbar]);
 
   return useMemo(
     () => ({

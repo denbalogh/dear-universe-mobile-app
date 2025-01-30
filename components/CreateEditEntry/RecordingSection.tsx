@@ -55,10 +55,6 @@ const RecordingSection = ({
     setRecordingStatus(status);
   };
 
-  const handleRequestRecordingPermissions = () => {
-    requestRecordingPermissions(startRecording);
-  };
-
   const pauseRecording = useCallback(async () => {
     if (recording) {
       await recording.pauseAsync();
@@ -153,7 +149,7 @@ const RecordingSection = ({
           hasRecordingStarted={hasRecordingStarted}
           isRecording={isRecording}
           hasPermissions={recordingPermissionsGranted}
-          onRequestPermissionsPress={handleRequestRecordingPermissions}
+          onRequestPermissionsPress={requestRecordingPermissions}
           onRecordPress={startRecording}
           onPausePress={pauseRecording}
           onStopPress={stopRecording}
