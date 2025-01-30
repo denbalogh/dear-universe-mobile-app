@@ -1,4 +1,4 @@
-import { format, isMatch, parse } from "date-fns";
+import { format, isMatch, isToday, parse } from "date-fns";
 
 const ID_DATE_FORMAT = "d_M_y";
 
@@ -28,8 +28,9 @@ export const formatMonthName = (date: Date): string => {
   return format(date, "MMMM");
 };
 
-const FULL_DATE_FORMAT = "do MMMM yyyy";
+const FULL_DATE_FORMAT = "do MMM. yyyy";
 
 export const formatFullDate = (date: Date): string => {
-  return format(date, FULL_DATE_FORMAT);
+  const formatted = format(date, FULL_DATE_FORMAT);
+  return isToday(date) ? `Today, ${formatted}` : formatted;
 };
