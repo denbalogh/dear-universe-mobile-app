@@ -30,7 +30,10 @@ const RecordingSection = ({
   ...viewProps
 }: Props) => {
   const theme = useCustomTheme();
-  const { granted, requestPermissions } = useRecordingPermissions();
+  const {
+    granted: recordingPermissionsGranted,
+    requestPermissions: requestRecordingPermissions,
+  } = useRecordingPermissions();
   const { showConfirmDialog } = useConfirmDialog();
 
   const [recording, setRecording] = useState<Recording>();
@@ -50,6 +53,10 @@ const RecordingSection = ({
 
     setRecording(recording);
     setRecordingStatus(status);
+  };
+
+  const handleRequestRecordingPermissions = () => {
+    requestRecordingPermissions(startRecording);
   };
 
   const pauseRecording = useCallback(async () => {
@@ -145,8 +152,8 @@ const RecordingSection = ({
           time={time}
           hasRecordingStarted={hasRecordingStarted}
           isRecording={isRecording}
-          hasPermissions={granted}
-          onRequestPermissionsPress={requestPermissions}
+          hasPermissions={recordingPermissionsGranted}
+          onRequestPermissionsPress={handleRequestRecordingPermissions}
           onRecordPress={startRecording}
           onPausePress={pauseRecording}
           onStopPress={stopRecording}

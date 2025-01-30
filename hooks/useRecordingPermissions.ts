@@ -1,26 +1,31 @@
-import { useSnackbar } from "@/contexts/SnackbarContext";
 import { usePermissions } from "expo-av/build/Audio";
 import { useCallback, useMemo } from "react";
+import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 
 type ReturnType = {
   granted: boolean;
-  requestPermissions: () => Promise<void>;
+  requestPermissions: (successCallback: () => void) => Promise<void>;
 };
 
 const useRecordingPermissions = (): ReturnType => {
-  const { showSnackbar } = useSnackbar();
+  const { showPermissionDeniedSnackbar } = usePermissionDeniedSnackbar();
 
   const [recordingPermissions, requestRecordingPermission] = usePermissions();
 
-  const handleRequestRecordingPermissions = useCallback(async () => {
-    const { canAskAgain, granted } = await requestRecordingPermission();
+  const handleRequestRecordingPermissions = useCallback(
+    async (successCallback: () => void) => {
+      const { canAskAgain, granted } = await requestRecordingPermission();
 
-    if (!granted && !canAskAgain) {
-      showSnackbar(
-        "The recording permission has been denied. To grant it, go to system settings.",
-      );
-    }
-  }, [requestRecordingPermission, showSnackbar]);
+      if (!granted && !canAskAgain) {
+        showPermissionDeniedSnackbar("microphone");
+      }
+
+      if (granted) {
+        successCallback();
+      }
+    },
+    [requestRecordingPermission, showPermissionDeniedSnackbar],
+  );
 
   return useMemo(
     () => ({

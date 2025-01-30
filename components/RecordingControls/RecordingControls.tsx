@@ -56,76 +56,64 @@ const Controls = ({
 
   return (
     <View style={styles.wrapper}>
-      {!hasPermissions ? (
-        <Button
-          onPress={onRequestPermissionsPress}
-          icon="microphone-question"
-          mode="outlined"
-          style={styles.permissionButton}
-          accessibilityLabel="Request recording permission"
-        >
-          Request permission
-        </Button>
-      ) : (
-        <View style={styles.buttonsWrapper}>
-          {hasRecordingStarted && (
-            <Animated.View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: theme.colors.primaryContainer },
-                styles.meteringAnimated,
-                animatedStyles,
-              ]}
-              testID="metering-animated"
-            />
-          )}
-          <IconButton
-            icon="delete"
-            onPress={onDiscardPress}
-            iconColor={theme.colors.error}
-            disabled={!hasRecordingStarted || isRecording}
-            accessibilityLabel="Discard recording"
+      <View style={styles.buttonsWrapper}>
+        {hasRecordingStarted && (
+          <Animated.View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: theme.colors.primaryContainer },
+              styles.meteringAnimated,
+              animatedStyles,
+            ]}
+            testID="metering-animated"
           />
-          {!hasRecordingStarted ? (
-            <Button
-              onPress={onRecordPress}
-              icon="record"
-              mode="elevated"
-              style={styles.recordButton}
-              accessibilityLabel="Start recording"
-            >
-              Record
-            </Button>
-          ) : isRecording ? (
-            <Button
-              onPress={onPausePress}
-              icon="pause"
-              mode="elevated"
-              style={styles.recordButton}
-              accessibilityLabel="Pause recording"
-            >
-              {`Pause | ${time}`}
-            </Button>
-          ) : (
-            <Button
-              onPress={onContinuePress}
-              icon="record"
-              mode="elevated"
-              style={styles.recordButton}
-              accessibilityLabel="Continue recording"
-            >
-              {`Continue | ${time}`}
-            </Button>
-          )}
-          <IconButton
-            icon="stop"
-            mode="contained-tonal"
-            onPress={onStopPress}
-            disabled={!hasRecordingStarted || isRecording}
-            accessibilityLabel="Stop recording"
-          />
-        </View>
-      )}
+        )}
+        <IconButton
+          icon="delete"
+          onPress={onDiscardPress}
+          iconColor={theme.colors.error}
+          disabled={!hasRecordingStarted || isRecording}
+          accessibilityLabel="Discard recording"
+        />
+        {!hasRecordingStarted ? (
+          <Button
+            onPress={hasPermissions ? onRecordPress : onRequestPermissionsPress}
+            icon="record"
+            mode="elevated"
+            style={styles.recordButton}
+            accessibilityLabel="Start recording"
+          >
+            Record
+          </Button>
+        ) : isRecording ? (
+          <Button
+            onPress={onPausePress}
+            icon="pause"
+            mode="elevated"
+            style={styles.recordButton}
+            accessibilityLabel="Pause recording"
+          >
+            {`Pause | ${time}`}
+          </Button>
+        ) : (
+          <Button
+            onPress={onContinuePress}
+            icon="record"
+            mode="elevated"
+            style={styles.recordButton}
+            accessibilityLabel="Continue recording"
+          >
+            {`Continue | ${time}`}
+          </Button>
+        )}
+        <IconButton
+          icon="stop"
+          mode="contained-tonal"
+          onPress={onStopPress}
+          disabled={!hasRecordingStarted || isRecording}
+          accessibilityLabel="Stop recording"
+        />
+      </View>
     </View>
   );
 };
@@ -138,9 +126,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  permissionButton: {
-    flex: 1,
   },
   buttonsWrapper: {
     flexDirection: "row",
