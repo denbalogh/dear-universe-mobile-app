@@ -1,12 +1,14 @@
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { CameraMode, CameraType, FlashMode } from "expo-camera";
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 import { FAB, IconButton } from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import CustomMenu from "../CustomMenu/CustomMenu";
 import { CustomOrientation } from "@/hooks/useScreenOrientation";
+
+const SLIDER_SPACE_FROM_WALL = 240;
 
 type Props = {
   isCameraReady: boolean;
@@ -50,8 +52,8 @@ const Controls = ({
   const theme = useCustomTheme();
   const { width, height } = useWindowDimensions();
 
-  const sliderWidthPortrait = width - 250;
-  const sliderWidthLandscape = height - 250;
+  const sliderWidthPortrait = width - SLIDER_SPACE_FROM_WALL;
+  const sliderWidthLandscape = height - SLIDER_SPACE_FROM_WALL;
 
   const onLowerZoom = () => {
     const newZoom = Math.max(0, zoom - 0.1);
@@ -91,12 +93,6 @@ const Controls = ({
     off: "flash-off",
   }[flash];
 
-  const flashComponent = (
-    <CustomMenu menuItems={flashMenuItems}>
-      {({ openMenu }) => <IconButton icon={flashIcon} onPress={openMenu} />}
-    </CustomMenu>
-  );
-
   const toggleMute = () => {
     onMuteChange(!mute);
   };
@@ -110,87 +106,49 @@ const Controls = ({
     video: "video",
   }[cameraMode];
 
-  if (orientation === "portrait") {
-    return (
-      <View
-        style={[
-          styles.portraitWrapper,
-          { backgroundColor: theme.colors.backdrop },
-        ]}
-      >
-        <View style={styles.portraitTopButtonsWrapper}>
-          {flashComponent}
-          <View style={styles.portraitSliderWrapper}>
-            <IconButton icon="magnify-minus" onPress={onLowerZoom} />
-            <Slider
-              style={{ width: sliderWidthPortrait }}
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor={theme.colors.primary}
-              maximumTrackTintColor={theme.colors.secondary}
-              thumbTintColor={theme.colors.primary}
-              value={zoom}
-              onSlidingComplete={onZoomChange}
-            />
-            <IconButton icon="magnify-plus" onPress={onHigherZoom} />
-          </View>
-          <IconButton
-            icon={mute ? "volume-off" : "volume-high"}
-            onPress={toggleMute}
-          />
-        </View>
-        <View style={styles.portraitBottomButtonsWrapper}>
-          <IconButton
-            onPress={toggleFacing}
-            icon="camera-flip"
-            disabled={isRecording}
-          />
-          {cameraMode === "picture" ? (
-            <FAB
-              icon="record"
-              onPress={onPicturePress}
-              color="transparent"
-              disabled={!isCameraReady}
-            />
-          ) : isRecording ? (
-            <FAB
-              icon="stop"
-              onPress={onStopRecordingPress}
-              label={recordingTime}
-            />
-          ) : (
-            <FAB
-              icon="record"
-              onPress={onRecordPress}
-              disabled={!isCameraReady}
-            />
-          )}
-          <IconButton
-            onPress={toggleCameraMode}
-            icon={cameraModeIcon}
-            disabled={isRecording}
-          />
-        </View>
-      </View>
-    );
-  }
+  const {
+    wrapperStyle,
+    topButtonsWrapperStyle,
+    sliderWrapperStyle,
+    sliderStyle,
+    bottomButtonsWrapperStyle,
+  } = useMemo(() => {
+    return orientation === "portrait"
+      ? {
+          wrapperStyle: [
+            styles.portraitWrapper,
+            { backgroundColor: theme.colors.backdrop },
+          ],
+          topButtonsWrapperStyle: styles.portraitTopButtonsWrapper,
+          sliderWrapperStyle: styles.portraitSliderWrapper,
+          sliderStyle: [{ width: sliderWidthPortrait }],
+          bottomButtonsWrapperStyle: styles.portraitBottomButtonsWrapper,
+        }
+      : {
+          wrapperStyle: [
+            styles.landscapeWrapper,
+            { backgroundColor: theme.colors.backdrop },
+          ],
+          topButtonsWrapperStyle: styles.landscapeTopButtonsWrapper,
+          sliderWrapperStyle: styles.landscapeSliderWrapper,
+          sliderStyle: [
+            styles.landscapeSlider,
+            { width: sliderWidthLandscape },
+          ],
+          bottomButtonsWrapperStyle: styles.landscapeBottomButtonsWrapper,
+        };
+  }, [orientation, sliderWidthPortrait, sliderWidthLandscape, theme.colors]);
 
   return (
-    <View
-      style={[
-        styles.landscapeWrapper,
-        { backgroundColor: theme.colors.backdrop },
-      ]}
-    >
-      <View style={[styles.landscapeTopButtonsWrapper]}>
-        <IconButton
-          icon={mute ? "volume-off" : "volume-high"}
-          onPress={toggleMute}
-        />
-        <View style={styles.landscapeSliderWrapper}>
-          <IconButton icon="magnify-plus" onPress={onHigherZoom} />
+    <View style={wrapperStyle}>
+      <View style={topButtonsWrapperStyle}>
+        <CustomMenu menuItems={flashMenuItems}>
+          {({ openMenu }) => <IconButton icon={flashIcon} onPress={openMenu} />}
+        </CustomMenu>
+        <View style={sliderWrapperStyle}>
+          <IconButton icon="magnify-minus" onPress={onLowerZoom} />
           <Slider
-            style={[styles.landscapeSlider, { width: sliderWidthLandscape }]}
+            style={sliderStyle}
             minimumValue={0}
             maximumValue={1}
             minimumTrackTintColor={theme.colors.primary}
@@ -199,14 +157,18 @@ const Controls = ({
             value={zoom}
             onSlidingComplete={onZoomChange}
           />
-          <IconButton icon="magnify-minus" onPress={onLowerZoom} />
+          <IconButton icon="magnify-plus" onPress={onHigherZoom} />
         </View>
-        {flashComponent}
-      </View>
-      <View style={styles.landscapeBottomButtonsWrapper}>
         <IconButton
-          onPress={toggleCameraMode}
-          icon={cameraModeIcon}
+          icon={mute ? "volume-off" : "volume-high"}
+          onPress={toggleMute}
+          disabled={cameraMode === "picture"}
+        />
+      </View>
+      <View style={bottomButtonsWrapperStyle}>
+        <IconButton
+          onPress={toggleFacing}
+          icon="camera-flip"
           disabled={isRecording}
         />
         {cameraMode === "picture" ? (
@@ -230,8 +192,8 @@ const Controls = ({
           />
         )}
         <IconButton
-          onPress={toggleFacing}
-          icon="camera-flip"
+          onPress={toggleCameraMode}
+          icon={cameraModeIcon}
           disabled={isRecording}
         />
       </View>
@@ -240,6 +202,8 @@ const Controls = ({
 };
 
 export default Controls;
+
+const LANDSCAPE_SLIDER_HEIGHT = 20;
 
 const styles = StyleSheet.create({
   portraitWrapper: {
@@ -272,25 +236,25 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.spaceSmall,
   },
   landscapeTopButtonsWrapper: {
-    flexDirection: "column",
+    flexDirection: "column-reverse",
     justifyContent: "space-between",
     alignItems: "center",
     marginRight: spacing.spaceMedium,
   },
   landscapeSliderWrapper: {
-    flexDirection: "column",
+    flexDirection: "column-reverse",
     justifyContent: "space-between",
     alignItems: "center",
-    width: 20,
+    width: LANDSCAPE_SLIDER_HEIGHT,
     flex: 1,
   },
   landscapeSlider: {
     transform: [{ rotateZ: "-90deg" }],
     transformOrigin: "center",
-    height: 20,
+    height: LANDSCAPE_SLIDER_HEIGHT,
   },
   landscapeBottomButtonsWrapper: {
-    flexDirection: "column",
+    flexDirection: "column-reverse",
     justifyContent: "space-between",
     alignItems: "center",
   },
