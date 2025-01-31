@@ -1,20 +1,27 @@
-import { useCameraPermissions as usePermissions } from "expo-camera";
+import {
+  useMicrophonePermissions,
+  useCameraPermissions as usePermissions,
+} from "expo-camera";
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 
 type ReturnType = {
-  granted: boolean;
-  requestPermissions: (successCallback: () => void) => Promise<void>;
+  cameraGranted: boolean;
+  requestCameraPermission: (successCallback: () => void) => Promise<void>;
+  microphoneGranted: boolean;
+  requestMicrophonePermission: (successCallback: () => void) => Promise<void>;
 };
 
 const useCameraPermissions = (): ReturnType => {
   const { showPermissionDeniedSnackbar } = usePermissionDeniedSnackbar();
 
   const [cameraPermissions, requestCameraPermission] = usePermissions();
+  const [microphonePermissions, requestMicrophonePermissions] =
+    useMicrophonePermissions();
 
-  const handleRequestCameraPermissions = useCallback(
+  const handleRequestCameraPermission = useCallback(
     async (successCallback: () => void) => {
-      const { canAskAgain, granted } = await requestCameraPermission();
+      const { granted, canAskAgain } = await requestCameraPermission();
 
       if (!granted && !canAskAgain) {
         showPermissionDeniedSnackbar("camera");
@@ -27,12 +34,34 @@ const useCameraPermissions = (): ReturnType => {
     [requestCameraPermission, showPermissionDeniedSnackbar],
   );
 
+  const handleRequestMicrophonePermission = useCallback(
+    async (successCallback: () => void) => {
+      const { granted, canAskAgain } = await requestMicrophonePermissions();
+
+      if (!granted && !canAskAgain) {
+        showPermissionDeniedSnackbar("microphone");
+      }
+
+      if (granted) {
+        successCallback();
+      }
+    },
+    [showPermissionDeniedSnackbar, requestMicrophonePermissions],
+  );
+
   return useMemo(
     () => ({
-      granted: cameraPermissions?.status === "granted",
-      requestPermissions: handleRequestCameraPermissions,
+      cameraGranted: cameraPermissions?.status === "granted",
+      requestCameraPermission: handleRequestCameraPermission,
+      microphoneGranted: microphonePermissions?.status === "granted",
+      requestMicrophonePermission: handleRequestMicrophonePermission,
     }),
-    [cameraPermissions, handleRequestCameraPermissions],
+    [
+      cameraPermissions,
+      microphonePermissions,
+      handleRequestCameraPermission,
+      handleRequestMicrophonePermission,
+    ],
   );
 };
 
