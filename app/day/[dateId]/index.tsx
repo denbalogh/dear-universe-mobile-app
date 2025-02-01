@@ -4,15 +4,8 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import {
-  BackHandler,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
@@ -37,6 +30,7 @@ import { isEqual } from "lodash";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import FadeInView from "@/components/FadeInView/FadeInView";
+import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -49,24 +43,14 @@ const DayScreen = () => {
     useLocalSearchParams<DaySearchTermParams>();
   const { dayObject, updateDayObject } = useDayObject(dateId);
 
-  const scrollOffset = useRef(0);
-
-  const handleOnScroll = useCallback(
-    ({
-      nativeEvent: {
-        contentOffset: { y },
-      },
-    }: NativeSyntheticEvent<NativeScrollEvent>) => {
-      scrollOffset.current = y;
-    },
-    [],
-  );
+  const { scrollOffset, handleOnScroll } = useScrollViewOffset();
 
   const {
     entryObjects = [],
     title: initialTitle = "",
     locked = false,
   } = dayObject || {};
+
   const hasEntries = entryObjects.length > 0;
 
   const [title, setTitle] = useState(initialTitle);
@@ -155,10 +139,10 @@ const DayScreen = () => {
   }, [dateId, router]);
 
   const onFlingDown = useCallback(() => {
-    if (scrollOffset.current <= 0) {
+    if (scrollOffset <= 0) {
       router.back();
     }
-  }, [router]);
+  }, [router, scrollOffset]);
 
   const toggleLocked = () => {
     if (dayObject === null) {
