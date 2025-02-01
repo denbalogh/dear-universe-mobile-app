@@ -4,12 +4,13 @@ import { Appbar, Modal, Portal } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import PreviewItem, { AppearFrom } from "./PreviewItem";
+import PreviewItem from "./PreviewItem";
 import { View } from "react-native";
 import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import { spacing } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
+import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
 
 type Props = {
   media: Media[];
@@ -26,7 +27,7 @@ const MediaGalleryPreview = ({
 }: Props) => {
   const { theme, statusBarStyle } = useActiveColorScheme();
   const [activeIndex, setActiveIndex] = useState(initialIndex);
-  const [appearFrom, setAppearFrom] = useState<AppearFrom>("bottom");
+  const [appearFrom, setAppearFrom] = useState<FadeInViewAppearFrom>("bottom");
 
   useEffect(() => {
     if (isVisible) {

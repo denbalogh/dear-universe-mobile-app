@@ -4,13 +4,7 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   BackHandler,
   NativeScrollEvent,
@@ -35,11 +29,6 @@ import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMe
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { addDays, isToday, subDays } from "date-fns";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
 import useDayObject from "@/hooks/useDayObject";
 import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
@@ -47,6 +36,7 @@ import DayTitle from "@/components/DayTitle/DayTitle";
 import { isEqual } from "lodash";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
+import FadeInView from "@/components/FadeInView/FadeInView";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -55,24 +45,9 @@ const DayScreen = () => {
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showSnackbar } = useSnackbar();
 
-  const { dateId, appearFrom } = useLocalSearchParams<DaySearchTermParams>();
+  const { dateId, appearFrom = "center" } =
+    useLocalSearchParams<DaySearchTermParams>();
   const { dayObject, updateDayObject } = useDayObject(dateId);
-
-  const translateInit = {
-    left: -100,
-    right: 100,
-    undefined: 0,
-  }[appearFrom];
-
-  const translate = useSharedValue(translateInit);
-
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ translateX: translate.value }],
-  }));
-
-  useEffect(() => {
-    translate.value = withTiming(0, { duration: 300 });
-  }, [translate]);
 
   const scrollOffset = useRef(0);
 
@@ -201,7 +176,7 @@ const DayScreen = () => {
       onFlingDown={onFlingDown}
     >
       <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
-        <Animated.View style={[styles.flex, animatedStyles]}>
+        <FadeInView style={styles.flex} appearFrom={appearFrom}>
           <Stack.Screen
             options={{
               header: () => (
@@ -291,7 +266,7 @@ const DayScreen = () => {
               }}
             />
           )}
-        </Animated.View>
+        </FadeInView>
       </View>
     </FlingGesture>
   );

@@ -1,4 +1,6 @@
+import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
+
 export type DaySearchTermParams = {
   dateId: string;
-  appearFrom: "left" | "right";
+  appearFrom: FadeInViewAppearFrom;
 };
