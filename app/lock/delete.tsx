@@ -8,6 +8,7 @@ import {
   isCodeHashValid,
   isCodeLengthValid,
 } from "@/components/CodeInput/utils";
+import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import BiometricsIcons from "@/components/LockScreens/BiometricsIcons";
 import { spacing } from "@/constants/theme";
 import { useSnackbar } from "@/contexts/SnackbarContext";
@@ -81,71 +82,75 @@ const LockDeleteScreen = () => {
   }, [lockUseBiometrics, handleUseBiometricsToDelete]);
 
   return (
-    <View
-      style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
-    >
-      <Stack.Screen
-        options={{
-          header: () => (
-            <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-              <Appbar.BackAction onPress={() => router.back()} />
-            </Appbar.Header>
-          ),
-          navigationBarColor: theme.colors.background,
-        }}
-      />
-      <ScrollView contentContainerStyle={styles.contentWrapper}>
-        <Text variant="displaySmall" style={styles.headline}>
-          Deleting lock
-        </Text>
-        <Text variant="titleMedium">
-          Type current {LOCK_LENGTH}-digit code to confirm
-        </Text>
-        <CodeInput
-          label="Current code"
-          code={currentCode}
-          onCodeChange={setCurrentCode}
-          textInputProps={{
-            autoFocus: !lockUseBiometrics,
-            style: styles.input,
-            onEndEditing: handleCurrentCodeEndEditing,
-            onSubmitEditing: handleCurrentCodeSubmit,
+    <FlingGesture onFlingDown={router.back}>
+      <View
+        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+      >
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Appbar.Header
+                style={{ backgroundColor: theme.colors.background }}
+              >
+                <Appbar.BackAction onPress={() => router.back()} />
+              </Appbar.Header>
+            ),
+            navigationBarColor: theme.colors.background,
           }}
         />
-        <HelperText type="error" visible={currentCodeStatus !== ""}>
-          {currentCodeStatus}
-        </HelperText>
-        {lockUseBiometrics && (
-          <Card
-            style={[styles.card, { backgroundColor: theme.colors.error }]}
-            mode="elevated"
-            onPress={handleUseBiometricsToDelete}
-          >
-            <Card.Content>
-              <View style={styles.cardContentWrapper}>
-                <Text
-                  variant="bodyLarge"
-                  style={{ color: theme.colors.onError }}
-                >
-                  Use biometrics to delete lock
-                </Text>
-                <BiometricsIcons color={theme.colors.onError} />
-              </View>
-            </Card.Content>
-          </Card>
-        )}
-      </ScrollView>
-      <Button
-        disabled={!isCurrentCodeValid}
-        style={styles.confirmButton}
-        mode="contained"
-        onPress={handleCurrentCodeSubmit}
-        textColor={theme.colors.onError}
-        buttonColor={theme.colors.error}
-      >
-        Confirm
-      </Button>
-    </View>
+        <ScrollView contentContainerStyle={styles.contentWrapper}>
+          <Text variant="displaySmall" style={styles.headline}>
+            Deleting lock
+          </Text>
+          <Text variant="titleMedium">
+            Type current {LOCK_LENGTH}-digit code to confirm
+          </Text>
+          <CodeInput
+            label="Current code"
+            code={currentCode}
+            onCodeChange={setCurrentCode}
+            textInputProps={{
+              autoFocus: !lockUseBiometrics,
+              style: styles.input,
+              onEndEditing: handleCurrentCodeEndEditing,
+              onSubmitEditing: handleCurrentCodeSubmit,
+            }}
+          />
+          <HelperText type="error" visible={currentCodeStatus !== ""}>
+            {currentCodeStatus}
+          </HelperText>
+          {lockUseBiometrics && (
+            <Card
+              style={[styles.card, { backgroundColor: theme.colors.error }]}
+              mode="elevated"
+              onPress={handleUseBiometricsToDelete}
+            >
+              <Card.Content>
+                <View style={styles.cardContentWrapper}>
+                  <Text
+                    variant="bodyLarge"
+                    style={{ color: theme.colors.onError }}
+                  >
+                    Use biometrics to delete lock
+                  </Text>
+                  <BiometricsIcons color={theme.colors.onError} />
+                </View>
+              </Card.Content>
+            </Card>
+          )}
+        </ScrollView>
+        <Button
+          disabled={!isCurrentCodeValid}
+          style={styles.confirmButton}
+          mode="contained"
+          onPress={handleCurrentCodeSubmit}
+          textColor={theme.colors.onError}
+          buttonColor={theme.colors.error}
+        >
+          Confirm
+        </Button>
+      </View>
+    </FlingGesture>
   );
 };
 

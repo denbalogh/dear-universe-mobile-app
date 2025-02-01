@@ -34,14 +34,8 @@ import {
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
-import {
-  Directions,
-  Gesture,
-  GestureDetector,
-} from "react-native-gesture-handler";
 import { addDays, isToday, subDays } from "date-fns";
 import Animated, {
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -52,6 +46,7 @@ import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import DayTitle from "@/components/DayTitle/DayTitle";
 import { isEqual } from "lodash";
 import { useSnackbar } from "@/contexts/SnackbarContext";
+import FlingGesture from "@/components/FlingGesture/FlingGesture";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -153,59 +148,41 @@ const DayScreen = () => {
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 
-  const flingLeft = useMemo(() => {
-    const goToPreviousDay = () => {
-      const currentDate = parseDateId(dateId);
-      const previousDate = subDays(currentDate, 1);
+  const onFlingLeft = useCallback(() => {
+    const currentDate = parseDateId(dateId);
+    const previousDate = subDays(currentDate, 1);
 
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: {
-          dateId: formatDateId(previousDate),
-          ...DAY_SCREEN_APPEAR_FROM_RIGHT,
-        },
-      });
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.LEFT)
-      .onEnd(() => runOnJS(goToPreviousDay)());
+    router.replace({
+      pathname: "/day/[dateId]",
+      params: {
+        dateId: formatDateId(previousDate),
+        ...DAY_SCREEN_APPEAR_FROM_RIGHT,
+      },
+    });
   }, [dateId, router]);
 
-  const flingRight = useMemo(() => {
-    const goToNextDay = () => {
-      const currentDate = parseDateId(dateId);
+  const onFlingRight = useCallback(() => {
+    const currentDate = parseDateId(dateId);
 
-      if (isToday(currentDate)) {
-        return;
-      }
+    if (isToday(currentDate)) {
+      return;
+    }
 
-      const nextDate = addDays(currentDate, 1);
+    const nextDate = addDays(currentDate, 1);
 
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: {
-          dateId: formatDateId(nextDate),
-          ...DAY_SCREEN_APPEAR_FROM_LEFT,
-        },
-      });
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.RIGHT)
-      .onEnd(() => runOnJS(goToNextDay)());
+    router.replace({
+      pathname: "/day/[dateId]",
+      params: {
+        dateId: formatDateId(nextDate),
+        ...DAY_SCREEN_APPEAR_FROM_LEFT,
+      },
+    });
   }, [dateId, router]);
 
-  const flingDown = useMemo(() => {
-    const goBack = () => {
-      if (scrollOffset.current <= 0) {
-        router.back();
-      }
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.DOWN)
-      .onEnd(() => runOnJS(goBack)());
+  const onFlingDown = useCallback(() => {
+    if (scrollOffset.current <= 0) {
+      router.back();
+    }
   }, [router]);
 
   const toggleLocked = () => {
@@ -218,7 +195,11 @@ const DayScreen = () => {
   };
 
   return (
-    <GestureDetector gesture={Gesture.Race(flingLeft, flingRight, flingDown)}>
+    <FlingGesture
+      onFlingLeft={onFlingLeft}
+      onFlingRight={onFlingRight}
+      onFlingDown={onFlingDown}
+    >
       <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
         <Animated.View style={[styles.flex, animatedStyles]}>
           <Stack.Screen
@@ -312,7 +293,7 @@ const DayScreen = () => {
           )}
         </Animated.View>
       </View>
-    </GestureDetector>
+    </FlingGesture>
   );
 };
 

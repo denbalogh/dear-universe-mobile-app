@@ -1,17 +1,12 @@
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { Modal, Portal } from "react-native-paper";
 import Camera from "./Camera";
-import {
-  Directions,
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import { runOnJS } from "react-native-reanimated";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import FlingGesture from "../FlingGesture/FlingGesture";
 
 type Props = {
   isVisible: boolean;
@@ -36,12 +31,6 @@ const CameraModal = ({
     }
   }, [isVisible]);
 
-  const flingDown = useMemo(() => {
-    return Gesture.Fling()
-      .direction(Directions.DOWN)
-      .onEnd(() => runOnJS(onClose)());
-  }, [onClose]);
-
   return (
     <Portal>
       <Modal
@@ -57,14 +46,14 @@ const CameraModal = ({
           style={statusBarStyle}
         />
         <GestureHandlerRootView>
-          <GestureDetector gesture={flingDown}>
+          <FlingGesture onFlingDown={onClose}>
             <Camera
               active={isVisible}
               onCloseModal={onClose}
               onPictureSaved={onPictureSaved}
               onVideoSaved={onVideoSaved}
             />
-          </GestureDetector>
+          </FlingGesture>
         </GestureHandlerRootView>
       </Modal>
     </Portal>

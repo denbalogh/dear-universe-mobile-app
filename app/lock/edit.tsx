@@ -10,6 +10,7 @@ import {
   isCodeLengthValid,
   areCodesMatching,
 } from "@/components/CodeInput/utils";
+import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import UseBiometricsCard from "@/components/LockScreens/UseBiometricsCard";
 import { spacing } from "@/constants/theme";
 import { useSnackbar } from "@/contexts/SnackbarContext";
@@ -176,113 +177,120 @@ const LockEditScreen = () => {
     areCodesMatching(newCode, newCodeConfirm);
 
   return (
-    <View
-      style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
-    >
-      <Stack.Screen
-        options={{
-          header: () => (
-            <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-              <Appbar.BackAction onPress={router.back} />
-            </Appbar.Header>
-          ),
-          navigationBarColor: theme.colors.background,
-        }}
-      />
-      <ScrollView contentContainerStyle={styles.contentWrapper}>
-        <Text variant="displaySmall" style={styles.headline}>
-          Editing lock
-        </Text>
-        <Card
-          style={styles.newCodeCard}
-          onPress={handleCodeChangeEnabledToggle}
-        >
-          <Card.Content>
-            <View style={styles.newCodeCardHeader}>
-              <Switch
-                value={codeChangeEnabled}
-                onChange={handleCodeChangeEnabledToggle}
-              />
-              <Text style={styles.newCodeCardHeaderText} variant="bodyLarge">
-                Change unlock code
-              </Text>
-            </View>
-            {codeChangeEnabled && (
-              <View style={styles.newCodeInputsWrapper}>
-                <Text variant="titleMedium">
-                  Type current {LOCK_LENGTH}-digit code for unlocking the app
-                </Text>
-                <CodeInput
-                  label="Current code"
-                  code={currentCode}
-                  onCodeChange={handleOnCurrentCodeChange}
-                  textInputProps={{
-                    autoFocus: currentCodeInputAutofocus.current,
-                    style: styles.input,
-                    onEndEditing: handleCurrentCodeEndEditing,
-                    onSubmitEditing: handleOnCurrentCodeSubmit,
-                  }}
-                />
-                <HelperText type="error" visible={currentCodeStatus !== ""}>
-                  {currentCodeStatus}
-                </HelperText>
-                <Text variant="titleMedium">
-                  Type new {LOCK_LENGTH}-digit code for unlocking the app
-                </Text>
-                <CodeInput
-                  label="New code"
-                  code={newCode}
-                  onCodeChange={handleOnNewCodeChange}
-                  textInputProps={{
-                    autoFocus: newCodeInputAutofocus.current,
-                    ref: newCodeInputRef,
-                    style: styles.input,
-                    onEndEditing: handleNewCodeEndEditing,
-                    onSubmitEditing: handleOnNewCodeSubmit,
-                  }}
-                />
-                <HelperText
-                  type="error"
-                  visible={newCodeStatus !== ""}
-                  style={styles.newCodeHelperText}
-                >
-                  {newCodeStatus}
-                </HelperText>
-                <Text variant="titleMedium">
-                  Type the same {LOCK_LENGTH}-digit code to confirm
-                </Text>
-                <CodeInput
-                  label="New code again"
-                  code={newCodeConfirm}
-                  onCodeChange={handleOnNewCodeConfirmChange}
-                  textInputProps={{
-                    autoFocus: newCodeConfirmInputAutofocus.current,
-                    ref: newCodeConfirmInputRef,
-                    style: styles.input,
-                    onEndEditing: handleNewCodeConfirmEndEditing,
-                  }}
-                />
-                <HelperText type="error" visible={newCodeConfirmStatus !== ""}>
-                  {newCodeConfirmStatus}
-                </HelperText>
-                <Button
-                  style={styles.confirmButton}
-                  mode="contained"
-                  disabled={isTyping || !areCodesValid}
-                  onPress={onConfirmPress}
-                >
-                  Confirm
-                </Button>
-              </View>
-            )}
-          </Card.Content>
-        </Card>
-        <UseBiometricsCard
-          biometricsEnabled={lockUseBiometrics}
-          onChange={handleOnBiometricsChange}
+    <FlingGesture onFlingDown={router.back}>
+      <View
+        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+      >
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Appbar.Header
+                style={{ backgroundColor: theme.colors.background }}
+              >
+                <Appbar.BackAction onPress={router.back} />
+              </Appbar.Header>
+            ),
+            navigationBarColor: theme.colors.background,
+          }}
         />
-      </ScrollView>
-    </View>
+        <ScrollView contentContainerStyle={styles.contentWrapper}>
+          <Text variant="displaySmall" style={styles.headline}>
+            Editing lock
+          </Text>
+          <Card
+            style={styles.newCodeCard}
+            onPress={handleCodeChangeEnabledToggle}
+          >
+            <Card.Content>
+              <View style={styles.newCodeCardHeader}>
+                <Switch
+                  value={codeChangeEnabled}
+                  onChange={handleCodeChangeEnabledToggle}
+                />
+                <Text style={styles.newCodeCardHeaderText} variant="bodyLarge">
+                  Change unlock code
+                </Text>
+              </View>
+              {codeChangeEnabled && (
+                <View style={styles.newCodeInputsWrapper}>
+                  <Text variant="titleMedium">
+                    Type current {LOCK_LENGTH}-digit code for unlocking the app
+                  </Text>
+                  <CodeInput
+                    label="Current code"
+                    code={currentCode}
+                    onCodeChange={handleOnCurrentCodeChange}
+                    textInputProps={{
+                      autoFocus: currentCodeInputAutofocus.current,
+                      style: styles.input,
+                      onEndEditing: handleCurrentCodeEndEditing,
+                      onSubmitEditing: handleOnCurrentCodeSubmit,
+                    }}
+                  />
+                  <HelperText type="error" visible={currentCodeStatus !== ""}>
+                    {currentCodeStatus}
+                  </HelperText>
+                  <Text variant="titleMedium">
+                    Type new {LOCK_LENGTH}-digit code for unlocking the app
+                  </Text>
+                  <CodeInput
+                    label="New code"
+                    code={newCode}
+                    onCodeChange={handleOnNewCodeChange}
+                    textInputProps={{
+                      autoFocus: newCodeInputAutofocus.current,
+                      ref: newCodeInputRef,
+                      style: styles.input,
+                      onEndEditing: handleNewCodeEndEditing,
+                      onSubmitEditing: handleOnNewCodeSubmit,
+                    }}
+                  />
+                  <HelperText
+                    type="error"
+                    visible={newCodeStatus !== ""}
+                    style={styles.newCodeHelperText}
+                  >
+                    {newCodeStatus}
+                  </HelperText>
+                  <Text variant="titleMedium">
+                    Type the same {LOCK_LENGTH}-digit code to confirm
+                  </Text>
+                  <CodeInput
+                    label="New code again"
+                    code={newCodeConfirm}
+                    onCodeChange={handleOnNewCodeConfirmChange}
+                    textInputProps={{
+                      autoFocus: newCodeConfirmInputAutofocus.current,
+                      ref: newCodeConfirmInputRef,
+                      style: styles.input,
+                      onEndEditing: handleNewCodeConfirmEndEditing,
+                    }}
+                  />
+                  <HelperText
+                    type="error"
+                    visible={newCodeConfirmStatus !== ""}
+                  >
+                    {newCodeConfirmStatus}
+                  </HelperText>
+                  <Button
+                    style={styles.confirmButton}
+                    mode="contained"
+                    disabled={isTyping || !areCodesValid}
+                    onPress={onConfirmPress}
+                  >
+                    Confirm
+                  </Button>
+                </View>
+              )}
+            </Card.Content>
+          </Card>
+          <UseBiometricsCard
+            biometricsEnabled={lockUseBiometrics}
+            onChange={handleOnBiometricsChange}
+          />
+        </ScrollView>
+      </View>
+    </FlingGesture>
   );
 };
 

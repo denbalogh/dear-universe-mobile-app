@@ -100,6 +100,7 @@ const LockScreen = () => {
             </Appbar.Header>
           ),
           navigationBarColor: theme.colors.background,
+          animation: "fade",
         }}
       />
       <ScrollView contentContainerStyle={styles.contentWrapper}>
