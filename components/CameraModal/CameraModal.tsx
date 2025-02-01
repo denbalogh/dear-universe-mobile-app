@@ -1,17 +1,31 @@
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { Modal, Portal } from "react-native-paper";
 import Camera from "./Camera";
+import {
+  Directions,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import { runOnJS } from "react-native-reanimated";
 
 type Props = {
   isVisible: boolean;
   onClose: () => void;
+  onPictureSaved: (uri: string) => void;
+  onVideoSaved: (uri: string) => void;
 };
 
-const CameraModal = ({ isVisible, onClose }: Props) => {
+const CameraModal = ({
+  isVisible,
+  onClose,
+  onPictureSaved,
+  onVideoSaved,
+}: Props) => {
   const { theme, statusBarStyle } = useActiveColorScheme();
 
   useEffect(() => {
@@ -21,6 +35,12 @@ const CameraModal = ({ isVisible, onClose }: Props) => {
       lockAsync(OrientationLock.PORTRAIT);
     }
   }, [isVisible]);
+
+  const flingDown = useMemo(() => {
+    return Gesture.Fling()
+      .direction(Directions.DOWN)
+      .onEnd(() => runOnJS(onClose)());
+  }, [onClose]);
 
   return (
     <Portal>
@@ -36,7 +56,16 @@ const CameraModal = ({ isVisible, onClose }: Props) => {
           backgroundColor={theme.colors.background}
           style={statusBarStyle}
         />
-        <Camera active={isVisible} onCloseModal={onClose} />
+        <GestureHandlerRootView>
+          <GestureDetector gesture={flingDown}>
+            <Camera
+              active={isVisible}
+              onCloseModal={onClose}
+              onPictureSaved={onPictureSaved}
+              onVideoSaved={onVideoSaved}
+            />
+          </GestureDetector>
+        </GestureHandlerRootView>
       </Modal>
     </Portal>
   );

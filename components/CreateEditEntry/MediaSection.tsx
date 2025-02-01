@@ -12,6 +12,7 @@ import EditableMediaGallery, {
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import CameraModal from "../CameraModal/CameraModal";
 import useCameraPermissions from "@/hooks/useCameraPermissions";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 
 type Props = {
   media: Media[];
@@ -27,6 +28,7 @@ const MediaSection = ({
 }: Props) => {
   const theme = useCustomTheme();
   const { showConfirmDialog } = useConfirmDialog();
+  const { showSnackbar } = useSnackbar();
   const [isCameraModalVisible, setIsCameraModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,7 +58,7 @@ const MediaSection = ({
     string[]
   >(initialSelectedMediaImagesUri);
 
-  const handleAddMedia = useCallback(
+  const handleAddMediaFromImagePicker = useCallback(
     async (assets: ImagePickerAsset[]) => {
       const newMedia = [];
 
@@ -79,13 +81,37 @@ const MediaSection = ({
     [media, onMediaChange],
   );
 
+  const handleAddImageFromCamera = useCallback(
+    (imageUri: string) => {
+      onMediaChange([...media, { imageUri }]);
+      setIsLoading(false);
+
+      showSnackbar("Picture was saved to entry");
+    },
+    [media, onMediaChange, showSnackbar],
+  );
+
+  const handleAddVideoFromCamera = useCallback(
+    async (videoUri: string) => {
+      const { uri: thumbnailUri } = await getThumbnailAsync(videoUri, {
+        time: 0,
+      });
+
+      onMediaChange([...media, { imageUri: thumbnailUri, videoUri }]);
+      setIsLoading(false);
+
+      showSnackbar("Video was saved to entry");
+    },
+    [media, onMediaChange, showSnackbar],
+  );
+
   const handleOnCancel = useCallback(() => {
     setIsLoading(false);
   }, []);
 
   const openImageLibrary = useMediaLibrary(
     ["images", "videos"],
-    handleAddMedia,
+    handleAddMediaFromImagePicker,
     handleOnCancel,
   );
 
@@ -194,7 +220,7 @@ const MediaSection = ({
             addButtons={[
               {
                 leadingIcon: "camera",
-                title: "Open camera",
+                title: "Use camera",
                 onPress: handleOpenCameraModal,
               },
               {
@@ -230,6 +256,8 @@ const MediaSection = ({
       <CameraModal
         isVisible={isCameraModalVisible}
         onClose={closeCameraModal}
+        onPictureSaved={handleAddImageFromCamera}
+        onVideoSaved={handleAddVideoFromCamera}
       />
     </View>
   );

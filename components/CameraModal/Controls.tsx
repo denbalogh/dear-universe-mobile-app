@@ -2,13 +2,10 @@ import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { CameraMode, CameraType, FlashMode } from "expo-camera";
 import React, { useMemo } from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
-import { FAB, IconButton } from "react-native-paper";
-import Slider from "@react-native-community/slider";
+import { StyleSheet, View } from "react-native";
+import { FAB, IconButton, Text } from "react-native-paper";
 import CustomMenu from "../CustomMenu/CustomMenu";
 import { CustomOrientation } from "@/hooks/useScreenOrientation";
-
-const SLIDER_SPACE_FROM_WALL = 240;
 
 type Props = {
   isCameraReady: boolean;
@@ -27,6 +24,8 @@ type Props = {
   onFlashChange: (flash: FlashMode) => void;
   mute: boolean;
   onMuteChange: (mute: boolean) => void;
+  torch: boolean;
+  onTorchChange: (torch: boolean) => void;
   orientation: CustomOrientation;
 };
 
@@ -47,26 +46,28 @@ const Controls = ({
   onFlashChange,
   mute,
   onMuteChange,
+  torch,
+  onTorchChange,
   orientation,
 }: Props) => {
   const theme = useCustomTheme();
-  const { width, height } = useWindowDimensions();
-
-  const sliderWidthPortrait = width - SLIDER_SPACE_FROM_WALL;
-  const sliderWidthLandscape = height - SLIDER_SPACE_FROM_WALL;
 
   const onLowerZoom = () => {
-    const newZoom = Math.max(0, zoom - 0.1);
+    const newZoom = Math.max(0, zoom - 20);
     onZoomChange(newZoom);
   };
 
   const onHigherZoom = () => {
-    const newZoom = Math.min(1, zoom + 0.1);
+    const newZoom = Math.min(100, zoom + 20);
     onZoomChange(newZoom);
   };
 
   const toggleFacing = () => {
     onFacingChange(facing === "back" ? "front" : "back");
+  };
+
+  const toggleTorch = () => {
+    onTorchChange(!torch);
   };
 
   const flashMenuItems = [
@@ -108,10 +109,9 @@ const Controls = ({
 
   const {
     wrapperStyle,
+    topWrapperStyle,
     topButtonsWrapperStyle,
-    sliderWrapperStyle,
-    sliderStyle,
-    bottomButtonsWrapperStyle,
+    bottomWrapperStyle,
   } = useMemo(() => {
     return orientation === "portrait"
       ? {
@@ -119,53 +119,55 @@ const Controls = ({
             styles.portraitWrapper,
             { backgroundColor: theme.colors.backdrop },
           ],
+          topWrapperStyle: styles.portraitTopWrapper,
           topButtonsWrapperStyle: styles.portraitTopButtonsWrapper,
-          sliderWrapperStyle: styles.portraitSliderWrapper,
-          sliderStyle: [{ width: sliderWidthPortrait }],
-          bottomButtonsWrapperStyle: styles.portraitBottomButtonsWrapper,
+          bottomWrapperStyle: styles.portraitBottomWrapper,
         }
       : {
           wrapperStyle: [
             styles.landscapeWrapper,
             { backgroundColor: theme.colors.backdrop },
           ],
+          topWrapperStyle: styles.landscapeTopWrapper,
           topButtonsWrapperStyle: styles.landscapeTopButtonsWrapper,
-          sliderWrapperStyle: styles.landscapeSliderWrapper,
-          sliderStyle: [
-            styles.landscapeSlider,
-            { width: sliderWidthLandscape },
-          ],
-          bottomButtonsWrapperStyle: styles.landscapeBottomButtonsWrapper,
+          bottomWrapperStyle: styles.landscapeBottomButtonsWrapper,
         };
-  }, [orientation, sliderWidthPortrait, sliderWidthLandscape, theme.colors]);
+  }, [orientation, theme.colors]);
 
   return (
     <View style={wrapperStyle}>
-      <View style={topButtonsWrapperStyle}>
-        <CustomMenu menuItems={flashMenuItems}>
-          {({ openMenu }) => <IconButton icon={flashIcon} onPress={openMenu} />}
-        </CustomMenu>
-        <View style={sliderWrapperStyle}>
-          <IconButton icon="magnify-minus" onPress={onLowerZoom} />
-          <Slider
-            style={sliderStyle}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor={theme.colors.primary}
-            maximumTrackTintColor={theme.colors.secondary}
-            thumbTintColor={theme.colors.primary}
-            value={zoom}
-            onSlidingComplete={onZoomChange}
+      <View style={topWrapperStyle}>
+        <View style={topButtonsWrapperStyle}>
+          <IconButton
+            icon={torch ? "flashlight" : "flashlight-off"}
+            onPress={toggleTorch}
           />
-          <IconButton icon="magnify-plus" onPress={onHigherZoom} />
+          <CustomMenu menuItems={flashMenuItems}>
+            {({ openMenu }) => (
+              <IconButton icon={flashIcon} onPress={openMenu} />
+            )}
+          </CustomMenu>
+          <IconButton
+            icon={mute ? "volume-off" : "volume-high"}
+            onPress={toggleMute}
+            disabled={cameraMode === "picture"}
+          />
         </View>
-        <IconButton
-          icon={mute ? "volume-off" : "volume-high"}
-          onPress={toggleMute}
-          disabled={cameraMode === "picture"}
-        />
+        <View style={topButtonsWrapperStyle}>
+          <IconButton
+            icon="magnify-minus"
+            onPress={onLowerZoom}
+            disabled={zoom === 0}
+          />
+          <Text variant="bodySmall">{zoom}%</Text>
+          <IconButton
+            icon="magnify-plus"
+            onPress={onHigherZoom}
+            disabled={zoom === 100}
+          />
+        </View>
       </View>
-      <View style={bottomButtonsWrapperStyle}>
+      <View style={bottomWrapperStyle}>
         <IconButton
           onPress={toggleFacing}
           icon="camera-flip"
@@ -203,8 +205,6 @@ const Controls = ({
 
 export default Controls;
 
-const LANDSCAPE_SLIDER_HEIGHT = 20;
-
 const styles = StyleSheet.create({
   portraitWrapper: {
     flexDirection: "column",
@@ -212,19 +212,17 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.spaceLarge,
     paddingTop: spacing.spaceSmall,
   },
-  portraitTopButtonsWrapper: {
+  portraitTopWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: spacing.spaceMedium,
   },
-  portraitSliderWrapper: {
+  portraitTopButtonsWrapper: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    flex: 1,
   },
-  portraitBottomButtonsWrapper: {
+  portraitBottomWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -235,23 +233,15 @@ const styles = StyleSheet.create({
     paddingRight: spacing.spaceLarge,
     paddingLeft: spacing.spaceSmall,
   },
-  landscapeTopButtonsWrapper: {
+  landscapeTopWrapper: {
     flexDirection: "column-reverse",
     justifyContent: "space-between",
     alignItems: "center",
     marginRight: spacing.spaceMedium,
   },
-  landscapeSliderWrapper: {
+  landscapeTopButtonsWrapper: {
     flexDirection: "column-reverse",
-    justifyContent: "space-between",
     alignItems: "center",
-    width: LANDSCAPE_SLIDER_HEIGHT,
-    flex: 1,
-  },
-  landscapeSlider: {
-    transform: [{ rotateZ: "-90deg" }],
-    transformOrigin: "center",
-    height: LANDSCAPE_SLIDER_HEIGHT,
   },
   landscapeBottomButtonsWrapper: {
     flexDirection: "column-reverse",

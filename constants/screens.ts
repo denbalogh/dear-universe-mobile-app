@@ -1,4 +1,21 @@
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
+import { DaySearchTermParams } from "@/types/dayScreen";
+
+// Day screen
+
+export const DAY_SCREEN_APPEAR_FROM_LEFT: Pick<
+  DaySearchTermParams,
+  "appearFrom"
+> = {
+  appearFrom: "left",
+};
+
+export const DAY_SCREEN_APPEAR_FROM_RIGHT: Pick<
+  DaySearchTermParams,
+  "appearFrom"
+> = {
+  appearFrom: "right",
+};
 
 // Day - entry - screens
 

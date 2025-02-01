@@ -27,6 +27,7 @@ const useMediaLibrary = (
       mediaTypes,
       allowsMultipleSelection: true,
       orderedSelection: true,
+      quality: 1,
     });
 
     if (selectedImages.canceled) {
