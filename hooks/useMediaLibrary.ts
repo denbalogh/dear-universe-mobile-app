@@ -1,4 +1,3 @@
-import { useSnackbar } from "@/contexts/SnackbarContext";
 import {
   ImagePickerAsset,
   ImagePickerOptions,
@@ -6,14 +5,14 @@ import {
   useMediaLibraryPermissions,
 } from "expo-image-picker";
 import { useCallback, useMemo } from "react";
-import { defaultOptions } from "./useCamera";
+import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 
 const useMediaLibrary = (
   mediaTypes: ImagePickerOptions["mediaTypes"],
   onSuccess: (images: ImagePickerAsset[]) => void,
   onCancel?: () => void,
 ) => {
-  const { showSnackbar } = useSnackbar();
+  const { showPermissionDeniedSnackbar } = usePermissionDeniedSnackbar();
 
   const [libraryPermissions, requestLibraryPermission] =
     useMediaLibraryPermissions();
@@ -25,8 +24,10 @@ const useMediaLibrary = (
 
   const handleOpenLibrary = useCallback(async () => {
     const selectedImages = await launchImageLibraryAsync({
-      ...defaultOptions,
       mediaTypes,
+      allowsMultipleSelection: true,
+      orderedSelection: true,
+      quality: 1,
     });
 
     if (selectedImages.canceled) {
@@ -44,11 +45,13 @@ const useMediaLibrary = (
     if (granted) {
       await handleOpenLibrary();
     } else if (!canAskAgain) {
-      showSnackbar(
-        "The media library permission has been denied. To grant it, go to system settings.",
-      );
+      showPermissionDeniedSnackbar("media library");
     }
-  }, [handleOpenLibrary, requestLibraryPermission, showSnackbar]);
+  }, [
+    handleOpenLibrary,
+    requestLibraryPermission,
+    showPermissionDeniedSnackbar,
+  ]);
 
   return useCallback(async () => {
     if (!isLibraryAllowed) {

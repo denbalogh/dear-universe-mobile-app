@@ -1,20 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Media } from "../EditableMediaGallery";
 import { Appbar, Modal, Portal } from "react-native-paper";
 import { StyleSheet } from "react-native";
-import {
-  Directions,
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { runOnJS } from "react-native-reanimated";
-import PreviewItem, { AppearFrom } from "./PreviewItem";
+import PreviewItem from "./PreviewItem";
 import { View } from "react-native";
 import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import { spacing } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
+import FlingGesture from "@/components/FlingGesture/FlingGesture";
+import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
 
 type Props = {
   media: Media[];
@@ -31,7 +27,7 @@ const MediaGalleryPreview = ({
 }: Props) => {
   const { theme, statusBarStyle } = useActiveColorScheme();
   const [activeIndex, setActiveIndex] = useState(initialIndex);
-  const [appearFrom, setAppearFrom] = useState<AppearFrom>("bottom");
+  const [appearFrom, setAppearFrom] = useState<FadeInViewAppearFrom>("bottom");
 
   useEffect(() => {
     if (isVisible) {
@@ -52,41 +48,23 @@ const MediaGalleryPreview = ({
     onClose();
   }, [onClose]);
 
-  const flingDown = useMemo(() => {
-    return Gesture.Fling()
-      .direction(Directions.DOWN)
-      .onEnd(() => runOnJS(handleOnClose)());
-  }, [handleOnClose]);
+  const onFlingLeft = useCallback(() => {
+    if (activeIndex === media.length - 1) {
+      setActiveIndex(0);
+    } else {
+      setActiveIndex(activeIndex + 1);
+    }
+    setAppearFrom("right");
+  }, [activeIndex, media.length]);
 
-  const flingLeft = useMemo(() => {
-    const switchToNext = () => {
-      if (activeIndex === media.length - 1) {
-        setActiveIndex(0);
-      } else {
-        setActiveIndex(activeIndex + 1);
-      }
-      setAppearFrom("right");
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.LEFT)
-      .onEnd(() => runOnJS(switchToNext)());
-  }, [media, activeIndex]);
-
-  const flingRight = useMemo(() => {
-    const switchToPrevious = () => {
-      if (activeIndex === 0) {
-        setActiveIndex(media.length - 1);
-      } else {
-        setActiveIndex(activeIndex - 1);
-      }
-      setAppearFrom("left");
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.RIGHT)
-      .onEnd(() => runOnJS(switchToPrevious)());
-  }, [media, activeIndex]);
+  const onFlingRight = useCallback(() => {
+    if (activeIndex === 0) {
+      setActiveIndex(media.length - 1);
+    } else {
+      setActiveIndex(activeIndex - 1);
+    }
+    setAppearFrom("left");
+  }, [activeIndex, media.length]);
 
   return (
     <Portal>
@@ -104,8 +82,10 @@ const MediaGalleryPreview = ({
             <Appbar.BackAction onPress={handleOnClose} />
             <Appbar.Content title={`${activeIndex + 1} of ${media.length}`} />
           </Appbar.Header>
-          <GestureDetector
-            gesture={Gesture.Race(flingDown, flingLeft, flingRight)}
+          <FlingGesture
+            onFlingDown={handleOnClose}
+            onFlingLeft={onFlingLeft}
+            onFlingRight={onFlingRight}
           >
             <View collapsable={false} style={styles.itemWrapper}>
               <PreviewItem
@@ -114,7 +94,7 @@ const MediaGalleryPreview = ({
                 key={activeIndex}
               />
             </View>
-          </GestureDetector>
+          </FlingGesture>
         </GestureHandlerRootView>
       </Modal>
     </Portal>

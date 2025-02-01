@@ -15,6 +15,7 @@ module.exports = {
       infoPlist: {
         NSMicrophoneUsageDescription:
           "The app needs access to your microphone in order to record audio for your entry.",
+        UIBackgroundModes: ["audio"],
       },
     },
     android: {
@@ -55,8 +56,16 @@ module.exports = {
         {
           photosPermission:
             "The app needs access to your media library in order to add photos to your entry.",
+        },
+      ],
+      [
+        "expo-camera",
+        {
           cameraPermission:
-            "The app needs access to your camera in order to take photos for your entry.",
+            "The app needs access to your camera in order to take photos/videos for your entry.",
+          microphonePermission:
+            "The app needs access to your microphone in order to record audio in the videos.",
+          recordAudioAndroid: true,
         },
       ],
       [

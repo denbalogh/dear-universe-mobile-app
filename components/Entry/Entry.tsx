@@ -54,7 +54,7 @@ const Entry = ({
   return (
     <Card
       style={[styles.wrapper, { backgroundColor: theme.colors.surfaceVariant }]}
-      mode={locked ? "outlined" : "contained"}
+      mode="contained"
     >
       <Card.Content style={styles.cardContent}>
         <Title title={title} onPress={onTitlePress} locked={locked} />

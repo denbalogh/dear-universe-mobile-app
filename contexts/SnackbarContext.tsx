@@ -1,10 +1,18 @@
 import { spacing } from "@/constants/theme";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 import { StyleSheet } from "react-native";
-import { Snackbar } from "react-native-paper";
+import { Portal, Snackbar, SnackbarProps } from "react-native-paper";
+
+type ActionType = SnackbarProps["action"];
 
 type SnackbarContextType = {
-  showSnackbar: (message: string) => void;
+  showSnackbar: (message: string, action?: ActionType) => void;
 };
 
 const SnackbarContext = createContext<SnackbarContextType>({
@@ -13,24 +21,36 @@ const SnackbarContext = createContext<SnackbarContextType>({
 
 const SnackbarContextProvider = ({ children }: { children: ReactNode }) => {
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+  const [snackbarAction, setSnackbarAction] = useState<ActionType>();
 
-  const dismissSnackbar = () => {
+  const showSnackbar = useCallback((message: string, action?: ActionType) => {
+    setSnackbarMessage(message);
+    setSnackbarAction(action);
+  }, []);
+
+  const dismissSnackbar = useCallback(() => {
     setSnackbarMessage("");
-  };
+    setSnackbarAction(undefined);
+  }, []);
 
   return (
-    <SnackbarContext.Provider value={{ showSnackbar: setSnackbarMessage }}>
+    <SnackbarContext.Provider value={{ showSnackbar }}>
       {children}
-      <Snackbar
-        visible={snackbarMessage !== ""}
-        onDismiss={dismissSnackbar}
-        icon="close"
-        onIconPress={dismissSnackbar}
-        iconAccessibilityLabel="Close snackbar"
-        wrapperStyle={styles.wrapper}
-      >
-        {snackbarMessage}
-      </Snackbar>
+      {snackbarMessage && ( // Need to rerender the Portal to show the snackbar above modals
+        <Portal>
+          <Snackbar
+            visible={true}
+            onDismiss={dismissSnackbar}
+            icon="close"
+            onIconPress={dismissSnackbar}
+            iconAccessibilityLabel="Close snackbar"
+            wrapperStyle={styles.wrapper}
+            action={snackbarAction}
+          >
+            {snackbarMessage}
+          </Snackbar>
+        </Portal>
+      )}
     </SnackbarContext.Provider>
   );
 };

@@ -28,7 +28,7 @@ const App = () => (
         <SnackbarContextProvider>
           <GestureHandlerRootView>
             <SettingsDrawerContextProvider>
-              <Stack />
+              <Stack screenOptions={{ animation: "fade_from_bottom" }} />
             </SettingsDrawerContextProvider>
           </GestureHandlerRootView>
         </SnackbarContextProvider>

@@ -8,6 +8,7 @@ import {
   isCodeLengthValid,
   areCodesMatching,
 } from "@/components/CodeInput/utils";
+import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import UseBiometricsCard from "@/components/LockScreens/UseBiometricsCard";
 import { spacing } from "@/constants/theme";
 import { useSnackbar } from "@/contexts/SnackbarContext";
@@ -94,87 +95,91 @@ const LockSetupScreen = () => {
   };
 
   return (
-    <View
-      style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
-    >
-      <Stack.Screen
-        options={{
-          header: () => (
-            <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-              <Appbar.BackAction onPress={() => router.back()} />
-            </Appbar.Header>
-          ),
-          navigationBarColor: theme.colors.background,
-        }}
-      />
-      <ScrollView contentContainerStyle={styles.contentWrapper}>
-        <Text variant="displaySmall" style={styles.headline}>
-          Setting up lock
-        </Text>
-        <Text variant="titleMedium">
-          Type a {LOCK_LENGTH}-digit code for unlocking the app
-        </Text>
-        <CodeInput
-          label="Code"
-          code={code}
-          onCodeChange={handleOnCodeChange}
-          textInputProps={{
-            autoFocus: true,
-            style: styles.input,
-            onEndEditing: handleCodeEndEditing,
-            onSubmitEditing: handleOnCodeSubmit,
+    <FlingGesture onFlingDown={router.back}>
+      <View
+        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+      >
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Appbar.Header
+                style={{ backgroundColor: theme.colors.background }}
+              >
+                <Appbar.BackAction onPress={() => router.back()} />
+              </Appbar.Header>
+            ),
+            navigationBarColor: theme.colors.background,
           }}
         />
-        <HelperText
-          type="error"
-          visible={codeStatus !== ""}
-          style={styles.helperText}
-        >
-          {codeStatus}
-        </HelperText>
-        <Text variant="titleMedium">
-          Type the same {LOCK_LENGTH}-digit code to confirm
-        </Text>
-        <CodeInput
-          label="Code again"
-          code={codeConfirm}
-          onCodeChange={handleOnCodeConfirmChange}
-          textInputProps={{
-            ref: codeConfirmInputRef,
-            style: styles.input,
-            onEndEditing: handleCodeConfirmEndEditing,
-          }}
-        />
-        <HelperText
-          type="error"
-          visible={codeConfirmStatus !== ""}
-          style={styles.helperText}
-        >
-          {codeConfirmStatus}
-        </HelperText>
-        <UseBiometricsCard
-          biometricsEnabled={biometricsEnabled}
-          onChange={setBiometricsEnabled}
-        />
-        <HelperText
-          type="error"
-          visible={biometricsEnabled && !areCodesValid}
-          style={styles.biometricsHelpterText}
-        >
-          Type in the {LOCK_LENGTH}-digit code for fallback authentication
-        </HelperText>
-      </ScrollView>
-      {!isKeyboardOpen && (
-        <Button
-          style={styles.confirmButton}
-          mode="contained"
-          disabled={!areCodesValid || isTyping}
-          onPress={onConfirmPress}
-        >
-          Confirm
-        </Button>
-      )}
-    </View>
+        <ScrollView contentContainerStyle={styles.contentWrapper}>
+          <Text variant="displaySmall" style={styles.headline}>
+            Setting up lock
+          </Text>
+          <Text variant="titleMedium">
+            Type a {LOCK_LENGTH}-digit code for unlocking the app
+          </Text>
+          <CodeInput
+            label="Code"
+            code={code}
+            onCodeChange={handleOnCodeChange}
+            textInputProps={{
+              autoFocus: true,
+              style: styles.input,
+              onEndEditing: handleCodeEndEditing,
+              onSubmitEditing: handleOnCodeSubmit,
+            }}
+          />
+          <HelperText
+            type="error"
+            visible={codeStatus !== ""}
+            style={styles.helperText}
+          >
+            {codeStatus}
+          </HelperText>
+          <Text variant="titleMedium">
+            Type the same {LOCK_LENGTH}-digit code to confirm
+          </Text>
+          <CodeInput
+            label="Code again"
+            code={codeConfirm}
+            onCodeChange={handleOnCodeConfirmChange}
+            textInputProps={{
+              ref: codeConfirmInputRef,
+              style: styles.input,
+              onEndEditing: handleCodeConfirmEndEditing,
+            }}
+          />
+          <HelperText
+            type="error"
+            visible={codeConfirmStatus !== ""}
+            style={styles.helperText}
+          >
+            {codeConfirmStatus}
+          </HelperText>
+          <UseBiometricsCard
+            biometricsEnabled={biometricsEnabled}
+            onChange={setBiometricsEnabled}
+          />
+          <HelperText
+            type="error"
+            visible={biometricsEnabled && !areCodesValid}
+            style={styles.biometricsHelpterText}
+          >
+            Type in the {LOCK_LENGTH}-digit code for fallback authentication
+          </HelperText>
+        </ScrollView>
+        {!isKeyboardOpen && (
+          <Button
+            style={styles.confirmButton}
+            mode="contained"
+            disabled={!areCodesValid || isTyping}
+            onPress={onConfirmPress}
+          >
+            Confirm
+          </Button>
+        )}
+      </View>
+    </FlingGesture>
   );
 };
 

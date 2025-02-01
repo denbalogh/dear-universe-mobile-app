@@ -1,5 +1,4 @@
 import { spacing } from "@/constants/theme";
-import useCamera from "@/hooks/useCamera";
 import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { ImagePickerAsset } from "expo-image-picker";
 import React, { useCallback, useState } from "react";
@@ -11,7 +10,9 @@ import EditableMediaGallery, {
   Media,
 } from "@/components/MediaGallery/EditableMediaGallery";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import CustomMenu from "../CustomMenu/CustomMenu";
+import CameraModal from "../CameraModal/CameraModal";
+import useCameraPermissions from "@/hooks/useCameraPermissions";
+import { useSnackbar } from "@/contexts/SnackbarContext";
 
 type Props = {
   media: Media[];
@@ -27,7 +28,27 @@ const MediaSection = ({
 }: Props) => {
   const theme = useCustomTheme();
   const { showConfirmDialog } = useConfirmDialog();
+  const { showSnackbar } = useSnackbar();
+  const [isCameraModalVisible, setIsCameraModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { cameraGranted, requestCameraPermission } = useCameraPermissions();
+
+  const openCameraModal = () => {
+    setIsCameraModalVisible(true);
+  };
+
+  const handleOpenCameraModal = useCallback(() => {
+    if (cameraGranted) {
+      openCameraModal();
+    } else {
+      requestCameraPermission(openCameraModal);
+    }
+  }, [cameraGranted, requestCameraPermission]);
+
+  const closeCameraModal = () => {
+    setIsCameraModalVisible(false);
+  };
 
   const initialSelectedMediaImagesUri = initialSelectedMediaImageUri
     ? [initialSelectedMediaImageUri]
@@ -37,7 +58,7 @@ const MediaSection = ({
     string[]
   >(initialSelectedMediaImagesUri);
 
-  const handleAddMedia = useCallback(
+  const handleAddMediaFromImagePicker = useCallback(
     async (assets: ImagePickerAsset[]) => {
       const newMedia = [];
 
@@ -60,35 +81,40 @@ const MediaSection = ({
     [media, onMediaChange],
   );
 
+  const handleAddImageFromCamera = useCallback(
+    (imageUri: string) => {
+      onMediaChange([...media, { imageUri }]);
+      setIsLoading(false);
+
+      showSnackbar("Picture was saved to entry");
+    },
+    [media, onMediaChange, showSnackbar],
+  );
+
+  const handleAddVideoFromCamera = useCallback(
+    async (videoUri: string) => {
+      const { uri: thumbnailUri } = await getThumbnailAsync(videoUri, {
+        time: 0,
+      });
+
+      onMediaChange([...media, { imageUri: thumbnailUri, videoUri }]);
+      setIsLoading(false);
+
+      showSnackbar("Video was saved to entry");
+    },
+    [media, onMediaChange, showSnackbar],
+  );
+
   const handleOnCancel = useCallback(() => {
     setIsLoading(false);
   }, []);
 
-  const openCameraForPhotos = useCamera(
-    "images",
-    handleAddMedia,
-    handleOnCancel,
-  );
-  const handleOpenCameraForPhotos = () => {
-    openCameraForPhotos();
-    setIsLoading(true);
-  };
-
-  const openCameraForVideos = useCamera(
-    "videos",
-    handleAddMedia,
-    handleOnCancel,
-  );
-  const handleOpenCameraForVideos = () => {
-    openCameraForVideos();
-    setIsLoading(true);
-  };
-
   const openImageLibrary = useMediaLibrary(
     ["images", "videos"],
-    handleAddMedia,
+    handleAddMediaFromImagePicker,
     handleOnCancel,
   );
+
   const handleOpenImageLibrary = () => {
     openImageLibrary();
     setIsLoading(true);
@@ -158,33 +184,16 @@ const MediaSection = ({
           )}
           <View style={styles.imageSourceWrapper}>
             <View style={styles.addMediaButtonWrapper}>
-              <CustomMenu
-                menuItems={[
-                  {
-                    onPress: handleOpenCameraForPhotos,
-                    title: "Take a photo",
-                    leadingIcon: "image",
-                  },
-                  {
-                    onPress: handleOpenCameraForVideos,
-                    title: "Record a video",
-                    leadingIcon: "video",
-                  },
-                ]}
+              <Button
+                mode="elevated"
+                icon="camera"
+                onPress={handleOpenCameraModal}
+                loading={isLoading}
+                style={styles.buttonLeft}
+                disabled={isLoading}
               >
-                {({ openMenu }) => (
-                  <Button
-                    mode="elevated"
-                    icon="camera"
-                    onPress={openMenu}
-                    loading={isLoading}
-                    style={styles.buttonLeft}
-                    disabled={isLoading}
-                  >
-                    Use camera
-                  </Button>
-                )}
-              </CustomMenu>
+                Use camera
+              </Button>
             </View>
             <View style={styles.addMediaButtonWrapper}>
               <Button
@@ -211,13 +220,8 @@ const MediaSection = ({
             addButtons={[
               {
                 leadingIcon: "camera",
-                title: "Take a photo",
-                onPress: handleOpenCameraForPhotos,
-              },
-              {
-                leadingIcon: "video",
-                title: "Record a video",
-                onPress: handleOpenCameraForVideos,
+                title: "Use camera",
+                onPress: handleOpenCameraModal,
               },
               {
                 leadingIcon: "image-multiple",
@@ -249,6 +253,12 @@ const MediaSection = ({
           </View>
         </>
       )}
+      <CameraModal
+        isVisible={isCameraModalVisible}
+        onClose={closeCameraModal}
+        onPictureSaved={handleAddImageFromCamera}
+        onVideoSaved={handleAddVideoFromCamera}
+      />
     </View>
   );
 };

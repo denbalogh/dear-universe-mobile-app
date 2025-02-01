@@ -15,23 +15,22 @@ import {
   ENTRY_SCREEN_FOCUS_DESCRIPTION,
   ENTRY_SCREEN_SCROLL_TO_RECORDING,
   ENTRY_SCREEN_SCROLL_TO_MEDIA,
+  DAY_SCREEN_APPEAR_FROM_LEFT,
+  DAY_SCREEN_APPEAR_FROM_RIGHT,
 } from "@/constants/screens";
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
-import {
-  Directions,
-  Gesture,
-  GestureDetector,
-} from "react-native-gesture-handler";
 import { addDays, isToday, subDays } from "date-fns";
-import { runOnJS } from "react-native-reanimated";
 import useDayObject from "@/hooks/useDayObject";
 import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import DayTitle from "@/components/DayTitle/DayTitle";
 import { isEqual } from "lodash";
 import { useSnackbar } from "@/contexts/SnackbarContext";
+import FlingGesture from "@/components/FlingGesture/FlingGesture";
+import FadeInView from "@/components/FadeInView/FadeInView";
+import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -40,14 +39,18 @@ const DayScreen = () => {
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showSnackbar } = useSnackbar();
 
-  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
+  const { dateId, appearFrom = "center" } =
+    useLocalSearchParams<DaySearchTermParams>();
   const { dayObject, updateDayObject } = useDayObject(dateId);
+
+  const { scrollOffset, handleOnScroll } = useScrollViewOffset();
 
   const {
     entryObjects = [],
     title: initialTitle = "",
     locked = false,
   } = dayObject || {};
+
   const hasEntries = entryObjects.length > 0;
 
   const [title, setTitle] = useState(initialTitle);
@@ -104,42 +107,42 @@ const DayScreen = () => {
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 
-  const flingLeft = useMemo(() => {
-    const goToPreviousDay = () => {
-      const currentDate = parseDateId(dateId);
-      const previousDate = subDays(currentDate, 1);
+  const onFlingLeft = useCallback(() => {
+    const currentDate = parseDateId(dateId);
+    const previousDate = subDays(currentDate, 1);
 
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: { dateId: formatDateId(previousDate) },
-      });
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.LEFT)
-      .onEnd(() => runOnJS(goToPreviousDay)());
+    router.replace({
+      pathname: "/day/[dateId]",
+      params: {
+        dateId: formatDateId(previousDate),
+        ...DAY_SCREEN_APPEAR_FROM_RIGHT,
+      },
+    });
   }, [dateId, router]);
 
-  const flingRight = useMemo(() => {
-    const goToNextDay = () => {
-      const currentDate = parseDateId(dateId);
+  const onFlingRight = useCallback(() => {
+    const currentDate = parseDateId(dateId);
 
-      if (isToday(currentDate)) {
-        return;
-      }
+    if (isToday(currentDate)) {
+      return;
+    }
 
-      const nextDate = addDays(currentDate, 1);
+    const nextDate = addDays(currentDate, 1);
 
-      router.replace({
-        pathname: "/day/[dateId]",
-        params: { dateId: formatDateId(nextDate) },
-      });
-    };
-
-    return Gesture.Fling()
-      .direction(Directions.RIGHT)
-      .onEnd(() => runOnJS(goToNextDay)());
+    router.replace({
+      pathname: "/day/[dateId]",
+      params: {
+        dateId: formatDateId(nextDate),
+        ...DAY_SCREEN_APPEAR_FROM_LEFT,
+      },
+    });
   }, [dateId, router]);
+
+  const onFlingDown = useCallback(() => {
+    if (scrollOffset <= 0) {
+      router.back();
+    }
+  }, [router, scrollOffset]);
 
   const toggleLocked = () => {
     if (dayObject === null) {
@@ -151,108 +154,112 @@ const DayScreen = () => {
   };
 
   return (
-    <GestureDetector gesture={Gesture.Race(flingLeft, flingRight)}>
-      <View style={[styles.wrapper, { backgroundColor: theme.colors.surface }]}>
-        <Stack.Screen
-          options={{
-            header: () => (
-              <Appbar.Header>
-                <Appbar.BackAction onPress={handleGoBack} />
-                <Appbar.Content title={fullDate} />
-                <Appbar.Action
-                  icon={locked ? "lock" : "lock-open-variant"}
-                  onPress={toggleLocked}
-                  disabled={!hasEntries}
-                />
-              </Appbar.Header>
-            ),
-            navigationBarColor: theme.colors.surface,
-            animation: "fade",
-          }}
-        />
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContentWrapper,
-            !locked && styles.bottomPadding,
-          ]}
-        >
-          <DayTitle
-            title={title}
-            onTitleChange={setTitle}
-            isTitleEdited={isTitleEdited}
-            onSubmit={handleOnSubmit}
-            locked={locked}
-          />
-          {hasEntries ? (
-            <>
-              {entryObjects.map(({ _id }, index) => {
-                const entryId = _id.toString();
-
-                return (
-                  <EntryWithData
-                    entryId={entryId}
-                    dayObject={dayObject}
-                    key={entryId}
-                    index={index}
-                    locked={locked}
+    <FlingGesture
+      onFlingLeft={onFlingLeft}
+      onFlingRight={onFlingRight}
+      onFlingDown={onFlingDown}
+    >
+      <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
+        <FadeInView style={styles.flex} appearFrom={appearFrom}>
+          <Stack.Screen
+            options={{
+              header: () => (
+                <Appbar.Header>
+                  <Appbar.BackAction onPress={handleGoBack} />
+                  <Appbar.Content title={fullDate} />
+                  <Appbar.Action
+                    icon={locked ? "lock" : "lock-open-variant"}
+                    onPress={toggleLocked}
+                    disabled={!hasEntries}
                   />
-                );
-              })}
-              {!locked && <AfterEntriesMessage />}
-            </>
-          ) : (
-            <EntryPlaceholder />
-          )}
-        </ScrollView>
-        {!isKeyboardOpen && !locked && (
-          <CTAButtons
-            style={styles.bottomButtons}
-            showText={!hasEntries}
-            addTextButton={{
-              onPress: () =>
-                router.navigate(
-                  {
-                    pathname: "./entry/new",
-                    params: ENTRY_SCREEN_FOCUS_DESCRIPTION,
-                  },
-                  { relativeToDirectory: true },
-                ),
-            }}
-            addRecordingButton={{
-              onPress: () =>
-                router.navigate(
-                  {
-                    pathname: "./entry/new",
-                    params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
-                  },
-                  { relativeToDirectory: true },
-                ),
-            }}
-            addMediaButton={{
-              onPress: () =>
-                router.navigate(
-                  {
-                    pathname: "./entry/new",
-                    params: ENTRY_SCREEN_SCROLL_TO_MEDIA,
-                  },
-                  { relativeToDirectory: true },
-                ),
+                </Appbar.Header>
+              ),
+              navigationBarColor: theme.colors.surface,
+              animation: "fade",
             }}
           />
-        )}
+          <ScrollView
+            onScroll={handleOnScroll}
+            style={styles.flex}
+            contentContainerStyle={[
+              styles.scrollContentWrapper,
+              !locked && styles.bottomPadding,
+            ]}
+          >
+            <DayTitle
+              title={title}
+              onTitleChange={setTitle}
+              isTitleEdited={isTitleEdited}
+              onSubmit={handleOnSubmit}
+              locked={locked}
+            />
+            {hasEntries ? (
+              <>
+                {entryObjects.map(({ _id }, index) => {
+                  const entryId = _id.toString();
+
+                  return (
+                    <EntryWithData
+                      entryId={entryId}
+                      dayObject={dayObject}
+                      key={entryId}
+                      index={index}
+                      locked={locked}
+                    />
+                  );
+                })}
+                {!locked && <AfterEntriesMessage />}
+              </>
+            ) : (
+              <EntryPlaceholder />
+            )}
+          </ScrollView>
+          {!isKeyboardOpen && !locked && (
+            <CTAButtons
+              style={styles.bottomButtons}
+              showText={!hasEntries}
+              addTextButton={{
+                onPress: () =>
+                  router.navigate(
+                    {
+                      pathname: "./entry/new",
+                      params: ENTRY_SCREEN_FOCUS_DESCRIPTION,
+                    },
+                    { relativeToDirectory: true },
+                  ),
+              }}
+              addRecordingButton={{
+                onPress: () =>
+                  router.navigate(
+                    {
+                      pathname: "./entry/new",
+                      params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
+                    },
+                    { relativeToDirectory: true },
+                  ),
+              }}
+              addMediaButton={{
+                onPress: () =>
+                  router.navigate(
+                    {
+                      pathname: "./entry/new",
+                      params: ENTRY_SCREEN_SCROLL_TO_MEDIA,
+                    },
+                    { relativeToDirectory: true },
+                  ),
+              }}
+            />
+          )}
+        </FadeInView>
       </View>
-    </GestureDetector>
+    </FlingGesture>
   );
 };
 
 export default DayScreen;
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
-  scrollView: {
+  flex: {
     flex: 1,
   },
   scrollContentWrapper: {
