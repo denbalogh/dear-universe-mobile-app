@@ -13,6 +13,8 @@ import { useCustomTheme } from "@/hooks/useCustomTheme";
 import CameraModal from "../CameraModal/CameraModal";
 import useCameraPermissions from "@/hooks/useCameraPermissions";
 import { useSnackbar } from "@/contexts/SnackbarContext";
+import { CameraMode } from "expo-camera";
+import CustomMenu from "../CustomMenu/CustomMenu";
 
 type Props = {
   media: Media[];
@@ -30,21 +32,27 @@ const MediaSection = ({
   const { showConfirmDialog } = useConfirmDialog();
   const { showSnackbar } = useSnackbar();
   const [isCameraModalVisible, setIsCameraModalVisible] = useState(false);
+  const [initialCameraMode, setInitialCameraMode] =
+    useState<CameraMode>("picture");
   const [isLoading, setIsLoading] = useState(false);
 
   const { cameraGranted, requestCameraPermission } = useCameraPermissions();
 
-  const openCameraModal = () => {
-    setIsCameraModalVisible(true);
-  };
+  const handleOpenCameraModal = useCallback(
+    (mode: CameraMode) => {
+      const openCameraModal = () => {
+        setIsCameraModalVisible(true);
+        setInitialCameraMode(mode);
+      };
 
-  const handleOpenCameraModal = useCallback(() => {
-    if (cameraGranted) {
-      openCameraModal();
-    } else {
-      requestCameraPermission(openCameraModal);
-    }
-  }, [cameraGranted, requestCameraPermission]);
+      if (cameraGranted) {
+        openCameraModal();
+      } else {
+        requestCameraPermission(openCameraModal);
+      }
+    },
+    [cameraGranted, requestCameraPermission],
+  );
 
   const closeCameraModal = () => {
     setIsCameraModalVisible(false);
@@ -184,16 +192,33 @@ const MediaSection = ({
           )}
           <View style={styles.imageSourceWrapper}>
             <View style={styles.addMediaButtonWrapper}>
-              <Button
-                mode="elevated"
-                icon="camera"
-                onPress={handleOpenCameraModal}
-                loading={isLoading}
-                style={styles.buttonLeft}
-                disabled={isLoading}
+              <CustomMenu
+                menuItems={[
+                  {
+                    title: "Take a photo",
+                    leadingIcon: "camera",
+                    onPress: () => handleOpenCameraModal("picture"),
+                  },
+                  {
+                    title: "Record a video",
+                    leadingIcon: "video",
+                    onPress: () => handleOpenCameraModal("video"),
+                  },
+                ]}
               >
-                Use camera
-              </Button>
+                {({ openMenu }) => (
+                  <Button
+                    mode="elevated"
+                    icon="camera"
+                    onPress={openMenu}
+                    loading={isLoading}
+                    style={styles.buttonLeft}
+                    disabled={isLoading}
+                  >
+                    Use camera
+                  </Button>
+                )}
+              </CustomMenu>
             </View>
             <View style={styles.addMediaButtonWrapper}>
               <Button
@@ -220,8 +245,13 @@ const MediaSection = ({
             addButtons={[
               {
                 leadingIcon: "camera",
-                title: "Use camera",
-                onPress: handleOpenCameraModal,
+                title: "Take a photo",
+                onPress: () => handleOpenCameraModal("picture"),
+              },
+              {
+                leadingIcon: "video",
+                title: "Record a video",
+                onPress: () => handleOpenCameraModal("video"),
               },
               {
                 leadingIcon: "image-multiple",
@@ -258,6 +288,7 @@ const MediaSection = ({
         onClose={closeCameraModal}
         onPictureSaved={handleAddImageFromCamera}
         onVideoSaved={handleAddVideoFromCamera}
+        initialMode={initialCameraMode}
       />
     </View>
   );

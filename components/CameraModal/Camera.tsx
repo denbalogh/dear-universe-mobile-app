@@ -13,6 +13,7 @@ type Props = {
   onCloseModal: () => void;
   onPictureSaved: (uri: string) => void;
   onVideoSaved: (uri: string) => void;
+  initialMode: CameraMode;
 };
 
 const Camera = ({
@@ -20,13 +21,14 @@ const Camera = ({
   onCloseModal,
   onPictureSaved,
   onVideoSaved,
+  initialMode,
 }: Props) => {
   const orientation = useScreenOrientation();
 
   const cameraRef = useRef<CameraView>(null);
 
   const [facing, setFacing] = useState<CameraType>("back");
-  const [cameraMode, setCameraMode] = useState<CameraMode>("picture");
+  const [cameraMode, setCameraMode] = useState<CameraMode>(initialMode);
   const [zoom, setZoom] = useState(0);
   const [flash, setFlash] = useState<FlashMode>("auto");
   const [mute, setMute] = useState(false);

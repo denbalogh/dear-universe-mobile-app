@@ -31,6 +31,8 @@ import {
 } from "@/utils/files";
 import MediaSection from "./MediaSection";
 import FeelingsSection from "./FeelingsSection/FeelingsSection";
+import useScrollViewOffset from "@/hooks/useScrollViewOffset";
+import FlingGesture from "../FlingGesture/FlingGesture";
 
 type LayoutParts =
   | "mainHeadline"
@@ -84,6 +86,8 @@ const CreateEditEntry = ({
   const [activeEmotions, setActiveEmotions] = useState(
     initialFeelingsActiveEmotions,
   );
+
+  const { scrollOffset, handleOnScroll } = useScrollViewOffset();
 
   const [sectionsHeight, setSectionsHeight] = useState<
     Record<LayoutParts, number>
@@ -207,13 +211,13 @@ const CreateEditEntry = ({
     );
   }, [showConfirmDialog, isCreateMode, router]);
 
-  const handleBackPress = () => {
+  const handleBackPress = useCallback(() => {
     if (isEdited) {
       handleShowDiscardDialog();
     } else {
       router.back();
     }
-  };
+  }, [isEdited, handleShowDiscardDialog, router]);
 
   useFocusEffect(
     useCallback(() => {
@@ -235,87 +239,96 @@ const CreateEditEntry = ({
     }, [isEdited, handleShowDiscardDialog]),
   );
 
+  const onFlingDown = useCallback(() => {
+    if (scrollOffset <= 0) {
+      handleBackPress();
+    }
+  }, [handleBackPress, scrollOffset]);
+
   return (
-    <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
-      <Stack.Screen
-        options={{
-          header: () => (
-            <Appbar.Header>
-              <Appbar.BackAction onPress={handleBackPress} />
-            </Appbar.Header>
-          ),
-          navigationBarColor: theme.colors.surface,
-        }}
-      />
-      <ScrollView
-        ref={scrollViewRef}
-        stickyHeaderIndices={[0, 2, 4, 6, 8]}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollViewContentContainer}
-      >
-        <SectionHeadline
-          headline={isCreateMode ? "Creating entry" : "Editing entry"}
-          superHeadline={formattedDate}
-          headlineVariant="displaySmall"
-          onLayout={handleSetSectionHeight("mainHeadline")}
-        />
-        <TextSection
-          titleInputProps={{
-            value: title,
-            onChangeText: setTitle,
-            autoFocus: focusTitle,
+    <FlingGesture onFlingDown={onFlingDown}>
+      <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Appbar.Header>
+                <Appbar.BackAction onPress={handleBackPress} />
+              </Appbar.Header>
+            ),
+            navigationBarColor: theme.colors.surface,
           }}
-          descriptionInputProps={{
-            value: description,
-            onChangeText: setDescription,
-            autoFocus: focusDescription,
-          }}
-          style={styles.sectionWrapper}
-          onLayout={handleSetSectionHeight("textSection")}
         />
-        <SectionHeadline
-          headline="Recording"
-          superHeadline={formattedDate}
-          onLayout={handleSetSectionHeight("recordingHeadline")}
-        />
-        <RecordingSection
-          recordingUri={recordingUri}
-          onRecordingDone={setRecordingUri}
-          style={styles.sectionWrapper}
-          onLayout={handleSetSectionHeight("recordingSection")}
-        />
-        <SectionHeadline
-          headline="Media"
-          superHeadline={formattedDate}
-          onLayout={handleSetSectionHeight("mediaHeadline")}
-        />
-        <MediaSection
-          media={media}
-          onMediaChange={setMedia}
-          style={styles.sectionWrapper}
-          onLayout={handleSetSectionHeight("mediaSection")}
-          initialSelectedMediaImageUri={selectedMediaImageUri}
-        />
-        <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
-        <FeelingsSection
-          activeGroup={activeGroup}
-          activeEmotions={activeEmotions}
-          onActiveGroupChange={setActiveGroup}
-          onActiveEmotionsChange={setActiveEmotions}
-          style={styles.sectionWrapper}
-        />
-      </ScrollView>
-      {!isKeyboardOpen && (
-        <View style={styles.saveButtonWrapper}>
-          <FAB
-            label="Save"
-            variant="tertiary"
-            onPress={handleSaveEntry}
-            disabled={!isEdited}
+        <ScrollView
+          ref={scrollViewRef}
+          stickyHeaderIndices={[0, 2, 4, 6, 8]}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollViewContentContainer}
+          onScroll={handleOnScroll}
+        >
+          <SectionHeadline
+            headline={isCreateMode ? "Creating entry" : "Editing entry"}
+            superHeadline={formattedDate}
+            headlineVariant="displaySmall"
+            onLayout={handleSetSectionHeight("mainHeadline")}
           />
-        </View>
-      )}
-    </View>
+          <TextSection
+            titleInputProps={{
+              value: title,
+              onChangeText: setTitle,
+              autoFocus: focusTitle,
+            }}
+            descriptionInputProps={{
+              value: description,
+              onChangeText: setDescription,
+              autoFocus: focusDescription,
+            }}
+            style={styles.sectionWrapper}
+            onLayout={handleSetSectionHeight("textSection")}
+          />
+          <SectionHeadline
+            headline="Recording"
+            superHeadline={formattedDate}
+            onLayout={handleSetSectionHeight("recordingHeadline")}
+          />
+          <RecordingSection
+            recordingUri={recordingUri}
+            onRecordingDone={setRecordingUri}
+            style={styles.sectionWrapper}
+            onLayout={handleSetSectionHeight("recordingSection")}
+          />
+          <SectionHeadline
+            headline="Media"
+            superHeadline={formattedDate}
+            onLayout={handleSetSectionHeight("mediaHeadline")}
+          />
+          <MediaSection
+            media={media}
+            onMediaChange={setMedia}
+            style={styles.sectionWrapper}
+            onLayout={handleSetSectionHeight("mediaSection")}
+            initialSelectedMediaImageUri={selectedMediaImageUri}
+          />
+          <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
+          <FeelingsSection
+            activeGroup={activeGroup}
+            activeEmotions={activeEmotions}
+            onActiveGroupChange={setActiveGroup}
+            onActiveEmotionsChange={setActiveEmotions}
+            style={styles.sectionWrapper}
+          />
+        </ScrollView>
+        {!isKeyboardOpen && (
+          <View style={styles.saveButtonWrapper}>
+            <FAB
+              label="Save"
+              variant="tertiary"
+              onPress={handleSaveEntry}
+              disabled={!isEdited}
+            />
+          </View>
+        )}
+      </View>
+    </FlingGesture>
   );
 };
 

@@ -114,28 +114,24 @@ const Controls = ({
     bottomWrapperStyle,
   } = useMemo(() => {
     return orientation === "portrait"
-      ? {
-          wrapperStyle: [
-            styles.portraitWrapper,
-            { backgroundColor: theme.colors.backdrop },
-          ],
+      ? // Portrait styles
+        {
+          wrapperStyle: styles.portraitWrapper,
           topWrapperStyle: styles.portraitTopWrapper,
           topButtonsWrapperStyle: styles.portraitTopButtonsWrapper,
           bottomWrapperStyle: styles.portraitBottomWrapper,
         }
-      : {
-          wrapperStyle: [
-            styles.landscapeWrapper,
-            { backgroundColor: theme.colors.backdrop },
-          ],
+      : // Landscape styles
+        {
+          wrapperStyle: styles.landscapeWrapper,
           topWrapperStyle: styles.landscapeTopWrapper,
           topButtonsWrapperStyle: styles.landscapeTopButtonsWrapper,
           bottomWrapperStyle: styles.landscapeBottomButtonsWrapper,
         };
-  }, [orientation, theme.colors]);
+  }, [orientation]);
 
   return (
-    <View style={wrapperStyle}>
+    <View style={[wrapperStyle, { backgroundColor: theme.colors.backdrop }]}>
       <View style={topWrapperStyle}>
         <View style={topButtonsWrapperStyle}>
           <IconButton

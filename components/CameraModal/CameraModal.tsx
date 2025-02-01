@@ -7,12 +7,14 @@ import { Modal, Portal } from "react-native-paper";
 import Camera from "./Camera";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import FlingGesture from "../FlingGesture/FlingGesture";
+import { CameraMode } from "expo-camera";
 
 type Props = {
   isVisible: boolean;
   onClose: () => void;
   onPictureSaved: (uri: string) => void;
   onVideoSaved: (uri: string) => void;
+  initialMode: CameraMode;
 };
 
 const CameraModal = ({
@@ -20,6 +22,7 @@ const CameraModal = ({
   onClose,
   onPictureSaved,
   onVideoSaved,
+  initialMode,
 }: Props) => {
   const { theme, statusBarStyle } = useActiveColorScheme();
 
@@ -52,6 +55,7 @@ const CameraModal = ({
               onCloseModal={onClose}
               onPictureSaved={onPictureSaved}
               onVideoSaved={onVideoSaved}
+              initialMode={initialMode}
             />
           </FlingGesture>
         </GestureHandlerRootView>
