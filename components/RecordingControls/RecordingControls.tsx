@@ -81,7 +81,11 @@ const Controls = ({
             icon="record"
             mode="elevated"
             style={styles.recordButton}
-            accessibilityLabel="Start recording"
+            accessibilityLabel={
+              hasPermissions
+                ? "Start recording"
+                : "Request recording permission"
+            }
           >
             Record
           </Button>
