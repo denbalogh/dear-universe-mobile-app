@@ -11,10 +11,11 @@ import {
 import BiometricsIcons from "@/components/LockScreens/BiometricsIcons";
 import { spacing } from "@/constants/theme";
 import useAppState from "@/hooks/useAppState";
+import useBackHandler from "@/hooks/useBackHandler";
 import useBiometrics from "@/hooks/useBiometrics";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import useSettingsObject from "@/hooks/useSettingsObject";
-import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
@@ -33,18 +34,12 @@ const LockScreen = () => {
   const [isCodeValid, setIsCodeValid] = useState(false);
 
   // Prevent going back from lock screen with hardware back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        () => {
-          BackHandler.exitApp();
-          return true;
-        },
-      );
-      return () => subscription.remove();
-    }, []),
-  );
+  const onAndroidBackButtonPress = useCallback(() => {
+    BackHandler.exitApp();
+    return true;
+  }, []);
+
+  useBackHandler(onAndroidBackButtonPress);
 
   const handleConfirm = useCallback(async () => {
     router.back();

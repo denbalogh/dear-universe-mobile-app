@@ -10,17 +10,11 @@ import TextSection from "@/components/CreateEditEntry/TextSection";
 import SectionHeadline from "@/components/CreateEditEntry/SectionHeadline";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import {
-  BackHandler,
-  LayoutChangeEvent,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { LayoutChangeEvent, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, FAB } from "react-native-paper";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
-import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { debounce, isEqual, sortBy } from "lodash";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
@@ -33,6 +27,7 @@ import MediaSection from "./MediaSection";
 import FeelingsSection from "./FeelingsSection/FeelingsSection";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import FlingGesture from "../FlingGesture/FlingGesture";
+import useBackHandler from "@/hooks/useBackHandler";
 
 type LayoutParts =
   | "mainHeadline"
@@ -219,25 +214,15 @@ const CreateEditEntry = ({
     }
   }, [isEdited, handleShowDiscardDialog, router]);
 
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        if (isEdited) {
-          handleShowDiscardDialog();
-          return true;
-        } else {
-          return false;
-        }
-      };
+  const onAndroidBackButtonPress = useCallback(() => {
+    if (isEdited) {
+      handleShowDiscardDialog();
+      return true;
+    }
+    return false;
+  }, [isEdited, handleShowDiscardDialog]);
 
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        onBackPress,
-      );
-
-      return () => subscription.remove();
-    }, [isEdited, handleShowDiscardDialog]),
-  );
+  useBackHandler(onAndroidBackButtonPress);
 
   const onFlingDown = useCallback(() => {
     if (scrollOffset <= 0) {
