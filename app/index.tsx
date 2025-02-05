@@ -6,6 +6,7 @@ import InfiniteDaysList from "@/components/InfiniteDaysList/InfiniteDaysList";
 import { formatMonthYear } from "@/utils/date";
 import { useSettingsDrawer } from "@/contexts/SettingsDrawerContext";
 import useLockScreenHandler from "@/hooks/useLockScreenHandler";
+import useNotificationHandler from "@/hooks/useNotificationHandler";
 
 const App = () => {
   const theme = useTheme();
@@ -15,6 +16,9 @@ const App = () => {
 
   // Navigates to lock screen if the lock is set
   useLockScreenHandler();
+
+  // Handles notification actions
+  useNotificationHandler();
 
   return (
     <View style={styles.wrapper}>

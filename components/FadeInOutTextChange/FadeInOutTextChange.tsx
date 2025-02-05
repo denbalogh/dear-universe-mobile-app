@@ -1,10 +1,10 @@
+import { getRandomPhrase } from "@/utils/getRandomPhrase";
 import React, { useEffect, useState } from "react";
 import Animated, {
   useSharedValue,
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { getRandomPhrase } from "./utils";
 
 type Props = {
   phrases: string[];

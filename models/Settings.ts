@@ -6,6 +6,8 @@ export class Settings extends Realm.Object {
   theme: SettingsTheme = "system";
   lockCodeHash: string = "";
   lockUseBiometrics: boolean = false;
+  dailyReminderTime: string = "";
+  dailyReminderMessage: string = "";
 
   static schema: Realm.ObjectSchema = {
     name: "Settings",
@@ -23,6 +25,14 @@ export class Settings extends Realm.Object {
       lockUseBiometrics: {
         type: "bool",
         default: false,
+      },
+      dailyReminderTime: {
+        type: "string",
+        default: "",
+      },
+      dailyReminderMessage: {
+        type: "string",
+        default: "",
       },
     },
   };

@@ -1,11 +1,6 @@
-import {
-  Stack,
-  useFocusEffect,
-  useLocalSearchParams,
-  useRouter,
-} from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
 import { spacing } from "@/constants/theme";
@@ -31,6 +26,7 @@ import { useSnackbar } from "@/contexts/SnackbarContext";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import FadeInView from "@/components/FadeInView/FadeInView";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
+import useBackHandler from "@/hooks/useBackHandler";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -85,25 +81,15 @@ const DayScreen = () => {
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (isTitleEdited) {
-          handleShowDiscardDialog();
-          return true;
-        } else {
-          return false;
-        }
-      };
+  const onAndroidBackButtonPress = useCallback(() => {
+    if (isTitleEdited) {
+      handleShowDiscardDialog();
+      return true;
+    }
+    return false;
+  }, [handleShowDiscardDialog, isTitleEdited]);
 
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        onBackPress,
-      );
-
-      return () => subscription.remove();
-    }, [isTitleEdited, handleShowDiscardDialog]),
-  );
+  useBackHandler(onAndroidBackButtonPress);
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 

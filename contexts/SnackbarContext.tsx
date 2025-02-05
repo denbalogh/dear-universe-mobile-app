@@ -46,6 +46,7 @@ const SnackbarContextProvider = ({ children }: { children: ReactNode }) => {
             iconAccessibilityLabel="Close snackbar"
             wrapperStyle={styles.wrapper}
             action={snackbarAction}
+            duration={Snackbar.DURATION_SHORT}
           >
             {snackbarMessage}
           </Snackbar>

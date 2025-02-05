@@ -15,14 +15,23 @@ import {
 } from "react-native-reanimated";
 import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext";
 import PaperProviderWithTheme from "@/components/PaperProviderWithTheme.tsx/PaperProviderWithTheme";
+import { setNotificationHandler } from "expo-notifications";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
   strict: false, // Reanimated runs in strict mode by default
 });
 
+setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 const App = () => (
-  <RealmProvider schema={schemas} schemaVersion={3} path="default.realm">
+  <RealmProvider schema={schemas} schemaVersion={7} path="default.realm">
     <PaperProviderWithTheme>
       <ConfirmDialogContextProvider>
         <SnackbarContextProvider>

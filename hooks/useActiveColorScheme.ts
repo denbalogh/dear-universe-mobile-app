@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { Appearance } from "react-native";
 import useSettingsObject from "./useSettingsObject";
-import { CustomTheme, themeDark, themeLight } from "@/constants/theme";
+
+type ColorScheme = "light" | "dark";
 
 type ReturnType = {
-  theme: CustomTheme;
-  statusBarStyle: "light" | "dark";
+  statusBarStyle: ColorScheme;
+  colorScheme: ColorScheme;
 };
 
 const useActiveColorScheme = (): ReturnType => {
@@ -26,11 +27,11 @@ const useActiveColorScheme = (): ReturnType => {
 
   return useMemo(() => {
     const statusBarStyle = activeColorScheme === "dark" ? "light" : "dark";
-    const theme = activeColorScheme === "dark" ? themeDark : themeLight;
+    const colorScheme = activeColorScheme as ColorScheme;
 
     return {
-      theme,
       statusBarStyle,
+      colorScheme,
     };
   }, [activeColorScheme]);
 };

@@ -51,14 +51,11 @@ const NewEntryScreen = () => {
         dayObject.entryObjects.push(entry);
       });
 
-      showSnackbar("Entry was created");
+      showSnackbar(`Entry saved for ${formattedDate}`);
 
-      router.dismissTo({
-        pathname: "/day/[dateId]",
-        params: { dateId },
-      });
+      router.back();
     },
-    [dayObject, realm, router, dateId, showSnackbar],
+    [dayObject, realm, router, showSnackbar, formattedDate],
   );
 
   return (

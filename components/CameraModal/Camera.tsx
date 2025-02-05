@@ -7,6 +7,7 @@ import { IconButton } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import useScreenOrientation from "@/hooks/useScreenOrientation";
 import useCameraPermissions from "@/hooks/useCameraPermissions";
+import useBackHandler from "@/hooks/useBackHandler";
 
 type Props = {
   active: boolean;
@@ -39,6 +40,13 @@ const Camera = ({
   const handleOnCameraReady = useCallback(() => {
     setIsCameraReady(true);
   }, []);
+
+  const closeCameraOnAndroidBackPress = useCallback(() => {
+    onCloseModal();
+    return true;
+  }, [onCloseModal]);
+
+  useBackHandler(closeCameraOnAndroidBackPress);
 
   const handlePicturePress = async () => {
     if (cameraRef.current) {

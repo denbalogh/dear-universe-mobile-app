@@ -33,22 +33,23 @@ const LockButton = ({ closeSettingsDrawer }: Props) => {
 
   if (lockCodeHash) {
     return (
-      <Card style={styles.wrapper} mode="outlined">
+      <Card style={styles.wrapper} mode="contained" onPress={handleOnEditPress}>
         <Card.Title
           title="App locked"
           subtitle={lockUseBiometrics && "Unlock with biometrics enabled"}
           left={(props) => <Avatar.Icon {...props} icon="lock" />}
+          subtitleNumberOfLines={2}
         />
-        <Card.Actions style={{ paddingTop: 0 }}>
+        <Card.Actions style={styles.cardActions}>
           <Button mode="text" onPress={handleOnEditPress}>
-            Edit lock
+            Edit
           </Button>
           <Button
             mode="text"
             textColor={theme.colors.error}
             onPress={handleOnDeletePress}
           >
-            Delete lock
+            Delete
           </Button>
         </Card.Actions>
       </Card>
@@ -61,6 +62,7 @@ const LockButton = ({ closeSettingsDrawer }: Props) => {
         title="App unlocked"
         subtitle="Set up a lock for entering the app"
         left={(props) => <Avatar.Icon {...props} icon="lock-open" />}
+        subtitleNumberOfLines={2}
       />
     </Card>
   );
@@ -71,5 +73,8 @@ export default LockButton;
 const styles = StyleSheet.create({
   wrapper: {
     marginVertical: spacing.spaceMedium,
+  },
+  cardActions: {
+    paddingTop: 0,
   },
 });
