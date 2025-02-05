@@ -245,7 +245,6 @@ const CreateEditEntry = ({
         />
         <ScrollView
           ref={scrollViewRef}
-          stickyHeaderIndices={[0, 2, 4, 6, 8]}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.scrollViewContentContainer}
           onScroll={handleOnScroll}

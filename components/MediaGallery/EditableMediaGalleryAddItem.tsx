@@ -10,7 +10,7 @@ import { sizing } from "@/constants/theme";
 import { getBorderRadius } from "./utils";
 import CustomMenu from "../CustomMenu/CustomMenu";
 
-export type ImageGridAddItemProps = {
+export type EditableMediaGalleryAddItemProps = {
   imagesCount: number;
   gridSize: number;
   addButtons: MenuItemProps[];
@@ -18,7 +18,7 @@ export type ImageGridAddItemProps = {
   disabled?: boolean;
 } & ViewProps;
 
-const ImageGridAddItem = ({
+const EditableMediaGalleryAddItem = ({
   imagesCount,
   gridSize,
   style,
@@ -26,7 +26,7 @@ const ImageGridAddItem = ({
   loading = false,
   disabled = false,
   ...props
-}: ImageGridAddItemProps) => {
+}: EditableMediaGalleryAddItemProps) => {
   const theme = useTheme();
 
   const borderRadii = useMemo(() => {
@@ -61,7 +61,7 @@ const ImageGridAddItem = ({
   );
 };
 
-export default ImageGridAddItem;
+export default EditableMediaGalleryAddItem;
 
 const styles = StyleSheet.create({
   wrapper: {

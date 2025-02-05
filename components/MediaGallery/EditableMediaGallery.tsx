@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View, ViewProps } from "react-native";
-import ImageGridItem from "./ImageGridItem";
-import { Checkbox, IconButton, MenuItemProps } from "react-native-paper";
-import AddImageGridItem from "./ImageGridAddItem";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { roundness, sizing, spacing } from "@/constants/theme";
+import { MenuItemProps } from "react-native-paper";
+import AddImageGridItem from "./EditableMediaGalleryAddItem";
 import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
-import CustomMenu from "../CustomMenu/CustomMenu";
+import { DndProvider, DndProviderProps } from "@mgcrea/react-native-dnd";
+import EditableMediaGalleryItem from "./EditableMediaGalleryItem";
+import { runOnJS } from "react-native-reanimated";
 
 export type Media = {
   imageUri: string;
@@ -15,35 +14,25 @@ export type Media = {
 
 type Props = {
   media: Media[];
+  onOrderChange: (fromId: string, toId: string) => void;
   gridSize?: number;
   addButtons: MenuItemProps[];
   addButtonsLoading?: boolean;
-  onMoveLeftPress: (index: number) => void;
-  onMoveToStartPress: (index: number) => void;
-  onMoveRightPress: (index: number) => void;
-  onMoveToEndPress: (index: number) => void;
-  onMediaLongPress: (imageUri: string) => void;
   selectedMediaImagesUri: string[];
   onSelectedMediaImagesUriChange: (selectedUri: string[]) => void;
 } & ViewProps;
 
 const EditableMediaGallery = ({
   media,
+  onOrderChange,
   gridSize = 3,
   style,
   addButtons,
   addButtonsLoading = false,
-  onMoveLeftPress,
-  onMoveToStartPress,
-  onMoveRightPress,
-  onMoveToEndPress,
-  onMediaLongPress,
   selectedMediaImagesUri,
   onSelectedMediaImagesUriChange,
   ...props
 }: Props) => {
-  const theme = useCustomTheme();
-
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
   const [gridWidth, setGridWidth] = useState(0);
@@ -77,94 +66,60 @@ const EditableMediaGallery = ({
     );
   };
 
+  const handleOnDragEnd: DndProviderProps["onDragEnd"] = ({ active, over }) => {
+    "worklet";
+    if (over) {
+      const activeId = active.id as string;
+      const overId = over.id as string;
+      runOnJS(onOrderChange)(activeId, overId);
+    }
+  };
+
+  const mediaConcatKey = useMemo(
+    () => media.map(({ imageUri }) => imageUri).join(""),
+    [media],
+  );
+
   return (
     <>
-      <View
-        {...props}
-        style={[style, styles.wrapper]}
-        onLayout={handleOnLayout}
+      <DndProvider
+        key={mediaConcatKey} // When media reorders or changes, we need to reset the DND state, because it was not updating correctly
+        activationDelay={500}
+        onDragEnd={handleOnDragEnd}
       >
-        {media.map(({ imageUri, videoUri }, index) => {
-          const menuItems = [];
+        <View
+          {...props}
+          style={[style, styles.wrapper]}
+          onLayout={handleOnLayout}
+        >
+          {media.map(({ imageUri, videoUri }, index) => {
+            const isSelected = selectedMediaImagesUri.includes(imageUri);
 
-          if (index > 0) {
-            menuItems.push({
-              leadingIcon: "arrow-collapse-left",
-              onPress: () => onMoveToStartPress(index),
-              title: "To start",
-            });
-            menuItems.push({
-              leadingIcon: "arrow-left",
-              onPress: () => onMoveLeftPress(index),
-              title: "Left",
-            });
-          }
-
-          if (index < media.length - 1) {
-            menuItems.push({
-              leadingIcon: "arrow-right",
-              onPress: () => onMoveRightPress(index),
-              title: "Right",
-            });
-            menuItems.push({
-              leadingIcon: "arrow-collapse-right",
-              onPress: () => onMoveToEndPress(index),
-              title: "To end",
-            });
-          }
-
-          const isSelected = selectedMediaImagesUri.includes(imageUri);
-
-          return (
-            <View key={`${imageUri}-${index}`}>
-              <ImageGridItem
-                source={{ uri: imageUri }}
+            return (
+              <EditableMediaGalleryItem
+                key={imageUri}
+                item={{ imageUri, videoUri }}
                 index={index}
                 imagesCount={itemCountPlusAddButton}
                 gridSize={gridSize}
                 style={{ width: imageSize, height: imageSize }}
+                isSelected={isSelected}
+                onSelect={handleOnSelect}
                 touchableProps={{
                   onPress: () => handleOnImagePress(index),
-                  onLongPress: () => onMediaLongPress(imageUri),
                 }}
-                showPlayIcon={!!videoUri}
-                playIconPosition="bottomLeft"
               />
-              <View
-                style={[
-                  styles.select,
-                  { backgroundColor: `${theme.colors.background}96` }, // 60% opacity
-                ]}
-              >
-                <Checkbox
-                  status={isSelected ? "checked" : "unchecked"}
-                  onPress={() => handleOnSelect(imageUri)}
-                  color={theme.colors.onBackground}
-                />
-              </View>
-              <View style={styles.buttons}>
-                <CustomMenu menuItems={menuItems}>
-                  {({ openMenu }) => (
-                    <IconButton
-                      icon="arrow-left-right"
-                      mode="contained-tonal"
-                      size={sizing.sizeSmall}
-                      onPress={openMenu}
-                    />
-                  )}
-                </CustomMenu>
-              </View>
-            </View>
-          );
-        })}
-        <AddImageGridItem
-          imagesCount={itemCountPlusAddButton}
-          gridSize={gridSize}
-          addButtons={addButtons}
-          style={{ width: imageSize, height: imageSize }}
-          loading={addButtonsLoading}
-        />
-      </View>
+            );
+          })}
+          <AddImageGridItem
+            imagesCount={itemCountPlusAddButton}
+            gridSize={gridSize}
+            addButtons={addButtons}
+            style={{ width: imageSize, height: imageSize }}
+            loading={addButtonsLoading}
+          />
+        </View>
+      </DndProvider>
       <MediaGalleryPreview
         media={media}
         isVisible={isPreviewVisible}
@@ -182,16 +137,5 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
-  },
-  buttons: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-  },
-  select: {
-    position: "absolute",
-    top: spacing.spaceSmall,
-    left: spacing.spaceSmall,
-    borderRadius: roundness,
   },
 });

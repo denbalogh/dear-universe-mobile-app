@@ -9,31 +9,33 @@ import { StyleSheet, View } from "react-native";
 import { getBorderRadius } from "./utils";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { Media } from "./EditableMediaGallery";
+import { getColorWithOpacity } from "@/utils/style";
 
-export type ImageGridItemProps = {
+export type MediaGalleryItemProps = {
+  item: Media;
   index: number;
   imagesCount: number;
   gridSize: number;
   touchableProps: Omit<TouchableRippleProps, "children">;
-  showPlayIcon?: boolean;
-  playIconPosition?: "center" | "bottomLeft";
-} & ImageProps;
+  style: ImageProps["style"];
+};
 
-const ImageGridItem = ({
+const MediaGalleryItem = ({
+  item: { imageUri, videoUri },
   index,
   imagesCount,
   gridSize,
   style,
   touchableProps,
-  showPlayIcon = false,
-  playIconPosition = "center",
-  ...props
-}: ImageGridItemProps) => {
+}: MediaGalleryItemProps) => {
   const theme = useCustomTheme();
   const borderRadii = useMemo(
     () => getBorderRadius(index, imagesCount, gridSize),
     [index, imagesCount, gridSize],
   );
+
+  const isVideo = !!videoUri;
 
   return (
     <TouchableRipple
@@ -45,20 +47,18 @@ const ImageGridItem = ({
       }}
     >
       <View>
-        <Image style={[style, { ...borderRadii }]} {...props} />
-        {showPlayIcon && (
-          <View
-            style={[
-              StyleSheet.absoluteFill,
-              playIconPosition === "center"
-                ? styles.playIconWrapperCenter
-                : styles.playIconWrapperBottomLeft,
-            ]}
-          >
+        <Image style={[style, { ...borderRadii }]} source={imageUri} />
+        {isVideo && (
+          <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
             <View
               style={[
                 styles.playIcon,
-                { backgroundColor: `${theme.colors.background}96` }, // 60% opacity
+                {
+                  backgroundColor: getColorWithOpacity(
+                    theme.colors.background,
+                    0.6,
+                  ),
+                },
               ]}
             >
               <Icon
@@ -74,19 +74,15 @@ const ImageGridItem = ({
   );
 };
 
-export default ImageGridItem;
+export default MediaGalleryItem;
 
 const styles = StyleSheet.create({
   touchable: {
     overflow: "hidden",
   },
-  playIconWrapperCenter: {
+  playIconWrapper: {
     justifyContent: "center",
     alignItems: "center",
-  },
-  playIconWrapperBottomLeft: {
-    justifyContent: "flex-end",
-    alignItems: "flex-start",
   },
   playIcon: {
     borderRadius: roundness,

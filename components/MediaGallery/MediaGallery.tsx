@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { LayoutChangeEvent, StyleSheet, ViewProps } from "react-native";
-import { Media } from "./EditableMediaGallery";
-import ImageGridItem from "./ImageGridItem";
+import MediaGalleryItem from "./MediaGalleryItem";
 import { View } from "react-native";
 import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
+import { Media } from "./EditableMediaGallery";
 
 type Props = {
   media: Media[];
@@ -61,9 +61,9 @@ const MediaGallery = ({
     >
       {media.map(({ imageUri, videoUri }, index) => {
         return (
-          <ImageGridItem
-            key={index}
-            source={{ uri: imageUri }}
+          <MediaGalleryItem
+            key={imageUri}
+            item={{ imageUri, videoUri }}
             index={index}
             imagesCount={media.length}
             gridSize={gridSize}
@@ -72,7 +72,6 @@ const MediaGallery = ({
               onPress: () => handleOnImagePress(index),
               onLongPress: () => handleOnMediaLongPress(imageUri),
             }}
-            showPlayIcon={!!videoUri}
           />
         );
       })}
