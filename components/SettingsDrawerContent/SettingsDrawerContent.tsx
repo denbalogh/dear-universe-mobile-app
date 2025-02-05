@@ -5,6 +5,7 @@ import { Appbar } from "react-native-paper";
 import ThemeButton from "./ThemeButton";
 import { spacing } from "@/constants/theme";
 import LockButton from "./LockButton";
+import DailyReminderButton from "./DailyReminderButton";
 
 type Props = {
   closeDrawer: () => void;
@@ -24,6 +25,7 @@ const SettingsDrawerContent = ({ closeDrawer }: Props) => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <ThemeButton />
         <LockButton closeSettingsDrawer={closeDrawer} />
+        <DailyReminderButton closeSettingsDrawer={closeDrawer} />
       </ScrollView>
     </View>
   );

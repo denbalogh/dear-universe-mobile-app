@@ -25,6 +25,10 @@ module.exports = {
         backgroundColor: "#FDF8FF",
       },
       googleServicesFile: "./google-services.json",
+      permissions: [
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+      ],
     },
     web: {
       bundler: "metro",
@@ -98,6 +102,13 @@ module.exports = {
         {
           faceIDPermission:
             "The app needs access to FaceID in order to authenticate you.",
+        },
+      ],
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/images/notification-icon.png",
+          color: "#ffffff",
         },
       ],
     ],

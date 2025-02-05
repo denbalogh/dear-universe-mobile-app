@@ -1,7 +1,8 @@
+import { themeDark, themeLight } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { PaperProvider } from "react-native-paper";
 
@@ -10,7 +11,12 @@ type Props = {
 };
 
 const PaperProviderWithTheme = ({ children }: Props) => {
-  const { theme, statusBarStyle } = useActiveColorScheme();
+  const { statusBarStyle, colorScheme } = useActiveColorScheme();
+
+  const theme = useMemo(
+    () => (colorScheme === "dark" ? themeDark : themeLight),
+    [colorScheme],
+  );
 
   useEffect(() => {
     const setRootBackgroundColor = async () =>

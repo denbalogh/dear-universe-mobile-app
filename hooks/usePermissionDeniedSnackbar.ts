@@ -2,7 +2,7 @@ import { useSnackbar } from "@/contexts/SnackbarContext";
 import { useCallback } from "react";
 import { Linking } from "react-native";
 
-type Module = "camera" | "microphone" | "media library";
+type Module = "camera" | "microphone" | "media library" | "notifications";
 
 type ReturnType = {
   showPermissionDeniedSnackbar: (module: Module) => void;

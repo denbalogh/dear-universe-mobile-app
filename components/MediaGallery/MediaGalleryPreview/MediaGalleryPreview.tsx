@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Media } from "../EditableMediaGallery";
-import { Appbar, Modal, Portal } from "react-native-paper";
+import { Appbar, Portal } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
@@ -11,6 +11,8 @@ import { spacing } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
+import NavigationAwareModal from "@/components/NavigationAwareModal/NavigationAwareModal";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 type Props = {
   media: Media[];
@@ -25,7 +27,8 @@ const MediaGalleryPreview = ({
   isVisible,
   onClose,
 }: Props) => {
-  const { theme, statusBarStyle } = useActiveColorScheme();
+  const theme = useCustomTheme();
+  const { statusBarStyle } = useActiveColorScheme();
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [appearFrom, setAppearFrom] = useState<FadeInViewAppearFrom>("bottom");
 
@@ -68,7 +71,7 @@ const MediaGalleryPreview = ({
 
   return (
     <Portal>
-      <Modal
+      <NavigationAwareModal
         visible={isVisible}
         onDismiss={handleOnClose}
         contentContainerStyle={styles.modalContentContainer}
@@ -96,7 +99,7 @@ const MediaGalleryPreview = ({
             </View>
           </FlingGesture>
         </GestureHandlerRootView>
-      </Modal>
+      </NavigationAwareModal>
     </Portal>
   );
 };

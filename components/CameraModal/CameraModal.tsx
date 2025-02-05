@@ -3,11 +3,13 @@ import { lockAsync, OrientationLock } from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
-import { Modal, Portal } from "react-native-paper";
+import { Portal } from "react-native-paper";
 import Camera from "./Camera";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import FlingGesture from "../FlingGesture/FlingGesture";
 import { CameraMode } from "expo-camera";
+import NavigationAwareModal from "../NavigationAwareModal/NavigationAwareModal";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 type Props = {
   isVisible: boolean;
@@ -24,7 +26,8 @@ const CameraModal = ({
   onVideoSaved,
   initialMode,
 }: Props) => {
-  const { theme, statusBarStyle } = useActiveColorScheme();
+  const theme = useCustomTheme();
+  const { statusBarStyle } = useActiveColorScheme();
 
   useEffect(() => {
     if (isVisible) {
@@ -36,7 +39,7 @@ const CameraModal = ({
 
   return (
     <Portal>
-      <Modal
+      <NavigationAwareModal
         visible={isVisible}
         onDismiss={onClose}
         contentContainerStyle={[
@@ -59,7 +62,7 @@ const CameraModal = ({
             />
           </FlingGesture>
         </GestureHandlerRootView>
-      </Modal>
+      </NavigationAwareModal>
     </Portal>
   );
 };

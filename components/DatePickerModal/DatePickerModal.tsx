@@ -6,7 +6,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, useWindowDimensions } from "react-native";
-import { Appbar, Modal, Portal } from "react-native-paper";
+import { Appbar, Portal } from "react-native-paper";
 import CustomMonthName, {
   MONTH_NAME_HEIGHT,
   MonthNameProps,
@@ -19,6 +19,8 @@ import CustomWeekDayName, {
 } from "./CustomWeekDayName";
 import { Realm } from "@realm/react";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
+import NavigationAwareModal from "../NavigationAwareModal/NavigationAwareModal";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 const APPBAR_HEIGHT = 70;
 const WEEKS_HEIGHT = 290;
@@ -32,7 +34,8 @@ type Props = {
 
 const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {
   const { height } = useWindowDimensions();
-  const { theme, statusBarStyle } = useActiveColorScheme();
+  const theme = useCustomTheme();
+  const { statusBarStyle } = useActiveColorScheme();
 
   const calendarSize = useMemo(
     () => ({
@@ -78,7 +81,7 @@ const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {
 
   return (
     <Portal>
-      <Modal
+      <NavigationAwareModal
         visible={isVisible}
         onDismiss={onDismiss}
         contentContainerStyle={[
@@ -118,7 +121,7 @@ const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {
           DayComponent={renderDayComponent}
           weeksContainerStyle={styles.weeksContainer}
         />
-      </Modal>
+      </NavigationAwareModal>
     </Portal>
   );
 };
