@@ -7,6 +7,7 @@ import { formatMonthYear } from "@/utils/date";
 import { useSettingsDrawer } from "@/contexts/SettingsDrawerContext";
 import useLockScreenHandler from "@/hooks/useLockScreenHandler";
 import useNotificationHandler from "@/hooks/useNotificationHandler";
+import useFirebaseAuthHandler from "@/hooks/useFirebaseAuthHandler";
 
 const App = () => {
   const theme = useTheme();
@@ -19,6 +20,9 @@ const App = () => {
 
   // Handles notification actions
   useNotificationHandler();
+
+  // Handles Firebase authentication
+  useFirebaseAuthHandler();
 
   return (
     <View style={styles.wrapper}>

@@ -4,7 +4,7 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     env: {
       production: {
-        plugins: ["react-native-paper/babel", "@realm/babel-plugin"],
+        plugins: ["react-native-paper/babel"],
       },
     },
   };

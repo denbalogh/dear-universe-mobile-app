@@ -31,7 +31,7 @@ setNotificationHandler({
 });
 
 const App = () => (
-  <RealmProvider schema={schemas} schemaVersion={7} path="default.realm">
+  <RealmProvider schema={schemas} schemaVersion={8} path="default.realm">
     <PaperProviderWithTheme>
       <ConfirmDialogContextProvider>
         <SnackbarContextProvider>

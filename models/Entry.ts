@@ -3,7 +3,7 @@ import { Day } from "./Day";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 
 export class Media extends Realm.Object {
-  videoUri?: string = "";
+  videoUri: string = "";
   imageUri!: string;
 
   static schema: Realm.ObjectSchema = {
@@ -19,11 +19,11 @@ export class Media extends Realm.Object {
 export class Entry extends Realm.Object<Entry, "day"> {
   _id: BSON.ObjectId = new BSON.ObjectId();
   createdAt: Date = new Date();
-  title?: string = "";
-  description?: string = "";
-  recordingUri?: string = "";
+  title: string = "";
+  description: string = "";
+  recordingUri: string = "";
   media: Media[] = [];
-  feelingsGroupName?: FEELING_GROUP_NAMES | "" = "";
+  feelingsGroupName: FEELING_GROUP_NAMES | "" = "";
   feelingsEmotions: string[] = [];
   day!: Day;
 
