@@ -93,7 +93,7 @@ const DayScreen = () => {
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 
-  const onFlingLeft = useCallback(() => {
+  const onFlingRight = useCallback(() => {
     const currentDate = parseDateId(dateId);
     const previousDate = subDays(currentDate, 1);
 
@@ -101,12 +101,12 @@ const DayScreen = () => {
       pathname: "/day/[dateId]",
       params: {
         dateId: formatDateId(previousDate),
-        ...DAY_SCREEN_APPEAR_FROM_RIGHT,
+        ...DAY_SCREEN_APPEAR_FROM_LEFT,
       },
     });
   }, [dateId, router]);
 
-  const onFlingRight = useCallback(() => {
+  const onFlingLeft = useCallback(() => {
     const currentDate = parseDateId(dateId);
 
     if (isToday(currentDate)) {
@@ -119,7 +119,7 @@ const DayScreen = () => {
       pathname: "/day/[dateId]",
       params: {
         dateId: formatDateId(nextDate),
-        ...DAY_SCREEN_APPEAR_FROM_LEFT,
+        ...DAY_SCREEN_APPEAR_FROM_RIGHT,
       },
     });
   }, [dateId, router]);

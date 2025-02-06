@@ -49,10 +49,6 @@ const MediaGallery = ({
     }
   };
 
-  if (!media.length) {
-    return null;
-  }
-
   return (
     <View
       onLayout={handleOnLayout}

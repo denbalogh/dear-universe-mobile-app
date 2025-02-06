@@ -24,7 +24,6 @@ type Props = {
   onDescriptionPress: () => void;
   onFeelingsPress: () => void;
   onDeleteEntryPress: () => void;
-  onRecordingLongPress: () => void;
   onMediaLongPress?: (uri: string) => void;
   moveMenuItems: MenuItemProps[];
   editMenuItems: MenuItemProps[];
@@ -42,46 +41,59 @@ const Entry = ({
   onDescriptionPress,
   onFeelingsPress,
   onDeleteEntryPress,
-  onRecordingLongPress,
   onMediaLongPress,
   moveMenuItems,
   editMenuItems,
   locked = false,
-}: Props) => (
-  <Card style={styles.wrapper} mode="contained">
-    <Card.Content style={styles.cardContent}>
-      <Title title={title} onPress={onTitlePress} locked={locked} />
-      <MediaGallery
-        media={media}
-        style={styles.mediaGallery}
-        onMediaLongPress={onMediaLongPress}
-        locked={locked}
-      />
-      <AudioPlayer
-        sourceUri={recordingUri}
-        style={styles.recording}
-        onLongPress={onRecordingLongPress}
-        locked={locked}
-      />
-      <Description
-        description={description}
-        onPress={onDescriptionPress}
-        locked={locked}
-      />
-      <BottomBar
-        feelingsButtonProps={{
-          feelingsGroupName: feelingsActiveGroup,
-          feelingsEmotions: feelingsActiveEmotions,
-          onPress: onFeelingsPress,
-        }}
-        onDeleteEntryPress={onDeleteEntryPress}
-        editMenuItems={editMenuItems}
-        moveMenuItems={moveMenuItems}
-        locked={locked}
-      />
-    </Card.Content>
-  </Card>
-);
+}: Props) => {
+  const hasTitle = !!title;
+  const hasMedia = media.length > 0;
+  const hasRecording = !!recordingUri;
+  const hasDescription = !!description;
+
+  return (
+    <Card style={styles.wrapper} mode="contained">
+      <Card.Content style={styles.cardContent}>
+        {hasTitle && (
+          <Title title={title} onPress={onTitlePress} locked={locked} />
+        )}
+        {hasMedia && (
+          <MediaGallery
+            media={media}
+            style={styles.mediaGallery}
+            onMediaLongPress={onMediaLongPress}
+            locked={locked}
+          />
+        )}
+        {hasRecording && (
+          <AudioPlayer
+            sourceUri={recordingUri}
+            style={styles.recording}
+            locked={locked}
+          />
+        )}
+        {hasDescription && (
+          <Description
+            description={description}
+            onPress={onDescriptionPress}
+            locked={locked}
+          />
+        )}
+        <BottomBar
+          feelingsButtonProps={{
+            feelingsGroupName: feelingsActiveGroup,
+            feelingsEmotions: feelingsActiveEmotions,
+            onPress: onFeelingsPress,
+          }}
+          onDeleteEntryPress={onDeleteEntryPress}
+          editMenuItems={editMenuItems}
+          moveMenuItems={moveMenuItems}
+          locked={locked}
+        />
+      </Card.Content>
+    </Card>
+  );
+};
 
 export default Entry;
 
