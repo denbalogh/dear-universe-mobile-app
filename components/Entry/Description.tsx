@@ -4,16 +4,12 @@ import { StyleSheet, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
 
 type Props = {
-  description?: string;
+  description: string;
   onPress: () => void;
   locked: boolean;
 };
 
 const Description = ({ description, onPress, locked }: Props) => {
-  if (!description) {
-    return null;
-  }
-
   if (locked) {
     return (
       <View style={styles.wrapper}>

@@ -3,12 +3,7 @@ import { Platform, StyleSheet, View, ViewProps } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useTheme } from "react-native-paper";
 import { spacing } from "@/constants/theme";
-import {
-  Audio,
-  AVPlaybackStatus,
-  AVPlaybackStatusError,
-  AVPlaybackStatusSuccess,
-} from "expo-av";
+import { Audio, AVPlaybackStatus, AVPlaybackStatusSuccess } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
 import { format } from "date-fns";
@@ -16,79 +11,44 @@ import useAppState from "@/hooks/useAppState";
 
 type Props = {
   sourceUri: string;
-  onLongPress?: () => void;
   locked?: boolean;
 } & ViewProps;
 
-const AudioPlayer = ({
-  sourceUri,
-  onLongPress,
-  locked = false,
-  ...props
-}: Props) => {
+const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
   const theme = useTheme();
+  const appState = useAppState();
 
-  const [isLoadingSound, setIsLoadingSound] = useState(true);
   const sound = useRef<Sound>();
+  const [soundStatus, setSoundStatus] = useState<AVPlaybackStatus>();
 
-  const [soundStatusSuccess, setSoundStatusSuccess] =
-    useState<AVPlaybackStatusSuccess>();
-  const [soundStatusError, setSoundStatusError] =
-    useState<AVPlaybackStatusError>();
-
-  const handleSetStatus = (status: AVPlaybackStatus) => {
-    if (status.isLoaded) {
-      setSoundStatusSuccess(status);
-      setSoundStatusError(undefined);
-    } else {
-      setSoundStatusError(status);
-      setSoundStatusSuccess(undefined);
+  const handleUnloadSound = async () => {
+    if (sound.current) {
+      await sound.current.unloadAsync();
     }
   };
 
   const loadSound = useCallback(async () => {
-    setIsLoadingSound(true);
-
-    if (sound.current) {
-      await sound.current.unloadAsync();
-    }
-
-    const defaultStatus = {};
+    await handleUnloadSound();
 
     const { sound: newSound } = await Audio.Sound.createAsync(
       { uri: sourceUri },
-      defaultStatus,
-      handleSetStatus,
+      {}, // default status
+      setSoundStatus,
     );
 
     const status = await newSound.getStatusAsync();
 
     sound.current = newSound;
-    handleSetStatus(status);
-    setIsLoadingSound(false);
+    setSoundStatus(status);
   }, [sourceUri]);
-
-  useEffect(() => {
-    loadSound();
-  }, [loadSound]);
-
-  useEffect(() => {
-    return () => {
-      const unloadSound = async () => {
-        if (sound.current) {
-          await sound.current.unloadAsync();
-        }
-      };
-      unloadSound();
-    };
-  }, [sound]);
 
   const {
     durationMillis = 1,
     positionMillis = 0,
     isPlaying = false,
     didJustFinish = false,
-  } = soundStatusSuccess || {};
+    isLoaded = false,
+  } = (soundStatus as AVPlaybackStatusSuccess) || {};
 
   const playSound = async () => {
     if (!sound.current) {
@@ -102,25 +62,17 @@ const AudioPlayer = ({
     }
   };
 
-  const setSoundPosition = async (positionMillis: number) => {
-    if (sound.current) {
-      await sound.current.setPositionAsync(positionMillis);
-    }
-  };
-
   const pauseSound = async () => {
     if (sound.current) {
       await sound.current.pauseAsync();
     }
   };
 
-  const appState = useAppState();
-
-  useEffect(() => {
-    if (appState !== "active") {
-      pauseSound();
+  const setSoundPosition = async (positionMillis: number) => {
+    if (sound.current) {
+      await sound.current.setPositionAsync(positionMillis);
     }
-  }, [appState]);
+  };
 
   const handleOn5SecForwardPress = () => {
     if (sound.current) {
@@ -139,18 +91,21 @@ const AudioPlayer = ({
   const currentTime = format(new Date(positionMillis), "mm:ss");
   const maxTime = format(new Date(durationMillis), "mm:ss");
 
-  const handleOnRecordingLongPress = () => {
-    if (!locked && onLongPress) {
-      onLongPress();
-    }
-  };
+  useEffect(() => {
+    loadSound();
+    return () => {
+      handleUnloadSound();
+    };
+  }, [loadSound]);
 
-  if (!sourceUri) {
-    return null;
-  }
+  useEffect(() => {
+    if (appState !== "active") {
+      pauseSound();
+    }
+  }, [appState]);
 
   return (
-    <View {...props}>
+    <View {...viewProps}>
       <Slider
         style={styles.slider}
         minimumValue={0}
@@ -158,22 +113,20 @@ const AudioPlayer = ({
         minimumTrackTintColor={theme.colors.primary}
         maximumTrackTintColor={theme.colors.secondary}
         thumbTintColor={theme.colors.primary}
-        disabled={isLoadingSound}
+        disabled={!isLoaded}
         value={positionMillis}
         onSlidingComplete={(value) => setSoundPosition(value)}
       />
       <Controls
-        isLoading={isLoadingSound}
+        isLoaded={isLoaded}
         isPlaying={isPlaying}
         onPlayPress={playSound}
         onPausePress={pauseSound}
         on5SecForwardPress={handleOn5SecForwardPress}
         on5SecRewindPress={handleOn5SecRewindPress}
-        failedToLoad={soundStatusError !== undefined}
         onReloadPress={loadSound}
         currentTime={currentTime}
         maxTime={maxTime}
-        onLongPress={handleOnRecordingLongPress}
       />
     </View>
   );

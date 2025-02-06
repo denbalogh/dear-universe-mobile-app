@@ -93,16 +93,6 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
     showSnackbar,
   ]);
 
-  const handleOnRecordingLongPress = () => {
-    router.navigate(
-      {
-        pathname: `./entry/${_id.toString()}`,
-        params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
-      },
-      { relativeToDirectory: true },
-    );
-  };
-
   const handleOnMediaLongPress = (uri: string) => {
     router.navigate(
       {
@@ -248,7 +238,6 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
       feelingsActiveEmotions={feelingsEmotions}
       onFeelingsPress={handleFeelingsPress}
       onDeleteEntryPress={handleDeleteEntryPress}
-      onRecordingLongPress={handleOnRecordingLongPress}
       onMediaLongPress={handleOnMediaLongPress}
       recordingUri={recordingUri}
       media={media}

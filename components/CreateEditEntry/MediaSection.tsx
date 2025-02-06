@@ -6,15 +6,15 @@ import { StyleSheet, View, ViewProps } from "react-native";
 import { ActivityIndicator, Button, IconButton } from "react-native-paper";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { getThumbnailAsync } from "expo-video-thumbnails";
-import EditableMediaGallery, {
-  Media,
-} from "@/components/MediaGallery/EditableMediaGallery";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import CameraModal from "../CameraModal/CameraModal";
 import useCameraPermissions from "@/hooks/useCameraPermissions";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import { CameraMode } from "expo-camera";
 import CustomMenu from "../CustomMenu/CustomMenu";
+import EditableMediaGallery, {
+  Media,
+} from "../MediaGallery/EditableMediaGallery";
 
 type Props = {
   media: Media[];
@@ -130,38 +130,6 @@ const MediaSection = ({
 
   const hasMedia = media.length > 0;
 
-  const handleMoveLeftPress = (index: number) => {
-    const newMedia = [...media];
-    const [removedMedia] = newMedia.splice(index, 1);
-    newMedia.splice(index - 1, 0, removedMedia);
-    onMediaChange(newMedia);
-  };
-
-  const handleMoveToStartPress = (index: number) => {
-    const newMedia = [...media];
-    const [removedMedia] = newMedia.splice(index, 1);
-    newMedia.unshift(removedMedia);
-    onMediaChange(newMedia);
-  };
-
-  const handleMoveRightPress = (index: number) => {
-    const newMedia = [...media];
-    const [removedMedia] = newMedia.splice(index, 1);
-    newMedia.splice(index + 1, 0, removedMedia);
-    onMediaChange(newMedia);
-  };
-
-  const handleMoveToEndPress = (index: number) => {
-    const newMedia = [...media];
-    const [removedMedia] = newMedia.splice(index, 1);
-    newMedia.push(removedMedia);
-    onMediaChange(newMedia);
-  };
-
-  const handleSelectSingle = (uri: string) => {
-    setSelectedMediaImagesUri([uri]);
-  };
-
   const handleSelectAll = () => {
     setSelectedMediaImagesUri(media.map(({ imageUri }) => imageUri));
   };
@@ -180,6 +148,20 @@ const MediaSection = ({
       handleCancelSelection();
     });
   };
+
+  const handleOrderChange = useCallback(
+    (fromId: string, toId: string) => {
+      const fromIndex = media.findIndex(({ imageUri }) => imageUri === fromId);
+      const toIndex = media.findIndex(({ imageUri }) => imageUri === toId);
+
+      const newMedia = [...media];
+      const [removed] = newMedia.splice(fromIndex, 1);
+      newMedia.splice(toIndex, 0, removed);
+
+      onMediaChange(newMedia);
+    },
+    [media, onMediaChange],
+  );
 
   return (
     <View {...viewProps}>
@@ -238,10 +220,7 @@ const MediaSection = ({
         <>
           <EditableMediaGallery
             media={media}
-            onMoveLeftPress={handleMoveLeftPress}
-            onMoveToStartPress={handleMoveToStartPress}
-            onMoveRightPress={handleMoveRightPress}
-            onMoveToEndPress={handleMoveToEndPress}
+            onOrderChange={handleOrderChange}
             addButtons={[
               {
                 leadingIcon: "camera",
@@ -260,7 +239,6 @@ const MediaSection = ({
               },
             ]}
             addButtonsLoading={isLoading}
-            onMediaLongPress={handleSelectSingle}
             selectedMediaImagesUri={selectedMediaImagesUri}
             onSelectedMediaImagesUriChange={setSelectedMediaImagesUri}
           />

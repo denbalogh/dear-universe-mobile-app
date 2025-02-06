@@ -1,12 +1,7 @@
 import { roundness, sizing, spacing } from "@/constants/theme";
 import React from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
-import {
-  ActivityIndicator,
-  IconButton,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { IconButton, Text, useTheme } from "react-native-paper";
 
 const TimePlaceholder = (props: ViewProps) => {
   const theme = useTheme();
@@ -23,8 +18,7 @@ const TimePlaceholder = (props: ViewProps) => {
 };
 
 type Props = {
-  failedToLoad: boolean;
-  isLoading: boolean;
+  isLoaded: boolean;
   isPlaying: boolean;
   onPlayPress: () => void;
   onPausePress: () => void;
@@ -33,12 +27,10 @@ type Props = {
   on5SecForwardPress: () => void;
   currentTime?: string;
   maxTime?: string;
-  onLongPress?: () => void;
 };
 
 const Controls = ({
-  failedToLoad,
-  isLoading,
+  isLoaded,
   isPlaying,
   onPausePress,
   onPlayPress,
@@ -47,12 +39,11 @@ const Controls = ({
   on5SecRewindPress,
   currentTime = "--:--",
   maxTime = "--:--",
-  onLongPress,
 }: Props) => {
   return (
     <View style={styles.wrapper}>
       <View style={styles.timesWrapper}>
-        {isLoading || failedToLoad ? (
+        {!isLoaded ? (
           <TimePlaceholder testID="currentTimeLoading" />
         ) : (
           <Text
@@ -63,7 +54,7 @@ const Controls = ({
             {currentTime}
           </Text>
         )}
-        {isLoading || failedToLoad ? (
+        {!isLoaded ? (
           <TimePlaceholder testID="maxTimeLoading" />
         ) : (
           <Text
@@ -80,50 +71,40 @@ const Controls = ({
           icon="rewind-5"
           size={sizing.sizeMedium}
           onPress={on5SecRewindPress}
-          disabled={isLoading || failedToLoad}
+          disabled={!isLoaded}
           accessibilityLabel="Rewind 5 seconds"
-          onLongPress={onLongPress}
         />
-        {isLoading ? (
-          <ActivityIndicator
-            accessibilityLabel="Loading the recording"
-            style={styles.loadingIndicator}
-          />
-        ) : failedToLoad ? (
+        {!isLoaded ? (
           <IconButton
             icon="reload"
             size={sizing.sizeMedium}
             onPress={onReloadPress}
-            style={styles.playPauseIconButton}
+            style={styles.centerIconButton}
             accessibilityLabel="Reload"
-            onLongPress={onLongPress}
           />
         ) : isPlaying ? (
           <IconButton
             icon="pause"
             size={sizing.sizeMedium}
             onPress={onPausePress}
-            style={styles.playPauseIconButton}
+            style={styles.centerIconButton}
             accessibilityLabel="Pause"
-            onLongPress={onLongPress}
           />
         ) : (
           <IconButton
             icon="play"
             size={sizing.sizeMedium}
             onPress={onPlayPress}
-            style={styles.playPauseIconButton}
+            style={styles.centerIconButton}
             accessibilityLabel="Play"
-            onLongPress={onLongPress}
           />
         )}
         <IconButton
           icon="fast-forward-5"
           size={sizing.sizeMedium}
           onPress={on5SecForwardPress}
-          disabled={isLoading || failedToLoad}
+          disabled={!isLoaded}
           accessibilityLabel="Forward 5 seconds"
-          onLongPress={onLongPress}
         />
       </View>
     </View>
@@ -152,11 +133,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  loadingIndicator: {
-    marginHorizontal: spacing.spaceMedium,
-    paddingVertical: spacing.spaceMedium,
-  },
-  playPauseIconButton: {
+  centerIconButton: {
     marginHorizontal: spacing.spaceSmall,
   },
   timePlaceholder: {
