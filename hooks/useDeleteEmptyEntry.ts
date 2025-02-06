@@ -1,5 +1,6 @@
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import { Entry } from "@/models/Entry";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 import { useObject, useRealm } from "@realm/react";
 import { useEffect } from "react";
 import { BSON } from "realm";
@@ -24,6 +25,7 @@ const useDeleteEmptyEntry = (entryId: string) => {
     }
 
     if (!title && !description && !recordingUri && media.length === 0) {
+      getCrashlytics().log("Deleting empty entry");
       realm.write(() => {
         realm.delete(entryObject);
       });

@@ -1,7 +1,7 @@
 // Polyfill for React Native's `crypto` module
 import "react-native-get-random-values";
 
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import Constants from "expo-constants";
 import Storybook from "../.storybook";
 import { RealmProvider } from "@realm/react";
@@ -16,6 +16,8 @@ import {
 import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext";
 import PaperProviderWithTheme from "@/components/PaperProviderWithTheme.tsx/PaperProviderWithTheme";
 import { setNotificationHandler } from "expo-notifications";
+import { useEffect } from "react";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -30,21 +32,33 @@ setNotificationHandler({
   }),
 });
 
-const App = () => (
-  <RealmProvider schema={schemas} schemaVersion={8} path="default.realm">
-    <PaperProviderWithTheme>
-      <ConfirmDialogContextProvider>
-        <SnackbarContextProvider>
-          <GestureHandlerRootView>
-            <SettingsDrawerContextProvider>
-              <Stack screenOptions={{ animation: "fade_from_bottom" }} />
-            </SettingsDrawerContextProvider>
-          </GestureHandlerRootView>
-        </SnackbarContextProvider>
-      </ConfirmDialogContextProvider>
-    </PaperProviderWithTheme>
-  </RealmProvider>
-);
+const App = () => {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    getCrashlytics().log("App mounted.");
+  }, []);
+
+  useEffect(() => {
+    getCrashlytics().log(`Navigated to ${pathname}`);
+  }, [pathname]);
+
+  return (
+    <RealmProvider schema={schemas} schemaVersion={8} path="default.realm">
+      <PaperProviderWithTheme>
+        <ConfirmDialogContextProvider>
+          <SnackbarContextProvider>
+            <GestureHandlerRootView>
+              <SettingsDrawerContextProvider>
+                <Stack screenOptions={{ animation: "fade_from_bottom" }} />
+              </SettingsDrawerContextProvider>
+            </GestureHandlerRootView>
+          </SnackbarContextProvider>
+        </ConfirmDialogContextProvider>
+      </PaperProviderWithTheme>
+    </RealmProvider>
+  );
+};
 
 let AppEntryPoint = App;
 

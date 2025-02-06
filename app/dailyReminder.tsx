@@ -32,6 +32,7 @@ import { getRandomPhrase } from "@/utils/getRandomPhrase";
 import { phrases } from "@/constants/dailyReminder";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 
 export const DAILY_REMINDER_IDENTIFIER = "daily-reminder";
 
@@ -89,10 +90,12 @@ const DailyReminderSetupScreen = () => {
   useBackHandler(onAndroidBackButtonPress);
 
   const scheduleNotification = useCallback(async () => {
+    getCrashlytics().log("Daily reminder - cancel all scheduled notifications");
     await cancelAllScheduledNotificationsAsync();
 
     const [hours, minutes] = [time.getHours(), time.getMinutes()];
 
+    getCrashlytics().log("Daily reminder - schedule notification");
     await scheduleNotificationAsync({
       content: {
         title: "Daily reminder",

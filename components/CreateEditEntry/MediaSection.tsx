@@ -15,6 +15,7 @@ import CustomMenu from "../CustomMenu/CustomMenu";
 import EditableMediaGallery, {
   Media,
 } from "../MediaGallery/EditableMediaGallery";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 
 type Props = {
   media: Media[];
@@ -70,6 +71,8 @@ const MediaSection = ({
     async (assets: ImagePickerAsset[]) => {
       const newMedia = [];
 
+      getCrashlytics().log("Adding media from image picker");
+
       for (const { type, uri } of assets) {
         if (type === "video") {
           const { uri: thumbnailUri } = await getThumbnailAsync(uri, {
@@ -101,6 +104,7 @@ const MediaSection = ({
 
   const handleAddVideoFromCamera = useCallback(
     async (videoUri: string) => {
+      getCrashlytics().log("Adding video from camera");
       const { uri: thumbnailUri } = await getThumbnailAsync(videoUri, {
         time: 0,
       });
@@ -151,6 +155,7 @@ const MediaSection = ({
 
   const handleOrderChange = useCallback(
     (fromId: string, toId: string) => {
+      getCrashlytics().log("Changing media order");
       const fromIndex = media.findIndex(({ imageUri }) => imageUri === fromId);
       const toIndex = media.findIndex(({ imageUri }) => imageUri === toId);
 

@@ -28,6 +28,7 @@ import FeelingsSection from "./FeelingsSection/FeelingsSection";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import FlingGesture from "../FlingGesture/FlingGesture";
 import useBackHandler from "@/hooks/useBackHandler";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 
 type LayoutParts =
   | "mainHeadline"
@@ -131,6 +132,8 @@ const CreateEditEntry = ({
         const mediaOffset =
           recordingOffset + recordingHeadline + recordingSection;
         const feelingsOffset = mediaOffset + mediaHeadline + mediaSection;
+
+        getCrashlytics().log("Create entry scrolling to section");
 
         if (scrollToRecording) {
           handleScrollToOffset(recordingOffset);

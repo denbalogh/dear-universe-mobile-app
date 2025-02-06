@@ -1,5 +1,6 @@
 import { Media } from "@/components/MediaGallery/EditableMediaGallery";
 import { IMAGES_DIR, RECORDINGS_DIR, VIDEOS_DIR } from "@/constants/files";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 import {
   deleteAsync,
   getInfoAsync,
@@ -16,6 +17,8 @@ const createDirectoryIfNotExists = async (directory: string) => {
 };
 
 export const moveMediaToAppDirectoryAndGetPaths = async (media: Media[]) => {
+  getCrashlytics().log("Moving media to app directory");
+
   const newFiles: Media[] = [];
 
   await createDirectoryIfNotExists(IMAGES_DIR);
@@ -57,6 +60,8 @@ export const moveRecordingToAppDirectoryAndGetPath = async (
     return "";
   }
 
+  getCrashlytics().log("Moving recording to app directory");
+
   await createDirectoryIfNotExists(RECORDINGS_DIR);
 
   const filename = recordingUri.split("/").pop();
@@ -74,6 +79,8 @@ export const moveAndDeleteUpdatedMediaAndGetPaths = async (
   media: Media[],
   initialMedia: Media[],
 ) => {
+  getCrashlytics().log("Moving and deleting updated media");
+
   const deletedMedia = initialMedia.filter(
     ({ imageUri, videoUri }) =>
       !media.some(
@@ -142,6 +149,8 @@ export const moveAndDeleteUpdatedRecordingAndGetPath = async (
     return "";
   }
 
+  getCrashlytics().log("Moving and deleting updated recording");
+
   await createDirectoryIfNotExists(RECORDINGS_DIR);
 
   // Remove deleted recording from phone storage
@@ -164,6 +173,8 @@ export const deleteFilesInEntry = async (
   media: Media[],
   recordingUri: string,
 ) => {
+  getCrashlytics().log("Deleting files in entry");
+
   for (const { imageUri, videoUri } of media) {
     await deleteAsync(imageUri);
 

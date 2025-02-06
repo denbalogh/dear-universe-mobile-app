@@ -8,6 +8,7 @@ import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
 import { format } from "date-fns";
 import useAppState from "@/hooks/useAppState";
+import { getCrashlytics } from "@react-native-firebase/crashlytics";
 
 type Props = {
   sourceUri: string;
@@ -23,6 +24,7 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
 
   const handleUnloadSound = async () => {
     if (sound.current) {
+      getCrashlytics().log("Unloading sound");
       await sound.current.unloadAsync();
     }
   };
@@ -30,12 +32,14 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
   const loadSound = useCallback(async () => {
     await handleUnloadSound();
 
+    getCrashlytics().log("Loading sound");
     const { sound: newSound } = await Audio.Sound.createAsync(
       { uri: sourceUri },
       {}, // default status
       setSoundStatus,
     );
 
+    getCrashlytics().log("Getting sound status");
     const status = await newSound.getStatusAsync();
 
     sound.current = newSound;
@@ -56,26 +60,31 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
     }
 
     if (didJustFinish) {
+      getCrashlytics().log("Replaying sound");
       await sound.current.replayAsync();
     } else {
+      getCrashlytics().log("Playing sound");
       await sound.current.playAsync();
     }
   };
 
   const pauseSound = async () => {
     if (sound.current) {
+      getCrashlytics().log("Pausing sound");
       await sound.current.pauseAsync();
     }
   };
 
   const setSoundPosition = async (positionMillis: number) => {
     if (sound.current) {
+      getCrashlytics().log("Setting sound position");
       await sound.current.setPositionAsync(positionMillis);
     }
   };
 
   const handleOn5SecForwardPress = () => {
     if (sound.current) {
+      getCrashlytics().log("Forwarding sound by 5 seconds");
       sound.current.setPositionAsync(
         Math.min(positionMillis + 5000, durationMillis),
       );
@@ -84,6 +93,7 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
 
   const handleOn5SecRewindPress = () => {
     if (sound.current) {
+      getCrashlytics().log("Rewinding sound by 5 seconds");
       sound.current.setPositionAsync(Math.max(positionMillis - 5000, 0));
     }
   };
