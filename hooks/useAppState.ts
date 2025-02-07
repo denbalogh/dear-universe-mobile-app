@@ -1,5 +1,6 @@
-import { getAnalytics, logAppOpen } from "@react-native-firebase/analytics";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
+import { logAppOpen } from "@react-native-firebase/analytics";
+import { getApp } from "@react-native-firebase/app";
 import { useEffect, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 
@@ -7,20 +8,20 @@ const useAppState = (): AppStateStatus => {
   const [appStateVisible, setAppStateVisible] = useState(AppState.currentState);
 
   useEffect(() => {
-    log(getCrashlytics(), "AppState - add listener");
+    logCrashlytics("AppState - add listener");
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       setAppStateVisible(nextAppState);
 
       if (nextAppState === "active") {
-        logAppOpen(getAnalytics());
-        log(getCrashlytics(), "App is in the foreground");
+        logAppOpen(getApp().analytics());
+        logCrashlytics("App is in the foreground");
       } else {
-        log(getCrashlytics(), "App is not in the foreground");
+        logCrashlytics("App is not in the foreground");
       }
     });
 
     return () => {
-      log(getCrashlytics(), "AppState - remove listener");
+      logCrashlytics("AppState - remove listener");
       subscription.remove();
     };
   }, []);

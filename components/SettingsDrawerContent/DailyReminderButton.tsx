@@ -3,7 +3,7 @@ import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import useSettingsObject from "@/hooks/useSettingsObject";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 import { cancelAllScheduledNotificationsAsync } from "expo-notifications";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -31,7 +31,7 @@ const DailyReminderButton = ({ closeSettingsDrawer }: Props) => {
   };
 
   const handleDeleteReminder = async () => {
-    log(getCrashlytics(), "Deleting daily reminder");
+    logCrashlytics("Deleting daily reminder");
     await cancelAllScheduledNotificationsAsync();
     updateSettingsObject({ dailyReminderTime: "", dailyReminderMessage: "" });
     showSnackbar("Daily reminder deleted");

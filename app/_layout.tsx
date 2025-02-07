@@ -17,8 +17,9 @@ import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext"
 import PaperProviderWithTheme from "@/components/PaperProviderWithTheme.tsx/PaperProviderWithTheme";
 import { setNotificationHandler } from "expo-notifications";
 import { useEffect } from "react";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
-import { getAnalytics, logScreenView } from "@react-native-firebase/analytics";
+import { logScreenView } from "@react-native-firebase/analytics";
+import { getApp } from "@react-native-firebase/app";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -37,12 +38,12 @@ const App = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    log(getCrashlytics(), "App mounted.");
+    logCrashlytics("App mounted.");
   }, []);
 
   useEffect(() => {
-    log(getCrashlytics(), `Navigated to ${pathname}`);
-    logScreenView(getAnalytics(), { screen_name: pathname });
+    logCrashlytics(`Navigated to ${pathname}`);
+    logScreenView(getApp().analytics(), { screen_name: pathname });
   }, [pathname]);
 
   return (

@@ -1,7 +1,7 @@
 import { usePermissions } from "expo-av/build/Audio";
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type ReturnType = {
   granted: boolean;
@@ -14,7 +14,7 @@ const useRecordingPermissions = (): ReturnType => {
   const [recordingPermissions, requestRecordingPermission] = usePermissions();
 
   const handleRequestRecordingPermissions = useCallback(async () => {
-    log(getCrashlytics(), "Requesting recording permission");
+    logCrashlytics("Requesting recording permission");
     const { canAskAgain, granted } = await requestRecordingPermission();
 
     if (!granted && !canAskAgain) {

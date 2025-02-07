@@ -4,7 +4,7 @@ import {
 } from "expo-camera";
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type ReturnType = {
   cameraGranted: boolean;
@@ -22,7 +22,7 @@ const useCameraPermissions = (): ReturnType => {
 
   const handleRequestCameraPermission = useCallback(
     async (successCallback: () => void) => {
-      log(getCrashlytics(), "Requesting camera permission");
+      logCrashlytics("Requesting camera permission");
       const { granted, canAskAgain } = await requestCameraPermission();
 
       if (!granted && !canAskAgain) {
@@ -38,7 +38,7 @@ const useCameraPermissions = (): ReturnType => {
 
   const handleRequestMicrophonePermission = useCallback(
     async (successCallback: () => void) => {
-      log(getCrashlytics(), "Requesting microphone permission for camera");
+      logCrashlytics("Requesting microphone permission for camera");
       const { granted, canAskAgain } = await requestMicrophonePermissions();
 
       if (!granted && !canAskAgain) {

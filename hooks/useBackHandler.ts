@@ -1,4 +1,4 @@
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { BackHandler } from "react-native";
@@ -10,13 +10,13 @@ import { BackHandler } from "react-native";
 const useBackHandler = (func: () => boolean) => {
   useFocusEffect(
     useCallback(() => {
-      log(getCrashlytics(), "Back handler - adding listener");
+      logCrashlytics("Back handler - adding listener");
       const subscription = BackHandler.addEventListener(
         "hardwareBackPress",
         func,
       );
       return () => {
-        log(getCrashlytics(), "Back handler - removing listener");
+        logCrashlytics("Back handler - removing listener");
         subscription.remove();
       };
     }, [func]),

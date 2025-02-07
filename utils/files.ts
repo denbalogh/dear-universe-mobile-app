@@ -1,12 +1,12 @@
 import { Media } from "@/components/MediaGallery/EditableMediaGallery";
 import { IMAGES_DIR, RECORDINGS_DIR, VIDEOS_DIR } from "@/constants/files";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 import {
   deleteAsync,
   getInfoAsync,
   makeDirectoryAsync,
   moveAsync,
 } from "expo-file-system";
+import logCrashlytics from "./logCrashlytics";
 
 const createDirectoryIfNotExists = async (directory: string) => {
   const { exists } = await getInfoAsync(directory);
@@ -17,7 +17,7 @@ const createDirectoryIfNotExists = async (directory: string) => {
 };
 
 export const moveMediaToAppDirectoryAndGetPaths = async (media: Media[]) => {
-  log(getCrashlytics(), "Moving media to app directory");
+  logCrashlytics("Moving media to app directory");
 
   const newFiles: Media[] = [];
 
@@ -60,7 +60,7 @@ export const moveRecordingToAppDirectoryAndGetPath = async (
     return "";
   }
 
-  log(getCrashlytics(), "Moving recording to app directory");
+  logCrashlytics("Moving recording to app directory");
 
   await createDirectoryIfNotExists(RECORDINGS_DIR);
 
@@ -79,7 +79,7 @@ export const moveAndDeleteUpdatedMediaAndGetPaths = async (
   media: Media[],
   initialMedia: Media[],
 ) => {
-  log(getCrashlytics(), "Moving and deleting updated media");
+  logCrashlytics("Moving and deleting updated media");
 
   const deletedMedia = initialMedia.filter(
     ({ imageUri, videoUri }) =>
@@ -149,7 +149,7 @@ export const moveAndDeleteUpdatedRecordingAndGetPath = async (
     return "";
   }
 
-  log(getCrashlytics(), "Moving and deleting updated recording");
+  logCrashlytics("Moving and deleting updated recording");
 
   await createDirectoryIfNotExists(RECORDINGS_DIR);
 
@@ -173,7 +173,7 @@ export const deleteFilesInEntry = async (
   media: Media[],
   recordingUri: string,
 ) => {
-  log(getCrashlytics(), "Deleting files in entry");
+  logCrashlytics("Deleting files in entry");
 
   for (const { imageUri, videoUri } of media) {
     await deleteAsync(imageUri);

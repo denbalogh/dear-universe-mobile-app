@@ -1,6 +1,6 @@
 import { SETTINGS_ID } from "@/constants/settings";
 import { Settings } from "@/models/Settings";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 import { useObject, useRealm } from "@realm/react";
 import { useCallback, useEffect } from "react";
 import { UpdateMode } from "realm";
@@ -16,7 +16,7 @@ const useSettingsObject = (): ReturnType => {
 
   useEffect(() => {
     if (settingsObject === null) {
-      log(getCrashlytics(), "Creating new Settings object");
+      logCrashlytics("Creating new Settings object");
       realm.write(() => {
         realm.create(Settings, {
           _id: SETTINGS_ID,
@@ -27,7 +27,7 @@ const useSettingsObject = (): ReturnType => {
 
   const updateSettingsObject = useCallback(
     (data: Partial<Settings>) => {
-      log(getCrashlytics(), "Updating Settings object");
+      logCrashlytics("Updating Settings object");
       realm.write(() => {
         realm.create(
           Settings,

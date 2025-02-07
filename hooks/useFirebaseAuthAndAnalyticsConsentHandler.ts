@@ -1,18 +1,9 @@
-import {
-  getAuth,
-  signInAnonymously,
-  signOut,
-} from "@react-native-firebase/auth";
+import { signInAnonymously, signOut } from "@react-native-firebase/auth";
 import { useCallback, useEffect } from "react";
 import useSettingsObject from "./useSettingsObject";
-import {
-  getCrashlytics,
-  setCrashlyticsCollectionEnabled,
-} from "@react-native-firebase/crashlytics";
-import {
-  getAnalytics,
-  setAnalyticsCollectionEnabled,
-} from "@react-native-firebase/analytics";
+import { setCrashlyticsCollectionEnabled } from "@react-native-firebase/crashlytics";
+import { setAnalyticsCollectionEnabled } from "@react-native-firebase/analytics";
+import { getApp } from "@react-native-firebase/app";
 
 const useFirebaseAuthAndAnalyticsConsentHandler = () => {
   const { settingsObject } = useSettingsObject();
@@ -20,16 +11,16 @@ const useFirebaseAuthAndAnalyticsConsentHandler = () => {
   const { analyticsConsent = false } = settingsObject || {};
 
   const handleAnonymousSignIn = async () => {
-    await signInAnonymously(getAuth());
+    await signInAnonymously(getApp().auth());
   };
 
   const handleLogOut = async () => {
-    await signOut(getAuth());
+    await signOut(getApp().auth());
   };
 
   const handleSetConsent = useCallback((enabled: boolean) => {
-    setCrashlyticsCollectionEnabled(getCrashlytics(), enabled);
-    setAnalyticsCollectionEnabled(getAnalytics(), enabled);
+    setCrashlyticsCollectionEnabled(getApp().crashlytics(), enabled);
+    setAnalyticsCollectionEnabled(getApp().analytics(), enabled);
   }, []);
 
   useEffect(() => {

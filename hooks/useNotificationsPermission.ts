@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 import { requestPermissionsAsync } from "expo-notifications";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type ReturnType = {
   requestPermissions: (onSuccess: () => void) => Promise<void>;
@@ -12,7 +12,7 @@ const useNotificationsPermissions = (): ReturnType => {
 
   const requestNotificationsPermissions = useCallback(
     async (onSuccess: () => void) => {
-      log(getCrashlytics(), "Requesting notifications permission");
+      logCrashlytics("Requesting notifications permission");
       const { canAskAgain, granted } = await requestPermissionsAsync();
 
       if (!granted && !canAskAgain) {

@@ -18,7 +18,7 @@ import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import useAppState from "@/hooks/useAppState";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type Props = {
   onRecordingDone: (recordingUri: string) => void;
@@ -41,13 +41,13 @@ const RecordingSection = ({
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>();
 
   const startRecording = async () => {
-    log(getCrashlytics(), "Setting audio mode");
+    logCrashlytics("Setting audio mode");
     await setAudioModeAsync({
       allowsRecordingIOS: true,
       playsInSilentModeIOS: true,
     });
 
-    log(getCrashlytics(), "Creating recording");
+    logCrashlytics("Creating recording");
     const { recording, status } = await Recording.createAsync(
       RecordingOptionsPresets.HIGH_QUALITY,
       setRecordingStatus,
@@ -60,21 +60,21 @@ const RecordingSection = ({
 
   const pauseRecording = useCallback(async () => {
     if (recording) {
-      log(getCrashlytics(), "Pausing recording");
+      logCrashlytics("Pausing recording");
       await recording.pauseAsync();
     }
   }, [recording]);
 
   const continueRecording = async () => {
     if (recording) {
-      log(getCrashlytics(), "Continuing recording");
+      logCrashlytics("Continuing recording");
       await recording.startAsync();
     }
   };
 
   const stopRecording = async () => {
     if (recording) {
-      log(getCrashlytics(), "Stopping recording");
+      logCrashlytics("Stopping recording");
       await recording.stopAndUnloadAsync();
       await setAudioModeAsync({
         allowsRecordingIOS: false,
@@ -115,7 +115,7 @@ const RecordingSection = ({
 
   const unloadRecording = useCallback(async () => {
     if (recording) {
-      log(getCrashlytics(), "Unloading recording");
+      logCrashlytics("Unloading recording");
       await recording.stopAndUnloadAsync();
       await setAudioModeAsync({
         allowsRecordingIOS: false,

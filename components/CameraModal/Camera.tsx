@@ -8,7 +8,7 @@ import { spacing } from "@/constants/theme";
 import useScreenOrientation from "@/hooks/useScreenOrientation";
 import useCameraPermissions from "@/hooks/useCameraPermissions";
 import useBackHandler from "@/hooks/useBackHandler";
-import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type Props = {
   active: boolean;
@@ -51,7 +51,7 @@ const Camera = ({
 
   const handlePicturePress = async () => {
     if (cameraRef.current) {
-      log(getCrashlytics(), "Taking picture");
+      logCrashlytics("Taking picture");
       const picture = await cameraRef.current.takePictureAsync({
         quality: 1.0,
         skipProcessing: false,
@@ -79,7 +79,7 @@ const Camera = ({
         setRecordingTimeInMs((prev) => prev + 1000);
       }, 1000);
 
-      log(getCrashlytics(), "Recording video");
+      logCrashlytics("Recording video");
       const video = await cameraRef.current.recordAsync();
 
       if (video) {
@@ -102,7 +102,7 @@ const Camera = ({
       clearInterval(recordingTimerId.current as NodeJS.Timeout);
       setRecordingTimeInMs(0);
 
-      log(getCrashlytics(), "Stopping video recording");
+      logCrashlytics("Stopping video recording");
       await cameraRef.current.stopRecording();
     }
   };
