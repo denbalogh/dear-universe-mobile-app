@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 import { requestPermissionsAsync } from "expo-notifications";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type ReturnType = {
   requestPermissions: (onSuccess: () => void) => Promise<void>;
@@ -11,6 +12,7 @@ const useNotificationsPermissions = (): ReturnType => {
 
   const requestNotificationsPermissions = useCallback(
     async (onSuccess: () => void) => {
+      logCrashlytics("Requesting notifications permission");
       const { canAskAgain, granted } = await requestPermissionsAsync();
 
       if (!granted && !canAskAgain) {

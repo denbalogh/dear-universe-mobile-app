@@ -9,6 +9,7 @@ import useDayObject from "@/hooks/useDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { BSON } from "realm";
 import { useSnackbar } from "@/contexts/SnackbarContext";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 const EditEntryScreen = () => {
   const realm = useRealm();
@@ -50,6 +51,7 @@ const EditEntryScreen = () => {
         feelingsActiveEmotions,
       } = entryData;
 
+      logCrashlytics("Updating entry");
       realm.write(() => {
         entryObject.title = title;
         entryObject.description = description;

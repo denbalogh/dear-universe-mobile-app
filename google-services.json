@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "243099742671",
     "project_id": "dear-universe-app",
-    "storage_bucket": "dear-universe-app.appspot.com"
+    "storage_bucket": "dear-universe-app.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,20 @@
           "package_name": "com.denbalogh.dearuniverseapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "243099742671-qhn4pqr3mfmqn8aic160u3vq5rva75h9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.denbalogh.dearuniverseapp",
+            "certificate_hash": "fefb74e66afc8c5c0d7e5df8c7eb284b8ea48795"
+          }
+        },
+        {
+          "client_id": "243099742671-6cnkl2887q7u6kqqsn97lf0j5oiljpab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBizdZ4nF1A1CVOOJXfWD99YCxDSpaT6Eg"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "243099742671-6cnkl2887q7u6kqqsn97lf0j5oiljpab.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "243099742671-m2fsuriuhm9cfhjclplechhjaac62qdm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.denbalogh.dearuniverseapp"
+              }
+            }
+          ]
         }
       }
     }

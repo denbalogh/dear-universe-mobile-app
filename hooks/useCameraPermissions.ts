@@ -4,6 +4,7 @@ import {
 } from "expo-camera";
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type ReturnType = {
   cameraGranted: boolean;
@@ -21,6 +22,7 @@ const useCameraPermissions = (): ReturnType => {
 
   const handleRequestCameraPermission = useCallback(
     async (successCallback: () => void) => {
+      logCrashlytics("Requesting camera permission");
       const { granted, canAskAgain } = await requestCameraPermission();
 
       if (!granted && !canAskAgain) {
@@ -36,6 +38,7 @@ const useCameraPermissions = (): ReturnType => {
 
   const handleRequestMicrophonePermission = useCallback(
     async (successCallback: () => void) => {
+      logCrashlytics("Requesting microphone permission for camera");
       const { granted, canAskAgain } = await requestMicrophonePermissions();
 
       if (!granted && !canAskAgain) {

@@ -1,7 +1,7 @@
 // Polyfill for React Native's `crypto` module
 import "react-native-get-random-values";
 
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import Constants from "expo-constants";
 import Storybook from "../.storybook";
 import { RealmProvider } from "@realm/react";
@@ -16,6 +16,10 @@ import {
 import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext";
 import PaperProviderWithTheme from "@/components/PaperProviderWithTheme.tsx/PaperProviderWithTheme";
 import { setNotificationHandler } from "expo-notifications";
+import { useEffect } from "react";
+import { logScreenView } from "@react-native-firebase/analytics";
+import { getApp } from "@react-native-firebase/app";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -30,21 +34,34 @@ setNotificationHandler({
   }),
 });
 
-const App = () => (
-  <RealmProvider schema={schemas} schemaVersion={7} path="default.realm">
-    <PaperProviderWithTheme>
-      <ConfirmDialogContextProvider>
-        <SnackbarContextProvider>
-          <GestureHandlerRootView>
-            <SettingsDrawerContextProvider>
-              <Stack screenOptions={{ animation: "fade_from_bottom" }} />
-            </SettingsDrawerContextProvider>
-          </GestureHandlerRootView>
-        </SnackbarContextProvider>
-      </ConfirmDialogContextProvider>
-    </PaperProviderWithTheme>
-  </RealmProvider>
-);
+const App = () => {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    logCrashlytics("App mounted.");
+  }, []);
+
+  useEffect(() => {
+    logCrashlytics(`Navigated to ${pathname}`);
+    logScreenView(getApp().analytics(), { screen_name: pathname });
+  }, [pathname]);
+
+  return (
+    <RealmProvider schema={schemas} schemaVersion={9} path="default.realm">
+      <PaperProviderWithTheme>
+        <ConfirmDialogContextProvider>
+          <SnackbarContextProvider>
+            <GestureHandlerRootView>
+              <SettingsDrawerContextProvider>
+                <Stack screenOptions={{ animation: "fade_from_bottom" }} />
+              </SettingsDrawerContextProvider>
+            </GestureHandlerRootView>
+          </SnackbarContextProvider>
+        </ConfirmDialogContextProvider>
+      </PaperProviderWithTheme>
+    </RealmProvider>
+  );
+};
 
 let AppEntryPoint = App;
 

@@ -13,6 +13,7 @@ import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
 import NavigationAwareModal from "@/components/NavigationAwareModal/NavigationAwareModal";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type Props = {
   media: Media[];
@@ -40,8 +41,10 @@ const MediaGalleryPreview = ({
 
   useEffect(() => {
     if (isVisible) {
+      logCrashlytics("MediaGalleryPreview - Locking orientation to all");
       lockAsync(OrientationLock.ALL);
     } else {
+      logCrashlytics("MediaGalleryPreview - Locking orientation to portrait");
       lockAsync(OrientationLock.PORTRAIT);
     }
   }, [isVisible]);

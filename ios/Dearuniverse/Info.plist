@@ -34,6 +34,12 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>com.googleusercontent.apps.243099742671-m2fsuriuhm9cfhjclplechhjaac62qdm</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
           <string>exp+dear-universe-app</string>
         </array>
       </dict>

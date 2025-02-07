@@ -8,6 +8,7 @@ import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useDayObject from "@/hooks/useDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { useSnackbar } from "@/contexts/SnackbarContext";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
@@ -37,6 +38,7 @@ const NewEntryScreen = () => {
         feelingsActiveEmotions,
       } = entryData;
 
+      logCrashlytics("Creating new entry");
       realm.write(() => {
         const entry = realm.create(Entry, {
           title,

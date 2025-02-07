@@ -1,5 +1,6 @@
 import { SETTINGS_ID } from "@/constants/settings";
 import { Settings } from "@/models/Settings";
+import logCrashlytics from "@/utils/logCrashlytics";
 import { useObject, useRealm } from "@realm/react";
 import { useCallback, useEffect } from "react";
 import { UpdateMode } from "realm";
@@ -15,6 +16,7 @@ const useSettingsObject = (): ReturnType => {
 
   useEffect(() => {
     if (settingsObject === null) {
+      logCrashlytics("Creating new Settings object");
       realm.write(() => {
         realm.create(Settings, {
           _id: SETTINGS_ID,
@@ -25,6 +27,7 @@ const useSettingsObject = (): ReturnType => {
 
   const updateSettingsObject = useCallback(
     (data: Partial<Settings>) => {
+      logCrashlytics("Updating Settings object");
       realm.write(() => {
         realm.create(
           Settings,

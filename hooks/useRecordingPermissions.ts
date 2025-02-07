@@ -1,6 +1,7 @@
 import { usePermissions } from "expo-av/build/Audio";
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type ReturnType = {
   granted: boolean;
@@ -13,6 +14,7 @@ const useRecordingPermissions = (): ReturnType => {
   const [recordingPermissions, requestRecordingPermission] = usePermissions();
 
   const handleRequestRecordingPermissions = useCallback(async () => {
+    logCrashlytics("Requesting recording permission");
     const { canAskAgain, granted } = await requestRecordingPermission();
 
     if (!granted && !canAskAgain) {

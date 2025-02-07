@@ -6,6 +6,8 @@ import ThemeButton from "./ThemeButton";
 import { spacing } from "@/constants/theme";
 import LockButton from "./LockButton";
 import DailyReminderButton from "./DailyReminderButton";
+import AnalyticsConsentSwitch from "./AnalyticsConsentSwitch";
+import AppLogo from "./AppLogo";
 
 type Props = {
   closeDrawer: () => void;
@@ -23,9 +25,13 @@ const SettingsDrawerContent = ({ closeDrawer }: Props) => {
         <Appbar.Content title="Settings" />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <ThemeButton />
-        <LockButton closeSettingsDrawer={closeDrawer} />
-        <DailyReminderButton closeSettingsDrawer={closeDrawer} />
+        <View>
+          <ThemeButton />
+          <LockButton closeSettingsDrawer={closeDrawer} />
+          <DailyReminderButton closeSettingsDrawer={closeDrawer} />
+          <AnalyticsConsentSwitch />
+        </View>
+        <AppLogo />
       </ScrollView>
     </View>
   );
@@ -38,7 +44,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
+    flex: 1,
     padding: spacing.spaceMedium,
+    justifyContent: "space-between",
   },
   label: {
     marginBottom: spacing.spaceSmall,

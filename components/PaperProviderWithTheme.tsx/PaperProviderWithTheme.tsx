@@ -1,5 +1,6 @@
 import { themeDark, themeLight } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
+import logCrashlytics from "@/utils/logCrashlytics";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import React, { ReactNode, useEffect, useMemo } from "react";
@@ -19,8 +20,10 @@ const PaperProviderWithTheme = ({ children }: Props) => {
   );
 
   useEffect(() => {
-    const setRootBackgroundColor = async () =>
+    const setRootBackgroundColor = async () => {
+      logCrashlytics("Setting root background color");
       await setBackgroundColorAsync(theme.colors.surface); // For keyboard background color
+    };
 
     setRootBackgroundColor();
   }, [theme]);

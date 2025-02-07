@@ -1,6 +1,6 @@
 import { spacing } from "@/constants/theme";
 import { Stack, useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
   Appbar,
@@ -24,6 +24,7 @@ import {
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import {
   formatDateToHoursMinutes,
+  isEqualHoursMinutes,
   parseHoursMinutesToDate,
 } from "@/utils/time";
 import DatePicker from "react-native-date-picker";
@@ -32,6 +33,7 @@ import { getRandomPhrase } from "@/utils/getRandomPhrase";
 import { phrases } from "@/constants/dailyReminder";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 export const DAILY_REMINDER_IDENTIFIER = "daily-reminder";
 
@@ -57,14 +59,22 @@ const DailyReminderSetupScreen = () => {
   const { dailyReminderTime = "", dailyReminderMessage = "" } =
     settingsObject || {};
 
-  const initialTime = parseHoursMinutesToDate(dailyReminderTime);
-  const [time, setTime] = useState(initialTime);
+  const initialTime = useRef(parseHoursMinutesToDate(dailyReminderTime));
+  const [time, setTime] = useState(initialTime.current);
 
-  const initialMessage = dailyReminderMessage || getRandomPhrase(phrases);
-  const [message, setMessage] = useState(initialMessage);
+  const handleSetTime = (newTime: Date) => {
+    setTime(newTime);
+    closeDatePicker();
+  };
+
+  const initialMessage = useRef(
+    dailyReminderMessage || getRandomPhrase(phrases),
+  );
+  const [message, setMessage] = useState(initialMessage.current);
 
   const isEdited =
-    !isEqual(initialTime, time) || !isEqual(message, initialMessage);
+    !isEqualHoursMinutes(time, initialTime.current) ||
+    !isEqual(message, initialMessage.current);
 
   const handleShowDiscardDialog = useCallback(() => {
     showConfirmDialog("Do you wish to discard the changes?", router.back);
@@ -89,10 +99,12 @@ const DailyReminderSetupScreen = () => {
   useBackHandler(onAndroidBackButtonPress);
 
   const scheduleNotification = useCallback(async () => {
+    logCrashlytics("Daily reminder - cancel all scheduled notifications");
     await cancelAllScheduledNotificationsAsync();
 
     const [hours, minutes] = [time.getHours(), time.getMinutes()];
 
+    logCrashlytics("Daily reminder - schedule notification");
     await scheduleNotificationAsync({
       content: {
         title: "Daily reminder",
@@ -182,11 +194,12 @@ const DailyReminderSetupScreen = () => {
           mode="contained"
           style={styles.confirmButton}
           onPress={onConfirmPress}
+          disabled={!isEdited}
         >
           Confirm
         </Button>
         <DatePicker
-          modal
+          modal={true}
           mode="time"
           minuteInterval={5}
           locale="en"
@@ -194,7 +207,7 @@ const DailyReminderSetupScreen = () => {
           theme={colorScheme}
           open={isDatePickerOpen}
           date={time}
-          onConfirm={setTime}
+          onConfirm={handleSetTime}
           onCancel={closeDatePicker}
         />
       </View>

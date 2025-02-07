@@ -1,4 +1,5 @@
 import { useSnackbar } from "@/contexts/SnackbarContext";
+import logCrashlytics from "@/utils/logCrashlytics";
 import {
   authenticateAsync,
   getEnrolledLevelAsync,
@@ -17,7 +18,10 @@ const useBiometrics = (): ReturnType => {
 
   const authenticate = useCallback(
     async (promptMessage: string) => {
+      logCrashlytics("Biometrics - check hardware");
       const hasHardware = await hasHardwareAsync();
+
+      logCrashlytics("Biometrics - check enrolled level");
       const enrolledLevel = await getEnrolledLevelAsync();
 
       if (!hasHardware) {
@@ -30,6 +34,7 @@ const useBiometrics = (): ReturnType => {
         return { success: false } as LocalAuthenticationResult;
       }
 
+      logCrashlytics("Biometrics - authenticate");
       return await authenticateAsync({
         promptMessage,
         disableDeviceFallback: true,

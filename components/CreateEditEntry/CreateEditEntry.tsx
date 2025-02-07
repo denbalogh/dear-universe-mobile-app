@@ -28,6 +28,7 @@ import FeelingsSection from "./FeelingsSection/FeelingsSection";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import FlingGesture from "../FlingGesture/FlingGesture";
 import useBackHandler from "@/hooks/useBackHandler";
+import logCrashlytics from "@/utils/logCrashlytics";
 
 type LayoutParts =
   | "mainHeadline"
@@ -131,6 +132,8 @@ const CreateEditEntry = ({
         const mediaOffset =
           recordingOffset + recordingHeadline + recordingSection;
         const feelingsOffset = mediaOffset + mediaHeadline + mediaSection;
+
+        logCrashlytics("Create entry scrolling to section");
 
         if (scrollToRecording) {
           handleScrollToOffset(recordingOffset);
