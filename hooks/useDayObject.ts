@@ -1,6 +1,6 @@
 import { Day } from "@/models/Day";
 import { isDateIdFormat } from "@/utils/date";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 import { useObject, useRealm } from "@realm/react";
 import { useCallback, useEffect } from "react";
 import { UpdateMode } from "realm";
@@ -20,7 +20,7 @@ const useDayObject = (dateId: string): ReturnType => {
 
   useEffect(() => {
     if (dayObject === null) {
-      getCrashlytics().log("Creating new Day object");
+      log(getCrashlytics(), "Creating new Day object");
       realm.write(() => {
         realm.create(Day, {
           _id: dateId,
@@ -31,7 +31,7 @@ const useDayObject = (dateId: string): ReturnType => {
 
   const updateDayObject = useCallback(
     (data: Partial<Day>) => {
-      getCrashlytics().log("Updating Day object");
+      log(getCrashlytics(), "Updating Day object");
       realm.write(() => {
         realm.create(
           Day,

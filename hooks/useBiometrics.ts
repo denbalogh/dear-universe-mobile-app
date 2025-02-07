@@ -1,5 +1,5 @@
 import { useSnackbar } from "@/contexts/SnackbarContext";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 import {
   authenticateAsync,
   getEnrolledLevelAsync,
@@ -18,10 +18,10 @@ const useBiometrics = (): ReturnType => {
 
   const authenticate = useCallback(
     async (promptMessage: string) => {
-      getCrashlytics().log("Biometrics - check hardware");
+      log(getCrashlytics(), "Biometrics - check hardware");
       const hasHardware = await hasHardwareAsync();
 
-      getCrashlytics().log("Biometrics - check enrolled level");
+      log(getCrashlytics(), "Biometrics - check enrolled level");
       const enrolledLevel = await getEnrolledLevelAsync();
 
       if (!hasHardware) {
@@ -34,7 +34,7 @@ const useBiometrics = (): ReturnType => {
         return { success: false } as LocalAuthenticationResult;
       }
 
-      getCrashlytics().log("Biometrics - authenticate");
+      log(getCrashlytics(), "Biometrics - authenticate");
       return await authenticateAsync({
         promptMessage,
         disableDeviceFallback: true,

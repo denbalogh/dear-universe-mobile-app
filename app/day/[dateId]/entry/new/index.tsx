@@ -8,7 +8,7 @@ import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useDayObject from "@/hooks/useDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { useSnackbar } from "@/contexts/SnackbarContext";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
@@ -38,7 +38,7 @@ const NewEntryScreen = () => {
         feelingsActiveEmotions,
       } = entryData;
 
-      getCrashlytics().log("Creating new entry");
+      log(getCrashlytics(), "Creating new entry");
       realm.write(() => {
         const entry = realm.create(Entry, {
           title,

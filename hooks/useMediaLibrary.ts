@@ -6,7 +6,7 @@ import {
 } from "expo-image-picker";
 import { useCallback, useMemo } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 
 const useMediaLibrary = (
   mediaTypes: ImagePickerOptions["mediaTypes"],
@@ -24,7 +24,7 @@ const useMediaLibrary = (
   );
 
   const handleOpenLibrary = useCallback(async () => {
-    getCrashlytics().log("Opening media library");
+    log(getCrashlytics(), "Opening media library");
     const selectedImages = await launchImageLibraryAsync({
       mediaTypes,
       allowsMultipleSelection: true,
@@ -42,7 +42,7 @@ const useMediaLibrary = (
   }, [mediaTypes, onCancel, onSuccess]);
 
   const handleRequestLibraryPermissions = useCallback(async () => {
-    getCrashlytics().log("Requesting media library permission");
+    log(getCrashlytics(), "Requesting media library permission");
     const { canAskAgain, granted } = await requestLibraryPermission();
 
     if (granted) {

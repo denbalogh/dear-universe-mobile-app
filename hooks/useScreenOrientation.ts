@@ -1,4 +1,4 @@
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 import {
   addOrientationChangeListener,
   getOrientationAsync,
@@ -13,13 +13,13 @@ const useScreenOrientation = (): CustomOrientation => {
   const [orientation, setOrientation] = useState(Orientation.PORTRAIT_UP);
 
   useEffect(() => {
-    getCrashlytics().log("Screen orientation - get initial orientation");
+    log(getCrashlytics(), "Screen orientation - get initial orientation");
     // set initial orientation
     getOrientationAsync().then((info) => {
       setOrientation(info);
     });
 
-    getCrashlytics().log("Screen orientation - add listener");
+    log(getCrashlytics(), "Screen orientation - add listener");
     // subscribe to future changes
     const subscription = addOrientationChangeListener(
       ({ orientationInfo: { orientation } }) => {
@@ -29,7 +29,7 @@ const useScreenOrientation = (): CustomOrientation => {
 
     // return a clean up function to unsubscribe from notifications
     return () => {
-      getCrashlytics().log("Screen orientation - remove listener");
+      log(getCrashlytics(), "Screen orientation - remove listener");
       removeOrientationChangeListener(subscription);
     };
   }, []);

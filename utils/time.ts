@@ -13,3 +13,7 @@ export const parseHoursMinutesToDate = (time: string): Date => {
 
   return parse(time, HOURS_MINUTES_FORMAT, new Date());
 };
+
+export const isEqualHoursMinutes = (date1: Date, date2: Date): boolean => {
+  return formatDateToHoursMinutes(date1) === formatDateToHoursMinutes(date2);
+};

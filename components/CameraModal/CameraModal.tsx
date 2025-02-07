@@ -10,7 +10,7 @@ import FlingGesture from "../FlingGesture/FlingGesture";
 import { CameraMode } from "expo-camera";
 import NavigationAwareModal from "../NavigationAwareModal/NavigationAwareModal";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 
 type Props = {
   isVisible: boolean;
@@ -32,10 +32,10 @@ const CameraModal = ({
 
   useEffect(() => {
     if (isVisible) {
-      getCrashlytics().log("CameraModal - Locking orientation to all");
+      log(getCrashlytics(), "CameraModal - Locking orientation to all");
       lockAsync(OrientationLock.ALL);
     } else {
-      getCrashlytics().log("CameraModal - Locking orientation to portrait");
+      log(getCrashlytics(), "CameraModal - Locking orientation to portrait");
       lockAsync(OrientationLock.PORTRAIT);
     }
   }, [isVisible]);

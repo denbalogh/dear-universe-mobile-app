@@ -17,7 +17,8 @@ import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext"
 import PaperProviderWithTheme from "@/components/PaperProviderWithTheme.tsx/PaperProviderWithTheme";
 import { setNotificationHandler } from "expo-notifications";
 import { useEffect } from "react";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
+import { getAnalytics, logScreenView } from "@react-native-firebase/analytics";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -36,15 +37,16 @@ const App = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    getCrashlytics().log("App mounted.");
+    log(getCrashlytics(), "App mounted.");
   }, []);
 
   useEffect(() => {
-    getCrashlytics().log(`Navigated to ${pathname}`);
+    log(getCrashlytics(), `Navigated to ${pathname}`);
+    logScreenView(getAnalytics(), { screen_name: pathname });
   }, [pathname]);
 
   return (
-    <RealmProvider schema={schemas} schemaVersion={8} path="default.realm">
+    <RealmProvider schema={schemas} schemaVersion={9} path="default.realm">
       <PaperProviderWithTheme>
         <ConfirmDialogContextProvider>
           <SnackbarContextProvider>

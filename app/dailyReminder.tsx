@@ -24,6 +24,7 @@ import {
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import {
   formatDateToHoursMinutes,
+  isEqualHoursMinutes,
   parseHoursMinutesToDate,
 } from "@/utils/time";
 import DatePicker from "react-native-date-picker";
@@ -32,7 +33,7 @@ import { getRandomPhrase } from "@/utils/getRandomPhrase";
 import { phrases } from "@/constants/dailyReminder";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
-import { getCrashlytics } from "@react-native-firebase/crashlytics";
+import { getCrashlytics, log } from "@react-native-firebase/crashlytics";
 
 export const DAILY_REMINDER_IDENTIFIER = "daily-reminder";
 
@@ -65,7 +66,8 @@ const DailyReminderSetupScreen = () => {
   const [message, setMessage] = useState(initialMessage);
 
   const isEdited =
-    !isEqual(initialTime, time) || !isEqual(message, initialMessage);
+    !isEqualHoursMinutes(time, initialTime) ||
+    !isEqual(message, initialMessage);
 
   const handleShowDiscardDialog = useCallback(() => {
     showConfirmDialog("Do you wish to discard the changes?", router.back);
@@ -90,12 +92,15 @@ const DailyReminderSetupScreen = () => {
   useBackHandler(onAndroidBackButtonPress);
 
   const scheduleNotification = useCallback(async () => {
-    getCrashlytics().log("Daily reminder - cancel all scheduled notifications");
+    log(
+      getCrashlytics(),
+      "Daily reminder - cancel all scheduled notifications",
+    );
     await cancelAllScheduledNotificationsAsync();
 
     const [hours, minutes] = [time.getHours(), time.getMinutes()];
 
-    getCrashlytics().log("Daily reminder - schedule notification");
+    log(getCrashlytics(), "Daily reminder - schedule notification");
     await scheduleNotificationAsync({
       content: {
         title: "Daily reminder",
@@ -185,6 +190,7 @@ const DailyReminderSetupScreen = () => {
           mode="contained"
           style={styles.confirmButton}
           onPress={onConfirmPress}
+          disabled={!isEdited}
         >
           Confirm
         </Button>
