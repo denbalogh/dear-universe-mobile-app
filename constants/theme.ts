@@ -113,6 +113,7 @@ export const spacing = {
 };
 
 export const sizing = {
+  sizeExtraSmall: 12,
   sizeSmall: 16,
   sizeMedium: 24,
   sizeLarge: 40,

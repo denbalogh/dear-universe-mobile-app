@@ -8,6 +8,9 @@ import { useSettingsDrawer } from "@/contexts/SettingsDrawerContext";
 import useLockScreenHandler from "@/hooks/useLockScreenHandler";
 import useNotificationHandler from "@/hooks/useNotificationHandler";
 import useFirebaseAuthAndAnalyticsConsentHandler from "@/hooks/useFirebaseAuthAndAnalyticsConsentHandler";
+import useAdsConsentHandler from "@/hooks/useAdsConsentHandler";
+import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
+import { spacing } from "@/constants/theme";
 
 const App = () => {
   const theme = useTheme();
@@ -24,8 +27,13 @@ const App = () => {
   // Handles Firebase authentication and analytics consent
   useFirebaseAuthAndAnalyticsConsentHandler();
 
+  // Handles ads consent
+  useAdsConsentHandler();
+
   return (
-    <View style={styles.wrapper}>
+    <View
+      style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+    >
       <Stack.Screen
         options={{
           header: () => (
@@ -47,6 +55,7 @@ const App = () => {
           navigationBarColor: theme.colors.background,
         }}
       />
+      <NativeAdBannerSlim style={styles.adBanner} />
       <InfiniteDaysList onMonthYearChange={setMonthYear} />
     </View>
   );
@@ -57,5 +66,8 @@ export default App;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+  },
+  adBanner: {
+    margin: spacing.spaceSmall,
   },
 });

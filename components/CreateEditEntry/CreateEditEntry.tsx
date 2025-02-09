@@ -29,6 +29,7 @@ import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import FlingGesture from "../FlingGesture/FlingGesture";
 import useBackHandler from "@/hooks/useBackHandler";
 import logCrashlytics from "@/utils/logCrashlytics";
+import NativeAdBannerBig from "../NativeAdBanner/NativeAdBannerBig";
 
 type LayoutParts =
   | "mainHeadline"
@@ -303,6 +304,7 @@ const CreateEditEntry = ({
             onActiveEmotionsChange={setActiveEmotions}
             style={styles.sectionWrapper}
           />
+          <NativeAdBannerBig />
         </ScrollView>
         {!isKeyboardOpen && (
           <View style={styles.saveButtonWrapper}>
