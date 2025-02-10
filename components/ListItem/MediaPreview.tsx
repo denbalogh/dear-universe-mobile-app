@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Media } from "../MediaGallery/EditableMediaGallery";
 import { StyleSheet, View } from "react-native";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
@@ -6,28 +6,42 @@ import { Image } from "expo-image";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { Icon } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import useDayObject from "@/hooks/useDayObject";
+import { EntryData } from "../Entry/Entry";
 
 type Props = {
-  media: Media[];
+  dateId: string;
 };
 
-const MediaPreview = ({ media }: Props) => {
+const MediaPreview = ({ dateId }: Props) => {
   const theme = useCustomTheme();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [counter, setCounter] = useState(0);
+
+  const { dayObject } = useDayObject(dateId);
+  const { entryObjects = [] } = dayObject || {};
+
+  const media = (entryObjects as EntryData[]).reduce(
+    (acc, entry) => (entry?.media ? [...acc, ...entry.media] : acc),
+    [] as Media[],
+  );
+
+  const intervalId = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const isLastIndex = activeIndex === media.length - 1;
-      setActiveIndex(isLastIndex ? 0 : activeIndex + 1);
+    intervalId.current = setInterval(() => {
+      setCounter((curr) => curr + 1);
     }, 5000);
+
     return () => {
-      clearInterval(intervalId);
+      clearTimeout(intervalId.current);
     };
-  }, [activeIndex, media]);
+  }, []);
 
   if (media.length === 0) {
     return null;
   }
+
+  const activeIndex = counter % media.length;
 
   const uri = media[activeIndex].imageUri;
   const hasVideo = !!media[activeIndex].videoUri;

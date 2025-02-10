@@ -8,8 +8,6 @@ import {
   ENTRY_SCREEN_SCROLL_TO_RECORDING,
   ENTRY_SCREEN_SCROLL_TO_MEDIA,
 } from "@/constants/screens";
-import { Media } from "../MediaGallery/EditableMediaGallery";
-import { EntryData } from "../Entry/Entry";
 
 const ListItemWithData = ({ dateId }: { dateId: string }) => {
   const dayObject = useObject(Day, dateId);
@@ -58,15 +56,6 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
     [entryObjects],
   );
 
-  const media = useMemo(
-    () =>
-      (entryObjects as EntryData[]).reduce(
-        (acc, entry) => (entry?.media ? [...acc, ...entry.media] : acc),
-        [] as Media[],
-      ),
-    [entryObjects],
-  );
-
   return (
     <ListItem
       onPress={onPressHandler}
@@ -75,7 +64,6 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
       addEntryHandlers={addEntryHandlers}
       isEmpty={isEmpty}
       feelings={feelings}
-      media={media}
     />
   );
 };
