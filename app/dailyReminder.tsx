@@ -59,6 +59,7 @@ const DailyReminderSetupScreen = () => {
   const { dailyReminderTime = "", dailyReminderMessage = "" } =
     settingsObject || {};
 
+  const isInitialTimeEmpty = useRef(dailyReminderTime === "");
   const initialTime = useRef(parseHoursMinutesToDate(dailyReminderTime));
   const [time, setTime] = useState(initialTime.current);
 
@@ -67,13 +68,16 @@ const DailyReminderSetupScreen = () => {
     closeDatePicker();
   };
 
+  const isInitialMessageEmpty = useRef(dailyReminderMessage === "");
   const initialMessage = useRef(
     dailyReminderMessage || getRandomPhrase(phrases),
   );
   const [message, setMessage] = useState(initialMessage.current);
 
   const isEdited =
+    isInitialTimeEmpty.current ||
     !isEqualHoursMinutes(time, initialTime.current) ||
+    isInitialMessageEmpty.current ||
     !isEqual(message, initialMessage.current);
 
   const handleShowDiscardDialog = useCallback(() => {
