@@ -75,10 +75,11 @@ const DailyReminderSetupScreen = () => {
   const [message, setMessage] = useState(initialMessage.current);
 
   const isEdited =
-    isInitialTimeEmpty.current ||
     !isEqualHoursMinutes(time, initialTime.current) ||
-    isInitialMessageEmpty.current ||
     !isEqual(message, initialMessage.current);
+
+  const isConfirmEnabled =
+    isInitialTimeEmpty.current || isInitialMessageEmpty.current || isEdited;
 
   const handleShowDiscardDialog = useCallback(() => {
     showConfirmDialog("Do you wish to discard the changes?", router.back);
@@ -198,7 +199,7 @@ const DailyReminderSetupScreen = () => {
           mode="contained"
           style={styles.confirmButton}
           onPress={onConfirmPress}
-          disabled={!isEdited}
+          disabled={!isConfirmEnabled}
         >
           Confirm
         </Button>

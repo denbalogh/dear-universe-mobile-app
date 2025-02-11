@@ -1,13 +1,13 @@
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Appbar } from "react-native-paper";
+import { Appbar, Button } from "react-native-paper";
 import ThemeButton from "./ThemeButton";
 import { spacing } from "@/constants/theme";
 import LockButton from "./LockButton";
 import DailyReminderButton from "./DailyReminderButton";
-import AnalyticsConsentSwitch from "./AnalyticsConsentSwitch";
 import AppLogo from "./AppLogo";
+import { useRouter } from "expo-router";
 
 type Props = {
   closeDrawer: () => void;
@@ -15,6 +15,12 @@ type Props = {
 
 const SettingsDrawerContent = ({ closeDrawer }: Props) => {
   const theme = useCustomTheme();
+  const router = useRouter();
+
+  const onTermsButtonPress = () => {
+    router.navigate({ pathname: "/terms" });
+    closeDrawer();
+  };
 
   return (
     <View
@@ -29,7 +35,9 @@ const SettingsDrawerContent = ({ closeDrawer }: Props) => {
           <ThemeButton />
           <LockButton closeSettingsDrawer={closeDrawer} />
           <DailyReminderButton closeSettingsDrawer={closeDrawer} />
-          <AnalyticsConsentSwitch />
+          <Button mode="text" onPress={onTermsButtonPress}>
+            Terms & policies
+          </Button>
         </View>
         <AppLogo />
       </ScrollView>

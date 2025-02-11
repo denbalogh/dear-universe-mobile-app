@@ -11,6 +11,7 @@ import useFirebaseAuthAndAnalyticsConsentHandler from "@/hooks/useFirebaseAuthAn
 import useAdsConsentHandler from "@/hooks/useAdsConsentHandler";
 import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
 import { spacing } from "@/constants/theme";
+import useTermsAndPoliciesHandler from "@/hooks/useTermsAndPoliciesHandler";
 
 const App = () => {
   const theme = useTheme();
@@ -20,6 +21,9 @@ const App = () => {
 
   // Navigates to lock screen if the lock is set
   useLockScreenHandler();
+
+  // Navigates to terms and policies screen if user hasn't confirmed
+  useTermsAndPoliciesHandler();
 
   // Handles notification actions
   useNotificationHandler();

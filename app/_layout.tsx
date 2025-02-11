@@ -47,7 +47,7 @@ const App = () => {
   }, [pathname]);
 
   return (
-    <RealmProvider schema={schemas} schemaVersion={9} path="default.realm">
+    <RealmProvider schema={schemas} schemaVersion={10} path="default.realm">
       <PaperProviderWithTheme>
         <ConfirmDialogContextProvider>
           <SnackbarContextProvider>
