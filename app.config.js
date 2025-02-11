@@ -41,10 +41,29 @@ module.exports = {
       "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
       [
+        "react-native-google-mobile-ads",
+        {
+          androidAppId: "ca-app-pub-3470994410920852~8621670596",
+          iosAppId: "ca-app-pub-3470994410920852~4803018548",
+          delayAppMeasurementInit: true,
+        },
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          userTrackingPermission:
+            "This identifier will be used to deliver personalized ads to you.",
+        },
+      ],
+      [
         "expo-build-properties",
         {
           ios: {
             useFrameworks: "static",
+          },
+          android: {
+            extraProguardRules:
+              "-keep class com.google.android.gms.internal.consent_sdk.** { *; }",
           },
         },
       ],

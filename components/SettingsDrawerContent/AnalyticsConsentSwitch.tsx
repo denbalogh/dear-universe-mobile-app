@@ -17,7 +17,7 @@ const AnalyticsConsentSwitch = () => {
   const handleOnToggle = () => {
     if (analyticsConsent) {
       showConfirmDialog(
-        "Analytics data help us improve Dear Universe by fixing issues and enhancing performance. You really wish to disable it?",
+        "Analytics data help us improve the app by fixing issues and enhancing performance. You really wish to disable it?",
         toggle,
       );
     } else {
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: spacing.spaceSmall,
   },
   text: {
     flexShrink: 1,

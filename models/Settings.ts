@@ -9,6 +9,7 @@ export class Settings extends Realm.Object {
   dailyReminderTime: string = "";
   dailyReminderMessage: string = "";
   analyticsConsent: boolean = true;
+  termsAndPoliciesUnderstood: boolean = false;
 
   static schema: Realm.ObjectSchema = {
     name: "Settings",
@@ -38,6 +39,10 @@ export class Settings extends Realm.Object {
       analyticsConsent: {
         type: "bool",
         default: true,
+      },
+      termsAndPoliciesUnderstood: {
+        type: "bool",
+        default: false,
       },
     },
   };

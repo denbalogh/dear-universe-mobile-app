@@ -7,7 +7,6 @@ import { parseDateId } from "@/utils/date";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import FeelingsIndicator from "../FeelingsIndicator/FeelingsIndicator";
-import { Media } from "../MediaGallery/EditableMediaGallery";
 import MediaPreview from "./MediaPreview";
 
 type Props = {
@@ -21,7 +20,6 @@ type Props = {
   };
   isEmpty?: boolean;
   feelings: FEELING_GROUP_NAMES[];
-  media?: Media[];
 };
 
 const ListItem = ({
@@ -31,7 +29,6 @@ const ListItem = ({
   isEmpty,
   onPress,
   feelings,
-  media,
 }: Props) => {
   const theme = useTheme();
 
@@ -45,8 +42,6 @@ const ListItem = ({
   const textColor = isEmpty
     ? theme.colors.onBackground
     : theme.colors.onSurfaceVariant;
-
-  const hasMedia = media && media.length > 0;
 
   return (
     <Card
@@ -108,7 +103,7 @@ const ListItem = ({
             >
               {title || "No title for the day"}
             </Text>
-            {hasMedia && <MediaPreview media={media} key={media.length} />}
+            <MediaPreview dateId={dateId} />
           </View>
         )}
         <FeelingsIndicator

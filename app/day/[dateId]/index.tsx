@@ -27,6 +27,7 @@ import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import FadeInView from "@/components/FadeInView/FadeInView";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import useBackHandler from "@/hooks/useBackHandler";
+import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -179,6 +180,7 @@ const DayScreen = () => {
               onSubmit={handleOnSubmit}
               locked={locked}
             />
+            <NativeAdBannerSlim style={styles.adBanner} />
             {hasEntries ? (
               <>
                 {entryObjects.map(({ _id }, index) => {
@@ -251,6 +253,9 @@ const styles = StyleSheet.create({
   scrollContentWrapper: {
     paddingHorizontal: spacing.spaceSmall,
     paddingTop: spacing.spaceSmall,
+  },
+  adBanner: {
+    marginBottom: spacing.spaceSmall,
   },
   bottomButtons: {
     position: "absolute",

@@ -1,5 +1,6 @@
 import SettingsDrawerContent from "@/components/SettingsDrawerContent/SettingsDrawerContent";
 import useBackHandler from "@/hooks/useBackHandler";
+import useSettingsObject from "@/hooks/useSettingsObject";
 import { useSegments } from "expo-router";
 import React, {
   createContext,
@@ -28,10 +29,19 @@ const SettingsDrawerContextProvider = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const segments = useSegments();
+  const { settingsObject } = useSettingsObject();
+  const { termsAndPoliciesUnderstood = false } = settingsObject || {};
 
   const isOnLockScreen = useMemo(() => {
     return segments.length === 1 && segments[0] === "lock";
   }, [segments]);
+
+  const isOnTermsScreen = useMemo(() => {
+    return segments.length === 1 && segments[0] === "terms";
+  }, [segments]);
+
+  const isSwipeDisabled =
+    isOnLockScreen || (isOnTermsScreen && !termsAndPoliciesUnderstood);
 
   const openDrawer = useCallback(() => setIsOpen(true), []);
   const closeDrawer = useCallback(() => setIsOpen(false), []);
@@ -62,7 +72,7 @@ const SettingsDrawerContextProvider = ({
         onOpen={openDrawer}
         onClose={closeDrawer}
         renderDrawerContent={renderDrawerContent}
-        swipeEnabled={!isOnLockScreen}
+        swipeEnabled={!isSwipeDisabled}
       >
         {children}
       </Drawer>

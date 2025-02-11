@@ -35,7 +35,7 @@ export default AppLogo;
 const styles = StyleSheet.create({
   wrapper: {
     alignItems: "center",
-    marginTop: spacing.spaceMedium,
+    marginTop: spacing.spaceLarge,
   },
   image: {
     width: 80,
