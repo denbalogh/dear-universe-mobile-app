@@ -18,9 +18,13 @@ const useSettingsObject = (): ReturnType => {
     if (settingsObject === null) {
       logCrashlytics("Creating new Settings object");
       realm.write(() => {
-        realm.create(Settings, {
-          _id: SETTINGS_ID,
-        });
+        realm.create(
+          Settings,
+          {
+            _id: SETTINGS_ID,
+          },
+          UpdateMode.All,
+        );
       });
     }
   }, [settingsObject, realm]);

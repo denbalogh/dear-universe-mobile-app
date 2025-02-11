@@ -13,6 +13,7 @@ import MobileAds, {
 const testDeviceIdentifiers = [
   "EMULATOR",
   "47829423-68ef-4810-8043-83f3f108376c",
+  "a75e9df1-5ccb-4f83-ad6c-33f78845f542",
 ];
 
 const useAdsConsentHandler = () => {
