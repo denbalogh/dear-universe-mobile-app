@@ -30,6 +30,7 @@ import FlingGesture from "../FlingGesture/FlingGesture";
 import useBackHandler from "@/hooks/useBackHandler";
 import logCrashlytics from "@/utils/logCrashlytics";
 import NativeAdBannerBig from "../NativeAdBanner/NativeAdBannerBig";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type LayoutParts =
   | "mainHeadline"
@@ -72,6 +73,7 @@ const CreateEditEntry = ({
   const router = useRouter();
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showConfirmDialog } = useConfirmDialog();
+  const { bottom } = useSafeAreaInsets();
 
   const isCreateMode = mode === "create";
 
@@ -236,7 +238,12 @@ const CreateEditEntry = ({
 
   return (
     <FlingGesture onFlingDown={onFlingDown}>
-      <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
+      <View
+        style={[
+          styles.flex,
+          { backgroundColor: theme.colors.surface, paddingBottom: bottom },
+        ]}
+      >
         <Stack.Screen
           options={{
             header: () => (
@@ -304,10 +311,10 @@ const CreateEditEntry = ({
             onActiveEmotionsChange={setActiveEmotions}
             style={styles.sectionWrapper}
           />
-          <NativeAdBannerBig />
+          <NativeAdBannerBig style={styles.adBanner} />
         </ScrollView>
         {!isKeyboardOpen && (
-          <View style={styles.saveButtonWrapper}>
+          <View style={[styles.saveButtonWrapper, { paddingBottom: bottom }]}>
             <FAB
               label="Save"
               variant="tertiary"
@@ -333,6 +340,9 @@ const styles = StyleSheet.create({
   sectionWrapper: {
     padding: spacing.spaceMedium,
     paddingVertical: spacing.spaceLarge,
+  },
+  adBanner: {
+    margin: spacing.spaceMedium,
   },
   saveButtonWrapper: {
     position: "absolute",

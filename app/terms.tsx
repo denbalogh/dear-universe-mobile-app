@@ -12,11 +12,13 @@ import { Stack, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { BackHandler, StyleSheet, View } from "react-native";
 import { Appbar, Button, Text, useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const TermsScreen = () => {
   const theme = useTheme();
   const router = useRouter();
   const { settingsObject, updateSettingsObject } = useSettingsObject();
+  const { bottom } = useSafeAreaInsets();
 
   const { termsAndPoliciesUnderstood = false } = settingsObject || {};
 
@@ -56,7 +58,10 @@ const TermsScreen = () => {
   return (
     <FlingGesture onFlingDown={onFlingDown}>
       <View
-        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.wrapper,
+          { backgroundColor: theme.colors.background, paddingBottom: bottom },
+        ]}
       >
         <Stack.Screen
           options={{

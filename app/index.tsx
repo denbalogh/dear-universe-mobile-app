@@ -12,10 +12,12 @@ import useAdsConsentHandler from "@/hooks/useAdsConsentHandler";
 import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
 import { spacing } from "@/constants/theme";
 import useTermsAndPoliciesHandler from "@/hooks/useTermsAndPoliciesHandler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const App = () => {
   const theme = useTheme();
   const { showSettingsDrawer } = useSettingsDrawer();
+  const { bottom } = useSafeAreaInsets();
 
   const [monthYear, setMonthYear] = useState(formatMonthYear(new Date()));
 
@@ -36,7 +38,10 @@ const App = () => {
 
   return (
     <View
-      style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+      style={[
+        styles.wrapper,
+        { backgroundColor: theme.colors.background, paddingBottom: bottom },
+      ]}
     >
       <Stack.Screen
         options={{
@@ -50,7 +55,7 @@ const App = () => {
                 titleStyle={{ color: theme.colors.onBackground }}
               />
               <Appbar.Action
-                icon="cog"
+                icon="cog-outline"
                 onPress={showSettingsDrawer}
                 color={theme.colors.onBackground}
               />

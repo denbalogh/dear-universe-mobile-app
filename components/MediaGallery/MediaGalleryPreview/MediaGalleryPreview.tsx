@@ -5,9 +5,7 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import PreviewItem from "./PreviewItem";
-import { View } from "react-native";
 import { lockAsync, OrientationLock } from "expo-screen-orientation";
-import { spacing } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
@@ -77,7 +75,7 @@ const MediaGalleryPreview = ({
       <NavigationAwareModal
         visible={isVisible}
         onDismiss={handleOnClose}
-        contentContainerStyle={styles.modalContentContainer}
+        contentContainerStyle={[styles.modalContentContainer]}
       >
         <StatusBar
           backgroundColor={theme.colors.surface}
@@ -93,13 +91,11 @@ const MediaGalleryPreview = ({
             onFlingLeft={onFlingLeft}
             onFlingRight={onFlingRight}
           >
-            <View collapsable={false} style={styles.itemWrapper}>
-              <PreviewItem
-                item={media[activeIndex]}
-                appearFrom={appearFrom}
-                key={activeIndex}
-              />
-            </View>
+            <PreviewItem
+              item={media[activeIndex]}
+              appearFrom={appearFrom}
+              key={activeIndex}
+            />
           </FlingGesture>
         </GestureHandlerRootView>
       </NavigationAwareModal>
@@ -112,18 +108,6 @@ export default MediaGalleryPreview;
 const styles = StyleSheet.create({
   modalContentContainer: {
     flex: 1,
-  },
-  itemWrapper: {
-    flex: 1,
-  },
-  closeButton: {
-    position: "absolute",
-    top: spacing.spaceSmall,
-    left: spacing.spaceSmall,
-  },
-  activeIndex: {
-    position: "absolute",
-    top: spacing.spaceMedium,
-    right: spacing.spaceSmall,
+    backgroundColor: "black",
   },
 });
