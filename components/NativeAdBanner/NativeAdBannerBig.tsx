@@ -71,7 +71,9 @@ const NativeAdBannerBig = ({ style, ...viewProps }: Props) => {
             </NativeAsset>
             {nativeAd.starRating && (
               <NativeAsset assetType={NativeAssetType.STAR_RATING}>
-                <StarRating rating={nativeAd.starRating} />
+                <View>
+                  <StarRating rating={nativeAd.starRating} />
+                </View>
               </NativeAsset>
             )}
           </View>

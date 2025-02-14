@@ -74,10 +74,12 @@ const NativeAdBannerSlim = (props: Props) => {
             </View>
             {nativeAd.starRating && (
               <NativeAsset assetType={NativeAssetType.STAR_RATING}>
-                <StarRating
-                  rating={nativeAd.starRating}
-                  style={styles.starRating}
-                />
+                <View>
+                  <StarRating
+                    rating={nativeAd.starRating}
+                    style={styles.starRating}
+                  />
+                </View>
               </NativeAsset>
             )}
           </View>
