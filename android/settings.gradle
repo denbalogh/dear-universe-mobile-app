@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'Dear universe'
+rootProject.name = 'Dear Universe'
 
 dependencyResolutionManagement {
   versionCatalogs {

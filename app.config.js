@@ -1,6 +1,6 @@
 module.exports = {
   expo: {
-    name: "Dear universe",
+    name: "Dear Universe",
     slug: "dear-universe-app",
     version: "1.0.0",
     orientation: "portrait",
@@ -29,11 +29,6 @@ module.exports = {
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.RECEIVE_BOOT_COMPLETED",
       ],
-    },
-    web: {
-      bundler: "metro",
-      output: "static",
-      favicon: "./assets/images/favicon.png",
     },
     plugins: [
       "expo-router",
@@ -144,5 +139,9 @@ module.exports = {
     },
     owner: "denbalogh",
     newArchEnabled: true,
+    updates: {
+      url: "https://u.expo.dev/179716c1-8891-4d76-8d1f-1e24dfb89a6d",
+    },
+    runtimeVersion: "1.0.0",
   },
 };
