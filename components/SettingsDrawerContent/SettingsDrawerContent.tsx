@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     padding: spacing.spaceMedium,
     justifyContent: "space-between",
+    flexGrow: 1,
   },
   label: {
     marginBottom: spacing.spaceSmall,

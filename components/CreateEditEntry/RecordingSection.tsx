@@ -9,7 +9,7 @@ import {
   RecordingStatus,
   setAudioModeAsync,
 } from "expo-av/build/Audio";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { normalizeMeteringForScale } from "../RecordingControls/utils";
 import { StyleSheet, View, ViewProps } from "react-native";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";

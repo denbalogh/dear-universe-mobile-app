@@ -15,7 +15,9 @@ import { Appbar, FAB } from "react-native-paper";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useRouter } from "expo-router";
-import { debounce, isEqual, sortBy } from "lodash";
+import debounce from "lodash/debounce";
+import isEqual from "lodash/isEqual";
+import sortBy from "lodash/sortBy";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   moveAndDeleteUpdatedMediaAndGetPaths,

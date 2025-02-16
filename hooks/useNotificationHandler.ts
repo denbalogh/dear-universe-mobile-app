@@ -6,7 +6,7 @@ import {
 } from "expo-notifications";
 import { DAILY_REMINDER_IDENTIFIER } from "@/app/dailyReminder";
 import { formatDateId } from "@/utils/date";
-import { fromUnixTime } from "date-fns";
+import { fromUnixTime } from "date-fns/fromUnixTime";
 import { useRouter } from "expo-router";
 import logCrashlytics from "@/utils/logCrashlytics";
 

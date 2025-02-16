@@ -1,4 +1,7 @@
-import { format, isMatch, isToday, parse } from "date-fns";
+import { format } from "date-fns/format";
+import { isMatch } from "date-fns/isMatch";
+import { isToday } from "date-fns/isToday";
+import { parse } from "date-fns/parse";
 
 const ID_DATE_FORMAT = "d_M_y";
 

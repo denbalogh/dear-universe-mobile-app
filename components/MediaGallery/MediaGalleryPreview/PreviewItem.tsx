@@ -3,7 +3,6 @@ import { Media } from "../EditableMediaGallery";
 import { StyleSheet } from "react-native";
 import VideoPlayer from "./VideoPlayer";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
-import { View } from "react-native";
 import FadeInView, {
   FadeInViewAppearFrom,
 } from "@/components/FadeInView/FadeInView";

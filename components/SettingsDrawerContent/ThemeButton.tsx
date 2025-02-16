@@ -1,6 +1,6 @@
 import { SettingsTheme } from "@/constants/settings";
 import useSettingsObject from "@/hooks/useSettingsObject";
-import { capitalize } from "lodash";
+import capitalize from "lodash/capitalize";
 import React from "react";
 import { Button } from "react-native-paper";
 import CustomMenu from "../CustomMenu/CustomMenu";

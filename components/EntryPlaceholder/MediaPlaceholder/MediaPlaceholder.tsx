@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutChangeEvent, StyleSheet, View, ViewProps } from "react-native";
+import { LayoutChangeEvent, StyleSheet, ViewProps } from "react-native";
 import MediaPlaceholderItem from "./MediaPlaceholderItem";
 import { spacing } from "@/constants/theme";
 import Animated, { AnimatedProps } from "react-native-reanimated";

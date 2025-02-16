@@ -16,12 +16,14 @@ import {
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
-import { addDays, isToday, subDays } from "date-fns";
+import { addDays } from "date-fns/addDays";
+import { isToday } from "date-fns/isToday";
+import { subDays } from "date-fns/subDays";
 import useDayObject from "@/hooks/useDayObject";
 import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import DayTitle from "@/components/DayTitle/DayTitle";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import FadeInView from "@/components/FadeInView/FadeInView";

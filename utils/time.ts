@@ -1,4 +1,5 @@
-import { format, parse } from "date-fns";
+import { format } from "date-fns/format";
+import { parse } from "date-fns/parse";
 
 const HOURS_MINUTES_FORMAT = "HH:mm";
 

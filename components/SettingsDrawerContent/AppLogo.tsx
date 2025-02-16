@@ -1,19 +1,11 @@
 import { spacing } from "@/constants/theme";
 import useActiveColorScheme from "@/hooks/useActiveColorScheme";
 import { Image } from "expo-image";
-import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { getApplicationName, getBuildNumber } from "react-native-device-info";
 import { Text } from "react-native-paper";
 
 const AppLogo = () => {
   const { colorScheme } = useActiveColorScheme();
-
-  const appNameAndBuildVersion = useMemo(() => {
-    const appName = getApplicationName();
-    const buildNumber = getBuildNumber();
-    return `${appName} v${buildNumber}`;
-  }, []);
 
   return (
     <View style={styles.wrapper}>
@@ -25,7 +17,7 @@ const AppLogo = () => {
         }
         style={styles.image}
       />
-      <Text variant="labelSmall">{appNameAndBuildVersion}</Text>
+      <Text variant="labelSmall">Dear Universe</Text>
     </View>
   );
 };

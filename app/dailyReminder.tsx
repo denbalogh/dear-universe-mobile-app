@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "react-native-paper";
 import useSettingsObject from "@/hooks/useSettingsObject";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import useBackHandler from "@/hooks/useBackHandler";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import useNotificationsPermissions from "@/hooks/useNotificationsPermission";

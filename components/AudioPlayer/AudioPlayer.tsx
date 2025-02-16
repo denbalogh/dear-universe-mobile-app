@@ -6,7 +6,7 @@ import { spacing } from "@/constants/theme";
 import { Audio, AVPlaybackStatus, AVPlaybackStatusSuccess } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
 import Controls from "./Controls";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import useAppState from "@/hooks/useAppState";
 import logCrashlytics from "@/utils/logCrashlytics";
 

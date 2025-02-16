@@ -2,7 +2,7 @@ import { CameraMode, CameraType, CameraView, FlashMode } from "expo-camera";
 import React, { useCallback, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import Controls from "./Controls";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { IconButton } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import useScreenOrientation from "@/hooks/useScreenOrientation";

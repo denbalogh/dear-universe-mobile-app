@@ -1,4 +1,4 @@
-import { sizing, spacing } from "@/constants/theme";
+import { sizing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React, { ComponentProps, memo } from "react";
 import { StyleSheet, View, ViewProps } from "react-native";
