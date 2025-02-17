@@ -47,7 +47,10 @@ const NativeAdBannerBig = ({ style, ...viewProps }: Props) => {
       style={[
         style,
         styles.wrapper,
-        { borderColor: theme.colors.onBackground },
+        {
+          borderColor: theme.colors.onBackground,
+          backgroundColor: theme.colors.background,
+        },
       ]}
     >
       <NativeAdView nativeAd={nativeAd}>

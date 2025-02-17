@@ -19,7 +19,7 @@ export const ICON_SIZE = 60;
 
 type Props = ViewProps;
 
-const NativeAdBannerSlim = (props: Props) => {
+const NativeAdBannerSlim = ({ style, ...viewProps }: Props) => {
   const theme = useCustomTheme();
   const [nativeAd, setNativeAd] = useState<NativeAd>();
 
@@ -42,7 +42,17 @@ const NativeAdBannerSlim = (props: Props) => {
   }
 
   return (
-    <View {...props}>
+    <View
+      style={[
+        style,
+        styles.wrapper,
+        {
+          borderColor: theme.colors.onBackground,
+          backgroundColor: theme.colors.background,
+        },
+      ]}
+      {...viewProps}
+    >
       <NativeAdView nativeAd={nativeAd} style={styles.nativeAdView}>
         {nativeAd.icon && (
           <NativeAsset assetType={NativeAssetType.ICON}>
@@ -92,6 +102,11 @@ const NativeAdBannerSlim = (props: Props) => {
 export default NativeAdBannerSlim;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    borderWidth: 1,
+    padding: spacing.spaceExtraSmall,
+    borderRadius: roundness,
+  },
   nativeAdView: {
     flexDirection: "row",
     alignItems: "center",
