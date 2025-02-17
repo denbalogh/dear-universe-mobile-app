@@ -6,10 +6,7 @@
   },
   "build": {
     "common": {
-      "node": "22.9.0",
-      "env": {
-        "EXPO_USE_COMMUNITY_AUTOLINKING": "1"
-      }
+      "node": "22.9.0"
     },
     "development": {
       "extends": "common",
