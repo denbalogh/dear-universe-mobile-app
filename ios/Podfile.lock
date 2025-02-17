@@ -2189,8 +2189,6 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNDeviceInfo (14.0.4):
-    - React-Core
   - RNFBAnalytics (21.7.2):
     - Firebase/Analytics (= 11.7.0)
     - React-Core
@@ -2570,7 +2568,6 @@ DEPENDENCIES:
   - RealmJS (from `../node_modules/realm`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
-  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -2826,8 +2823,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
-  RNDeviceInfo:
-    :path: "../node_modules/react-native-device-info"
   RNFBAnalytics:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
@@ -2981,7 +2976,6 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNCAsyncStorage: d494bdee892cc6a4d790c960afb7b5dd1d91abb1
   RNDateTimePicker: dfea58203474b4a5b5d0550e2e9ed35026e7859f
-  RNDeviceInfo: feea80a690d2bde1fe51461cf548039258bd03f2
   RNFBAnalytics: 38a750042b5cf988c61b3e33d1491c182da4b536
   RNFBApp: a5395f4df3ea5d19697bdc99f5a0400903e5fff6
   RNFBAuth: 4ec44f6bed849d3ac4a8da118bbe0a6109fa2e66
