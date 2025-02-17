@@ -43,7 +43,7 @@ const MediaGalleryPreview = ({
       lockAsync(OrientationLock.ALL);
     } else {
       logCrashlytics("MediaGalleryPreview - Locking orientation to portrait");
-      lockAsync(OrientationLock.PORTRAIT);
+      lockAsync(OrientationLock.PORTRAIT_UP);
     }
   }, [isVisible]);
 

@@ -5,11 +5,9 @@ import {
   Orientation,
   removeOrientationChangeListener,
 } from "expo-screen-orientation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-export type CustomOrientation = "portrait" | "landscape";
-
-const useScreenOrientation = (): CustomOrientation => {
+const useScreenOrientation = (): Orientation => {
   const [orientation, setOrientation] = useState(Orientation.PORTRAIT_UP);
 
   useEffect(() => {
@@ -34,16 +32,7 @@ const useScreenOrientation = (): CustomOrientation => {
     };
   }, []);
 
-  return useMemo(() => {
-    if (
-      orientation === Orientation.LANDSCAPE_LEFT ||
-      orientation === Orientation.LANDSCAPE_RIGHT
-    ) {
-      return "landscape";
-    } else {
-      return "portrait";
-    }
-  }, [orientation]);
+  return orientation;
 };
 
 export default useScreenOrientation;
