@@ -20,3 +20,12 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+
+# ENV variables
+.env
+google-services.json
+GoogleService-Info.plist
+
+# Generated native files
+android/
+ios/

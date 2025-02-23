@@ -15,7 +15,9 @@ import { Appbar, FAB } from "react-native-paper";
 import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useRouter } from "expo-router";
-import { debounce, isEqual, sortBy } from "lodash";
+import debounce from "lodash/debounce";
+import isEqual from "lodash/isEqual";
+import sortBy from "lodash/sortBy";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import {
   moveAndDeleteUpdatedMediaAndGetPaths,
@@ -30,6 +32,8 @@ import FlingGesture from "../FlingGesture/FlingGesture";
 import useBackHandler from "@/hooks/useBackHandler";
 import logCrashlytics from "@/utils/logCrashlytics";
 import NativeAdBannerBig from "../NativeAdBanner/NativeAdBannerBig";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { VisibilitySensor } from "@futurejj/react-native-visibility-sensor";
 
 type LayoutParts =
   | "mainHeadline"
@@ -72,8 +76,14 @@ const CreateEditEntry = ({
   const router = useRouter();
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showConfirmDialog } = useConfirmDialog();
+  const { bottom } = useSafeAreaInsets();
 
   const isCreateMode = mode === "create";
+
+  const [isHeadlineVisible, setIsHeadlineVisible] = useState(false);
+  const handleSetHeadlineVisibility = (isVisible: boolean) => {
+    setIsHeadlineVisible(isVisible);
+  };
 
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
@@ -234,14 +244,28 @@ const CreateEditEntry = ({
     }
   }, [handleBackPress, scrollOffset]);
 
+  const headline = isCreateMode ? "Creating entry" : "Editing entry";
+
+  const isHeadlineVisibleOrOnTop = useMemo(() => {
+    return isHeadlineVisible || scrollOffset <= 0;
+  }, [isHeadlineVisible, scrollOffset]);
+
   return (
     <FlingGesture onFlingDown={onFlingDown}>
-      <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
+      <View
+        style={[
+          styles.flex,
+          { backgroundColor: theme.colors.surface, paddingBottom: bottom },
+        ]}
+      >
         <Stack.Screen
           options={{
             header: () => (
-              <Appbar.Header>
+              <Appbar.Header elevated={!isHeadlineVisibleOrOnTop}>
                 <Appbar.BackAction onPress={handleBackPress} />
+                {!isHeadlineVisibleOrOnTop && (
+                  <Appbar.Content title={headline} />
+                )}
               </Appbar.Header>
             ),
             navigationBarColor: theme.colors.surface,
@@ -253,12 +277,18 @@ const CreateEditEntry = ({
           contentContainerStyle={styles.scrollViewContentContainer}
           onScroll={handleOnScroll}
         >
-          <SectionHeadline
-            headline={isCreateMode ? "Creating entry" : "Editing entry"}
-            superHeadline={formattedDate}
-            headlineVariant="displaySmall"
-            onLayout={handleSetSectionHeight("mainHeadline")}
-          />
+          <VisibilitySensor
+            triggerOnce={false}
+            onChange={handleSetHeadlineVisibility}
+            threshold={{ bottom: 100 }}
+          >
+            <SectionHeadline
+              headline={headline}
+              superHeadline={formattedDate}
+              headlineVariant="displaySmall"
+              onLayout={handleSetSectionHeight("mainHeadline")}
+            />
+          </VisibilitySensor>
           <TextSection
             titleInputProps={{
               value: title,
@@ -304,10 +334,10 @@ const CreateEditEntry = ({
             onActiveEmotionsChange={setActiveEmotions}
             style={styles.sectionWrapper}
           />
-          <NativeAdBannerBig />
+          <NativeAdBannerBig style={styles.adBanner} />
         </ScrollView>
         {!isKeyboardOpen && (
-          <View style={styles.saveButtonWrapper}>
+          <View style={[styles.saveButtonWrapper, { paddingBottom: bottom }]}>
             <FAB
               label="Save"
               variant="tertiary"
@@ -333,6 +363,9 @@ const styles = StyleSheet.create({
   sectionWrapper: {
     padding: spacing.spaceMedium,
     paddingVertical: spacing.spaceLarge,
+  },
+  adBanner: {
+    margin: spacing.spaceMedium,
   },
   saveButtonWrapper: {
     position: "absolute",

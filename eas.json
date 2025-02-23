@@ -1,0 +1,38 @@
+{
+  "cli": {
+    "version": ">= 15.0.10",
+    "appVersionSource": "remote",
+    "requireCommit": true
+  },
+  "build": {
+    "common": {
+      "node": "22.9.0"
+    },
+    "development": {
+      "extends": "common",
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview": {
+      "extends": "common",
+      "distribution": "internal",
+      "channel": "preview",
+      "android": {
+        "buildType": "apk",
+        "resourceClass": "large"
+      }
+    },
+    "production": {
+      "extends": "common",
+      "autoIncrement": true,
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

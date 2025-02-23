@@ -1,14 +1,16 @@
 import { CameraMode, CameraType, CameraView, FlashMode } from "expo-camera";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import Controls from "./Controls";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { IconButton } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import useScreenOrientation from "@/hooks/useScreenOrientation";
 import useCameraPermissions from "@/hooks/useCameraPermissions";
 import useBackHandler from "@/hooks/useBackHandler";
 import logCrashlytics from "@/utils/logCrashlytics";
+import { lockAsync, OrientationLock } from "expo-screen-orientation";
+import { getOrientationLock, isLandscape } from "@/utils/orientation";
 
 type Props = {
   active: boolean;
@@ -33,7 +35,6 @@ const Camera = ({
   const [cameraMode, setCameraMode] = useState<CameraMode>(initialMode);
   const [zoom, setZoom] = useState(0);
   const [flash, setFlash] = useState<FlashMode>("auto");
-  const [mute, setMute] = useState(false);
   const [torch, setTorch] = useState(false);
 
   const [isCameraReady, setIsCameraReady] = useState(false);
@@ -70,6 +71,18 @@ const Camera = ({
   const recordingTimerId = useRef<NodeJS.Timeout | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTimeInMs, setRecordingTimeInMs] = useState(0);
+
+  useEffect(() => {
+    if (isRecording) {
+      // Lock orientation to current orientation
+      logCrashlytics("Locking orientation on video recording start");
+      lockAsync(getOrientationLock(orientation)).then();
+    } else {
+      // Unlock orientation
+      logCrashlytics("Unlocking orientation on video recording stop");
+      lockAsync(OrientationLock.ALL).then();
+    }
+  }, [isRecording, orientation]);
 
   const onStartRecording = useCallback(async () => {
     if (cameraRef.current) {
@@ -115,13 +128,12 @@ const Camera = ({
       active={active}
       style={[
         styles.wrapper,
-        { flexDirection: orientation === "landscape" ? "row" : "column" },
+        { flexDirection: isLandscape(orientation) ? "row" : "column" },
       ]}
       facing={facing}
       mode={cameraMode}
       zoom={zoom / 100}
       flash={flash}
-      mute={mute}
       enableTorch={torch}
       onCameraReady={handleOnCameraReady}
     >
@@ -140,8 +152,6 @@ const Camera = ({
         onZoomChange={setZoom}
         flash={flash}
         onFlashChange={setFlash}
-        mute={mute}
-        onMuteChange={setMute}
         torch={torch}
         onTorchChange={setTorch}
         orientation={orientation}

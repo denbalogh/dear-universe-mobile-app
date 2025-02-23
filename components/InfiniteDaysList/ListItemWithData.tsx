@@ -19,29 +19,26 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
     router.navigate({ pathname: "/day/[dateId]", params: { dateId } });
   }, [dateId, router]);
 
-  const addEntryHandlers = useMemo(
-    () => ({
-      onAddTextPress: () =>
-        router.navigate({
-          pathname: "/day/[dateId]/entry/new",
-          params: {
-            dateId,
-            ...ENTRY_SCREEN_FOCUS_DESCRIPTION,
-          },
-        }),
-      onAddRecordingPress: () =>
-        router.navigate({
-          pathname: "/day/[dateId]/entry/new",
-          params: { dateId, ...ENTRY_SCREEN_SCROLL_TO_RECORDING },
-        }),
-      onAddMediaPress: () =>
-        router.navigate({
-          pathname: "/day/[dateId]/entry/new",
-          params: { dateId, ...ENTRY_SCREEN_SCROLL_TO_MEDIA },
-        }),
-    }),
-    [dateId, router],
-  );
+  const onAddTextHandler = useCallback(() => {
+    router.navigate({
+      pathname: "/day/[dateId]/entry/new",
+      params: { dateId, ...ENTRY_SCREEN_FOCUS_DESCRIPTION },
+    });
+  }, [dateId, router]);
+
+  const onAddRecordingHandler = useCallback(() => {
+    router.navigate({
+      pathname: "/day/[dateId]/entry/new",
+      params: { dateId, ...ENTRY_SCREEN_SCROLL_TO_RECORDING },
+    });
+  }, [dateId, router]);
+
+  const onAddMediaHandler = useCallback(() => {
+    router.navigate({
+      pathname: "/day/[dateId]/entry/new",
+      params: { dateId, ...ENTRY_SCREEN_SCROLL_TO_MEDIA },
+    });
+  }, [dateId, router]);
 
   const isEmpty = useMemo(
     () => !title && (!dayObject || entryObjects.length === 0),
@@ -61,7 +58,9 @@ const ListItemWithData = ({ dateId }: { dateId: string }) => {
       onPress={onPressHandler}
       dateId={dateId}
       title={title}
-      addEntryHandlers={addEntryHandlers}
+      onAddTextPress={onAddTextHandler}
+      onAddRecordingPress={onAddRecordingHandler}
+      onAddMediaPress={onAddMediaHandler}
       isEmpty={isEmpty}
       feelings={feelings}
     />

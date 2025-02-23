@@ -19,12 +19,14 @@ import { Stack, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LockDeleteScreen = () => {
   const theme = useCustomTheme();
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
   const { authenticate } = useBiometrics();
+  const { bottom } = useSafeAreaInsets();
 
   const { updateSettingsObject, settingsObject } = useSettingsObject();
   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
@@ -84,7 +86,10 @@ const LockDeleteScreen = () => {
   return (
     <FlingGesture onFlingDown={router.back}>
       <View
-        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.wrapper,
+          { backgroundColor: theme.colors.background, paddingBottom: bottom },
+        ]}
       >
         <Stack.Screen
           options={{

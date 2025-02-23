@@ -1,6 +1,6 @@
 module.exports = {
   expo: {
-    name: "Dear universe",
+    name: "Dear Universe",
     slug: "dear-universe-app",
     version: "1.0.0",
     orientation: "portrait",
@@ -11,7 +11,8 @@ module.exports = {
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
       requireFullScreen: true,
       supportsTablet: false,
-      googleServicesFile: "./GoogleService-Info.plist",
+      googleServicesFile:
+        process.env.GOOGLE_SERVICES_IOS ?? "./GoogleService-Info.plist",
       infoPlist: {
         NSMicrophoneUsageDescription:
           "The app needs access to your microphone in order to record audio for your entry.",
@@ -24,16 +25,12 @@ module.exports = {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#FDF8FF",
       },
-      googleServicesFile: "./google-services.json",
+      googleServicesFile:
+        process.env.GOOGLE_SERVICES_ANDROID ?? "./google-services.json",
       permissions: [
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.RECEIVE_BOOT_COMPLETED",
       ],
-    },
-    web: {
-      bundler: "metro",
-      output: "static",
-      favicon: "./assets/images/favicon.png",
     },
     plugins: [
       "expo-router",
@@ -43,8 +40,8 @@ module.exports = {
       [
         "react-native-google-mobile-ads",
         {
-          androidAppId: "ca-app-pub-3470994410920852~8621670596",
-          iosAppId: "ca-app-pub-3470994410920852~4803018548",
+          androidAppId: process.env.GOOGLE_ADS_ANDROID_APP_ID,
+          iosAppId: process.env.GOOGLE_ADS_IOS_APP_ID,
           delayAppMeasurementInit: true,
         },
       ],
@@ -138,11 +135,15 @@ module.exports = {
     },
     extra: {
       eas: {
-        projectId: "179716c1-8891-4d76-8d1f-1e24dfb89a6d",
+        projectId: process.env.EAS_PROJECT_ID,
       },
       storybookEnabled: process.env.STORYBOOK_ENABLED,
     },
     owner: "denbalogh",
     newArchEnabled: true,
+    updates: {
+      url: process.env.EAS_UPDATES_URL,
+    },
+    runtimeVersion: "1.0.0",
   },
 };

@@ -4,7 +4,7 @@ import {
   isMonthYearFormat,
   parseDateId,
 } from "@/utils/date";
-import { subDays } from "date-fns";
+import { subDays } from "date-fns/subDays";
 
 export const createDaysUntilDate = (
   untilDate: Date = new Date(),

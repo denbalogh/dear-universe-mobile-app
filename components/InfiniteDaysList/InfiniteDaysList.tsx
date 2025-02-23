@@ -230,9 +230,9 @@ const InfiniteDaysList = ({ onMonthYearChange }: Props) => {
       >
         <FAB
           onPress={handleShowDatePicker}
-          icon="calendar-search"
+          icon="calendar-month"
           variant="primary"
-          label="Search date"
+          label="Go to date"
         />
       </Animated.View>
       <Animated.View

@@ -105,7 +105,7 @@ const DatePickerModal = ({ isVisible, onDismiss, onConfirm, realm }: Props) => {
           mode="center-aligned"
         >
           <Appbar.BackAction onPress={onDismiss} />
-          <Appbar.Content title="Search date" />
+          <Appbar.Content title="Go to date" />
         </Appbar.Header>
         <CalendarList
           calendarSize={calendarSize}

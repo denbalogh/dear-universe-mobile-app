@@ -20,6 +20,7 @@ import { Stack, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Appbar, Button, HelperText, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LockSetupScreen = () => {
   const theme = useCustomTheme();
@@ -27,6 +28,7 @@ const LockSetupScreen = () => {
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showSnackbar } = useSnackbar();
   const { updateSettingsObject } = useSettingsObject();
+  const { bottom } = useSafeAreaInsets();
 
   const [isTyping, setIsTyping] = useState(false);
   const [code, setCode] = useState("");
@@ -97,7 +99,10 @@ const LockSetupScreen = () => {
   return (
     <FlingGesture onFlingDown={router.back}>
       <View
-        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.wrapper,
+          { backgroundColor: theme.colors.background, paddingBottom: bottom },
+        ]}
       >
         <Stack.Screen
           options={{

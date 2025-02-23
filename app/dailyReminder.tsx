@@ -11,7 +11,7 @@ import {
   TextInput,
 } from "react-native-paper";
 import useSettingsObject from "@/hooks/useSettingsObject";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import useBackHandler from "@/hooks/useBackHandler";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
 import useNotificationsPermissions from "@/hooks/useNotificationsPermission";
@@ -34,6 +34,7 @@ import { phrases } from "@/constants/dailyReminder";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import logCrashlytics from "@/utils/logCrashlytics";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const DAILY_REMINDER_IDENTIFIER = "daily-reminder";
 
@@ -44,6 +45,7 @@ const DailyReminderSetupScreen = () => {
   const { showConfirmDialog } = useConfirmDialog();
   const { requestPermissions } = useNotificationsPermissions();
   const { showSnackbar } = useSnackbar();
+  const { bottom } = useSafeAreaInsets();
 
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
@@ -153,7 +155,10 @@ const DailyReminderSetupScreen = () => {
   return (
     <FlingGesture onFlingDown={onBackPress}>
       <View
-        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.wrapper,
+          { backgroundColor: theme.colors.background, paddingBottom: bottom },
+        ]}
       >
         <Stack.Screen
           options={{

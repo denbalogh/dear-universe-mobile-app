@@ -19,12 +19,14 @@ import { Stack, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LockScreen = () => {
   const theme = useCustomTheme();
   const router = useRouter();
   const appState = useAppState();
   const { authenticate } = useBiometrics();
+  const { bottom } = useSafeAreaInsets();
 
   const { settingsObject } = useSettingsObject();
   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
@@ -85,7 +87,10 @@ const LockScreen = () => {
 
   return (
     <View
-      style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+      style={[
+        styles.wrapper,
+        { backgroundColor: theme.colors.background, paddingBottom: bottom },
+      ]}
     >
       <Stack.Screen
         options={{

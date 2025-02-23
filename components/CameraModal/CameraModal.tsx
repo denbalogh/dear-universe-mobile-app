@@ -36,7 +36,7 @@ const CameraModal = ({
       lockAsync(OrientationLock.ALL);
     } else {
       logCrashlytics("CameraModal - Locking orientation to portrait");
-      lockAsync(OrientationLock.PORTRAIT);
+      lockAsync(OrientationLock.PORTRAIT_UP);
     }
   }, [isVisible]);
 

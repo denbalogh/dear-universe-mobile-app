@@ -1,11 +1,12 @@
 import { spacing } from "@/constants/theme";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { CameraMode, CameraType, FlashMode } from "expo-camera";
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { FAB, IconButton, Text } from "react-native-paper";
 import CustomMenu from "../CustomMenu/CustomMenu";
-import { CustomOrientation } from "@/hooks/useScreenOrientation";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
+import { Orientation } from "expo-screen-orientation";
+import { isPortrait } from "@/utils/orientation";
 
 type Props = {
   isCameraReady: boolean;
@@ -22,11 +23,9 @@ type Props = {
   onZoomChange: (zoom: number) => void;
   flash: FlashMode;
   onFlashChange: (flash: FlashMode) => void;
-  mute: boolean;
-  onMuteChange: (mute: boolean) => void;
   torch: boolean;
   onTorchChange: (torch: boolean) => void;
-  orientation: CustomOrientation;
+  orientation: Orientation;
 };
 
 const Controls = ({
@@ -44,8 +43,6 @@ const Controls = ({
   onZoomChange,
   flash,
   onFlashChange,
-  mute,
-  onMuteChange,
   torch,
   onTorchChange,
   orientation,
@@ -94,10 +91,6 @@ const Controls = ({
     off: "flash-off",
   }[flash];
 
-  const toggleMute = () => {
-    onMuteChange(!mute);
-  };
-
   const toggleCameraMode = () => {
     onCameraModeChange(cameraMode === "picture" ? "video" : "picture");
   };
@@ -113,7 +106,7 @@ const Controls = ({
     topButtonsWrapperStyle,
     bottomWrapperStyle,
   } = useMemo(() => {
-    return orientation === "portrait"
+    return isPortrait(orientation)
       ? // Portrait styles
         {
           wrapperStyle: styles.portraitWrapper,
@@ -137,29 +130,36 @@ const Controls = ({
           <IconButton
             icon={torch ? "flashlight" : "flashlight-off"}
             onPress={toggleTorch}
+            disabled={isRecording}
+            iconColor="white"
           />
-          <CustomMenu menuItems={flashMenuItems}>
-            {({ openMenu }) => (
-              <IconButton icon={flashIcon} onPress={openMenu} />
-            )}
-          </CustomMenu>
-          <IconButton
-            icon={mute ? "volume-off" : "volume-high"}
-            onPress={toggleMute}
-            disabled={cameraMode === "picture"}
-          />
+          {cameraMode === "picture" && (
+            <CustomMenu menuItems={flashMenuItems}>
+              {({ openMenu }) => (
+                <IconButton
+                  icon={flashIcon}
+                  onPress={openMenu}
+                  iconColor="white"
+                />
+              )}
+            </CustomMenu>
+          )}
         </View>
         <View style={topButtonsWrapperStyle}>
           <IconButton
             icon="magnify-minus"
             onPress={onLowerZoom}
-            disabled={zoom === 0}
+            disabled={zoom === 0 || isRecording}
+            iconColor="white"
           />
-          <Text variant="bodySmall">{zoom}%</Text>
+          <Text variant="bodySmall" style={styles.zoomText}>
+            {zoom}%
+          </Text>
           <IconButton
             icon="magnify-plus"
             onPress={onHigherZoom}
-            disabled={zoom === 100}
+            disabled={zoom === 100 || isRecording}
+            iconColor="white"
           />
         </View>
       </View>
@@ -168,6 +168,7 @@ const Controls = ({
           onPress={toggleFacing}
           icon="camera-flip"
           disabled={isRecording}
+          iconColor="white"
         />
         {cameraMode === "picture" ? (
           <FAB
@@ -193,6 +194,7 @@ const Controls = ({
           onPress={toggleCameraMode}
           icon={cameraModeIcon}
           disabled={isRecording}
+          iconColor="white"
         />
       </View>
     </View>
@@ -243,5 +245,8 @@ const styles = StyleSheet.create({
     flexDirection: "column-reverse",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  zoomText: {
+    color: "white",
   },
 });

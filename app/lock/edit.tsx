@@ -28,11 +28,13 @@ import {
   Switch,
   Text,
 } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LockEditScreen = () => {
   const theme = useCustomTheme();
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
+  const { bottom } = useSafeAreaInsets();
   const { settingsObject, updateSettingsObject } = useSettingsObject();
   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
 
@@ -179,7 +181,10 @@ const LockEditScreen = () => {
   return (
     <FlingGesture onFlingDown={router.back}>
       <View
-        style={[styles.wrapper, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.wrapper,
+          { backgroundColor: theme.colors.background, paddingBottom: bottom },
+        ]}
       >
         <Stack.Screen
           options={{

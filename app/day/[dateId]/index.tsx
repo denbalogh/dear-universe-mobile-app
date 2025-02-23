@@ -16,22 +16,28 @@ import {
 import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
 import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
-import { addDays, isToday, subDays } from "date-fns";
+import { addDays } from "date-fns/addDays";
+import { isToday } from "date-fns/isToday";
+import { subDays } from "date-fns/subDays";
 import useDayObject from "@/hooks/useDayObject";
 import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import DayTitle from "@/components/DayTitle/DayTitle";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import FadeInView from "@/components/FadeInView/FadeInView";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import useBackHandler from "@/hooks/useBackHandler";
 import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const BOTTOM_PADDING = 130;
 
 const DayScreen = () => {
   const theme = useTheme();
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
 
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showSnackbar } = useSnackbar();
@@ -170,7 +176,7 @@ const DayScreen = () => {
             style={styles.flex}
             contentContainerStyle={[
               styles.scrollContentWrapper,
-              !locked && styles.bottomPadding,
+              { paddingBottom: locked ? bottom : BOTTOM_PADDING + bottom },
             ]}
           >
             <DayTitle
@@ -204,7 +210,7 @@ const DayScreen = () => {
           </ScrollView>
           {!isKeyboardOpen && !locked && (
             <CTAButtons
-              style={styles.bottomButtons}
+              style={[styles.bottomButtons, { paddingBottom: bottom }]}
               showText={!hasEntries}
               addTextButton={{
                 onPress: () =>
@@ -262,8 +268,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: spacing.spaceLarge,
-  },
-  bottomPadding: {
-    paddingBottom: 130,
   },
 });

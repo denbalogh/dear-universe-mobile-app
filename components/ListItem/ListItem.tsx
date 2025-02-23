@@ -2,22 +2,23 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, IconButton, Card, useTheme } from "react-native-paper";
 import { roundness, sizing, spacing } from "@/constants/theme";
-import { format, getDate, isToday as isTodayDateFns } from "date-fns";
+import { format } from "date-fns/format";
+import { getDate } from "date-fns/getDate";
+import { isToday as isTodayDateFns } from "date-fns/isToday";
 import { parseDateId } from "@/utils/date";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import FeelingsIndicator from "../FeelingsIndicator/FeelingsIndicator";
 import MediaPreview from "./MediaPreview";
+import CustomMenu from "../CustomMenu/CustomMenu";
 
 type Props = {
   title: string;
   dateId: string;
   onPress: () => void;
-  addEntryHandlers: {
-    onAddTextPress: () => void;
-    onAddRecordingPress: () => void;
-    onAddMediaPress: () => void;
-  };
+  onAddTextPress: () => void;
+  onAddRecordingPress: () => void;
+  onAddMediaPress: () => void;
   isEmpty?: boolean;
   feelings: FEELING_GROUP_NAMES[];
 };
@@ -25,7 +26,9 @@ type Props = {
 const ListItem = ({
   title,
   dateId,
-  addEntryHandlers,
+  onAddTextPress,
+  onAddRecordingPress,
+  onAddMediaPress,
   isEmpty,
   onPress,
   feelings,
@@ -44,74 +47,97 @@ const ListItem = ({
     : theme.colors.onSurfaceVariant;
 
   return (
-    <Card
-      testID="ListItemPressable"
-      style={[styles.card, { backgroundColor }]}
-      onPress={onPress}
+    <CustomMenu
+      menuItems={[
+        {
+          title: "Add text",
+          leadingIcon: "pen-plus",
+          onPress: onAddTextPress,
+        },
+        {
+          title: "Add recording",
+          leadingIcon: "microphone-plus",
+          onPress: onAddRecordingPress,
+        },
+        {
+          title: "Add media",
+          leadingIcon: "image-plus",
+          onPress: onAddMediaPress,
+        },
+      ]}
     >
-      <Card.Content style={styles.cardContent}>
-        <View style={styles.dayWrapper}>
-          <Text
-            variant="displaySmall"
-            style={[
-              { color: textColor },
-              isToday && [styles.today, { color: theme.colors.tertiary }],
-            ]}
-            accessibilityLabel={
-              isToday
-                ? `Today ${format(date, "do LLLL yyyy")}`
-                : format(date, "do LLLL yyyy")
-            }
-          >
-            {getDate(date)}
-          </Text>
-          <Text
-            variant="bodyLarge"
-            accessibilityLabel={format(date, "EEEE")}
-            style={{ color: textColor }}
-          >
-            {format(date, "E")}
-          </Text>
-        </View>
-        {isEmpty ? (
-          <View style={styles.addEntryButtonsWrapper}>
-            <IconButton
-              icon="pen-plus"
-              onPress={addEntryHandlers.onAddTextPress}
-              accessibilityLabel="Add text"
-              size={sizing.sizeMedium}
+      {({ openMenu }) => (
+        <Card
+          testID="ListItemPressable"
+          style={[styles.card, { backgroundColor }]}
+          onPress={onPress}
+          onLongPress={openMenu}
+        >
+          <Card.Content style={styles.cardContent}>
+            <View style={styles.dayWrapper}>
+              <Text
+                variant="displaySmall"
+                style={[
+                  { color: textColor },
+                  isToday && [styles.today, { color: theme.colors.tertiary }],
+                ]}
+                accessibilityLabel={
+                  isToday
+                    ? `Today ${format(date, "do LLLL yyyy")}`
+                    : format(date, "do LLLL yyyy")
+                }
+              >
+                {getDate(date)}
+              </Text>
+              <Text
+                variant="bodyLarge"
+                accessibilityLabel={format(date, "EEEE")}
+                style={{ color: textColor }}
+              >
+                {format(date, "E")}
+              </Text>
+            </View>
+            {isEmpty ? (
+              <View style={styles.addEntryButtonsWrapper}>
+                <IconButton
+                  icon="pen-plus"
+                  onPress={onAddTextPress}
+                  accessibilityLabel="Add text"
+                  size={sizing.sizeMedium}
+                />
+                <IconButton
+                  icon="microphone-plus"
+                  onPress={onAddRecordingPress}
+                  accessibilityLabel="Add recording"
+                  size={sizing.sizeMedium}
+                />
+                <IconButton
+                  icon="image-plus"
+                  onPress={onAddMediaPress}
+                  accessibilityLabel="Add media"
+                  size={sizing.sizeMedium}
+                />
+              </View>
+            ) : (
+              <View style={styles.contentWrapper}>
+                <Text
+                  style={[styles.title, { color: textColor }]}
+                  variant="bodyMedium"
+                  numberOfLines={4}
+                >
+                  {title || "No title for the day"}
+                </Text>
+                <MediaPreview dateId={dateId} />
+              </View>
+            )}
+            <FeelingsIndicator
+              style={styles.feelingsIndicator}
+              feelings={feelings}
             />
-            <IconButton
-              icon="microphone-plus"
-              onPress={addEntryHandlers.onAddRecordingPress}
-              accessibilityLabel="Add recording"
-              size={sizing.sizeMedium}
-            />
-            <IconButton
-              icon="image-plus"
-              onPress={addEntryHandlers.onAddMediaPress}
-              accessibilityLabel="Add media"
-              size={sizing.sizeMedium}
-            />
-          </View>
-        ) : (
-          <View style={styles.contentWrapper}>
-            <Text
-              style={[styles.title, { color: textColor }]}
-              variant="bodyMedium"
-              numberOfLines={4}
-            >
-              {title || "No title for the day"}
-            </Text>
-            <MediaPreview dateId={dateId} />
-          </View>
-        )}
-        <FeelingsIndicator
-          style={styles.feelingsIndicator}
-          feelings={feelings}
-        />
-      </Card.Content>
-    </Card>
+          </Card.Content>
+        </Card>
+      )}
+    </CustomMenu>
   );
 };
 

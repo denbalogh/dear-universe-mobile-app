@@ -1,4 +1,4 @@
-import { spacing } from "@/constants/theme";
+import { roundness, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import logCrashlytics from "@/utils/logCrashlytics";
 import { Image } from "expo-image";
@@ -10,12 +10,13 @@ import {
   NativeAsset,
   NativeAssetType,
   NativeMediaAspectRatio,
-  NativeMediaView,
   TestIds,
 } from "react-native-google-mobile-ads";
-import StarRating from "./StarCount";
+import StarRating from "./StarRating";
+import { Text as PaperText } from "react-native-paper";
+import { AD_ID } from "@/constants/ads";
 
-const imageSize = 60;
+export const ICON_SIZE = 60;
 
 type Props = ViewProps;
 
@@ -25,7 +26,7 @@ const NativeAdBannerSlim = ({ style, ...viewProps }: Props) => {
 
   useEffect(() => {
     logCrashlytics("Creating native ad for banner slim");
-    NativeAd.createForAdRequest(TestIds.NATIVE, {
+    NativeAd.createForAdRequest(__DEV__ ? TestIds.NATIVE : AD_ID, {
       aspectRatio: NativeMediaAspectRatio.SQUARE,
     }).then(setNativeAd);
   }, []);
@@ -42,48 +43,60 @@ const NativeAdBannerSlim = ({ style, ...viewProps }: Props) => {
   }
 
   return (
-    <NativeAdView
+    <View
+      style={[
+        style,
+        styles.wrapper,
+        {
+          borderColor: theme.colors.onBackground,
+          backgroundColor: theme.colors.background,
+        },
+      ]}
       {...viewProps}
-      style={[style, styles.wrapper]}
-      nativeAd={nativeAd}
     >
-      {nativeAd.icon ? (
-        <NativeAsset assetType={NativeAssetType.ICON}>
-          <Image source={{ uri: nativeAd.icon.url }} style={styles.icon} />
-        </NativeAsset>
-      ) : (
-        <NativeMediaView style={styles.banner} />
-      )}
-      <View style={styles.textWrapper}>
-        <NativeAsset assetType={NativeAssetType.HEADLINE}>
-          <Text
-            style={[
-              theme.fonts.titleMedium,
-              { color: theme.colors.onBackground },
-            ]}
-          >
-            {nativeAd.headline}
-          </Text>
-        </NativeAsset>
-        <NativeAsset assetType={NativeAssetType.BODY}>
-          <Text
-            style={[
-              theme.fonts.bodySmall,
-              { color: theme.colors.onBackground },
-            ]}
-          >
-            {nativeAd.body}
-          </Text>
-        </NativeAsset>
-        {nativeAd.starRating && (
-          <NativeAsset assetType={NativeAssetType.STAR_RATING}>
-            <View>
-              <StarRating rating={nativeAd.starRating} />
-            </View>
+      <NativeAdView nativeAd={nativeAd} style={styles.nativeAdView}>
+        {nativeAd.icon && (
+          <NativeAsset assetType={NativeAssetType.ICON}>
+            <Image source={{ uri: nativeAd.icon.url }} style={styles.icon} />
           </NativeAsset>
         )}
-      </View>
-    </NativeAdView>
+        <View style={styles.rightWrapper}>
+          <NativeAsset assetType={NativeAssetType.HEADLINE}>
+            <Text
+              style={[
+                theme.fonts.titleMedium,
+                { color: theme.colors.onBackground },
+              ]}
+            >
+              {nativeAd.headline}
+            </Text>
+          </NativeAsset>
+          <View style={styles.adLabelRatingWrapper}>
+            <View
+              style={[
+                styles.adLabelWrapper,
+                {
+                  borderColor: theme.colors.onBackground,
+                  backgroundColor: theme.colors.background,
+                },
+              ]}
+            >
+              <PaperText variant="labelLarge">Ad</PaperText>
+            </View>
+            {nativeAd.starRating && (
+              <NativeAsset assetType={NativeAssetType.STAR_RATING}>
+                <View>
+                  <StarRating
+                    rating={nativeAd.starRating}
+                    style={styles.starRating}
+                  />
+                </View>
+              </NativeAsset>
+            )}
+          </View>
+        </View>
+      </NativeAdView>
+    </View>
   );
 };
 
@@ -91,17 +104,33 @@ export default NativeAdBannerSlim;
 
 const styles = StyleSheet.create({
   wrapper: {
+    borderWidth: 1,
+    padding: spacing.spaceExtraSmall,
+    borderRadius: roundness,
+  },
+  nativeAdView: {
     flexDirection: "row",
     alignItems: "center",
   },
   icon: {
-    width: imageSize,
-    height: imageSize,
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    marginEnd: spacing.spaceSmall,
   },
-  banner: {
-    height: imageSize,
+  rightWrapper: {
+    flex: 1,
   },
-  textWrapper: {
+  adLabelRatingWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: spacing.spaceExtraSmall,
+  },
+  adLabelWrapper: {
+    paddingHorizontal: spacing.spaceExtraSmall,
+    borderWidth: 1,
+    borderRadius: roundness,
+  },
+  starRating: {
     marginStart: spacing.spaceSmall,
   },
 });
