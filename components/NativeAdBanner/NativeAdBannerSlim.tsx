@@ -14,6 +14,7 @@ import {
 } from "react-native-google-mobile-ads";
 import StarRating from "./StarRating";
 import { Text as PaperText } from "react-native-paper";
+import { AD_ID } from "@/constants/ads";
 
 export const ICON_SIZE = 60;
 
@@ -25,7 +26,7 @@ const NativeAdBannerSlim = ({ style, ...viewProps }: Props) => {
 
   useEffect(() => {
     logCrashlytics("Creating native ad for banner slim");
-    NativeAd.createForAdRequest(TestIds.NATIVE, {
+    NativeAd.createForAdRequest(__DEV__ ? TestIds.NATIVE : AD_ID, {
       aspectRatio: NativeMediaAspectRatio.SQUARE,
     }).then(setNativeAd);
   }, []);

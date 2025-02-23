@@ -16,6 +16,7 @@ import StarRating from "./StarRating";
 import { Text as PaperText } from "react-native-paper";
 import { Image } from "expo-image";
 import { ICON_SIZE } from "./NativeAdBannerSlim";
+import { AD_ID } from "@/constants/ads";
 
 type Props = ViewProps;
 
@@ -25,7 +26,7 @@ const NativeAdBannerBig = ({ style, ...viewProps }: Props) => {
 
   useEffect(() => {
     logCrashlytics("Creating native ad for banner big");
-    NativeAd.createForAdRequest(TestIds.NATIVE, {
+    NativeAd.createForAdRequest(__DEV__ ? TestIds.NATIVE : AD_ID, {
       aspectRatio: NativeMediaAspectRatio.LANDSCAPE,
     }).then(setNativeAd);
   }, []);
