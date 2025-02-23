@@ -29,7 +29,10 @@
     "production": {
       "extends": "common",
       "autoIncrement": true,
-      "channel": "production"
+      "channel": "production",
+      "android": {
+        "resourceClass": "large"
+      }
     }
   },
   "submit": {
