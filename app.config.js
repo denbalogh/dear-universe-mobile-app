@@ -140,6 +140,8 @@ module.exports = {
         projectId: process.env.EAS_PROJECT_ID,
       },
       storybookEnabled: process.env.STORYBOOK_ENABLED,
+      hideAds: process.env.HIDE_ADS,
+      adsTest: process.env.ADS_TEST,
     },
     owner: "denbalogh",
     newArchEnabled: true,

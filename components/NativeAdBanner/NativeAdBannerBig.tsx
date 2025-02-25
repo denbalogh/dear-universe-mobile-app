@@ -17,6 +17,7 @@ import { Text as PaperText } from "react-native-paper";
 import { Image } from "expo-image";
 import { ICON_SIZE } from "./NativeAdBannerSlim";
 import { AD_ID } from "@/constants/ads";
+import { EXPO_CONFIG_EXTRA } from "@/constants/expoConfig";
 
 type Props = ViewProps;
 
@@ -26,9 +27,12 @@ const NativeAdBannerBig = ({ style, ...viewProps }: Props) => {
 
   useEffect(() => {
     logCrashlytics("Creating native ad for banner big");
-    NativeAd.createForAdRequest(__DEV__ ? TestIds.NATIVE : AD_ID, {
-      aspectRatio: NativeMediaAspectRatio.LANDSCAPE,
-    }).then(setNativeAd);
+    NativeAd.createForAdRequest(
+      EXPO_CONFIG_EXTRA.adsTest ? TestIds.NATIVE : AD_ID,
+      {
+        aspectRatio: NativeMediaAspectRatio.LANDSCAPE,
+      },
+    ).then(setNativeAd);
   }, []);
 
   useEffect(() => {
@@ -38,7 +42,7 @@ const NativeAdBannerBig = ({ style, ...viewProps }: Props) => {
     };
   }, [nativeAd]);
 
-  if (!nativeAd) {
+  if (!nativeAd || EXPO_CONFIG_EXTRA.hideAds) {
     return null;
   }
 

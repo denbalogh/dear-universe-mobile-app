@@ -1,3 +1,4 @@
+import { EXPO_CONFIG_EXTRA } from "@/constants/expoConfig";
 import logCrashlytics from "@/utils/logCrashlytics";
 import {
   getTrackingPermissionsAsync,
@@ -53,6 +54,10 @@ const useAdsConsentHandler = () => {
   };
 
   const handleAskConsent = useCallback(async () => {
+    if (EXPO_CONFIG_EXTRA.hideAds) {
+      return;
+    }
+
     logCrashlytics("Asking for ads consent");
     const { canRequestAds: gatherConsentCanRequestAds } =
       await AdsConsent.gatherConsent({
