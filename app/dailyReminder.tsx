@@ -36,8 +36,6 @@ import FlingGesture from "@/components/FlingGesture/FlingGesture";
 import logCrashlytics from "@/utils/logCrashlytics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const DAILY_REMINDER_IDENTIFIER = "daily-reminder";
-
 const DailyReminderSetupScreen = () => {
   const router = useRouter();
   const theme = useCustomTheme();
@@ -125,7 +123,6 @@ const DailyReminderSetupScreen = () => {
         hour: hours,
         minute: minutes,
       },
-      identifier: DAILY_REMINDER_IDENTIFIER,
     });
 
     updateSettingsObject({

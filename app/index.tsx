@@ -6,12 +6,11 @@ import InfiniteDaysList from "@/components/InfiniteDaysList/InfiniteDaysList";
 import { formatMonthYear } from "@/utils/date";
 import { useSettingsDrawer } from "@/contexts/SettingsDrawerContext";
 import useLockScreenHandler from "@/hooks/useLockScreenHandler";
-import useNotificationHandler from "@/hooks/useNotificationHandler";
 import useFirebaseAuthAndAnalyticsConsentHandler from "@/hooks/useFirebaseAuthAndAnalyticsConsentHandler";
 import useAdsConsentHandler from "@/hooks/useAdsConsentHandler";
 import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
 import { spacing } from "@/constants/theme";
-import useTermsAndPoliciesHandler from "@/hooks/useTermsAndPoliciesHandler";
+import useTermsAndPoliciesHandler from "@/hooks/useTermsAndPoliciesScreenHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const App = () => {
@@ -21,20 +20,17 @@ const App = () => {
 
   const [monthYear, setMonthYear] = useState(formatMonthYear(new Date()));
 
-  // Navigates to lock screen if the lock is set
-  useLockScreenHandler();
-
-  // Navigates to terms and policies screen if user hasn't confirmed
-  useTermsAndPoliciesHandler();
-
-  // Handles notification actions
-  useNotificationHandler();
-
   // Handles Firebase authentication and analytics consent
   useFirebaseAuthAndAnalyticsConsentHandler();
 
   // Handles ads consent
   useAdsConsentHandler();
+
+  // Navigates to terms and policies screen if user hasn't confirmed
+  useTermsAndPoliciesHandler();
+
+  // Navigates to lock screen if the lock is set
+  useLockScreenHandler();
 
   return (
     <View
