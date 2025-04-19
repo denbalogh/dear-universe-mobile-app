@@ -1,60 +1,32 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, useTheme } from "react-native-paper";
-import { formatDateId, formatFullDate, parseDateId } from "@/utils/date";
-import { spacing } from "@/constants/theme";
-import CTAButtons from "@/components/CTAButtons/CTAButtons";
+import { StyleSheet, View } from "react-native";
+import { Appbar, TextInput, useTheme } from "react-native-paper";
+import { formatFullDate, parseDateId } from "@/utils/date";
 import { DaySearchTermParams } from "@/types/dayScreen";
-import {
-  ENTRY_SCREEN_FOCUS_DESCRIPTION,
-  ENTRY_SCREEN_SCROLL_TO_RECORDING,
-  ENTRY_SCREEN_SCROLL_TO_MEDIA,
-  DAY_SCREEN_APPEAR_FROM_LEFT,
-  DAY_SCREEN_APPEAR_FROM_RIGHT,
-} from "@/constants/screens";
-import AfterEntriesMessage from "@/components/AfterEntriesMessage/AfterEntriesMessage";
-import EntryWithData from "@/components/EntryWithData/EntryWithData";
 import { useConfirmDialog } from "@/contexts/ConfirmDialogContext";
-import { addDays } from "date-fns/addDays";
-import { isToday } from "date-fns/isToday";
-import { subDays } from "date-fns/subDays";
 import useDayObject from "@/hooks/useDayObject";
-import EntryPlaceholder from "@/components/EntryPlaceholder/EntryPlaceholder";
-import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
-import DayTitle from "@/components/DayTitle/DayTitle";
 import isEqual from "lodash/isEqual";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
-import FadeInView from "@/components/FadeInView/FadeInView";
-import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import useBackHandler from "@/hooks/useBackHandler";
-import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
+import BottomSheet from "@/components/DayScreenComponents/BottomSheet/BottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const BOTTOM_PADDING = 130;
+import { spacing } from "@/constants/theme";
+import { EntryCreationContextProvider } from "@/contexts/EntryCreationContext";
+import EntriesList from "@/components/EntriesList/EntriesList";
 
 const DayScreen = () => {
   const theme = useTheme();
   const router = useRouter();
   const { bottom } = useSafeAreaInsets();
 
-  const isKeyboardOpen = useIsKeyboardOpen();
   const { showSnackbar } = useSnackbar();
 
-  const { dateId, appearFrom = "center" } =
-    useLocalSearchParams<DaySearchTermParams>();
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
   const { dayObject, updateDayObject } = useDayObject(dateId);
 
-  const { scrollOffset, handleOnScroll } = useScrollViewOffset();
-
-  const {
-    entryObjects = [],
-    title: initialTitle = "",
-    locked = false,
-  } = dayObject || {};
-
-  const hasEntries = entryObjects.length > 0;
+  const { title: initialTitle = "" } = dayObject || {};
 
   const [title, setTitle] = useState(initialTitle);
 
@@ -100,151 +72,41 @@ const DayScreen = () => {
 
   const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 
-  const onFlingRight = useCallback(() => {
-    const currentDate = parseDateId(dateId);
-    const previousDate = subDays(currentDate, 1);
-
-    router.replace({
-      pathname: "/day/[dateId]",
-      params: {
-        dateId: formatDateId(previousDate),
-        ...DAY_SCREEN_APPEAR_FROM_LEFT,
-      },
-    });
-  }, [dateId, router]);
-
-  const onFlingLeft = useCallback(() => {
-    const currentDate = parseDateId(dateId);
-
-    if (isToday(currentDate)) {
-      return;
-    }
-
-    const nextDate = addDays(currentDate, 1);
-
-    router.replace({
-      pathname: "/day/[dateId]",
-      params: {
-        dateId: formatDateId(nextDate),
-        ...DAY_SCREEN_APPEAR_FROM_RIGHT,
-      },
-    });
-  }, [dateId, router]);
-
-  const onFlingDown = useCallback(() => {
-    if (scrollOffset <= 0) {
-      router.back();
-    }
-  }, [router, scrollOffset]);
-
-  const toggleLocked = () => {
-    if (dayObject === null) {
-      return;
-    }
-
-    updateDayObject({ locked: !locked });
-    showSnackbar(locked ? "Day was unlocked" : "Day was locked");
-  };
-
   return (
-    <FlingGesture
-      onFlingLeft={onFlingLeft}
-      onFlingRight={onFlingRight}
-      onFlingDown={onFlingDown}
-    >
-      <View style={[styles.flex, { backgroundColor: theme.colors.surface }]}>
-        <FadeInView style={styles.flex} appearFrom={appearFrom}>
-          <Stack.Screen
-            options={{
-              header: () => (
-                <Appbar.Header>
-                  <Appbar.BackAction onPress={handleGoBack} />
-                  <Appbar.Content title={fullDate} />
-                  <Appbar.Action
-                    icon={locked ? "lock" : "lock-open-variant"}
-                    onPress={toggleLocked}
-                    disabled={!hasEntries}
-                  />
-                </Appbar.Header>
-              ),
-              navigationBarColor: theme.colors.surface,
-              animation: "fade",
-            }}
-          />
-          <ScrollView
-            onScroll={handleOnScroll}
-            style={styles.flex}
-            contentContainerStyle={[
-              styles.scrollContentWrapper,
-              { paddingBottom: locked ? bottom : BOTTOM_PADDING + bottom },
-            ]}
-          >
-            <DayTitle
-              title={title}
-              onTitleChange={setTitle}
-              isTitleEdited={isTitleEdited}
-              onSubmit={handleOnSubmit}
-              locked={locked}
-            />
-            <NativeAdBannerSlim style={styles.adBanner} />
-            {hasEntries ? (
-              <>
-                {entryObjects.map(({ _id }, index) => {
-                  const entryId = _id.toString();
-
-                  return (
-                    <EntryWithData
-                      entryId={entryId}
-                      dayObject={dayObject}
-                      key={entryId}
-                      index={index}
-                      locked={locked}
-                    />
-                  );
-                })}
-                {!locked && <AfterEntriesMessage />}
-              </>
-            ) : (
-              <EntryPlaceholder />
-            )}
-          </ScrollView>
-          {!isKeyboardOpen && !locked && (
-            <CTAButtons
-              style={[styles.bottomButtons, { paddingBottom: bottom }]}
-              showText={!hasEntries}
-              addTextButton={{
-                onPress: () =>
-                  router.navigate(
-                    {
-                      pathname: "./entry/new",
-                      params: ENTRY_SCREEN_FOCUS_DESCRIPTION,
-                    },
-                    { relativeToDirectory: true },
-                  ),
-              }}
-              addRecordingButton={{
-                onPress: () =>
-                  router.navigate(
-                    {
-                      pathname: "./entry/new",
-                      params: ENTRY_SCREEN_SCROLL_TO_RECORDING,
-                    },
-                    { relativeToDirectory: true },
-                  ),
-              }}
-              addMediaButton={{
-                onPress: () =>
-                  router.navigate(
-                    {
-                      pathname: "./entry/new",
-                      params: ENTRY_SCREEN_SCROLL_TO_MEDIA,
-                    },
-                    { relativeToDirectory: true },
-                  ),
-              }}
-            />
-          )}
-        </FadeInView>
+    <FlingGesture onFlingRight={router.back}>
+      <View
+        style={[
+          styles.flex,
+          { backgroundColor: theme.colors.surface, paddingBottom: bottom },
+        ]}
+      >
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Appbar.Header>
+                <Appbar.BackAction onPress={handleGoBack} />
+                <Appbar.Content title={fullDate} />
+              </Appbar.Header>
+            ),
+          }}
+        />
+        <TextInput
+          label="Title for the day"
+          value={title}
+          onChangeText={setTitle}
+          multiline={true}
+          enterKeyHint="done"
+          submitBehavior="blurAndSubmit"
+          onEndEditing={handleOnSubmit}
+          autoFocus={!title}
+          style={styles.dayTitleInput}
+          mode="outlined"
+          contentStyle={{ marginTop: 5 }}
+        />
+        <EntryCreationContextProvider>
+          <EntriesList />
+          <BottomSheet defaultSnapPoint={title ? 1 : 0} />
+        </EntryCreationContextProvider>
       </View>
     </FlingGesture>
   );
@@ -256,17 +118,8 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  scrollContentWrapper: {
-    paddingHorizontal: spacing.spaceSmall,
-    paddingTop: spacing.spaceSmall,
-  },
-  adBanner: {
-    marginBottom: spacing.spaceSmall,
-  },
-  bottomButtons: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: spacing.spaceLarge,
+  dayTitleInput: {
+    margin: spacing.spaceSmall,
+    zIndex: 0,
   },
 });

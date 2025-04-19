@@ -1,68 +1,93 @@
-import {
-  ImagePickerAsset,
-  ImagePickerOptions,
-  launchImageLibraryAsync,
-  useMediaLibraryPermissions,
-} from "expo-image-picker";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 import logCrashlytics from "@/utils/logCrashlytics";
+import {
+  Asset,
+  AssetsOptions,
+  getAssetsAsync,
+  MediaType,
+  usePermissions,
+} from "expo-media-library";
 
-const useMediaLibrary = (
-  mediaTypes: ImagePickerOptions["mediaTypes"],
-  onSuccess: (images: ImagePickerAsset[]) => void,
-  onCancel?: () => void,
-) => {
+const assetsOptions: AssetsOptions = {
+  first: 40,
+  mediaType: [MediaType.photo, MediaType.video],
+  sortBy: "creationTime",
+};
+
+type ReturnType = {
+  getInitAssets: () => Promise<Asset[]>;
+  getNextAssets: () => Promise<Asset[]>;
+  hasNextPage: boolean;
+};
+
+const useMediaLibrary = (): ReturnType => {
+  const nextPage = useRef<string | undefined>();
+  const hasNextPage = useRef(true);
+
   const { showPermissionDeniedSnackbar } = usePermissionDeniedSnackbar();
-
-  const [libraryPermissions, requestLibraryPermission] =
-    useMediaLibraryPermissions();
+  const [libraryPermissions, requestLibraryPermission] = usePermissions();
 
   const isLibraryAllowed = useMemo(
     () => libraryPermissions?.status === "granted",
     [libraryPermissions],
   );
 
-  const handleOpenLibrary = useCallback(async () => {
-    logCrashlytics("Opening media library");
-    const selectedImages = await launchImageLibraryAsync({
-      mediaTypes,
-      allowsMultipleSelection: true,
-      orderedSelection: true,
-      quality: 1,
-    });
-
-    if (selectedImages.canceled) {
-      if (onCancel) {
-        onCancel();
-      }
-    } else {
-      onSuccess(selectedImages.assets);
-    }
-  }, [mediaTypes, onCancel, onSuccess]);
-
   const handleRequestLibraryPermissions = useCallback(async () => {
     logCrashlytics("Requesting media library permission");
     const { canAskAgain, granted } = await requestLibraryPermission();
 
-    if (granted) {
-      await handleOpenLibrary();
-    } else if (!canAskAgain) {
+    if (!granted && !canAskAgain) {
       showPermissionDeniedSnackbar("media library");
     }
-  }, [
-    handleOpenLibrary,
-    requestLibraryPermission,
-    showPermissionDeniedSnackbar,
-  ]);
+  }, [requestLibraryPermission, showPermissionDeniedSnackbar]);
 
-  return useCallback(async () => {
+  const handleFetchInitialAssets = useCallback(async () => {
+    const assets = await getAssetsAsync(assetsOptions);
+
+    nextPage.current = assets.endCursor;
+    hasNextPage.current = assets.hasNextPage;
+    return assets.assets;
+  }, []);
+
+  const handleFetchNextAssets = useCallback(async () => {
+    const assets = await getAssetsAsync({
+      ...assetsOptions,
+      after: nextPage.current,
+    });
+
+    nextPage.current = assets.endCursor;
+    hasNextPage.current = assets.hasNextPage;
+    return assets.assets;
+  }, [nextPage]);
+
+  const getInitAssets = useCallback(async () => {
     if (!isLibraryAllowed) {
       await handleRequestLibraryPermissions();
     } else {
-      await handleOpenLibrary();
+      return await handleFetchInitialAssets();
     }
-  }, [handleOpenLibrary, handleRequestLibraryPermissions, isLibraryAllowed]);
+    return [];
+  }, [
+    handleFetchInitialAssets,
+    handleRequestLibraryPermissions,
+    isLibraryAllowed,
+  ]);
+
+  const getNextAssets = useCallback(async () => {
+    if (!isLibraryAllowed) {
+      await handleRequestLibraryPermissions();
+    } else {
+      return await handleFetchNextAssets();
+    }
+    return [];
+  }, [
+    handleFetchNextAssets,
+    handleRequestLibraryPermissions,
+    isLibraryAllowed,
+  ]);
+
+  return { getInitAssets, getNextAssets, hasNextPage: hasNextPage.current };
 };
 
 export default useMediaLibrary;

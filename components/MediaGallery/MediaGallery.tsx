@@ -9,7 +9,6 @@ type Props = {
   media: Media[];
   gridSize?: number;
   onMediaLongPress?: (uri: string) => void;
-  locked?: boolean;
 } & ViewProps;
 
 const MediaGallery = ({
@@ -17,7 +16,6 @@ const MediaGallery = ({
   gridSize = 4,
   onMediaLongPress,
   style,
-  locked = false,
   ...viewProps
 }: Props) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
@@ -44,7 +42,7 @@ const MediaGallery = ({
   };
 
   const handleOnMediaLongPress = (imageUri: string) => {
-    if (!locked && onMediaLongPress) {
+    if (onMediaLongPress) {
       onMediaLongPress(imageUri);
     }
   };

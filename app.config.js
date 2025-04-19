@@ -131,6 +131,13 @@ module.exports = {
           color: "#ffffff",
         },
       ],
+      [
+        "expo-media-library",
+        {
+          photosPermission:
+            "The app needs access to your media library in order to add photos to your entry.",
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
