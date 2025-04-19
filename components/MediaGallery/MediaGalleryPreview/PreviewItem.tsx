@@ -1,28 +1,24 @@
 import React from "react";
-import { Media } from "../EditableMediaGallery";
 import { StyleSheet } from "react-native";
 import VideoPlayer from "./VideoPlayer";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import FadeInView, {
   FadeInViewAppearFrom,
 } from "@/components/FadeInView/FadeInView";
+import { Media } from "@/types/Media";
 
 type Props = {
   item: Media;
   appearFrom: FadeInViewAppearFrom;
 };
 
-const PreviewItem = ({ item: { imageUri, videoUri }, appearFrom }: Props) => {
+const PreviewItem = ({ item: { uri, mediaType }, appearFrom }: Props) => {
   return (
     <FadeInView style={styles.item} appearFrom={appearFrom}>
-      {videoUri ? (
-        <VideoPlayer sourceUri={videoUri} style={styles.item} />
+      {mediaType === "video" ? (
+        <VideoPlayer sourceUri={uri} style={styles.item} />
       ) : (
-        <ImageZoom
-          style={styles.item}
-          uri={imageUri}
-          isDoubleTapEnabled={true}
-        />
+        <ImageZoom style={styles.item} uri={uri} isDoubleTapEnabled={true} />
       )}
     </FadeInView>
   );

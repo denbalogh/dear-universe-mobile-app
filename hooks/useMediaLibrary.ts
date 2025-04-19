@@ -10,7 +10,7 @@ import {
 } from "expo-media-library";
 
 const assetsOptions: AssetsOptions = {
-  first: 40,
+  first: 30,
   mediaType: [MediaType.photo, MediaType.video],
   sortBy: "creationTime",
 };

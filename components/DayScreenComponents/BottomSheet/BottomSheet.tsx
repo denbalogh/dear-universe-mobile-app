@@ -5,7 +5,7 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import TextSection from "./TextSection";
 import RecordingSection from "./RecordingSection";
-import MediaSection from "./MediaSection";
+import MediaSection from "./MediaSection/MediaSection";
 import FeelingsSection from "./FeelingsSection";
 import { SegmentedButtons } from "react-native-paper";
 

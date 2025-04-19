@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Media } from "../EditableMediaGallery";
 import { Appbar, Portal } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -12,6 +11,7 @@ import { FadeInViewAppearFrom } from "@/components/FadeInView/FadeInView";
 import NavigationAwareModal from "@/components/NavigationAwareModal/NavigationAwareModal";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import logCrashlytics from "@/utils/logCrashlytics";
+import { Media } from "@/types/Media";
 
 type Props = {
   media: Media[];

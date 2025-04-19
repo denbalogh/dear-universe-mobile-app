@@ -1,6 +1,6 @@
 import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { Asset, MediaType } from "expo-media-library";
+import { Asset } from "expo-media-library";
 import React, {
   useCallback,
   useEffect,
@@ -11,9 +11,8 @@ import React, {
 import { spacing } from "@/constants/theme";
 import { LayoutChangeEvent, StyleSheet, ViewToken } from "react-native";
 import MediaGalleryPreview from "@/components/MediaGallery/MediaGalleryPreview/MediaGalleryPreview";
-import MediaGalleryItem from "@/components/MediaGallery/MediaGalleryItem";
-import { Media } from "@/components/MediaGallery/EditableMediaGallery";
-import EditableMediaGalleryItem from "@/components/MediaGallery/EditableMediaGalleryItem";
+import Image from "./Image";
+import { Media } from "@/types/Media";
 
 const GRID_SIZE = 3;
 const EXTEND_LIST_OFFSET = 5 * GRID_SIZE; // 5 rows
@@ -49,49 +48,45 @@ const MediaSection = () => {
     [],
   );
 
-  const handleOnImagePress = (index: number) => {
+  const handleOnImagePress = useCallback((index: number) => {
     setInitialIndex(index);
     setIsPreviewVisible(true);
-  };
+  }, []);
+
+  const handleOnImageCheck = useCallback((index: number) => {
+    console.log("checked");
+  }, []);
 
   const itemSize = gridWidth / GRID_SIZE;
 
   const renderItem = useCallback(
     ({ item, index }: { item: Media; index: number }) => {
       return (
-        <EditableMediaGalleryItem
-          item={item}
+        <Image
+          uri={item.uri}
+          size={itemSize}
           index={index}
-          imagesCount={assets.length}
-          gridSize={GRID_SIZE}
-          touchableProps={{
-            onPress: () => handleOnImagePress(index),
-          }}
-          style={{
-            width: itemSize,
-            height: itemSize,
-          }}
-          isSelected={false}
-          onSelect={() => {}}
-          dndEnabled={false}
+          onPress={handleOnImagePress}
+          isChecked={false}
+          onCheck={handleOnImageCheck}
+          isVideo={item.mediaType === "video"}
         />
       );
     },
-    [assets.length, itemSize],
+    [itemSize, handleOnImagePress, handleOnImageCheck],
   );
 
   const lastItemIndex = assets.length - 1;
 
   const onViewableItemsChanged = useCallback(
     async ({ changed }: { changed: ViewToken[] }) => {
-      for (const item of changed) {
-        // Handle appending days
+      for (const { isViewable, index } of changed) {
         if (
           hasNextPage &&
           !isFetchingAssets.current &&
-          item.isViewable &&
-          item.index &&
-          item.index > lastItemIndex - EXTEND_LIST_OFFSET
+          isViewable &&
+          index &&
+          index > lastItemIndex - EXTEND_LIST_OFFSET
         ) {
           isFetchingAssets.current = true;
 
@@ -106,11 +101,7 @@ const MediaSection = () => {
   );
 
   const media = useMemo(
-    () =>
-      assets.map((asset) => ({
-        imageUri: asset.uri,
-        videoUri: asset.mediaType === MediaType.video ? asset.uri : undefined,
-      })),
+    () => assets.map(({ uri, mediaType }) => ({ uri, mediaType })),
     [assets],
   );
 
