@@ -6,8 +6,9 @@ import { StyleSheet, View } from "react-native";
 import TextSection from "./TextSection";
 import RecordingSection from "./RecordingSection";
 import MediaSection from "./MediaSection/MediaSection";
-import FeelingsSection from "./FeelingsSection";
+import FeelingsSection from "./FeelingsSection/FeelingsSection";
 import { SegmentedButtons } from "react-native-paper";
+import { useEntryDraft } from "@/contexts/EntryDraftContext";
 
 enum Tabs {
   Text = "text",
@@ -45,6 +46,8 @@ const BottomSheet = ({ defaultSnapPoint }: Props) => {
     }
   }, [activeTab]);
 
+  const { recordingUri } = useEntryDraft();
+
   const snapPoints = useMemo(() => {
     switch (activeTab) {
       case Tabs.Text:
@@ -52,9 +55,13 @@ const BottomSheet = ({ defaultSnapPoint }: Props) => {
       case Tabs.Feelings:
         return [90, "50%", "100%"];
       case Tabs.Recording:
-        return [90, 220];
+        if (recordingUri) {
+          return [90, 300];
+        } else {
+          return [90, 220];
+        }
     }
-  }, [activeTab]);
+  }, [activeTab, recordingUri]);
 
   const onTabChange = useCallback((tab: string) => {
     setActiveTab(tab as Tabs);

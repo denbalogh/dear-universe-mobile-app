@@ -3,13 +3,13 @@ import { formatFullDate, parseDateId } from "@/utils/date";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CreateEditEntry from "@/components/CreateEditEntry/CreateEditEntry";
 import { useObject, useRealm } from "@realm/react";
-import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useDayObject from "@/hooks/useDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { BSON } from "realm";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import logCrashlytics from "@/utils/logCrashlytics";
+import { EntryData } from "@/components/DayScreenComponents/Entry/Entry";
 
 const EditEntryScreen = () => {
   const realm = useRealm();
@@ -43,8 +43,8 @@ const EditEntryScreen = () => {
       }
 
       const {
-        title,
-        description,
+        // title,
+        // description,
         recordingUri,
         media,
         feelingsActiveGroup,
@@ -68,25 +68,27 @@ const EditEntryScreen = () => {
     [dayObject, entryObject, realm, router, showSnackbar, formattedDate],
   );
 
-  return (
-    <CreateEditEntry
-      mode="edit"
-      formattedDate={formattedDate}
-      title={title}
-      description={description}
-      recordingUri={recordingUri}
-      media={media}
-      feelingsActiveGroup={feelingsGroupName}
-      feelingsActiveEmotions={feelingsEmotions}
-      onSave={handleOnEntrySave}
-      focusTitle={focus === "title"}
-      focusDescription={focus === "description"}
-      scrollToRecording={scrollTo === "recording"}
-      scrollToMedia={scrollTo === "media"}
-      scrollToFeelings={scrollTo === "feelings"}
-      selectedMediaImageUri={selectedMediaImageUri}
-    />
-  );
+  // return (
+  //   <CreateEditEntry
+  //     mode="edit"
+  //     formattedDate={formattedDate}
+  //     title={title}
+  //     description={description}
+  //     recordingUri={recordingUri}
+  //     media={media}
+  //     feelingsActiveGroup={feelingsGroupName}
+  //     feelingsActiveEmotions={feelingsEmotions}
+  //     onSave={handleOnEntrySave}
+  //     focusTitle={focus === "title"}
+  //     focusDescription={focus === "description"}
+  //     scrollToRecording={scrollTo === "recording"}
+  //     scrollToMedia={scrollTo === "media"}
+  //     scrollToFeelings={scrollTo === "feelings"}
+  //     selectedMediaImageUri={selectedMediaImageUri}
+  //   />
+  // );
+
+  return null;
 };
 
 export default EditEntryScreen;

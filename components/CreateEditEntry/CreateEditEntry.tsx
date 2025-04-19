@@ -12,7 +12,6 @@ import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { LayoutChangeEvent, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, FAB } from "react-native-paper";
-import { EntryData } from "../Entry/Entry";
 import useIsKeyboardOpen from "@/hooks/useIsKeyboardOpen";
 import { Stack, useRouter } from "expo-router";
 import debounce from "lodash/debounce";
@@ -26,7 +25,6 @@ import {
   moveRecordingToAppDirectoryAndGetPath,
 } from "@/utils/files";
 import MediaSection from "./MediaSection";
-import FeelingsSection from "./FeelingsSection/FeelingsSection";
 import useScrollViewOffset from "@/hooks/useScrollViewOffset";
 import FlingGesture from "../FlingGesture/FlingGesture";
 import useBackHandler from "@/hooks/useBackHandler";
@@ -34,6 +32,7 @@ import logCrashlytics from "@/utils/logCrashlytics";
 import NativeAdBannerBig from "../NativeAdBanner/NativeAdBannerBig";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { VisibilitySensor } from "@futurejj/react-native-visibility-sensor";
+import { EntryData } from "../DayScreenComponents/Entry/Entry";
 
 type LayoutParts =
   | "mainHeadline"
@@ -58,8 +57,8 @@ type Props = {
 const CreateEditEntry = ({
   mode,
   formattedDate,
-  title: initialTitle,
-  description: initialDescription,
+  // title: initialTitle,
+  // description: initialDescription,
   recordingUri: initialRecordingUri,
   media: initialMedia,
   feelingsActiveGroup: initialFeelingsActiveGroup,
@@ -85,8 +84,8 @@ const CreateEditEntry = ({
     setIsHeadlineVisible(isVisible);
   };
 
-  const [title, setTitle] = useState(initialTitle);
-  const [description, setDescription] = useState(initialDescription);
+  // const [title, setTitle] = useState(initialTitle);
+  // const [description, setDescription] = useState(initialDescription);
   const [recordingUri, setRecordingUri] = useState(initialRecordingUri);
   const [media, setMedia] = useState(initialMedia);
   const [activeGroup, setActiveGroup] = useState(initialFeelingsActiveGroup);
@@ -177,178 +176,173 @@ const CreateEditEntry = ({
       ? await moveMediaToAppDirectoryAndGetPaths(media)
       : await moveAndDeleteUpdatedMediaAndGetPaths(media, initialMedia);
 
-    onSave({
-      title,
-      description,
-      recordingUri: newRecordingUri,
-      media: newMedia,
-      feelingsActiveGroup: activeGroup,
-      feelingsActiveEmotions: [...activeEmotions], // Copy the array because it's a reference
-    });
+    // onSave({
+    //   // title,
+    //   // description,
+    //   recordingUri: newRecordingUri,
+    //   media: newMedia,
+    //   feelingsActiveGroup: activeGroup,
+    //   feelingsActiveEmotions: [...activeEmotions], // Copy the array because it's a reference
+    // });
   };
 
-  const isEdited = useMemo(
-    () =>
-      !isEqual(title, initialTitle) ||
-      !isEqual(description, initialDescription) ||
-      !isEqual(recordingUri, initialRecordingUri) ||
-      !isEqual([...media], [...initialMedia]) ||
-      !isEqual(activeGroup, initialFeelingsActiveGroup) ||
-      !isEqual(sortBy(activeEmotions), sortBy(initialFeelingsActiveEmotions)),
-    [
-      title,
-      description,
-      recordingUri,
-      media,
-      activeGroup,
-      activeEmotions,
-      initialTitle,
-      initialDescription,
-      initialRecordingUri,
-      initialMedia,
-      initialFeelingsActiveGroup,
-      initialFeelingsActiveEmotions,
-    ],
-  );
+  // const isEdited = useMemo(
+  //   () =>
+  //     // !isEqual(title, initialTitle) ||
+  //     // !isEqual(description, initialDescription) ||
+  //     !isEqual(recordingUri, initialRecordingUri) ||
+  //     !isEqual([...media], [...initialMedia]) ||
+  //     !isEqual(activeGroup, initialFeelingsActiveGroup) ||
+  //     !isEqual(sortBy(activeEmotions), sortBy(initialFeelingsActiveEmotions)),
+  //   [
+  //     title,
+  //     description,
+  //     recordingUri,
+  //     media,
+  //     activeGroup,
+  //     activeEmotions,
+  //     initialTitle,
+  //     initialDescription,
+  //     initialRecordingUri,
+  //     initialMedia,
+  //     initialFeelingsActiveGroup,
+  //     initialFeelingsActiveEmotions,
+  //   ],
+  // );
 
-  const handleShowDiscardDialog = useCallback(() => {
-    showConfirmDialog(
-      isCreateMode
-        ? "Do you wish to discard the entry?"
-        : "Do you wish to discard the changes?",
-      router.back,
-    );
-  }, [showConfirmDialog, isCreateMode, router]);
+  // const handleShowDiscardDialog = useCallback(() => {
+  //   showConfirmDialog(
+  //     isCreateMode
+  //       ? "Do you wish to discard the entry?"
+  //       : "Do you wish to discard the changes?",
+  //     router.back,
+  //   );
+  // }, [showConfirmDialog, isCreateMode, router]);
 
-  const handleBackPress = useCallback(() => {
-    if (isEdited) {
-      handleShowDiscardDialog();
-    } else {
-      router.back();
-    }
-  }, [isEdited, handleShowDiscardDialog, router]);
+  // const handleBackPress = useCallback(() => {
+  //   if (isEdited) {
+  //     handleShowDiscardDialog();
+  //   } else {
+  //     router.back();
+  //   }
+  // }, [isEdited, handleShowDiscardDialog, router]);
 
-  const onAndroidBackButtonPress = useCallback(() => {
-    if (isEdited) {
-      handleShowDiscardDialog();
-      return true;
-    }
-    return false;
-  }, [isEdited, handleShowDiscardDialog]);
+  // const onAndroidBackButtonPress = useCallback(() => {
+  //   if (isEdited) {
+  //     handleShowDiscardDialog();
+  //     return true;
+  //   }
+  //   return false;
+  // }, [isEdited, handleShowDiscardDialog]);
 
-  useBackHandler(onAndroidBackButtonPress);
+  // useBackHandler(onAndroidBackButtonPress);
 
-  const onFlingDown = useCallback(() => {
-    if (scrollOffset <= 0) {
-      handleBackPress();
-    }
-  }, [handleBackPress, scrollOffset]);
+  // const onFlingDown = useCallback(() => {
+  //   if (scrollOffset <= 0) {
+  //     handleBackPress();
+  //   }
+  // }, [handleBackPress, scrollOffset]);
 
-  const headline = isCreateMode ? "Creating entry" : "Editing entry";
+  // const headline = isCreateMode ? "Creating entry" : "Editing entry";
 
-  const isHeadlineVisibleOrOnTop = useMemo(() => {
-    return isHeadlineVisible || scrollOffset <= 0;
-  }, [isHeadlineVisible, scrollOffset]);
+  // const isHeadlineVisibleOrOnTop = useMemo(() => {
+  //   return isHeadlineVisible || scrollOffset <= 0;
+  // }, [isHeadlineVisible, scrollOffset]);
 
-  return (
-    <FlingGesture onFlingDown={onFlingDown}>
-      <View
-        style={[
-          styles.flex,
-          { backgroundColor: theme.colors.surface, paddingBottom: bottom },
-        ]}
-      >
-        <Stack.Screen
-          options={{
-            header: () => (
-              <Appbar.Header elevated={!isHeadlineVisibleOrOnTop}>
-                <Appbar.BackAction onPress={handleBackPress} />
-                {!isHeadlineVisibleOrOnTop && (
-                  <Appbar.Content title={headline} />
-                )}
-              </Appbar.Header>
-            ),
-            navigationBarColor: theme.colors.surface,
-          }}
-        />
-        <ScrollView
-          ref={scrollViewRef}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.scrollViewContentContainer}
-          onScroll={handleOnScroll}
-        >
-          <VisibilitySensor
-            triggerOnce={false}
-            onChange={handleSetHeadlineVisibility}
-            threshold={{ bottom: 100 }}
-          >
-            <SectionHeadline
-              headline={headline}
-              superHeadline={formattedDate}
-              headlineVariant="displaySmall"
-              onLayout={handleSetSectionHeight("mainHeadline")}
-            />
-          </VisibilitySensor>
-          <TextSection
-            titleInputProps={{
-              value: title,
-              onChangeText: setTitle,
-              autoFocus: focusTitle,
-            }}
-            descriptionInputProps={{
-              value: description,
-              onChangeText: setDescription,
-              autoFocus: focusDescription,
-            }}
-            style={styles.sectionWrapper}
-            onLayout={handleSetSectionHeight("textSection")}
-          />
-          <SectionHeadline
-            headline="Recording"
-            superHeadline={formattedDate}
-            onLayout={handleSetSectionHeight("recordingHeadline")}
-          />
-          <RecordingSection
-            recordingUri={recordingUri}
-            onRecordingDone={setRecordingUri}
-            style={styles.sectionWrapper}
-            onLayout={handleSetSectionHeight("recordingSection")}
-          />
-          <SectionHeadline
-            headline="Media"
-            superHeadline={formattedDate}
-            onLayout={handleSetSectionHeight("mediaHeadline")}
-          />
-          <MediaSection
-            media={media}
-            onMediaChange={setMedia}
-            style={styles.sectionWrapper}
-            onLayout={handleSetSectionHeight("mediaSection")}
-            initialSelectedMediaImageUri={selectedMediaImageUri}
-          />
-          <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
-          <FeelingsSection
-            activeGroup={activeGroup}
-            activeEmotions={activeEmotions}
-            onActiveGroupChange={setActiveGroup}
-            onActiveEmotionsChange={setActiveEmotions}
-            style={styles.sectionWrapper}
-          />
-          <NativeAdBannerBig style={styles.adBanner} />
-        </ScrollView>
-        {!isKeyboardOpen && (
-          <View style={[styles.saveButtonWrapper, { paddingBottom: bottom }]}>
-            <FAB
-              label="Save"
-              variant="tertiary"
-              onPress={handleSaveEntry}
-              disabled={!isEdited}
-            />
-          </View>
-        )}
-      </View>
-    </FlingGesture>
-  );
+  // return (
+  //   <FlingGesture onFlingDown={onFlingDown}>
+  //     <View
+  //       style={[
+  //         styles.flex,
+  //         { backgroundColor: theme.colors.surface, paddingBottom: bottom },
+  //       ]}
+  //     >
+  //       <Stack.Screen
+  //         options={{
+  //           header: () => (
+  //             <Appbar.Header elevated={!isHeadlineVisibleOrOnTop}>
+  //               <Appbar.BackAction onPress={handleBackPress} />
+  //               {!isHeadlineVisibleOrOnTop && (
+  //                 <Appbar.Content title={headline} />
+  //               )}
+  //             </Appbar.Header>
+  //           ),
+  //           navigationBarColor: theme.colors.surface,
+  //         }}
+  //       />
+  //       <ScrollView
+  //         ref={scrollViewRef}
+  //         keyboardShouldPersistTaps="handled"
+  //         contentContainerStyle={styles.scrollViewContentContainer}
+  //         onScroll={handleOnScroll}
+  //       >
+  //         <VisibilitySensor
+  //           triggerOnce={false}
+  //           onChange={handleSetHeadlineVisibility}
+  //           threshold={{ bottom: 100 }}
+  //         >
+  //           <SectionHeadline
+  //             headline={headline}
+  //             superHeadline={formattedDate}
+  //             headlineVariant="displaySmall"
+  //             onLayout={handleSetSectionHeight("mainHeadline")}
+  //           />
+  //         </VisibilitySensor>
+  //         <TextSection
+  //           titleInputProps={{
+  //             value: title,
+  //             onChangeText: setTitle,
+  //             autoFocus: focusTitle,
+  //           }}
+  //           descriptionInputProps={{
+  //             value: description,
+  //             onChangeText: setDescription,
+  //             autoFocus: focusDescription,
+  //           }}
+  //           style={styles.sectionWrapper}
+  //           onLayout={handleSetSectionHeight("textSection")}
+  //         />
+  //         <SectionHeadline
+  //           headline="Recording"
+  //           superHeadline={formattedDate}
+  //           onLayout={handleSetSectionHeight("recordingHeadline")}
+  //         />
+  //         <RecordingSection
+  //           recordingUri={recordingUri}
+  //           onRecordingDone={setRecordingUri}
+  //           style={styles.sectionWrapper}
+  //           onLayout={handleSetSectionHeight("recordingSection")}
+  //         />
+  //         <SectionHeadline
+  //           headline="Media"
+  //           superHeadline={formattedDate}
+  //           onLayout={handleSetSectionHeight("mediaHeadline")}
+  //         />
+  //         <MediaSection
+  //           media={media}
+  //           onMediaChange={setMedia}
+  //           style={styles.sectionWrapper}
+  //           onLayout={handleSetSectionHeight("mediaSection")}
+  //           initialSelectedMediaImageUri={selectedMediaImageUri}
+  //         />
+  //         <SectionHeadline headline="Feelings" superHeadline={formattedDate} />
+  //         <NativeAdBannerBig style={styles.adBanner} />
+  //       </ScrollView>
+  //       {!isKeyboardOpen && (
+  //         <View style={[styles.saveButtonWrapper, { paddingBottom: bottom }]}>
+  //           <FAB
+  //             label="Save"
+  //             variant="tertiary"
+  //             onPress={handleSaveEntry}
+  //             disabled={!isEdited}
+  //           />
+  //         </View>
+  //       )}
+  //     </View>
+  //   </FlingGesture>
+  // );
+
+  return null;
 };
 
 export default CreateEditEntry;

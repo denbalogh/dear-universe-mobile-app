@@ -5,9 +5,9 @@ import { View } from "react-native";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { StyleSheet } from "react-native";
 import { spacing } from "@/constants/theme";
-import CustomMenu from "../CustomMenu/CustomMenu";
-import EmotionChip from "../EmotionChip/EmotionChip";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
+import CustomMenu from "@/components/CustomMenu/CustomMenu";
+import EmotionChip from "@/components/EmotionChip/EmotionChip";
 
 type Props = {
   feelingsButtonProps: FeelingsButtonProps;

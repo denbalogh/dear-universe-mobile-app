@@ -3,11 +3,11 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Card, MenuItemProps } from "react-native-paper";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
-import AudioPlayer from "../AudioPlayer/AudioPlayer";
-import MediaGallery from "../MediaGallery/MediaGallery";
-import { Media } from "../MediaGallery/EditableMediaGallery";
 import BottomBar from "./BottomBar";
 import Text from "./Text";
+import { Media } from "@/components/MediaGallery/EditableMediaGallery";
+import MediaGallery from "@/components/MediaGallery/MediaGallery";
+import AudioPlayer from "@/components/AudioPlayer/AudioPlayer";
 
 export type EntryData = {
   text: string;

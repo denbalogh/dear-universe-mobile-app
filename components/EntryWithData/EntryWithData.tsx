@@ -8,7 +8,7 @@ import {
 import { Entry as EntryType } from "@/models/Entry";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
-import Entry from "../Entry/Entry";
+// import Entry from "../Entry/Entry";
 import { useObject, useRealm } from "@realm/react";
 import { Day } from "@/models/Day";
 import { MenuItemProps } from "react-native-paper";
@@ -228,24 +228,24 @@ const EntryWithData = ({ entryId, dayObject, index, locked }: Props) => {
     return menuItems;
   }, [router, _id, media, recordingUri, title, description]);
 
-  return (
-    <Entry
-      title={title}
-      onTitlePress={handleOnTitlePress}
-      description={description}
-      onDescriptionPress={handleOnDescriptionPress}
-      feelingsActiveGroup={feelingsGroupName}
-      feelingsActiveEmotions={feelingsEmotions}
-      onFeelingsPress={handleFeelingsPress}
-      onDeleteEntryPress={handleDeleteEntryPress}
-      onMediaLongPress={handleOnMediaLongPress}
-      recordingUri={recordingUri}
-      media={media}
-      moveMenuItems={moveMenuItems}
-      editMenuItems={editMenuItems}
-      locked={locked}
-    />
-  );
+  // return (
+  //   <Entry
+  //     title={title}
+  //     onTitlePress={handleOnTitlePress}
+  //     description={description}
+  //     onDescriptionPress={handleOnDescriptionPress}
+  //     feelingsActiveGroup={feelingsGroupName}
+  //     feelingsActiveEmotions={feelingsEmotions}
+  //     onFeelingsPress={handleFeelingsPress}
+  //     onDeleteEntryPress={handleDeleteEntryPress}
+  //     onMediaLongPress={handleOnMediaLongPress}
+  //     recordingUri={recordingUri}
+  //     media={media}
+  //     moveMenuItems={moveMenuItems}
+  //     editMenuItems={editMenuItems}
+  //     locked={locked}
+  //   />
+  // );
 };
 
 export default EntryWithData;

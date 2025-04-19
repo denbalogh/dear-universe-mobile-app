@@ -3,12 +3,12 @@ import { formatFullDate, parseDateId } from "@/utils/date";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CreateEditEntry from "@/components/CreateEditEntry/CreateEditEntry";
 import { useRealm } from "@realm/react";
-import { EntryData } from "@/components/Entry/Entry";
 import { EntrySearchParams } from "@/types/createEditEntryScreen";
 import useDayObject from "@/hooks/useDayObject";
 import { Entry, Media } from "@/models/Entry";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import logCrashlytics from "@/utils/logCrashlytics";
+import { EntryData } from "@/components/DayScreenComponents/Entry/Entry";
 
 const NewEntryScreen = () => {
   const realm = useRealm();
@@ -30,8 +30,8 @@ const NewEntryScreen = () => {
       }
 
       const {
-        title,
-        description,
+        // title,
+        // description,
         recordingUri,
         media,
         feelingsActiveGroup,
@@ -41,8 +41,8 @@ const NewEntryScreen = () => {
       logCrashlytics("Creating new entry");
       realm.write(() => {
         const entry = realm.create(Entry, {
-          title,
-          description,
+          // title,
+          // description,
           recordingUri,
           media: media as Media[],
           feelingsGroupName: feelingsActiveGroup,
@@ -60,24 +60,26 @@ const NewEntryScreen = () => {
     [dayObject, realm, router, showSnackbar, formattedDate],
   );
 
-  return (
-    <CreateEditEntry
-      mode="create"
-      formattedDate={formattedDate}
-      title=""
-      description=""
-      recordingUri=""
-      media={[]}
-      feelingsActiveGroup=""
-      feelingsActiveEmotions={[]}
-      onSave={handleOnEntrySave}
-      focusTitle={focus === "title"}
-      focusDescription={focus === "description"}
-      scrollToRecording={scrollTo === "recording"}
-      scrollToMedia={scrollTo === "media"}
-      scrollToFeelings={scrollTo === "feelings"}
-    />
-  );
+  // return (
+  //   <CreateEditEntry
+  //     mode="create"
+  //     formattedDate={formattedDate}
+  //     title=""
+  //     description=""
+  //     recordingUri=""
+  //     media={[]}
+  //     feelingsActiveGroup=""
+  //     feelingsActiveEmotions={[]}
+  //     onSave={handleOnEntrySave}
+  //     focusTitle={focus === "title"}
+  //     focusDescription={focus === "description"}
+  //     scrollToRecording={scrollTo === "recording"}
+  //     scrollToMedia={scrollTo === "media"}
+  //     scrollToFeelings={scrollTo === "feelings"}
+  //   />
+  // );
+
+  return null;
 };
 
 export default NewEntryScreen;

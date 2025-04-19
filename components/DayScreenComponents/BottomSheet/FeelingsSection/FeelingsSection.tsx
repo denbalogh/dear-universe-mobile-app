@@ -3,7 +3,7 @@ import { roundness, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import EmotionChips from "../../CreateEditEntry/FeelingsSection/EmotionChips";
+import EmotionChips from "./EmotionChips";
 import Slider, { MarkerProps } from "@react-native-community/slider";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "react-native-paper";

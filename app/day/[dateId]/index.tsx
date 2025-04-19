@@ -13,8 +13,8 @@ import useBackHandler from "@/hooks/useBackHandler";
 import BottomSheet from "@/components/DayScreenComponents/BottomSheet/BottomSheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing } from "@/constants/theme";
-import { EntryCreationContextProvider } from "@/contexts/EntryCreationContext";
-import EntriesList from "@/components/EntriesList/EntriesList";
+import { EntryDraftContextProvider } from "@/contexts/EntryDraftContext";
+import EntriesList from "@/components/DayScreenComponents/EntriesList/EntriesList";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -103,10 +103,10 @@ const DayScreen = () => {
           mode="outlined"
           contentStyle={{ marginTop: 5 }}
         />
-        <EntryCreationContextProvider>
+        <EntryDraftContextProvider>
           <EntriesList />
           <BottomSheet defaultSnapPoint={title ? 1 : 0} />
-        </EntryCreationContextProvider>
+        </EntryDraftContextProvider>
       </View>
     </FlingGesture>
   );

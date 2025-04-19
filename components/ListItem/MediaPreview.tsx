@@ -7,7 +7,7 @@ import { roundness, sizing, spacing } from "@/constants/theme";
 import { Icon } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import useDayObject from "@/hooks/useDayObject";
-import { EntryData } from "../Entry/Entry";
+import { EntryData } from "../DayScreenComponents/Entry/Entry";
 
 type Props = {
   dateId: string;

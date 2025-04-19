@@ -16,8 +16,14 @@ import { format } from "date-fns";
 import { normalizeMeteringForScale } from "../../RecordingControls/utils";
 import { StyleSheet, View } from "react-native";
 import { spacing } from "@/constants/theme";
+import { useEntryDraft } from "@/contexts/EntryDraftContext";
+import AudioPlayer from "@/components/AudioPlayer/AudioPlayer";
+import { Button, IconButton } from "react-native-paper";
+import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 const RecordingSection = () => {
+  const theme = useCustomTheme();
+
   const {
     granted: recordingPermissionsGranted,
     requestPermissions: requestRecordingPermissions,
@@ -26,6 +32,8 @@ const RecordingSection = () => {
 
   const [recording, setRecording] = useState<Recording>();
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>();
+
+  const { setRecordingUri, recordingUri } = useEntryDraft();
 
   const startRecording = async () => {
     logCrashlytics("Setting audio mode");
@@ -69,7 +77,9 @@ const RecordingSection = () => {
 
       const fileUri = recording.getURI();
 
-      console.log("Recording file URI:", fileUri);
+      if (fileUri) {
+        setRecordingUri(fileUri);
+      }
     }
   };
 
@@ -114,21 +124,42 @@ const RecordingSection = () => {
     showConfirmDialog("Do you want to discard the recording?", unloadRecording);
   };
 
+  const handleDiscardRecordingUri = () => {
+    showConfirmDialog("Do you want to discard the recording?", () =>
+      setRecordingUri(""),
+    );
+  };
+
   return (
     <View style={styles.wrapper}>
-      <RecordingControls
-        time={time}
-        hasRecordingStarted={hasRecordingStarted}
-        isRecording={isRecording}
-        hasPermissions={recordingPermissionsGranted}
-        onRequestPermissionsPress={requestRecordingPermissions}
-        onRecordPress={startRecording}
-        onPausePress={pauseRecording}
-        onStopPress={stopRecording}
-        onDiscardPress={handleDiscardRecording}
-        onContinuePress={continueRecording}
-        metering={normalizedMetering}
-      />
+      {recordingUri ? (
+        <>
+          <AudioPlayer sourceUri={recordingUri} />
+          <Button
+            style={styles.deleteButton}
+            icon="delete"
+            mode="elevated"
+            onPress={handleDiscardRecordingUri}
+            textColor={theme.colors.error}
+          >
+            Discard recording
+          </Button>
+        </>
+      ) : (
+        <RecordingControls
+          time={time}
+          hasRecordingStarted={hasRecordingStarted}
+          isRecording={isRecording}
+          hasPermissions={recordingPermissionsGranted}
+          onRequestPermissionsPress={requestRecordingPermissions}
+          onRecordPress={startRecording}
+          onPausePress={pauseRecording}
+          onStopPress={stopRecording}
+          onDiscardPress={handleDiscardRecording}
+          onContinuePress={continueRecording}
+          metering={normalizedMetering}
+        />
+      )}
     </View>
   );
 };
@@ -138,5 +169,9 @@ export default RecordingSection;
 const styles = StyleSheet.create({
   wrapper: {
     paddingVertical: spacing.spaceMedium,
+    paddingHorizontal: spacing.spaceSmall,
+  },
+  deleteButton: {
+    marginTop: spacing.spaceMedium,
   },
 });
