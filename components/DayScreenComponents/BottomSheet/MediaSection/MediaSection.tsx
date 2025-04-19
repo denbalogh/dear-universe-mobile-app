@@ -1,13 +1,7 @@
 import useMediaLibrary from "@/hooks/useMediaLibrary";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Asset } from "expo-media-library";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { spacing } from "@/constants/theme";
 import { LayoutChangeEvent, StyleSheet, ViewToken } from "react-native";
 import MediaGalleryPreview from "@/components/MediaGallery/MediaGalleryPreview/MediaGalleryPreview";
@@ -53,27 +47,20 @@ const MediaSection = () => {
     setIsPreviewVisible(true);
   }, []);
 
-  const handleOnImageCheck = useCallback((index: number) => {
-    console.log("checked");
-  }, []);
-
   const itemSize = gridWidth / GRID_SIZE;
 
   const renderItem = useCallback(
     ({ item, index }: { item: Media; index: number }) => {
       return (
         <Image
-          uri={item.uri}
+          item={item}
           size={itemSize}
           index={index}
           onPress={handleOnImagePress}
-          isChecked={false}
-          onCheck={handleOnImageCheck}
-          isVideo={item.mediaType === "video"}
         />
       );
     },
-    [itemSize, handleOnImagePress, handleOnImageCheck],
+    [itemSize, handleOnImagePress],
   );
 
   const lastItemIndex = assets.length - 1;
@@ -100,11 +87,6 @@ const MediaSection = () => {
     [lastItemIndex, getNextAssets, hasNextPage],
   );
 
-  const media = useMemo(
-    () => assets.map(({ uri, mediaType }) => ({ uri, mediaType })),
-    [assets],
-  );
-
   const handleGetItemLayout = useCallback(
     (_: any, index: number) => ({
       length: itemSize,
@@ -119,14 +101,14 @@ const MediaSection = () => {
       <BottomSheetFlatList
         onLayout={handleOnLayout}
         style={styles.flatList}
-        data={media}
+        data={assets}
         renderItem={renderItem}
         numColumns={GRID_SIZE}
         onViewableItemsChanged={onViewableItemsChanged}
         getItemLayout={handleGetItemLayout}
       />
       <MediaGalleryPreview
-        media={media}
+        media={assets}
         onClose={handleOnPreviewClose}
         isVisible={isPreviewVisible}
         initialIndex={initialIndex}

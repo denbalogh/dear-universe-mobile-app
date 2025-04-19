@@ -69,7 +69,7 @@ const BottomSheet = ({ defaultSnapPoint }: Props) => {
   }, []);
 
   const tabButtonStyle = {
-    borderWidth: 0,
+    borderWidth: 0.5,
   };
 
   return (

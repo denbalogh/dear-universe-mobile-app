@@ -42,9 +42,9 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "center",
   },
   emotion: {
-    marginRight: spacing.spaceSmall,
-    marginBottom: spacing.spaceSmall,
+    margin: spacing.spaceExtraSmall,
   },
 });

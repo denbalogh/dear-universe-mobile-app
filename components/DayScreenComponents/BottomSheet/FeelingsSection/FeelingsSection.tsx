@@ -1,111 +1,105 @@
 import { emotionsGroups, FEELING_GROUP_NAMES } from "@/constants/feelings";
 import { roundness, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import EmotionChips from "./EmotionChips";
-import Slider, { MarkerProps } from "@react-native-community/slider";
-import { LinearGradient } from "expo-linear-gradient";
-import { Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import { toLower } from "lodash";
+import { useEntryDraft } from "@/contexts/EntryDraftContext";
 
-const StepMarker = ({ currentValue, index }: MarkerProps) => {
+const EmojiButton = ({
+  feelingsGroup,
+}: {
+  feelingsGroup: FEELING_GROUP_NAMES;
+}) => {
   const theme = useCustomTheme();
 
-  const activeBackgroundColor = useMemo(() => {
-    switch (index) {
-      case 1:
-        return theme.colors["Very unpleasantbase"];
-      case 2:
-        return theme.colors["Unpleasantbase"];
-      case 3:
-        return theme.colors["Neutralbase"];
-      case 4:
-        return theme.colors["Pleasantbase"];
-      case 5:
-        return theme.colors["Very pleasantbase"];
-    }
-  }, [index, theme]);
+  const {
+    feelingsGroup: activeFeelingsGroup,
+    setFeelingsGroup,
+    setFeelingsEmotions,
+  } = useEntryDraft();
 
-  const isActive = index === currentValue;
+  const icon = useMemo(() => {
+    switch (feelingsGroup) {
+      case FEELING_GROUP_NAMES.VERY_UNPLEASANT:
+        return "emoticon-dead-outline";
+      case FEELING_GROUP_NAMES.UNPLEASANT:
+        return "emoticon-sad-outline";
+      case FEELING_GROUP_NAMES.NEUTRAL:
+        return "emoticon-neutral-outline";
+      case FEELING_GROUP_NAMES.PLEASANT:
+        return "emoticon-happy-outline";
+      case FEELING_GROUP_NAMES.VERY_PLEASANT:
+        return "emoticon-excited-outline";
+    }
+  }, [feelingsGroup]);
+
+  const handleOnPress = () => {
+    setFeelingsGroup(feelingsGroup);
+    setFeelingsEmotions([]);
+  };
+
+  const isActive = activeFeelingsGroup === feelingsGroup;
 
   return (
-    <View
-      style={[
-        styles.stepMarker,
-        {
-          backgroundColor: isActive
-            ? activeBackgroundColor
-            : theme.colors.background,
-          elevation: isActive ? 3 : 0,
-        },
-      ]}
+    <IconButton
+      icon={icon}
+      onPress={handleOnPress}
+      iconColor={
+        isActive
+          ? theme.colors[`on${feelingsGroup}Container`]
+          : theme.colors[`${feelingsGroup}base`]
+      }
+      style={{
+        backgroundColor: isActive
+          ? theme.colors[`${feelingsGroup}Container`]
+          : "transparent",
+      }}
     />
   );
 };
 
 const FeelingsSection = () => {
   const theme = useCustomTheme();
-  const [currentValue, setCurrentValue] = useState(1);
 
-  const feelingsGroup = useMemo(() => {
-    switch (currentValue) {
-      case 1:
-        return FEELING_GROUP_NAMES.VERY_UNPLEASANT;
-      case 2:
-        return FEELING_GROUP_NAMES.UNPLEASANT;
-      case 3:
-      default:
-        return FEELING_GROUP_NAMES.NEUTRAL;
-      case 4:
-        return FEELING_GROUP_NAMES.PLEASANT;
-      case 5:
-        return FEELING_GROUP_NAMES.VERY_PLEASANT;
-    }
-  }, [currentValue]);
+  const { feelingsGroup, feelingsEmotions, setFeelingsEmotions } =
+    useEntryDraft();
+
+  const toggleFeelingsEmotion = useCallback(
+    (emotion: string) => {
+      if (feelingsEmotions.includes(emotion)) {
+        setFeelingsEmotions(feelingsEmotions.filter((e) => e !== emotion));
+      } else {
+        setFeelingsEmotions([...feelingsEmotions, emotion]);
+      }
+    },
+    [feelingsEmotions, setFeelingsEmotions],
+  );
 
   return (
     <View>
-      <View style={styles.sliderWrapper}>
-        <LinearGradient
-          style={[StyleSheet.absoluteFill, styles.gradient]}
-          colors={[
-            theme.colors["Very unpleasantContainer"],
-            theme.colors["UnpleasantContainer"],
-            theme.colors["NeutralContainer"],
-            theme.colors["PleasantContainer"],
-            theme.colors["Very pleasantContainer"],
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          dither={false}
-        />
-        <Slider
-          minimumValue={1}
-          maximumValue={5}
-          step={1}
-          minimumTrackTintColor="transparent"
-          maximumTrackTintColor="transparent"
-          thumbTintColor="transparent"
-          StepMarker={StepMarker}
-          value={currentValue}
-          onValueChange={setCurrentValue}
-        />
+      <View style={{ marginHorizontal: -spacing.spaceExtraSmall }}>
+        <View style={styles.buttonsWrapper}>
+          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.VERY_UNPLEASANT} />
+          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.UNPLEASANT} />
+          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.NEUTRAL} />
+          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.PLEASANT} />
+          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.VERY_PLEASANT} />
+        </View>
       </View>
-      <Text
-        style={[
-          styles.feelingsGroupTitle,
-          { color: theme.colors[`${feelingsGroup}base`] },
-        ]}
-        variant="titleLarge"
-      >
-        I felt {toLower(feelingsGroup)}
+      <Text style={styles.feelingsGroupTitle} variant="titleLarge">
+        I felt{" "}
+        <Text style={{ color: theme.colors[`${feelingsGroup}base`] }}>
+          {toLower(feelingsGroup)}
+        </Text>
       </Text>
       <EmotionChips
         emotions={emotionsGroups[feelingsGroup]}
-        activeEmotions={[]}
+        activeEmotions={feelingsEmotions}
         feelingsGroupName={feelingsGroup}
-        onEmotionPress={() => {}}
+        onEmotionPress={toggleFeelingsEmotion}
       />
     </View>
   );
@@ -114,16 +108,12 @@ const FeelingsSection = () => {
 export default FeelingsSection;
 
 const styles = StyleSheet.create({
-  sliderWrapper: {
-    padding: spacing.spaceSmall,
-  },
   gradient: {
     borderRadius: roundness,
   },
-  stepMarker: {
-    width: 20,
-    height: 20,
-    borderRadius: 20,
+  buttonsWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   feelingsGroupTitle: {
     marginVertical: spacing.spaceMedium,

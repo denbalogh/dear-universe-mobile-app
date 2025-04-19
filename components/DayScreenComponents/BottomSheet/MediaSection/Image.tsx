@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { Image as ExpoImage } from "expo-image";
 import { Checkbox, Icon, TouchableRipple } from "react-native-paper";
 import { View } from "react-native";
@@ -6,31 +6,35 @@ import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { getColorWithOpacity } from "@/utils/style";
 import { StyleSheet } from "react-native";
 import { roundness, sizing, spacing } from "@/constants/theme";
+import { Media } from "@/types/Media";
+import { useEntryDraft } from "@/contexts/EntryDraftContext";
 
 type Props = {
-  uri: string;
+  item: Media;
   index: number;
   size: number;
-  isChecked: boolean;
   onPress: (index: number) => void;
-  onCheck: (index: number) => void;
-  isVideo: boolean;
 };
 
-const Image = ({
-  uri,
-  size,
-  index,
-  isChecked,
-  onPress,
-  onCheck,
-  isVideo,
-}: Props) => {
+const Image = ({ item, size, index, onPress }: Props) => {
   const theme = useCustomTheme();
   const backgroundColor = getColorWithOpacity(theme.colors.background, 0.6);
 
+  const { media, setMedia } = useEntryDraft();
+
   const handleOnPress = useCallback(() => onPress(index), [onPress, index]);
-  const handleOnCheck = useCallback(() => onCheck(index), [onCheck, index]);
+
+  const handleOnCheck = useCallback(() => {
+    if (media.some(({ uri }) => item.uri === uri)) {
+      setMedia(media.filter(({ uri }) => item.uri !== uri));
+    } else {
+      setMedia([...media, item]);
+    }
+  }, [item, media, setMedia]);
+
+  const isChecked = useMemo(() => {
+    return media.some(({ uri }) => item.uri === uri);
+  }, [item, media]);
 
   return (
     <TouchableRipple
@@ -41,7 +45,10 @@ const Image = ({
       }}
     >
       <>
-        <ExpoImage style={{ width: size, height: size }} source={{ uri }} />
+        <ExpoImage
+          style={{ width: size, height: size }}
+          source={{ uri: item.uri }}
+        />
         <View style={[styles.check, { backgroundColor }]}>
           <Checkbox
             status={isChecked ? "checked" : "unchecked"}
@@ -49,7 +56,7 @@ const Image = ({
             color={theme.colors.onBackground}
           />
         </View>
-        {isVideo && (
+        {item.mediaType === "video" && (
           <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
             <View style={[styles.playIcon, { backgroundColor }]}>
               <Icon
