@@ -6,84 +6,64 @@ export enum FEELING_GROUP_NAMES {
   VERY_PLEASANT = "Very pleasant",
 }
 
-export type Feelings = {
-  name: FEELING_GROUP_NAMES;
-  emotions: string[];
+export const emotionsGroups: Record<FEELING_GROUP_NAMES, string[]> = {
+  [FEELING_GROUP_NAMES.VERY_PLEASANT]: [
+    "Ecstatic",
+    "Blissful",
+    "Loving",
+    "Joyful",
+    "Radiant",
+    "Exuberant",
+    "Empowered",
+    "Energized",
+    "Fulfilled",
+  ],
+  [FEELING_GROUP_NAMES.PLEASANT]: [
+    "Peaceful",
+    "Optimistic",
+    "Grateful",
+    "Happy",
+    "Compassionate",
+    "Hopeful",
+    "Friendly",
+    "Warm",
+    "Inspired",
+  ],
+  [FEELING_GROUP_NAMES.NEUTRAL]: [
+    "Calm",
+    "Indifferent",
+    "Reflective",
+    "Accepting",
+    "Thoughtful",
+    "Content",
+    "Open",
+    "Composed",
+    "Neutral",
+  ],
+  [FEELING_GROUP_NAMES.UNPLEASANT]: [
+    "Frustrated",
+    "Irritated",
+    "Yearning",
+    "Jealous",
+    "Proud",
+    "Restless",
+    "Annoyed",
+    "Dissatisfied",
+    "Bored",
+  ],
+  [FEELING_GROUP_NAMES.VERY_UNPLEASANT]: [
+    "Ashamed",
+    "Guilty",
+    "Hopeless",
+    "Despairing",
+    "Fearful",
+    "Helpless",
+    "Angry",
+    "Anxious",
+    "Regretful",
+    "Grieving",
+  ],
 };
-
-export const feelings: Feelings[] = [
-  {
-    name: FEELING_GROUP_NAMES.VERY_PLEASANT,
-    emotions: [
-      "Ecstatic",
-      "Blissful",
-      "Loving",
-      "Joyful",
-      "Radiant",
-      "Exuberant",
-      "Empowered",
-      "Energized",
-      "Fulfilled",
-    ],
-  },
-  {
-    name: FEELING_GROUP_NAMES.PLEASANT,
-    emotions: [
-      "Peaceful",
-      "Optimistic",
-      "Grateful",
-      "Happy",
-      "Compassionate",
-      "Hopeful",
-      "Friendly",
-      "Warm",
-      "Inspired",
-    ],
-  },
-  {
-    name: FEELING_GROUP_NAMES.NEUTRAL,
-    emotions: [
-      "Calm",
-      "Indifferent",
-      "Reflective",
-      "Accepting",
-      "Thoughtful",
-      "Content",
-      "Open",
-      "Composed",
-      "Neutral",
-    ],
-  },
-  {
-    name: FEELING_GROUP_NAMES.UNPLEASANT,
-    emotions: [
-      "Frustrated",
-      "Irritated",
-      "Yearning",
-      "Jealous",
-      "Proud",
-      "Restless",
-      "Annoyed",
-      "Dissatisfied",
-      "Bored",
-    ],
-  },
-  {
-    name: FEELING_GROUP_NAMES.VERY_UNPLEASANT,
-    emotions: [
-      "Ashamed",
-      "Guilty",
-      "Hopeless",
-      "Despairing",
-      "Fearful",
-      "Helpless",
-      "Angry",
-      "Anxious",
-      "Regretful",
-      "Grieving",
-    ],
-  },
-];
 
 export const feelingColorsLight = {
   // Very pleasant

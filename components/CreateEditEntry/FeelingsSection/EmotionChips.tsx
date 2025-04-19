@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   emotion: {
-    marginRight: spacing.spaceExtraSmall,
-    marginTop: spacing.spaceExtraSmall,
+    marginRight: spacing.spaceSmall,
+    marginBottom: spacing.spaceSmall,
   },
 });
