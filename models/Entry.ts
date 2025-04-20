@@ -1,17 +1,18 @@
 import Realm, { BSON } from "realm";
 import { Day } from "./Day";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
+import { MediaTypeValue } from "expo-media-library";
 
 export class Media extends Realm.Object {
-  videoUri: string = "";
-  imageUri!: string;
+  uri?: string;
+  mediaType!: MediaTypeValue;
 
   static schema: Realm.ObjectSchema = {
     name: "Media",
     embedded: true,
     properties: {
-      videoUri: "string?",
-      imageUri: "string",
+      uri: "string",
+      mediaType: "string",
     },
   };
 }
@@ -19,11 +20,10 @@ export class Media extends Realm.Object {
 export class Entry extends Realm.Object<Entry, "day"> {
   _id: BSON.ObjectId = new BSON.ObjectId();
   createdAt: Date = new Date();
-  title: string = "";
-  description: string = "";
+  text: string = "";
   recordingUri: string = "";
   media: Media[] = [];
-  feelingsGroupName: FEELING_GROUP_NAMES | "" = "";
+  feelingsGroup: FEELING_GROUP_NAMES = FEELING_GROUP_NAMES.NEUTRAL;
   feelingsEmotions: string[] = [];
   day!: Day;
 
@@ -39,11 +39,7 @@ export class Entry extends Realm.Object<Entry, "day"> {
         type: "date",
         default: () => new Date(),
       },
-      title: {
-        type: "string",
-        default: "",
-      },
-      description: {
+      text: {
         type: "string",
         default: "",
       },
@@ -56,9 +52,9 @@ export class Entry extends Realm.Object<Entry, "day"> {
         objectType: "Media",
         default: [],
       },
-      feelingsGroupName: {
+      feelingsGroup: {
         type: "string",
-        default: "",
+        default: FEELING_GROUP_NAMES.NEUTRAL,
       },
       feelingsEmotions: {
         type: "list",
