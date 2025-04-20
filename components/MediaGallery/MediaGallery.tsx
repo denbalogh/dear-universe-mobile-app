@@ -1,23 +1,16 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, ViewProps } from "react-native";
 import MediaGalleryItem from "./MediaGalleryItem";
 import { View } from "react-native";
 import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
-import { Media } from "./EditableMediaGallery";
+import { Media } from "@/types/Media";
 
 type Props = {
   media: Media[];
   gridSize?: number;
-  onMediaLongPress?: (uri: string) => void;
 } & ViewProps;
 
-const MediaGallery = ({
-  media,
-  gridSize = 4,
-  onMediaLongPress,
-  style,
-  ...viewProps
-}: Props) => {
+const MediaGallery = ({ media, gridSize = 6, style, ...viewProps }: Props) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
   const [gridWidth, setGridWidth] = useState(0);
@@ -30,22 +23,21 @@ const MediaGallery = ({
     setGridWidth(width);
   };
 
-  const imageSize = gridWidth / gridSize - 0.001; // to prevent incorrent wrapping
-
-  const handleOnImagePress = (index: number) => {
-    setInitialIndex(index);
-    setIsPreviewVisible(true);
-  };
+  const imageSize = gridWidth / gridSize;
 
   const handleOnPreviewClose = () => {
     setIsPreviewVisible(false);
   };
 
-  const handleOnMediaLongPress = (imageUri: string) => {
-    if (onMediaLongPress) {
-      onMediaLongPress(imageUri);
-    }
-  };
+  const handleOnImagePress = useCallback((index: number) => {
+    setInitialIndex(index);
+    setIsPreviewVisible(true);
+  }, []);
+
+  const imageStyle = useMemo(
+    () => ({ width: imageSize, height: imageSize, marginHorizontal: -0.001 }),
+    [imageSize],
+  );
 
   return (
     <View
@@ -53,19 +45,16 @@ const MediaGallery = ({
       style={[styles.wrapper, style]}
       {...viewProps}
     >
-      {media.map(({ imageUri, videoUri }, index) => {
+      {media.map((item, index) => {
         return (
           <MediaGalleryItem
-            key={imageUri}
-            item={{ imageUri, videoUri }}
+            key={item.uri}
+            item={item}
             index={index}
             imagesCount={media.length}
             gridSize={gridSize}
-            style={{ width: imageSize, height: imageSize }}
-            touchableProps={{
-              onPress: () => handleOnImagePress(index),
-              onLongPress: () => handleOnMediaLongPress(imageUri),
-            }}
+            style={imageStyle}
+            onPress={handleOnImagePress}
           />
         );
       })}

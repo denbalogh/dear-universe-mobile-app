@@ -131,20 +131,21 @@ const RecordingSection = () => {
   };
 
   return (
-    <View style={styles.wrapper}>
+    <View
+      style={[
+        styles.wrapper,
+        {
+          paddingVertical: recordingUri
+            ? spacing.spaceSmall
+            : spacing.spaceMedium,
+        },
+      ]}
+    >
       {recordingUri ? (
-        <>
-          <AudioPlayer sourceUri={recordingUri} />
-          <Button
-            style={styles.deleteButton}
-            icon="delete"
-            mode="elevated"
-            onPress={handleDiscardRecordingUri}
-            textColor={theme.colors.error}
-          >
-            Discard recording
-          </Button>
-        </>
+        <AudioPlayer
+          sourceUri={recordingUri}
+          onDiscard={handleDiscardRecordingUri}
+        />
       ) : (
         <RecordingControls
           time={time}
@@ -168,7 +169,6 @@ export default RecordingSection;
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingVertical: spacing.spaceMedium,
     paddingHorizontal: spacing.spaceSmall,
   },
   deleteButton: {

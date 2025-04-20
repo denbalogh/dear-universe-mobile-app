@@ -1,33 +1,29 @@
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Image, ImageProps } from "expo-image";
-import {
-  Icon,
-  TouchableRipple,
-  TouchableRippleProps,
-} from "react-native-paper";
+import { Icon, TouchableRipple } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { getBorderRadius } from "./utils";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
-import { Media } from "./EditableMediaGallery";
 import { getColorWithOpacity } from "@/utils/style";
+import { Media } from "@/types/Media";
 
 export type MediaGalleryItemProps = {
   item: Media;
   index: number;
   imagesCount: number;
   gridSize: number;
-  touchableProps: Omit<TouchableRippleProps, "children">;
+  onPress: (index: number) => void;
   style: ImageProps["style"];
 };
 
 const MediaGalleryItem = ({
-  item: { imageUri, videoUri },
+  item: { uri, mediaType },
   index,
   imagesCount,
   gridSize,
   style,
-  touchableProps,
+  onPress,
 }: MediaGalleryItemProps) => {
   const theme = useCustomTheme();
   const borderRadii = useMemo(
@@ -35,11 +31,15 @@ const MediaGalleryItem = ({
     [index, imagesCount, gridSize],
   );
 
-  const isVideo = !!videoUri;
+  const isVideo = mediaType === "video";
+
+  const handleOnPress = () => {
+    onPress(index);
+  };
 
   return (
     <TouchableRipple
-      {...touchableProps}
+      onPress={handleOnPress}
       style={[styles.touchable, { ...borderRadii }]}
       background={{
         borderless: false,
@@ -47,7 +47,7 @@ const MediaGalleryItem = ({
       }}
     >
       <View>
-        <Image style={[style, { ...borderRadii }]} source={imageUri} />
+        <Image style={[style, { ...borderRadii }]} source={uri} />
         {isVideo && (
           <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
             <View
@@ -74,7 +74,7 @@ const MediaGalleryItem = ({
   );
 };
 
-export default MediaGalleryItem;
+export default memo(MediaGalleryItem);
 
 const styles = StyleSheet.create({
   touchable: {

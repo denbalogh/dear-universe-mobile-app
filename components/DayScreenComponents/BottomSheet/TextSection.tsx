@@ -16,9 +16,11 @@ const TextSection = () => {
       onChangeText={setText}
       scrollEnabled={false}
       style={styles.input}
+      multiline={true}
       cursorColor={theme.colors.secondary}
       selectionColor={theme.colors.secondaryContainer}
       selectionHandleColor={theme.colors.secondary}
+      submitBehavior="blurAndSubmit"
     />
   );
 };

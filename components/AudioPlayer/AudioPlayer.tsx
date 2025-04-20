@@ -1,21 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, StyleSheet, View, ViewProps } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Slider from "@react-native-community/slider";
-import { useTheme } from "react-native-paper";
-import { spacing } from "@/constants/theme";
+import { Button, IconButton, useTheme } from "react-native-paper";
+import { roundness, sizing } from "@/constants/theme";
 import { Audio, AVPlaybackStatus, AVPlaybackStatusSuccess } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
-import Controls from "./Controls";
 import { format } from "date-fns/format";
 import useAppState from "@/hooks/useAppState";
 import logCrashlytics from "@/utils/logCrashlytics";
 
 type Props = {
   sourceUri: string;
-  locked?: boolean;
-} & ViewProps;
+  onDiscard?: () => void;
+};
 
-const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
+const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
   const theme = useTheme();
   const appState = useAppState();
 
@@ -82,24 +81,7 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
     }
   };
 
-  const handleOn5SecForwardPress = () => {
-    if (sound.current) {
-      logCrashlytics("Forwarding sound by 5 seconds");
-      sound.current.setPositionAsync(
-        Math.min(positionMillis + 5000, durationMillis),
-      );
-    }
-  };
-
-  const handleOn5SecRewindPress = () => {
-    if (sound.current) {
-      logCrashlytics("Rewinding sound by 5 seconds");
-      sound.current.setPositionAsync(Math.max(positionMillis - 5000, 0));
-    }
-  };
-
   const currentTime = format(new Date(positionMillis), "mm:ss");
-  const maxTime = format(new Date(durationMillis), "mm:ss");
 
   useEffect(() => {
     loadSound();
@@ -115,29 +97,59 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
   }, [appState]);
 
   return (
-    <View {...viewProps}>
+    <View
+      style={[
+        styles.wrapper,
+        {
+          backgroundColor: theme.colors.surfaceVariant,
+        },
+      ]}
+    >
+      {!isLoaded ? (
+        <IconButton
+          icon="reload"
+          size={sizing.sizeMedium}
+          onPress={loadSound}
+          accessibilityLabel="Reload"
+          iconColor={theme.colors.onSurfaceVariant}
+        />
+      ) : isPlaying ? (
+        <Button
+          icon="pause"
+          onPress={pauseSound}
+          textColor={theme.colors.onSurfaceVariant}
+        >
+          {currentTime}
+        </Button>
+      ) : (
+        <Button
+          icon="play"
+          onPress={playSound}
+          textColor={theme.colors.onSurfaceVariant}
+        >
+          {currentTime}
+        </Button>
+      )}
       <Slider
         style={styles.slider}
         minimumValue={0}
         maximumValue={durationMillis}
-        minimumTrackTintColor={theme.colors.primary}
+        minimumTrackTintColor={theme.colors.onSurfaceVariant}
         maximumTrackTintColor={theme.colors.secondary}
-        thumbTintColor={theme.colors.primary}
+        thumbTintColor={theme.colors.onSurfaceVariant}
         disabled={!isLoaded}
         value={positionMillis}
         onSlidingComplete={(value) => setSoundPosition(value)}
       />
-      <Controls
-        isLoaded={isLoaded}
-        isPlaying={isPlaying}
-        onPlayPress={playSound}
-        onPausePress={pauseSound}
-        on5SecForwardPress={handleOn5SecForwardPress}
-        on5SecRewindPress={handleOn5SecRewindPress}
-        onReloadPress={loadSound}
-        currentTime={currentTime}
-        maxTime={maxTime}
-      />
+      {onDiscard && (
+        <IconButton
+          icon="delete"
+          size={sizing.sizeSmall}
+          onPress={onDiscard}
+          iconColor={theme.colors.error}
+          accessibilityLabel="Discard"
+        />
+      )}
     </View>
   );
 };
@@ -145,11 +157,13 @@ const AudioPlayer = ({ sourceUri, locked = false, ...viewProps }: Props) => {
 export default AudioPlayer;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: roundness,
+  },
   slider: {
-    ...Platform.select({
-      android: {
-        marginHorizontal: -spacing.spaceSmall,
-      },
-    }),
+    flex: 1,
   },
 });
