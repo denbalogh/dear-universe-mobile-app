@@ -79,7 +79,7 @@ module.exports = {
         "expo-image-picker",
         {
           photosPermission:
-            "The app needs access to your media library in order to add photos to your entry.",
+            "The app needs access to your media library in order to add photos/videos to your entry.",
         },
       ],
       [
@@ -129,13 +129,6 @@ module.exports = {
         {
           icon: "./assets/images/notification-icon.png",
           color: "#ffffff",
-        },
-      ],
-      [
-        "expo-media-library",
-        {
-          photosPermission:
-            "The app needs access to your media library in order to add photos to your entry.",
         },
       ],
     ],

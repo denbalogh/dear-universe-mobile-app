@@ -1,11 +1,11 @@
 import Realm, { BSON } from "realm";
 import { Day } from "./Day";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
-import { MediaTypeValue } from "expo-media-library";
+import { MediaType } from "expo-image-picker";
 
 export class Media extends Realm.Object {
   uri?: string;
-  mediaType!: MediaTypeValue;
+  mediaType!: MediaType;
 
   static schema: Realm.ObjectSchema = {
     name: "Media",

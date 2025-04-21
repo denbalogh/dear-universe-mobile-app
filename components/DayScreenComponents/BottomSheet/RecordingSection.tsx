@@ -18,12 +18,9 @@ import { StyleSheet, View } from "react-native";
 import { spacing } from "@/constants/theme";
 import { useEntryDraft } from "@/contexts/EntryDraftContext";
 import AudioPlayer from "@/components/AudioPlayer/AudioPlayer";
-import { Button, IconButton } from "react-native-paper";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 const RecordingSection = () => {
-  const theme = useCustomTheme();
-
   const {
     granted: recordingPermissionsGranted,
     requestPermissions: requestRecordingPermissions,
@@ -134,11 +131,11 @@ const RecordingSection = () => {
     <View
       style={[
         styles.wrapper,
-        {
-          paddingVertical: recordingUri
-            ? spacing.spaceSmall
-            : spacing.spaceMedium,
-        },
+        // {
+        //   paddingVertical: recordingUri
+        //     ? spacing.spaceSmall
+        //     : spacing.spaceMedium,
+        // },
       ]}
     >
       {recordingUri ? (

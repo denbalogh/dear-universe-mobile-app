@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Media } from "../MediaGallery/EditableMediaGallery";
+import { Media } from "../DayScreenComponents/BottomSheet/MediaSection/EditableMediaGallery";
 import { StyleSheet, View } from "react-native";
 import { ITEM_HEIGHT } from "../InfiniteDaysList/constants";
 import { Image } from "expo-image";

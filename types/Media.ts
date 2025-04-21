@@ -1,6 +1,6 @@
-import { MediaTypeValue } from "expo-media-library";
+import { MediaType } from "expo-image-picker";
 
 export type Media = {
   uri: string;
-  mediaType: MediaTypeValue;
+  mediaType: MediaType;
 };

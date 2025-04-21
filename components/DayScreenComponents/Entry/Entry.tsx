@@ -101,7 +101,8 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     paddingHorizontal: spacing.spaceSmall,
-    paddingVertical: spacing.spaceSmall,
+    paddingTop: spacing.spaceSmall,
+    paddingBottom: spacing.spaceExtraSmall,
   },
   draftText: {
     marginBottom: spacing.spaceSmall,
@@ -125,7 +126,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   emotion: {
-    margin: spacing.spaceExtraSmall,
+    marginRight: spacing.spaceExtraSmall,
+    marginBottom: spacing.spaceExtraSmall,
     padding: spacing.spaceExtraSmall,
     borderRadius: roundness,
   },

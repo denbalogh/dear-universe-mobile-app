@@ -12,9 +12,7 @@ import useCameraPermissions from "@/hooks/useCameraPermissions";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import { CameraMode } from "expo-camera";
 import CustomMenu from "../CustomMenu/CustomMenu";
-import EditableMediaGallery, {
-  Media,
-} from "../MediaGallery/EditableMediaGallery";
+import EditableMediaGallery from "../DayScreenComponents/BottomSheet/MediaSection/EditableMediaGallery";
 import logCrashlytics from "@/utils/logCrashlytics";
 
 type Props = {

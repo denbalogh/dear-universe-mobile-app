@@ -1,19 +1,13 @@
-import React, { useMemo } from "react";
-import {
-  ActivityIndicator,
-  IconButton,
-  MenuItemProps,
-  useTheme,
-} from "react-native-paper";
+import React, { memo, useMemo } from "react";
+import { ActivityIndicator, IconButton, useTheme } from "react-native-paper";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { sizing } from "@/constants/theme";
-import { getBorderRadius } from "./utils";
-import CustomMenu from "../CustomMenu/CustomMenu";
+import { getBorderRadius } from "../../../MediaGallery/utils";
 
 export type EditableMediaGalleryAddItemProps = {
   imagesCount: number;
   gridSize: number;
-  addButtons: MenuItemProps[];
+  onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
 } & ViewProps;
@@ -21,8 +15,8 @@ export type EditableMediaGalleryAddItemProps = {
 const EditableMediaGalleryAddItem = ({
   imagesCount,
   gridSize,
+  onPress,
   style,
-  addButtons,
   loading = false,
   disabled = false,
   ...props
@@ -46,22 +40,18 @@ const EditableMediaGalleryAddItem = ({
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <CustomMenu menuItems={addButtons}>
-          {({ openMenu }) => (
-            <IconButton
-              icon="plus"
-              size={sizing.sizeLarge}
-              disabled={disabled}
-              onPress={openMenu}
-            />
-          )}
-        </CustomMenu>
+        <IconButton
+          icon="plus"
+          size={sizing.sizeLarge}
+          disabled={disabled}
+          onPress={onPress}
+        />
       )}
     </View>
   );
 };
 
-export default EditableMediaGalleryAddItem;
+export default memo(EditableMediaGalleryAddItem);
 
 const styles = StyleSheet.create({
   wrapper: {

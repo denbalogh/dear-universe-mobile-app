@@ -12,10 +12,10 @@ const useDeleteEmptyEntry = (entryId: string) => {
   const entryObject = useObject(Entry, new BSON.ObjectId(entryId));
 
   const {
-    title = "",
-    description = "",
+    text = "",
     recordingUri = "",
     media = [],
+    feelingsEmotions = [],
   } = entryObject || {};
 
   // Delete entry if it has no content
@@ -24,7 +24,12 @@ const useDeleteEmptyEntry = (entryId: string) => {
       return;
     }
 
-    if (!title && !description && !recordingUri && media.length === 0) {
+    if (
+      !text &&
+      !recordingUri &&
+      media.length === 0 &&
+      feelingsEmotions.length === 0
+    ) {
       logCrashlytics("Deleting empty entry");
       realm.write(() => {
         realm.delete(entryObject);
@@ -33,10 +38,10 @@ const useDeleteEmptyEntry = (entryId: string) => {
       showSnackbar("Entry was deleted because it was empty");
     }
   }, [
-    title,
-    description,
+    text,
     recordingUri,
     media,
+    feelingsEmotions,
     entryObject,
     realm,
     showSnackbar,

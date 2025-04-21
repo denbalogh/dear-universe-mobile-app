@@ -1,4 +1,4 @@
-import { Media } from "@/components/MediaGallery/EditableMediaGallery";
+import { Media } from "@/components/DayScreenComponents/BottomSheet/MediaSection/EditableMediaGallery";
 import { IMAGES_DIR, RECORDINGS_DIR, VIDEOS_DIR } from "@/constants/files";
 import {
   deleteAsync,
