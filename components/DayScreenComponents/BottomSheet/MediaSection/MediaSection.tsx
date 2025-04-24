@@ -3,8 +3,8 @@ import React from "react";
 import { Button } from "react-native-paper";
 import { useEntryDraft } from "@/contexts/EntryDraftContext";
 import useMediaLibrary from "@/hooks/useMediaLibrary";
-import { MediaType } from "expo-image-picker";
 import EditableMediaGallery from "@/components/DayScreenComponents/BottomSheet/MediaSection/EditableMediaGallery";
+import { MediaType } from "@/types/Media";
 
 const MediaSection = () => {
   const { media, setMedia } = useEntryDraft();

@@ -36,7 +36,7 @@ const EditableMediaGalleryItem = ({
     [index, imagesCount, gridSize],
   );
 
-  const isVideo = mediaType === "videos";
+  const isVideo = mediaType === "video";
   const backgroundColor = getColorWithOpacity(theme.colors.background, 0.6);
 
   return (
@@ -64,15 +64,6 @@ const EditableMediaGalleryItem = ({
                   </View>
                 </View>
               )}
-              <View style={[StyleSheet.absoluteFill, styles.dragIconWrapper]}>
-                <View style={[styles.dragIcon, { backgroundColor }]}>
-                  <Icon
-                    source="drag"
-                    size={sizing.sizeMedium}
-                    color={theme.colors.onBackground}
-                  />
-                </View>
-              </View>
             </View>
           </TouchableRipple>
           <View style={[styles.select, { backgroundColor }]}>

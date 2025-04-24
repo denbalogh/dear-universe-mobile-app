@@ -1,12 +1,14 @@
-import { roundness, spacing } from "@/constants/theme";
-import React, { memo } from "react";
+import { roundness, sizing, spacing } from "@/constants/theme";
+import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Card, IconButton, Text } from "react-native-paper";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import MediaGallery from "@/components/MediaGallery/MediaGallery";
 import AudioPlayer from "@/components/AudioPlayer/AudioPlayer";
 import { Media } from "@/types/Media";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
+import CustomMenu from "@/components/CustomMenu/CustomMenu";
+import { useEntryDraft } from "@/contexts/EntryDraftContext";
 
 export type EntryData = {
   text: string;
@@ -16,7 +18,7 @@ export type EntryData = {
   feelingsEmotions: string[];
 };
 
-type Props = { isDraft: boolean } & EntryData;
+type Props = { isDraft?: boolean } & EntryData;
 
 const Entry = ({
   text,
@@ -24,13 +26,29 @@ const Entry = ({
   media,
   feelingsGroup,
   feelingsEmotions,
-  isDraft,
+  isDraft = false,
 }: Props) => {
   const theme = useCustomTheme();
   const hasMedia = media.length > 0;
   const hasRecording = !!recordingUri;
   const hasText = !!text;
   const hasFeelings = feelingsEmotions.length > 0;
+
+  const { clear } = useEntryDraft();
+
+  const optionsMenu = useMemo(() => {
+    if (isDraft) {
+      return [
+        {
+          title: "Clear",
+          onPress: clear,
+          leadingIcon: "close",
+        },
+      ];
+    }
+
+    return [];
+  }, [isDraft, clear]);
 
   return (
     <Card
@@ -42,14 +60,7 @@ const Entry = ({
       ]}
       mode={isDraft ? "outlined" : "contained"}
     >
-      <Card.Content
-        style={[
-          styles.cardContent,
-          {
-            paddingTop: isDraft ? spacing.spaceMedium : spacing.spaceSmall,
-          },
-        ]}
-      >
+      <Card.Content style={styles.cardContent}>
         {isDraft && (
           <Text
             style={[
@@ -60,7 +71,11 @@ const Entry = ({
             DRAFT
           </Text>
         )}
-        {hasMedia && <MediaGallery media={media} style={styles.mediaGallery} />}
+        {hasMedia && (
+          <View style={styles.mediaGallery}>
+            <MediaGallery media={media} />
+          </View>
+        )}
         {hasRecording && (
           <View style={styles.recording}>
             <AudioPlayer sourceUri={recordingUri} />
@@ -71,22 +86,35 @@ const Entry = ({
             {text}
           </Text>
         )}
-        <View style={styles.emotionsWrapper}>
-          {(hasFeelings ? feelingsEmotions : [feelingsGroup]).map(
-            (emotion, index) => (
-              <Text
-                key={`${emotion}-${index}`}
-                style={[
-                  styles.emotion,
-                  {
-                    backgroundColor: theme.colors[`${feelingsGroup}Container`],
-                  },
-                ]}
-              >
-                {emotion}
-              </Text>
-            ),
-          )}
+        <View style={styles.bottomBarWrapper}>
+          <View style={styles.emotionsWrapper}>
+            {(hasFeelings ? feelingsEmotions : [feelingsGroup]).map(
+              (emotion, index) => (
+                <Text
+                  key={`${emotion}-${index}`}
+                  style={[
+                    styles.emotion,
+                    {
+                      backgroundColor:
+                        theme.colors[`${feelingsGroup}Container`],
+                    },
+                  ]}
+                >
+                  {emotion}
+                </Text>
+              ),
+            )}
+          </View>
+          <CustomMenu menuItems={optionsMenu}>
+            {({ openMenu }) => (
+              <IconButton
+                size={sizing.sizeMedium}
+                icon="dots-horizontal"
+                onPress={openMenu}
+                style={styles.bottomBarIconButton}
+              />
+            )}
+          </CustomMenu>
         </View>
       </Card.Content>
     </Card>
@@ -98,6 +126,7 @@ export default memo(Entry);
 const styles = StyleSheet.create({
   wrapper: {
     borderRadius: roundness,
+    marginVertical: spacing.spaceSmall,
   },
   cardContent: {
     paddingHorizontal: spacing.spaceSmall,
@@ -105,12 +134,11 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.spaceExtraSmall,
   },
   draftText: {
-    marginBottom: spacing.spaceSmall,
     paddingHorizontal: spacing.spaceExtraSmall,
     position: "absolute",
-    top: -spacing.spaceSmall,
+    top: -12,
     left: spacing.spaceSmall,
-    zIndex: 2,
+    zIndex: 3,
   },
   mediaGallery: {
     marginVertical: spacing.spaceExtraSmall,
@@ -121,14 +149,23 @@ const styles = StyleSheet.create({
   text: {
     marginVertical: spacing.spaceExtraSmall,
   },
+  bottomBarWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   emotionsWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
+    flexShrink: 1,
   },
   emotion: {
     marginRight: spacing.spaceExtraSmall,
-    marginBottom: spacing.spaceExtraSmall,
+    marginVertical: spacing.spaceExtraSmall,
     padding: spacing.spaceExtraSmall,
     borderRadius: roundness,
+  },
+  bottomBarIconButton: {
+    height: 25,
   },
 });

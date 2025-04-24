@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { LayoutChangeEvent, StyleSheet, ViewProps } from "react-native";
+import { LayoutChangeEvent, StyleSheet } from "react-native";
 import MediaGalleryItem from "./MediaGalleryItem";
 import { View } from "react-native";
 import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
@@ -8,9 +8,9 @@ import { Media } from "@/types/Media";
 type Props = {
   media: Media[];
   gridSize?: number;
-} & ViewProps;
+};
 
-const MediaGallery = ({ media, gridSize = 6, style, ...viewProps }: Props) => {
+const MediaGallery = ({ media, gridSize = 5 }: Props) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
   const [gridWidth, setGridWidth] = useState(0);
@@ -40,11 +40,7 @@ const MediaGallery = ({ media, gridSize = 6, style, ...viewProps }: Props) => {
   );
 
   return (
-    <View
-      onLayout={handleOnLayout}
-      style={[styles.wrapper, style]}
-      {...viewProps}
-    >
+    <View onLayout={handleOnLayout} style={styles.wrapper}>
       {media.map((item, index) => {
         return (
           <MediaGalleryItem

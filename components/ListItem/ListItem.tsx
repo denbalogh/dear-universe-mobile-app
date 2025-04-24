@@ -86,21 +86,27 @@ const ListItem = ({
         {isEmpty ? (
           <View style={styles.addEntryButtonsWrapper}>
             <IconButton
-              icon="pen-plus"
-              onPress={onAddTextPress}
+              icon="pen"
+              onPress={() => {}}
               accessibilityLabel="Add text"
               size={sizing.sizeMedium}
             />
             <IconButton
-              icon="microphone-plus"
-              onPress={onAddRecordingPress}
+              icon="microphone"
+              onPress={() => {}}
               accessibilityLabel="Add recording"
               size={sizing.sizeMedium}
             />
             <IconButton
-              icon="image-plus"
-              onPress={onAddMediaPress}
+              icon="image-multiple"
+              onPress={() => {}}
               accessibilityLabel="Add media"
+              size={sizing.sizeMedium}
+            />
+            <IconButton
+              icon="emoticon-neutral-outline"
+              onPress={() => {}}
+              accessibilityLabel="Add feelings"
               size={sizing.sizeMedium}
             />
           </View>

@@ -1,4 +1,6 @@
-import { MediaType } from "expo-image-picker";
+import { ImagePickerAsset } from "expo-image-picker";
+
+export type MediaType = ImagePickerAsset["type"];
 
 export type Media = {
   uri: string;

@@ -131,11 +131,11 @@ const RecordingSection = () => {
     <View
       style={[
         styles.wrapper,
-        // {
-        //   paddingVertical: recordingUri
-        //     ? spacing.spaceSmall
-        //     : spacing.spaceMedium,
-        // },
+        {
+          paddingVertical: recordingUri
+            ? spacing.spaceSmall
+            : spacing.spaceMedium,
+        },
       ]}
     >
       {recordingUri ? (

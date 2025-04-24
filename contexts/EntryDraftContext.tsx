@@ -20,6 +20,7 @@ type EntryDraftContextType = {
   setFeelingsGroup: (group: FEELING_GROUP_NAMES) => void;
   setFeelingsEmotions: (emotions: string[]) => void;
   isEmpty: boolean;
+  clear: () => void;
 };
 
 const EntryDraftContext = createContext<EntryDraftContextType>({
@@ -34,6 +35,7 @@ const EntryDraftContext = createContext<EntryDraftContextType>({
   setFeelingsGroup: () => {},
   setFeelingsEmotions: () => {},
   isEmpty: true,
+  clear: () => {},
 });
 
 type ProviderProps = {
@@ -55,6 +57,14 @@ const EntryDraftContextProvider = ({ children }: ProviderProps) => {
     );
   }, [text, recordingUri, media, feelingsEmotions]);
 
+  const clear = () => {
+    setText("");
+    setRecordingUri("");
+    setMedia([]);
+    setFeelingsGroup(FEELING_GROUP_NAMES.NEUTRAL);
+    setFeelingsEmotions([]);
+  };
+
   return (
     <EntryDraftContext.Provider
       value={{
@@ -69,6 +79,7 @@ const EntryDraftContextProvider = ({ children }: ProviderProps) => {
         setFeelingsGroup,
         setFeelingsEmotions,
         isEmpty,
+        clear,
       }}
     >
       {children}

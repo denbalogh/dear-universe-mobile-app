@@ -1,7 +1,7 @@
 import Realm, { BSON } from "realm";
 import { Day } from "./Day";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
-import { MediaType } from "expo-image-picker";
+import { MediaType } from "@/types/Media";
 
 export class Media extends Realm.Object {
   uri?: string;

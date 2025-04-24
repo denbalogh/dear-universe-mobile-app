@@ -1,5 +1,5 @@
 import { emotionsGroups, FEELING_GROUP_NAMES } from "@/constants/feelings";
-import { roundness, spacing } from "@/constants/theme";
+import { spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
@@ -7,6 +7,7 @@ import EmotionChips from "./EmotionChips";
 import { IconButton, Text } from "react-native-paper";
 import { toLower } from "lodash";
 import { useEntryDraft } from "@/contexts/EntryDraftContext";
+import { LinearGradient } from "expo-linear-gradient";
 
 const EmojiButton = ({
   feelingsGroup,
@@ -47,14 +48,10 @@ const EmojiButton = ({
     <IconButton
       icon={icon}
       onPress={handleOnPress}
-      iconColor={
-        isActive
-          ? theme.colors[`on${feelingsGroup}Container`]
-          : theme.colors[`${feelingsGroup}base`]
-      }
+      iconColor={isActive ? "white" : theme.colors[`${feelingsGroup}base`]}
       style={{
         backgroundColor: isActive
-          ? theme.colors[`${feelingsGroup}Container`]
+          ? theme.colors[`${feelingsGroup}base`]
           : "transparent",
       }}
     />
@@ -80,7 +77,18 @@ const FeelingsSection = () => {
 
   return (
     <View>
-      <View style={{ marginHorizontal: -spacing.spaceExtraSmall }}>
+      <LinearGradient
+        colors={[
+          theme.colors[`${FEELING_GROUP_NAMES.VERY_UNPLEASANT}Container`],
+          theme.colors[`${FEELING_GROUP_NAMES.UNPLEASANT}Container`],
+          theme.colors[`${FEELING_GROUP_NAMES.NEUTRAL}Container`],
+          theme.colors[`${FEELING_GROUP_NAMES.PLEASANT}Container`],
+          theme.colors[`${FEELING_GROUP_NAMES.VERY_PLEASANT}Container`],
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.gradient}
+      >
         <View style={styles.buttonsWrapper}>
           <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.VERY_UNPLEASANT} />
           <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.UNPLEASANT} />
@@ -88,7 +96,7 @@ const FeelingsSection = () => {
           <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.PLEASANT} />
           <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.VERY_PLEASANT} />
         </View>
-      </View>
+      </LinearGradient>
       <Text style={styles.feelingsGroupTitle} variant="titleLarge">
         I felt{" "}
         <Text style={{ color: theme.colors[`${feelingsGroup}base`] }}>
@@ -109,7 +117,7 @@ export default FeelingsSection;
 
 const styles = StyleSheet.create({
   gradient: {
-    borderRadius: roundness,
+    borderRadius: 100,
   },
   buttonsWrapper: {
     flexDirection: "row",

@@ -8,7 +8,9 @@ import RecordingSection from "./RecordingSection";
 import MediaSection from "./MediaSection/MediaSection";
 import FeelingsSection from "./FeelingsSection/FeelingsSection";
 import { Button, SegmentedButtons } from "react-native-paper";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { DaySearchTermParams } from "@/types/dayScreen";
+import useDayObject from "@/hooks/useDayObject";
 
 enum Tabs {
   Text = "text",
@@ -17,15 +19,20 @@ enum Tabs {
   Feelings = "feelings",
 }
 
-type Props = {
-  defaultSnapPoint: number;
-};
-
-const BottomSheet = ({ defaultSnapPoint }: Props) => {
+const BottomSheet = () => {
   const theme = useCustomTheme();
 
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
+  const { dayObject } = useDayObject(dateId);
+
+  const hasTitle = !!dayObject?.title;
+  const hasEntries =
+    dayObject?.entryObjects && dayObject.entryObjects.length > 0;
+
   const bottomSheetRef = useRef<OriginalBottomSheet>(null);
-  const [activeSnapPoint, setActiveSnapPoint] = useState(defaultSnapPoint);
+  const [activeSnapPoint, setActiveSnapPoint] = useState(
+    hasEntries || !hasTitle ? -1 : 0,
+  );
 
   const onChange = useCallback((index: number) => {
     setActiveSnapPoint(index);
@@ -54,7 +61,7 @@ const BottomSheet = ({ defaultSnapPoint }: Props) => {
   }, []);
 
   const tabButtonStyle = {
-    // borderWidth: 0.5,
+    borderWidth: 0,
   };
 
   const isBottomSheetHidden = activeSnapPoint === -1;

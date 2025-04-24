@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { spacing } from "@/constants/theme";
 import { EntryDraftContextProvider } from "@/contexts/EntryDraftContext";
 import EntriesList from "@/components/DayScreenComponents/EntriesList/EntriesList";
+import ConfirmButton from "@/components/DayScreenComponents/ConfirmButton";
 
 const DayScreen = () => {
   const theme = useTheme();
@@ -105,7 +106,8 @@ const DayScreen = () => {
         />
         <EntryDraftContextProvider>
           <EntriesList />
-          <BottomSheet defaultSnapPoint={title ? 1 : 0} />
+          <BottomSheet />
+          <ConfirmButton />
         </EntryDraftContextProvider>
       </View>
     </FlingGesture>

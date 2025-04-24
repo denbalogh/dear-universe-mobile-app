@@ -17,7 +17,7 @@ type Props = {
   onAddImagePress: () => void;
 };
 
-const EditableMediaGallery = ({ gridSize = 3, onAddImagePress }: Props) => {
+const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
   const theme = useCustomTheme();
   const { media, setMedia } = useEntryDraft();
 

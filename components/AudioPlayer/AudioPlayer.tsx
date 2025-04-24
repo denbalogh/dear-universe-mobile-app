@@ -101,7 +101,7 @@ const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
       style={[
         styles.wrapper,
         {
-          backgroundColor: theme.colors.surfaceVariant,
+          backgroundColor: theme.colors.primaryContainer,
         },
       ]}
     >
@@ -111,13 +111,13 @@ const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
           size={sizing.sizeMedium}
           onPress={loadSound}
           accessibilityLabel="Reload"
-          iconColor={theme.colors.onSurfaceVariant}
+          iconColor={theme.colors.onPrimaryContainer}
         />
       ) : isPlaying ? (
         <Button
           icon="pause"
           onPress={pauseSound}
-          textColor={theme.colors.onSurfaceVariant}
+          textColor={theme.colors.onPrimaryContainer}
         >
           {currentTime}
         </Button>
@@ -125,7 +125,7 @@ const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
         <Button
           icon="play"
           onPress={playSound}
-          textColor={theme.colors.onSurfaceVariant}
+          textColor={theme.colors.onPrimaryContainer}
         >
           {currentTime}
         </Button>
@@ -134,9 +134,9 @@ const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
         style={styles.slider}
         minimumValue={0}
         maximumValue={durationMillis}
-        minimumTrackTintColor={theme.colors.onSurfaceVariant}
+        minimumTrackTintColor={theme.colors.onPrimaryContainer}
         maximumTrackTintColor={theme.colors.secondary}
-        thumbTintColor={theme.colors.onSurfaceVariant}
+        thumbTintColor={theme.colors.onPrimaryContainer}
         disabled={!isLoaded}
         value={positionMillis}
         onSlidingComplete={(value) => setSoundPosition(value)}
