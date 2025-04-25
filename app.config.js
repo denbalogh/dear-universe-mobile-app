@@ -13,8 +13,6 @@ module.exports = {
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
       requireFullScreen: true,
       supportsTablet: false,
-      googleServicesFile:
-        process.env.GOOGLE_SERVICES_IOS ?? "./GoogleService-Info.plist",
       infoPlist: {
         NSMicrophoneUsageDescription:
           "The app needs access to your microphone in order to record audio for your entry.",
@@ -27,8 +25,6 @@ module.exports = {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#FDF8FF",
       },
-      googleServicesFile:
-        process.env.GOOGLE_SERVICES_ANDROID ?? "./google-services.json",
       permissions: [
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.RECEIVE_BOOT_COMPLETED",
@@ -36,9 +32,6 @@ module.exports = {
     },
     plugins: [
       "expo-router",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      "@react-native-firebase/crashlytics",
       [
         "react-native-google-mobile-ads",
         {
@@ -80,16 +73,6 @@ module.exports = {
         {
           photosPermission:
             "The app needs access to your media library in order to add photos/videos to your entry.",
-        },
-      ],
-      [
-        "expo-camera",
-        {
-          cameraPermission:
-            "The app needs access to your camera in order to take photos/videos for your entry.",
-          microphonePermission:
-            "The app needs access to your microphone in order to record audio in the videos.",
-          recordAudioAndroid: true,
         },
       ],
       [
@@ -139,7 +122,6 @@ module.exports = {
       eas: {
         projectId: process.env.EAS_PROJECT_ID,
       },
-      storybookEnabled: process.env.STORYBOOK_ENABLED,
       hideAds: process.env.HIDE_ADS,
       adsTest: process.env.ADS_TEST,
     },

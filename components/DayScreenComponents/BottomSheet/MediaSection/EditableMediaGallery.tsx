@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
 import AddImageGridItem from "./EditableMediaGalleryAddItem";
-import MediaGalleryPreview from "../../../MediaGallery/MediaGalleryPreview/MediaGalleryPreview";
+import MediaGalleryPreview from "../../EntriesList/MediaGallery/MediaGalleryPreview/MediaGalleryPreview";
 import { DndProvider, DndProviderProps } from "@mgcrea/react-native-dnd";
 import EditableMediaGalleryItem from "./EditableMediaGalleryItem";
 import { runOnJS } from "react-native-reanimated";

@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import { spacing } from "@/constants/theme";
 import { useEntryDraft } from "@/contexts/EntryDraftContext";
-import Entry from "../Entry/Entry";
+import Entry from "./Entry";
 import useDayObject from "@/hooks/useDayObject";
 import { Media } from "@/types/Media";
 import { useLocalSearchParams } from "expo-router";

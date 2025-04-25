@@ -2,7 +2,7 @@ import React, { memo, useMemo } from "react";
 import { ActivityIndicator, IconButton, useTheme } from "react-native-paper";
 import { StyleSheet, View, ViewProps } from "react-native";
 import { sizing } from "@/constants/theme";
-import { getBorderRadius } from "../../../MediaGallery/utils";
+import { getBorderRadius } from "../../EntriesList/MediaGallery/utils";
 
 export type EditableMediaGalleryAddItemProps = {
   imagesCount: number;

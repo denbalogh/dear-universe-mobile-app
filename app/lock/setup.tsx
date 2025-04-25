@@ -9,7 +9,7 @@ import {
   areCodesMatching,
 } from "@/components/CodeInput/utils";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
-import UseBiometricsCard from "@/components/LockScreens/UseBiometricsCard";
+import UseBiometricsCard from "@/components/LockScreensComponents/UseBiometricsCard";
 import { spacing } from "@/constants/theme";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import { useCustomTheme } from "@/hooks/useCustomTheme";

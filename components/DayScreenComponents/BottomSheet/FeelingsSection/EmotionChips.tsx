@@ -1,4 +1,4 @@
-import EmotionChip from "@/components/EmotionChip/EmotionChip";
+import EmotionChip from "@/components/DayScreenComponents/BottomSheet/FeelingsSection/EmotionChip";
 import { FEELING_GROUP_NAMES } from "@/constants/feelings";
 import { spacing } from "@/constants/theme";
 import React from "react";

@@ -18,7 +18,6 @@ import { StyleSheet, View } from "react-native";
 import { spacing } from "@/constants/theme";
 import { useEntryDraft } from "@/contexts/EntryDraftContext";
 import AudioPlayer from "@/components/AudioPlayer/AudioPlayer";
-import { useCustomTheme } from "@/hooks/useCustomTheme";
 
 const RecordingSection = () => {
   const {

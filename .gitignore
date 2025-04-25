@@ -23,8 +23,6 @@ expo-env.d.ts
 
 # ENV variables
 .env
-google-services.json
-GoogleService-Info.plist
 
 # Generated native files
 android/

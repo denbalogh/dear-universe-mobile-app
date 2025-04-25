@@ -8,7 +8,7 @@ import {
   isCodeHashValid,
   isCodeLengthValid,
 } from "@/components/CodeInput/utils";
-import BiometricsIcons from "@/components/LockScreens/BiometricsIcons";
+import BiometricsIcons from "@/components/LockScreensComponents/BiometricsIcons";
 import { spacing } from "@/constants/theme";
 import useAppState from "@/hooks/useAppState";
 import useBackHandler from "@/hooks/useBackHandler";

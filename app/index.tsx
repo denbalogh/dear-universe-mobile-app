@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
-import InfiniteDaysList from "@/components/InfiniteDaysList/InfiniteDaysList";
 import { formatMonthYear } from "@/utils/date";
 import { useSettingsDrawer } from "@/contexts/SettingsDrawerContext";
 import useLockScreenHandler from "@/hooks/useLockScreenHandler";
@@ -12,6 +11,7 @@ import NativeAdBannerSlim from "@/components/NativeAdBanner/NativeAdBannerSlim";
 import { spacing } from "@/constants/theme";
 import useTermsAndPoliciesHandler from "@/hooks/useTermsAndPoliciesScreenHandler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import InfiniteDaysList from "@/components/MainScreenComponents/InfiniteDaysList/InfiniteDaysList";
 
 const App = () => {
   const theme = useTheme();

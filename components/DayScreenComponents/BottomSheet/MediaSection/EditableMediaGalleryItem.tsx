@@ -2,7 +2,7 @@ import React, { memo, useMemo } from "react";
 import { Image, ImageProps } from "expo-image";
 import { Checkbox, Icon, TouchableRipple } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
-import { getBorderRadius } from "../../../MediaGallery/utils";
+import { getBorderRadius } from "../../EntriesList/MediaGallery/utils";
 import { roundness, sizing, spacing } from "@/constants/theme";
 import { useCustomTheme } from "@/hooks/useCustomTheme";
 import { getColorWithOpacity } from "@/utils/style";

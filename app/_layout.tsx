@@ -2,7 +2,6 @@
 import "react-native-get-random-values";
 
 import { Stack, usePathname } from "expo-router";
-import Storybook from "../.storybook";
 import { RealmProvider } from "@realm/react";
 import { schemas } from "@/models";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
@@ -19,7 +18,6 @@ import { useEffect } from "react";
 import { logScreenView } from "@react-native-firebase/analytics";
 import { getApp } from "@react-native-firebase/app";
 import logCrashlytics from "@/utils/logCrashlytics";
-import { EXPO_CONFIG_EXTRA } from "@/constants/expoConfig";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -63,10 +61,4 @@ const App = () => {
   );
 };
 
-let AppEntryPoint = App;
-
-if (EXPO_CONFIG_EXTRA.storybookEnabled === "true") {
-  AppEntryPoint = Storybook;
-}
-
-export default AppEntryPoint;
+export default App;

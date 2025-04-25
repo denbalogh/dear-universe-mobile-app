@@ -9,7 +9,7 @@ import {
   isCodeLengthValid,
 } from "@/components/CodeInput/utils";
 import FlingGesture from "@/components/FlingGesture/FlingGesture";
-import BiometricsIcons from "@/components/LockScreens/BiometricsIcons";
+import BiometricsIcons from "@/components/LockScreensComponents/BiometricsIcons";
 import { spacing } from "@/constants/theme";
 import { useSnackbar } from "@/contexts/SnackbarContext";
 import useBiometrics from "@/hooks/useBiometrics";
