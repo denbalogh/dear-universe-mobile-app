@@ -1,5 +1,5 @@
-import { FEELING_GROUP_NAMES } from "@/constants/feelings";
-import { Media } from "@/types/Media";
+import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
+import { Media } from "@/common/types/Media";
 import React, {
   createContext,
   ReactNode,

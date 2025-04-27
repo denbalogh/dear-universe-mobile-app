@@ -52,6 +52,14 @@ module.exports = {
         {
           ios: {
             useFrameworks: "static",
+            extraPods: [
+              {
+                name: "simdjson",
+                configurations: ["Debug", "Release"],
+                path: "../node_modules/@nozbe/simdjson",
+                modular_headers: true,
+              },
+            ],
           },
           android: {
             extraProguardRules:
