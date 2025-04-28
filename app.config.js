@@ -1,4 +1,5 @@
-import "dotenv/config";
+const GOOGLE_ADS_ANDROID_APP_ID = "ca-app-pub-3470994410920852~8621670596";
+const GOOGLE_ADS_IOS_APP_ID = "ca-app-pub-3470994410920852~4803018548";
 
 module.exports = {
   expo: {
@@ -35,8 +36,8 @@ module.exports = {
       [
         "react-native-google-mobile-ads",
         {
-          androidAppId: process.env.GOOGLE_ADS_ANDROID_APP_ID,
-          iosAppId: process.env.GOOGLE_ADS_IOS_APP_ID,
+          androidAppId: GOOGLE_ADS_ANDROID_APP_ID,
+          iosAppId: GOOGLE_ADS_IOS_APP_ID,
           delayAppMeasurementInit: true,
         },
       ],
@@ -128,15 +129,15 @@ module.exports = {
     },
     extra: {
       eas: {
-        projectId: process.env.EAS_PROJECT_ID,
+        projectId: "179716c1-8891-4d76-8d1f-1e24dfb89a6d",
       },
-      hideAds: process.env.HIDE_ADS,
-      adsTest: process.env.ADS_TEST,
+      GOOGLE_ADS_ANDROID_APP_ID: GOOGLE_ADS_ANDROID_APP_ID,
+      GOOGLE_ADS_IOS_APP_ID: GOOGLE_ADS_IOS_APP_ID,
     },
     owner: "denbalogh",
     newArchEnabled: true,
     updates: {
-      url: process.env.EAS_UPDATES_URL,
+      url: "https://u.expo.dev/179716c1-8891-4d76-8d1f-1e24dfb89a6d",
     },
     runtimeVersion: "1.0.0",
   },

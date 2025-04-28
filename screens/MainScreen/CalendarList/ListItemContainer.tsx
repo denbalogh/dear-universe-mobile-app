@@ -1,9 +1,15 @@
 import { useObject } from "@realm/react";
-import React, { useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { useRouter } from "expo-router";
 import ListItem from "./ListItem/ListItem";
+import { StyleSheet, View } from "react-native";
+import { spacing } from "@/common/constants/theme";
+import { isMonthYearFormat, parseDateAt } from "@/common/utils/date";
+import MonthItem from "./MonthItem";
 
-const ListItemContainer = ({ dateAt }: { dateAt: Date }) => {
+const ListItemContainer = memo(({ dateAt }: { dateAt: string }) => {
+  const date = parseDateAt(dateAt);
+
   // const dayObject = useObject(Day, dateId);
   // const router = useRouter();
 
@@ -47,19 +53,38 @@ const ListItemContainer = ({ dateAt }: { dateAt: Date }) => {
   //   [entryObjects],
   // );
 
+  if (isMonthYearFormat(dateAt)) {
+    return (
+      <View style={styles.listItemWrapper}>
+        <MonthItem monthName={dateAt} />
+      </View>
+    );
+  }
+
   return (
-    <ListItem
-      onPress={() => {}}
-      dateAt={dateAt}
-      title=""
-      onTextPress={() => {}}
-      onRecordingPress={() => {}}
-      onMediaPress={() => {}}
-      onFeelingsPress={() => {}}
-      isEmpty={true}
-      feelings={[]}
-    />
+    <View style={styles.listItemWrapper}>
+      <ListItem
+        onPress={() => {}}
+        date={date}
+        title=""
+        onTextPress={() => {}}
+        onRecordingPress={() => {}}
+        onMediaPress={() => {}}
+        onFeelingsPress={() => {}}
+        isEmpty={true}
+        feelings={[]}
+      />
+    </View>
   );
-};
+});
+
+ListItemContainer.displayName = "ListItemContainer";
 
 export default ListItemContainer;
+
+const styles = StyleSheet.create({
+  listItemWrapper: {
+    paddingHorizontal: spacing.spaceSmall,
+    marginVertical: spacing.spaceExtraSmall,
+  },
+});

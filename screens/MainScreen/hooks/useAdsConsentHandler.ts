@@ -1,4 +1,4 @@
-import { EXPO_CONFIG_EXTRA } from "@/common/constants/expoConfig";
+import { ENV } from "@/common/constants/env";
 import {
   getTrackingPermissionsAsync,
   PermissionStatus,
@@ -49,7 +49,7 @@ const useAdsConsentHandler = () => {
   };
 
   const handleAskConsent = useCallback(async () => {
-    if (EXPO_CONFIG_EXTRA.hideAds) {
+    if (ENV.EXPO_PUBLIC_HIDE_ADS) {
       return;
     }
 

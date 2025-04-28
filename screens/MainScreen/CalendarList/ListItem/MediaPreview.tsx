@@ -8,10 +8,10 @@ import { Media } from "@/common/types/Media";
 import { ITEM_HEIGHT } from "../../constants";
 
 type Props = {
-  dateAt: Date;
+  date: Date;
 };
 
-const MediaPreview = ({ dateAt }: Props) => {
+const MediaPreview = ({ date }: Props) => {
   // const theme = useCustomTheme();
   // const [counter, setCounter] = useState(0);
 

@@ -20,7 +20,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import MonthItem from "./MonthItem";
 import ListItemContainer from "./ListItemContainer";
 
 const EXTEND_LIST_OFFSET = 10;
@@ -56,21 +55,10 @@ const CalendarList = ({ onMonthYearChange }: Props) => {
     }
   };
 
-  const handleRenderItem = useCallback(({ item }: { item: string }) => {
-    if (isMonthYearFormat(item)) {
-      return (
-        <View style={styles.listItemWrapper}>
-          <MonthItem monthName={item} />
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.listItemWrapper}>
-        <ListItemContainer dateAt={parseDateAt(item)} />
-      </View>
-    );
-  }, []);
+  const handleRenderItem = useCallback(
+    ({ item }: { item: string }) => <ListItemContainer dateAt={item} />,
+    [],
+  );
 
   const onScroll = useCallback(
     ({
@@ -200,10 +188,6 @@ const styles = StyleSheet.create({
   },
   flatListContentContainer: {
     paddingTop: spacing.spaceSmall, // Flatlist is inverted so it's bottom padding
-  },
-  listItemWrapper: {
-    paddingHorizontal: spacing.spaceSmall,
-    marginVertical: spacing.spaceExtraSmall,
   },
   bottomButtonWrapper: {
     position: "absolute",

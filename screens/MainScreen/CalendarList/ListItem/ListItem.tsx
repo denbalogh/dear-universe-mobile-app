@@ -17,7 +17,7 @@ import { ITEM_HEIGHT } from "../../constants";
 
 type Props = {
   title: string;
-  dateAt: Date;
+  date: Date;
   onPress: () => void;
   onTextPress: () => void;
   onRecordingPress: () => void;
@@ -29,7 +29,7 @@ type Props = {
 
 const ListItem = ({
   title,
-  dateAt,
+  date,
   onTextPress,
   onRecordingPress,
   onMediaPress,
@@ -40,7 +40,7 @@ const ListItem = ({
 }: Props) => {
   const theme = useTheme();
 
-  const isToday = isTodayDateFns(dateAt);
+  const isToday = isTodayDateFns(date);
 
   const backgroundColor = isEmpty
     ? theme.colors.background
@@ -69,18 +69,18 @@ const ListItem = ({
             ]}
             accessibilityLabel={
               isToday
-                ? `Today ${format(dateAt, "do LLLL yyyy")}`
-                : format(dateAt, "do LLLL yyyy")
+                ? `Today ${format(date, "do LLLL yyyy")}`
+                : format(date, "do LLLL yyyy")
             }
           >
-            {getDate(dateAt)}
+            {getDate(date)}
           </Text>
           <Text
             variant="bodyLarge"
-            accessibilityLabel={format(dateAt, "EEEE")}
+            accessibilityLabel={format(date, "EEEE")}
             style={{ color: textColor }}
           >
-            {format(dateAt, "E")}
+            {format(date, "E")}
           </Text>
         </View>
         {isEmpty ? (
@@ -119,7 +119,7 @@ const ListItem = ({
             >
               {title || "No title for the day"}
             </Text>
-            <MediaPreview dateAt={dateAt} />
+            <MediaPreview date={date} />
           </View>
         )}
         <FeelingsIndicator
