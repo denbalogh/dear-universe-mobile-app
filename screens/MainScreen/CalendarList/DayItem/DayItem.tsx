@@ -16,8 +16,9 @@ import FeelingsIndicator from "@/screens/MainScreen/CalendarList/DayItem/Feeling
 import { ITEM_HEIGHT } from "../../constants";
 import { withObservables } from "@nozbe/watermelondb/react";
 import Day from "@/common/models/Day";
-import { parseDateId } from "@/common/utils/date";
+import { parseDayId } from "@/common/utils/date";
 import Media from "@/common/models/Media";
+import { useRouter } from "expo-router";
 
 type Props = {
   day: Day;
@@ -25,7 +26,8 @@ type Props = {
 
 const ListItem = ({ day }: Props) => {
   const theme = useTheme();
-  const date = parseDateId(day.id);
+  const router = useRouter();
+  const date = parseDayId(day.id);
 
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const [feelings, setFeelings] = useState<FEELING_GROUP_NAMES[] | null>(null);
@@ -57,7 +59,7 @@ const ListItem = ({ day }: Props) => {
 
   return (
     <TouchableRipple
-      onPress={() => {}}
+      onPress={() => router.navigate(`/day/${day.id}`)}
       style={styles.itemWrapper}
       background={{
         foreground: true,
@@ -138,9 +140,9 @@ const ListItem = ({ day }: Props) => {
   );
 };
 
-export default withObservables<Props, Props>(["day"], ({ day }) => ({
-  day,
-}))(ListItem);
+const enhance = withObservables<Props, Props>(["day"], ({ day }) => ({ day }));
+
+export default enhance(ListItem);
 
 const styles = StyleSheet.create({
   itemWrapper: {

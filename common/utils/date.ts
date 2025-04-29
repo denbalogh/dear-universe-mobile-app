@@ -5,11 +5,11 @@ import { parse } from "date-fns/parse";
 
 const DATE_ID_FORMAT = "d_M_y";
 
-export const parseDateId = (date: string): Date => {
+export const parseDayId = (date: string): Date => {
   return parse(date, DATE_ID_FORMAT, new Date());
 };
 
-export const formatDateId = (date: Date): string => {
+export const formatDayId = (date: Date): string => {
   return format(date, DATE_ID_FORMAT);
 };
 

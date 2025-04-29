@@ -11,7 +11,7 @@ import { FAB, useTheme } from "react-native-paper";
 import {
   formatMonthYear,
   isMonthYearFormat,
-  parseDateId,
+  parseDayId,
 } from "@/common/utils/date";
 import { ITEM_HEIGHT } from "../constants";
 import { spacing } from "@/common/constants/theme";
@@ -118,9 +118,9 @@ const CalendarList = ({ onMonthYearChange }: Props) => {
           onMonthYearChange(item.item);
         }
 
-        if (parseDateId(item.item).getDate() === 1) {
+        if (parseDayId(item.item).getDate() === 1) {
           if (scrollDir.current === "up" && !item.isViewable) {
-            onMonthYearChange(formatMonthYear(parseDateId(item.item)));
+            onMonthYearChange(formatMonthYear(parseDayId(item.item)));
           }
         }
       }
