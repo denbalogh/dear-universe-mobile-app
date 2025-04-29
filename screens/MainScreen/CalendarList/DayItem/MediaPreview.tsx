@@ -15,7 +15,7 @@ const MediaPreview = ({ date }: Props) => {
   // const theme = useCustomTheme();
   // const [counter, setCounter] = useState(0);
 
-  // const { dayObject } = useDayObject(dateAt);
+  // const { dayObject } = useDayObject(dateId);
   // const { entryObjects = [] } = dayObject || {};
 
   // const media = (entryObjects as EntryData[]).reduce(

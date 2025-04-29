@@ -1,9 +1,10 @@
-import { Model } from "@nozbe/watermelondb";
-import { relation, text } from "@nozbe/watermelondb/decorators";
+import { Model, Query, Relation } from "@nozbe/watermelondb";
+import { children, relation, text } from "@nozbe/watermelondb/decorators";
 import { TableName } from "./schema";
 import { Associations } from "@nozbe/watermelondb/Model";
-import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
-import { Recording } from "@/common/types/Recording";
+import Media from "./Media";
+import Day from "./Day";
+import { FEELING_GROUP_NAMES } from "../constants/feelings";
 
 export default class Entry extends Model {
   static table = TableName.ENTRIES;
@@ -12,11 +13,12 @@ export default class Entry extends Model {
     [TableName.MEDIA]: { type: "has_many", foreignKey: "entry_id" },
   };
 
-  @text("language") language: string = "en";
+  @text("language") language!: string;
   @text("text") text?: string;
-  @text("feelings_group") feelingsGroup: string = FEELING_GROUP_NAMES.NEUTRAL;
+  @text("feelings_group") feelingsGroup!: FEELING_GROUP_NAMES;
   @text("feelings_emotions") feelingsEmotions?: string;
   @text("order_index") orderIndex!: number;
-
-  @relation(TableName.RECORDINGS, "recording_id") recording?: Recording;
+  @text("recording_uri") recordingUri?: string;
+  @relation(TableName.DAYS, "day_id") day!: Relation<Day>;
+  @children(TableName.MEDIA) media?: Query<Media>;
 }

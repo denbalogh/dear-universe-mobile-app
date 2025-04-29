@@ -21,7 +21,7 @@ enum Tabs {
 const BottomSheet = () => {
   const theme = useCustomTheme();
 
-  const { dateAt } = useLocalSearchParams<DaySearchTermParams>();
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
 
   // const hasTitle = !!dayObject?.title;
   // const hasEntries =

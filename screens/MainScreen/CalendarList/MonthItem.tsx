@@ -1,5 +1,5 @@
 import { spacing } from "@/common/constants/theme";
-import React from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Divider, Text } from "react-native-paper";
 import { ITEM_HEIGHT } from "../constants";
@@ -13,7 +13,7 @@ const MonthItem = ({ monthName }: { monthName: string }) => (
   </View>
 );
 
-export default MonthItem;
+export default memo(MonthItem);
 
 const styles = StyleSheet.create({
   monthWrapper: {

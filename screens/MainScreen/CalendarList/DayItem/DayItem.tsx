@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Text,
@@ -12,33 +12,38 @@ import { getDate } from "date-fns/getDate";
 import { isToday as isTodayDateFns } from "date-fns/isToday";
 import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
 import MediaPreview from "./MediaPreview";
-import FeelingsIndicator from "@/screens/MainScreen/CalendarList/ListItem/FeelingsIndicator";
+import FeelingsIndicator from "@/screens/MainScreen/CalendarList/DayItem/FeelingsIndicator";
 import { ITEM_HEIGHT } from "../../constants";
+import { withObservables } from "@nozbe/watermelondb/react";
+import Day from "@/common/models/Day";
+import { parseDateId } from "@/common/utils/date";
+import Media from "@/common/models/Media";
 
 type Props = {
-  title: string;
-  date: Date;
-  onPress: () => void;
-  onTextPress: () => void;
-  onRecordingPress: () => void;
-  onMediaPress: () => void;
-  onFeelingsPress: () => void;
-  isEmpty?: boolean;
-  feelings: FEELING_GROUP_NAMES[];
+  day: Day;
 };
 
-const ListItem = ({
-  title,
-  date,
-  onTextPress,
-  onRecordingPress,
-  onMediaPress,
-  onFeelingsPress,
-  isEmpty,
-  onPress,
-  feelings,
-}: Props) => {
+const ListItem = ({ day }: Props) => {
   const theme = useTheme();
+  const date = parseDateId(day.id);
+
+  const [isEmpty, setIsEmpty] = useState<boolean>(true);
+  const [feelings, setFeelings] = useState<FEELING_GROUP_NAMES[] | null>(null);
+  const [media, setMedia] = useState<Media[] | null>([]);
+
+  useEffect(() => {
+    (async () => {
+      if (day) {
+        const isEmpty = await day.isEmpty();
+        const feelings = await day.feelings();
+        const media = await day.media();
+
+        setIsEmpty(isEmpty);
+        setFeelings(feelings);
+        setMedia(media);
+      }
+    })();
+  }, [day]);
 
   const isToday = isTodayDateFns(date);
 
@@ -52,7 +57,7 @@ const ListItem = ({
 
   return (
     <TouchableRipple
-      onPress={onPress}
+      onPress={() => {}}
       style={styles.itemWrapper}
       background={{
         foreground: true,
@@ -117,21 +122,25 @@ const ListItem = ({
               variant="bodyMedium"
               numberOfLines={4}
             >
-              {title || "No title for the day"}
+              {day.title || "No title for the day"}
             </Text>
             <MediaPreview date={date} />
           </View>
         )}
-        <FeelingsIndicator
-          style={styles.feelingsIndicator}
-          feelings={feelings}
-        />
+        {feelings && (
+          <FeelingsIndicator
+            style={styles.feelingsIndicator}
+            feelings={feelings}
+          />
+        )}
       </View>
     </TouchableRipple>
   );
 };
 
-export default ListItem;
+export default withObservables<Props, Props>(["day"], ({ day }) => ({
+  day,
+}))(ListItem);
 
 const styles = StyleSheet.create({
   itemWrapper: {

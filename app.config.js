@@ -65,6 +65,7 @@ module.exports = {
           android: {
             extraProguardRules:
               "-keep class com.google.android.gms.internal.consent_sdk.** { *; }",
+            kotlinVersion: "1.9.25",
           },
         },
       ],

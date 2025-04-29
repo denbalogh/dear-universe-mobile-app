@@ -18,7 +18,7 @@ const EntriesList = () => {
     feelingsGroup,
   } = useEntryDraft();
 
-  const { dateAt } = useLocalSearchParams<DaySearchTermParams>();
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>

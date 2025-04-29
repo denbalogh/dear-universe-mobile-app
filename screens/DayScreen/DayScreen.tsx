@@ -2,7 +2,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar, TextInput, useTheme } from "react-native-paper";
-import { formatFullDate, parseDateAt } from "@/common/utils/date";
+import { formatFullDate, parseDateId } from "@/common/utils/date";
 import { useConfirmDialog } from "@/common/contexts/ConfirmDialogContext";
 import isEqual from "lodash/isEqual";
 import { useSnackbar } from "@/common/contexts/SnackbarContext";
@@ -23,7 +23,7 @@ const DayScreen = () => {
 
   const { showSnackbar } = useSnackbar();
 
-  const { dateAt } = useLocalSearchParams<DaySearchTermParams>();
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
 
   // const { title: initialTitle = "" } = dayObject || {};
 
@@ -69,7 +69,7 @@ const DayScreen = () => {
 
   // useBackHandler(onAndroidBackButtonPress);
 
-  const fullDate = useMemo(() => formatFullDate(parseDateAt(dateAt)), [dateAt]);
+  const fullDate = useMemo(() => formatFullDate(parseDateId(dateId)), [dateId]);
 
   return (
     <FlingGesture onFlingRight={router.back}>

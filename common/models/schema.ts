@@ -13,10 +13,7 @@ export default appSchema({
   tables: [
     tableSchema({
       name: TableName.DAYS,
-      columns: [
-        { name: "date_at", type: "number" },
-        { name: "title", type: "string", isOptional: true },
-      ],
+      columns: [{ name: "title", type: "string", isOptional: true }],
     }),
     tableSchema({
       name: TableName.ENTRIES,
@@ -27,6 +24,7 @@ export default appSchema({
         { name: "feelings_emotions", type: "string", isOptional: true },
         { name: "order_index", type: "number" },
         { name: "language", type: "string" },
+        { name: "recording_uri", type: "string", isOptional: true },
       ],
     }),
     tableSchema({
@@ -34,14 +32,6 @@ export default appSchema({
       columns: [
         { name: "uri", type: "string" },
         { name: "mediaType", type: "string" },
-        { name: "entry_id", type: "string", isIndexed: true },
-      ],
-    }),
-    tableSchema({
-      name: TableName.RECORDINGS,
-      columns: [
-        { name: "uri", type: "string" },
-        { name: "transcription", type: "string", isOptional: true },
         { name: "entry_id", type: "string", isIndexed: true },
       ],
     }),

@@ -3,18 +3,18 @@ import { isMatch } from "date-fns/isMatch";
 import { isToday } from "date-fns/isToday";
 import { parse } from "date-fns/parse";
 
-const DATE_AT_FORMAT = "d_M_y";
+const DATE_ID_FORMAT = "d_M_y";
 
-export const parseDateAt = (date: string): Date => {
-  return parse(date, DATE_AT_FORMAT, new Date());
+export const parseDateId = (date: string): Date => {
+  return parse(date, DATE_ID_FORMAT, new Date());
 };
 
-export const formatDateAt = (date: Date): string => {
-  return format(date, DATE_AT_FORMAT);
+export const formatDateId = (date: Date): string => {
+  return format(date, DATE_ID_FORMAT);
 };
 
-export const isDateAtFormat = (date: string): boolean => {
-  return isMatch(date, DATE_AT_FORMAT);
+export const isDateIdFormat = (date: string): boolean => {
+  return isMatch(date, DATE_ID_FORMAT);
 };
 
 const MONTH_YEAR_FORMAT = "MMMM y";

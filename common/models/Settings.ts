@@ -6,10 +6,10 @@ import { SettingsTheme } from "../types/Settings";
 export default class Settings extends Model {
   static table = TableName.SETTINGS;
 
-  @text("theme") theme: SettingsTheme = "system";
+  @text("theme") theme!: SettingsTheme;
   @text("lock_code_hash") lockCodeHash?: string;
-  @text("lock_use_biometric") lockUseBiometric: boolean = false;
+  @text("lock_use_biometric") lockUseBiometric!: boolean;
   @text("daily_reminder_at") dailyReminderAt?: Date;
   @text("daily_reminder_message") dailyReminderMessage?: string;
-  @text("terms_understood") termsUnderstood: boolean = false;
+  @text("terms_understood") termsUnderstood!: boolean;
 }

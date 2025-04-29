@@ -1,3 +1,3 @@
 export type DaySearchTermParams = {
-  dateAt: string;
+  dateId: string;
 };

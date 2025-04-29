@@ -1,26 +1,26 @@
 import {
-  formatDateAt,
+  formatDateId,
   formatFullDate,
   formatMonthName,
   formatMonthYear,
   isMonthYearFormat,
-  parseDateAt,
+  parseDateId,
 } from "../date";
 
 describe("utils/date", () => {
-  test("parseDateAt", () => {
+  test("parseDateId", () => {
     const input = "1_1_2022";
     const expected = new Date(2022, 0, 1);
 
-    const result = parseDateAt(input);
+    const result = parseDateId(input);
     expect(result).toEqual(expected);
   });
 
-  test("formatDateAt", () => {
+  test("formatDateId", () => {
     const input = new Date(2022, 0, 1);
     const expected = "1_1_2022";
 
-    const result = formatDateAt(input);
+    const result = formatDateId(input);
     expect(result).toEqual(expected);
   });
 

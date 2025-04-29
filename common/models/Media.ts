@@ -1,8 +1,9 @@
 import { Model } from "@nozbe/watermelondb";
-import { text } from "@nozbe/watermelondb/decorators";
+import { relation, text } from "@nozbe/watermelondb/decorators";
 import { TableName } from "./schema";
 import { Associations } from "@nozbe/watermelondb/Model";
 import { MediaType } from "@/common/types/Media";
+import Entry from "./Entry";
 
 export default class Media extends Model {
   static table = TableName.MEDIA;
@@ -12,4 +13,5 @@ export default class Media extends Model {
 
   @text("uri") uri!: string;
   @text("mediaType") mediaType!: MediaType;
+  @relation(TableName.ENTRIES, "entry_id") entry!: Entry;
 }

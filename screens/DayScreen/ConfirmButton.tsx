@@ -1,7 +1,7 @@
 import { spacing } from "@/common/constants/theme";
 import { useEntryDraft } from "@/contexts/EntryDraftContext";
 import { useSnackbar } from "@/common/contexts/SnackbarContext";
-import { formatFullDate, parseDateAt } from "@/common/utils/date";
+import { formatFullDate, parseDateId } from "@/common/utils/date";
 import { useRealm } from "@realm/react";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -13,7 +13,7 @@ const ConfirmButton = () => {
   const realm = useRealm();
   const { showSnackbar } = useSnackbar();
 
-  const { dateAt } = useLocalSearchParams<DaySearchTermParams>();
+  const { dateId } = useLocalSearchParams<DaySearchTermParams>();
 
   const {
     isEmpty,
@@ -47,7 +47,7 @@ const ConfirmButton = () => {
     //   dayObject.entryObjects.push(entry);
     // });
 
-    showSnackbar(`Entry saved for ${formatFullDate(parseDateAt(dateAt))}`);
+    showSnackbar(`Entry saved for ${formatFullDate(parseDateId(dateId))}`);
     clear();
   };
 
