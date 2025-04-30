@@ -4,7 +4,7 @@ import ConfirmDialog, {
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 type ConfirmDialogContextType = {
-  showConfirmDialog: (
+  showDialog: (
     message: string,
     confirmCallback: () => void,
     confirmType?: ConfirmDialogButtonType,
@@ -12,14 +12,10 @@ type ConfirmDialogContextType = {
 };
 
 const ConfirmDialogContext = createContext<ConfirmDialogContextType>({
-  showConfirmDialog: () => {},
+  showDialog: () => {},
 });
 
-type ProviderProps = {
-  children: ReactNode;
-};
-
-const ConfirmDialogContextProvider = ({ children }: ProviderProps) => {
+const ConfirmDialogProvider = ({ children }: { children: ReactNode }) => {
   const [message, setMessage] = useState<string>("");
   const [confirmCallback, setConfirmCallback] = useState<() => void>(() => {});
   const [confirmType, setConfirmType] =
@@ -29,7 +25,7 @@ const ConfirmDialogContextProvider = ({ children }: ProviderProps) => {
     setMessage("");
   };
 
-  const showConfirmDialog = (
+  const showDialog = (
     message: string,
     confirmCallback: () => void,
     confirmType: ConfirmDialogButtonType = "negative",
@@ -40,7 +36,7 @@ const ConfirmDialogContextProvider = ({ children }: ProviderProps) => {
   };
 
   return (
-    <ConfirmDialogContext.Provider value={{ showConfirmDialog }}>
+    <ConfirmDialogContext.Provider value={{ showDialog }}>
       {children}
       <ConfirmDialog
         text={message}
@@ -53,6 +49,6 @@ const ConfirmDialogContextProvider = ({ children }: ProviderProps) => {
   );
 };
 
-const useConfirmDialog = () => useContext(ConfirmDialogContext);
+export const useConfirmDialog = () => useContext(ConfirmDialogContext);
 
-export { useConfirmDialog, ConfirmDialogContextProvider };
+export default ConfirmDialogProvider;

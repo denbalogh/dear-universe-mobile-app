@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Day from "../models/Day";
 import database, { daysCollection } from "../models/db";
 
-export default function useDay(dateId: string): Day | null {
+export default function useDayFromDb(dateId: string): Day | null {
   const [day, setDay] = useState<Day | null>(null);
 
   useEffect(() => {
@@ -16,6 +16,7 @@ export default function useDay(dateId: string): Day | null {
           setDay(
             await daysCollection.create((day) => {
               day._raw.id = dateId;
+              day.title = "";
             }),
           );
         });

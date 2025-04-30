@@ -8,14 +8,12 @@ import LockButton from "./LockButton";
 import DailyReminderButton from "./DailyReminderButton";
 import AppLogo from "./AppLogo";
 import { useRouter } from "expo-router";
+import { useSettingsDrawer } from "../SettingsDrawerProvider";
 
-type Props = {
-  closeDrawer: () => void;
-};
-
-const SettingsDrawerContent = ({ closeDrawer }: Props) => {
+const SettingsDrawerContent = () => {
   const theme = useCustomTheme();
   const router = useRouter();
+  const { closeDrawer } = useSettingsDrawer();
 
   const onTermsButtonPress = () => {
     router.navigate({ pathname: "/terms" });
@@ -33,8 +31,8 @@ const SettingsDrawerContent = ({ closeDrawer }: Props) => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View>
           <ThemeButton />
-          <LockButton closeSettingsDrawer={closeDrawer} />
-          <DailyReminderButton closeSettingsDrawer={closeDrawer} />
+          <LockButton />
+          <DailyReminderButton />
           <Button mode="text" onPress={onTermsButtonPress}>
             Terms & policies
           </Button>

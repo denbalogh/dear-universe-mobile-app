@@ -1,13 +1,13 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { Button } from "react-native-paper";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import useMediaLibrary from "@/common/hooks/useMediaLibrary";
-import { Media } from "@/common/types/Media";
 import EditableMediaGallery from "./EditableMediaGallery";
+import Media from "@/common/models/Media";
 
 const MediaSection = () => {
-  const { media, setMedia } = useEntryDraft();
+  const { media, setMedia } = useEntryEditor();
 
   const openMediaLibrary = useMediaLibrary(["images", "videos"], (assets) => {
     const newMedia = assets.map(

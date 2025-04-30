@@ -1,6 +1,7 @@
 import { spacing } from "@/common/constants/theme";
 import useActiveColorScheme from "@/common/hooks/useActiveColorScheme";
 import { Image } from "expo-image";
+import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -22,7 +23,7 @@ const AppLogo = () => {
   );
 };
 
-export default AppLogo;
+export default memo(AppLogo);
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -11,13 +11,16 @@ import { BackHandler, StyleSheet, View } from "react-native";
 import { Appbar, Button, Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import WebViewModal from "@/common/components/WebViewModal";
+import { useSettings } from "@/common/providers/SettingsProvider";
+import database from "@/common/models/db";
 
 const TermsScreen = () => {
   const theme = useTheme();
   const router = useRouter();
   const { bottom } = useSafeAreaInsets();
 
-  // const { termsAndPoliciesUnderstood = false } = settingsObject || {};
+  const settings = useSettings();
+  const { termsUnderstood } = settings;
 
   const [url, setUrl] = useState<string>("");
 
@@ -29,27 +32,29 @@ const TermsScreen = () => {
     setUrl("");
   };
 
-  const onConfirmPress = () => {
-    // updateSettingsObject({
-    //   termsAndPoliciesUnderstood: true,
-    // });
+  const onConfirmPress = async () => {
+    await database.write(async () => {
+      await settings.update((s) => {
+        s.termsUnderstood = true;
+      });
+    });
     router.back();
   };
 
-  // const onAndroidBackButtonPress = useCallback(() => {
-  //   if (!termsAndPoliciesUnderstood) {
-  //     BackHandler.exitApp();
-  //     return true;
-  //   }
-  //   return false;
-  // }, [termsAndPoliciesUnderstood]);
+  const onAndroidBackButtonPress = useCallback(() => {
+    if (!termsUnderstood) {
+      BackHandler.exitApp();
+      return true;
+    }
+    return false;
+  }, [termsUnderstood]);
 
-  // useBackHandler(onAndroidBackButtonPress);
+  useBackHandler(onAndroidBackButtonPress);
 
   const onFlingDown = () => {
-    // if (termsAndPoliciesUnderstood) {
-    //   router.back();
-    // }
+    if (termsUnderstood) {
+      router.back();
+    }
   };
 
   return (
@@ -62,15 +67,13 @@ const TermsScreen = () => {
       >
         <Stack.Screen
           options={{
-            // header: () => (
-            //   <Appbar.Header
-            //     style={{ backgroundColor: theme.colors.background }}
-            //   >
-            //     {termsAndPoliciesUnderstood && (
-            //       <Appbar.BackAction onPress={router.back} />
-            //     )}
-            //   </Appbar.Header>
-            // ),
+            header: () => (
+              <Appbar.Header
+                style={{ backgroundColor: theme.colors.background }}
+              >
+                {termsUnderstood && <Appbar.BackAction onPress={router.back} />}
+              </Appbar.Header>
+            ),
             navigationBarColor: theme.colors.background,
           }}
         />
@@ -96,8 +99,8 @@ const TermsScreen = () => {
               POLICY. Please review them carefully before continuing.
             </Text>
           </View>
-          {/* <View>
-            {!termsAndPoliciesUnderstood && (
+          <View>
+            {!termsUnderstood && (
               <Button
                 mode="contained"
                 style={styles.confirmButton}
@@ -106,7 +109,7 @@ const TermsScreen = () => {
                 I understand
               </Button>
             )}
-          </View> */}
+          </View>
         </View>
         <WebViewModal
           url={url}

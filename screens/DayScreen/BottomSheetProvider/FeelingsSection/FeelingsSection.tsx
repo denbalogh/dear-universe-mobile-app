@@ -9,7 +9,7 @@ import { StyleSheet, View } from "react-native";
 import EmotionChips from "./EmotionChips";
 import { IconButton, Text } from "react-native-paper";
 import { toLower } from "lodash";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import { LinearGradient } from "expo-linear-gradient";
 
 const EmojiButton = ({
@@ -23,7 +23,7 @@ const EmojiButton = ({
     feelingsGroup: activeFeelingsGroup,
     setFeelingsGroup,
     setFeelingsEmotions,
-  } = useEntryDraft();
+  } = useEntryEditor();
 
   const icon = useMemo(() => {
     switch (feelingsGroup) {
@@ -65,7 +65,7 @@ const FeelingsSection = () => {
   const theme = useCustomTheme();
 
   const { feelingsGroup, feelingsEmotions, setFeelingsEmotions } =
-    useEntryDraft();
+    useEntryEditor();
 
   const toggleFeelingsEmotion = useCallback(
     (emotion: string) => {

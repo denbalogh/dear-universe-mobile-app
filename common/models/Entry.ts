@@ -1,5 +1,10 @@
 import { Model, Query, Relation } from "@nozbe/watermelondb";
-import { children, relation, text } from "@nozbe/watermelondb/decorators";
+import {
+  children,
+  field,
+  immutableRelation,
+  text,
+} from "@nozbe/watermelondb/decorators";
 import { TableName } from "./schema";
 import { Associations } from "@nozbe/watermelondb/Model";
 import Media from "./Media";
@@ -17,8 +22,8 @@ export default class Entry extends Model {
   @text("text") text?: string;
   @text("feelings_group") feelingsGroup!: FEELING_GROUP_NAMES;
   @text("feelings_emotions") feelingsEmotions?: string;
-  @text("order_index") orderIndex!: number;
+  @field("order_index") orderIndex!: number;
   @text("recording_uri") recordingUri?: string;
-  @relation(TableName.DAYS, "day_id") day!: Relation<Day>;
+  @immutableRelation(TableName.DAYS, "day_id") day!: Relation<Day>;
   @children(TableName.MEDIA) media?: Query<Media>;
 }

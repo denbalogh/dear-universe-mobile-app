@@ -11,7 +11,7 @@ import {
 import FlingGesture from "@/common/components/FlingGesture";
 import BiometricsIcons from "@/common/components/BiometricsIcons";
 import { spacing } from "@/common/constants/theme";
-import { useSnackbar } from "@/common/contexts/SnackbarContext";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import useBiometrics from "@/common/hooks/useBiometrics";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import { Stack, useRouter } from "expo-router";
@@ -19,6 +19,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSettings } from "@/common/providers/SettingsProvider";
+import database from "@/common/models/db";
+import { useSettingsDrawer } from "@/common/providers/SettingsDrawerProvider/SettingsDrawerProvider";
 
 const LockDeleteScreen = () => {
   const theme = useCustomTheme();
@@ -26,37 +29,43 @@ const LockDeleteScreen = () => {
   const { showSnackbar } = useSnackbar();
   const { authenticate } = useBiometrics();
   const { bottom } = useSafeAreaInsets();
+  const { closeDrawer } = useSettingsDrawer();
 
-  //   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
+  useEffect(closeDrawer, [closeDrawer]);
+
+  const settings = useSettings();
+  const { lockCodeHash = "", lockUseBiometrics } = settings;
 
   const [currentCode, setCurrentCode] = useState("");
   const [currentCodeStatus, setCurrentCodeStatus] = useState("");
   const [isCurrentCodeValid, setIsCurrentCodeValid] = useState(false);
 
   const handleConfirm = useCallback(async () => {
-    // updateSettingsObject({
-    //   lockCodeHash: "",
-    //   lockUseBiometrics: false,
-    // });
+    await database.write(async () => {
+      await settings.update((settings) => {
+        settings.lockCodeHash = "";
+        settings.lockUseBiometrics = false;
+      });
+    });
 
     showSnackbar("Lock was deleted");
     router.back();
-  }, [router, showSnackbar]);
+  }, [router, showSnackbar, settings]);
 
   const validateCode = async (onSuccess?: () => void) => {
-    // if (isCodeLengthValid(currentCode)) {
-    //   if (await isCodeHashValid(currentCode, lockCodeHash)) {
-    //     setIsCurrentCodeValid(true);
-    //     setCurrentCodeStatus("");
-    //     onSuccess?.();
-    //   } else {
-    //     setCurrentCodeStatus(INVALID_CODE_ERROR_MSG);
-    //     setIsCurrentCodeValid(false);
-    //   }
-    // } else {
-    //   setCurrentCodeStatus(INVALID_LENGTH_ERROR_MSG);
-    //   setIsCurrentCodeValid(false);
-    // }
+    if (isCodeLengthValid(currentCode)) {
+      if (await isCodeHashValid(currentCode, lockCodeHash)) {
+        setIsCurrentCodeValid(true);
+        setCurrentCodeStatus("");
+        onSuccess?.();
+      } else {
+        setCurrentCodeStatus(INVALID_CODE_ERROR_MSG);
+        setIsCurrentCodeValid(false);
+      }
+    } else {
+      setCurrentCodeStatus(INVALID_LENGTH_ERROR_MSG);
+      setIsCurrentCodeValid(false);
+    }
   };
 
   const handleCurrentCodeEndEditing = () => {
@@ -75,11 +84,11 @@ const LockDeleteScreen = () => {
     }
   }, [authenticate, handleConfirm]);
 
-  //   useEffect(() => {
-  //     if (lockUseBiometrics) {
-  //       handleUseBiometricsToDelete();
-  //     }
-  //   }, [lockUseBiometrics, handleUseBiometricsToDelete]);
+  useEffect(() => {
+    if (lockUseBiometrics) {
+      handleUseBiometricsToDelete();
+    }
+  }, [lockUseBiometrics, handleUseBiometricsToDelete]);
 
   return (
     <FlingGesture onFlingDown={router.back}>
@@ -122,7 +131,7 @@ const LockDeleteScreen = () => {
           <HelperText type="error" visible={currentCodeStatus !== ""}>
             {currentCodeStatus}
           </HelperText>
-          {/* {lockUseBiometrics && (
+          {lockUseBiometrics && (
             <Card
               style={[styles.card, { backgroundColor: theme.colors.error }]}
               mode="elevated"
@@ -140,7 +149,7 @@ const LockDeleteScreen = () => {
                 </View>
               </Card.Content>
             </Card>
-          )} */}
+          )}
         </ScrollView>
         <Button
           disabled={!isCurrentCodeValid}

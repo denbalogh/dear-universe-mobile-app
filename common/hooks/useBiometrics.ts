@@ -1,4 +1,4 @@
-import { useSnackbar } from "@/common/contexts/SnackbarContext";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import {
   authenticateAsync,
   getEnrolledLevelAsync,

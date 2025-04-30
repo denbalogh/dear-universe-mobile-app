@@ -19,7 +19,7 @@ const SnackbarContext = createContext<SnackbarContextType>({
   showSnackbar: () => {},
 });
 
-const SnackbarContextProvider = ({ children }: { children: ReactNode }) => {
+const SnackbarProvider = ({ children }: { children: ReactNode }) => {
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [snackbarAction, setSnackbarAction] = useState<ActionType>();
 
@@ -56,9 +56,9 @@ const SnackbarContextProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const useSnackbar = () => useContext(SnackbarContext);
+export const useSnackbar = () => useContext(SnackbarContext);
 
-export { useSnackbar, SnackbarContextProvider };
+export default SnackbarProvider;
 
 const styles = StyleSheet.create({
   wrapper: {

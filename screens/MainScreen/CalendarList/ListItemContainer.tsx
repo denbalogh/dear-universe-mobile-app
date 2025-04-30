@@ -4,16 +4,14 @@ import { StyleSheet, View } from "react-native";
 import { spacing } from "@/common/constants/theme";
 import { isMonthYearFormat } from "@/common/utils/date";
 import MonthItem from "./MonthItem";
-import useDay from "@/common/hooks/useDay";
 import DayItemLoading from "./DayItemLoading";
+import DayProvider from "@/common/providers/DayProvider";
 
 type Props = {
   dateId: string;
 };
 
 const ListItemContainer = ({ dateId }: Props) => {
-  const day = useDay(dateId);
-
   if (isMonthYearFormat(dateId)) {
     return (
       <View style={styles.listItemWrapper}>
@@ -24,7 +22,9 @@ const ListItemContainer = ({ dateId }: Props) => {
 
   return (
     <View style={styles.listItemWrapper}>
-      {day ? <DayItem day={day} /> : <DayItemLoading />}
+      <DayProvider dayId={dateId} loadingComponent={<DayItemLoading />}>
+        <DayItem />
+      </DayProvider>
     </View>
   );
 };

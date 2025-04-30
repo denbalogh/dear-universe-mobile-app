@@ -11,15 +11,18 @@ import {
 import FlingGesture from "@/common/components/FlingGesture";
 import UseBiometricsCard from "@/common/components/UseBiometricsCard";
 import { spacing } from "@/common/constants/theme";
-import { useSnackbar } from "@/common/contexts/SnackbarContext";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import useIsKeyboardOpen from "@/common/hooks/useIsKeyboardOpen";
 import { getHashFromString } from "@/common/utils/crypto";
 import { Stack, useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Appbar, Button, HelperText, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSettings } from "@/common/providers/SettingsProvider";
+import database from "@/common/models/db";
+import { useSettingsDrawer } from "@/common/providers/SettingsDrawerProvider/SettingsDrawerProvider";
 
 const LockSetupScreen = () => {
   const theme = useCustomTheme();
@@ -27,6 +30,11 @@ const LockSetupScreen = () => {
   const isKeyboardOpen = useIsKeyboardOpen();
   const { showSnackbar } = useSnackbar();
   const { bottom } = useSafeAreaInsets();
+  const { closeDrawer } = useSettingsDrawer();
+
+  useEffect(closeDrawer, [closeDrawer]);
+
+  const settings = useSettings();
 
   const [isTyping, setIsTyping] = useState(false);
   const [code, setCode] = useState("");
@@ -85,10 +93,13 @@ const LockSetupScreen = () => {
 
   const onConfirmPress = async () => {
     const hash = await getHashFromString(code);
-    // updateSettingsObject({
-    //   lockCodeHash: hash,
-    //   lockUseBiometrics: biometricsEnabled,
-    // });
+
+    await database.write(async () => {
+      await settings.update((s) => {
+        s.lockCodeHash = hash;
+        s.lockUseBiometrics = biometricsEnabled;
+      });
+    });
 
     showSnackbar("Lock was set up");
     router.back();

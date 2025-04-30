@@ -19,6 +19,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, Card, HelperText, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSettings } from "@/common/providers/SettingsProvider";
 
 const LockScreen = () => {
   const theme = useCustomTheme();
@@ -26,8 +27,7 @@ const LockScreen = () => {
   const appState = useAppState();
   const { authenticate } = useBiometrics();
   const { bottom } = useSafeAreaInsets();
-
-  //   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
+  const { lockCodeHash = "", lockUseBiometrics } = useSettings();
 
   const [code, setCode] = useState("");
   const [codeStatus, setCodeStatus] = useState("");
@@ -46,19 +46,19 @@ const LockScreen = () => {
   }, [router]);
 
   const validateCode = async (onSuccess?: () => void) => {
-    // if (isCodeLengthValid(code)) {
-    //   if (await isCodeHashValid(code, lockCodeHash)) {
-    //     setIsCodeValid(true);
-    //     setCodeStatus("");
-    //     onSuccess?.();
-    //   } else {
-    //     setCodeStatus(INVALID_CODE_ERROR_MSG);
-    //     setIsCodeValid(false);
-    //   }
-    // } else {
-    //   setCodeStatus(INVALID_LENGTH_ERROR_MSG);
-    //   setIsCodeValid(false);
-    // }
+    if (isCodeLengthValid(code)) {
+      if (await isCodeHashValid(code, lockCodeHash)) {
+        setIsCodeValid(true);
+        setCodeStatus("");
+        onSuccess?.();
+      } else {
+        setCodeStatus(INVALID_CODE_ERROR_MSG);
+        setIsCodeValid(false);
+      }
+    } else {
+      setCodeStatus(INVALID_LENGTH_ERROR_MSG);
+      setIsCodeValid(false);
+    }
   };
 
   const handleCodeEndEditing = () => {
@@ -77,11 +77,11 @@ const LockScreen = () => {
     }
   }, [authenticate, handleConfirm]);
 
-  //   useEffect(() => {
-  //     if (lockUseBiometrics && appState === "active") {
-  //       handleUseBiometricsToUnlock();
-  //     }
-  //   }, [lockUseBiometrics, handleUseBiometricsToUnlock, appState]);
+  useEffect(() => {
+    if (lockUseBiometrics && appState === "active") {
+      handleUseBiometricsToUnlock();
+    }
+  }, [lockUseBiometrics, handleUseBiometricsToUnlock, appState]);
 
   return (
     <View
@@ -122,7 +122,7 @@ const LockScreen = () => {
         <HelperText type="error" visible={codeStatus !== ""}>
           {codeStatus}
         </HelperText>
-        {/* {lockUseBiometrics && (
+        {lockUseBiometrics && (
           <Card
             style={[
               styles.card,
@@ -141,7 +141,7 @@ const LockScreen = () => {
               <BiometricsIcons color={theme.colors.onPrimaryContainer} />
             </Card.Content>
           </Card>
-        )} */}
+        )}
       </ScrollView>
       <Button
         disabled={!isCodeValid}

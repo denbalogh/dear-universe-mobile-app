@@ -13,11 +13,11 @@ import {
 import FlingGesture from "@/common/components/FlingGesture";
 import UseBiometricsCard from "@/common/components/UseBiometricsCard";
 import { spacing } from "@/common/constants/theme";
-import { useSnackbar } from "@/common/contexts/SnackbarContext";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import { getHashFromString } from "@/common/utils/crypto";
 import { Stack, useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import {
   Appbar,
@@ -28,14 +28,21 @@ import {
   Text,
 } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSettings } from "@/common/providers/SettingsProvider";
+import database from "@/common/models/db";
+import { useSettingsDrawer } from "@/common/providers/SettingsDrawerProvider/SettingsDrawerProvider";
 
 const LockEditScreen = () => {
   const theme = useCustomTheme();
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
   const { bottom } = useSafeAreaInsets();
+  const { closeDrawer } = useSettingsDrawer();
 
-  //   const { lockCodeHash = "", lockUseBiometrics = false } = settingsObject || {};
+  useEffect(closeDrawer, [closeDrawer]);
+
+  const settings = useSettings();
+  const { lockCodeHash = "", lockUseBiometrics } = settings;
 
   const [codeChangeEnabled, setCodeChangeEnabled] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -92,10 +99,12 @@ const LockEditScreen = () => {
     setCodeChangeEnabled(isOpen);
   };
 
-  const handleOnBiometricsChange = (biometricsEnabled: boolean) => {
-    // updateSettingsObject({
-    //   lockUseBiometrics: biometricsEnabled,
-    // });
+  const handleOnBiometricsChange = async (biometricsEnabled: boolean) => {
+    await database.write(async () => {
+      await settings.update((s) => {
+        s.lockUseBiometrics = biometricsEnabled;
+      });
+    });
 
     showSnackbar(
       biometricsEnabled
@@ -105,19 +114,19 @@ const LockEditScreen = () => {
   };
 
   const handleCurrentCodeEndEditing = async () => {
-    // if (isCodeLengthValid(currentCode)) {
-    //   if (await isCodeHashValid(currentCode, lockCodeHash)) {
-    //     setCurrentCodeStatus("");
-    //     setIsCurrentCodeValid(true);
-    //   } else {
-    //     setCurrentCodeStatus(INVALID_CODE_ERROR_MSG);
-    //     setIsCurrentCodeValid(false);
-    //   }
-    // } else {
-    //   setCurrentCodeStatus(INVALID_LENGTH_ERROR_MSG);
-    //   setIsCurrentCodeValid(false);
-    // }
-    // setIsTyping(false);
+    if (isCodeLengthValid(currentCode)) {
+      if (await isCodeHashValid(currentCode, lockCodeHash)) {
+        setCurrentCodeStatus("");
+        setIsCurrentCodeValid(true);
+      } else {
+        setCurrentCodeStatus(INVALID_CODE_ERROR_MSG);
+        setIsCurrentCodeValid(false);
+      }
+    } else {
+      setCurrentCodeStatus(INVALID_LENGTH_ERROR_MSG);
+      setIsCurrentCodeValid(false);
+    }
+    setIsTyping(false);
   };
 
   const handleNewCodeEndEditing = () => {
@@ -146,12 +155,12 @@ const LockEditScreen = () => {
   };
 
   const handleOnCurrentCodeSubmit = async () => {
-    // if (
-    //   (await isCodeHashValid(currentCode, lockCodeHash)) &&
-    //   !isCodeLengthValid(newCode)
-    // ) {
-    //   newCodeInputRef.current?.focus();
-    // }
+    if (
+      (await isCodeHashValid(currentCode, lockCodeHash)) &&
+      !isCodeLengthValid(newCode)
+    ) {
+      newCodeInputRef.current?.focus();
+    }
   };
 
   const handleOnNewCodeSubmit = () => {
@@ -164,9 +173,13 @@ const LockEditScreen = () => {
   };
 
   const onConfirmPress = async () => {
-    // updateSettingsObject({
-    //   lockCodeHash: await getHashFromString(newCode),
-    // });
+    const newHash = await getHashFromString(newCode);
+
+    await database.write(async () => {
+      await settings.update((s) => {
+        s.lockCodeHash = newHash;
+      });
+    });
 
     showSnackbar("Lock was updated");
     router.back();
@@ -288,10 +301,10 @@ const LockEditScreen = () => {
               )}
             </Card.Content>
           </Card>
-          {/* <UseBiometricsCard
+          <UseBiometricsCard
             biometricsEnabled={lockUseBiometrics}
             onChange={handleOnBiometricsChange}
-          /> */}
+          />
         </ScrollView>
       </View>
     </FlingGesture>

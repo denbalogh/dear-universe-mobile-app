@@ -40,10 +40,10 @@ export default appSchema({
       columns: [
         { name: "theme", type: "string" },
         { name: "lock_code_hash", type: "string", isOptional: true },
-        { name: "lock_use_biometrics", type: "boolean", isOptional: true },
+        { name: "lock_use_biometrics", type: "boolean" },
         { name: "daily_reminder_at", type: "number", isOptional: true },
         { name: "daily_reminder_message", type: "string", isOptional: true },
-        { name: "terms_understood", type: "boolean", isOptional: true },
+        { name: "terms_understood", type: "boolean" },
       ],
     }),
   ],

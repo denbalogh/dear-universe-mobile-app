@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { formatMonthYear } from "@/common/utils/date";
-import { useSettingsDrawer } from "@/common/contexts/SettingsDrawerContext/SettingsDrawerContext";
+import { useSettingsDrawer } from "@/common/providers/SettingsDrawerProvider/SettingsDrawerProvider";
 import useLockScreenHandler from "@/screens/MainScreen/hooks/useLockScreenHandler";
 import useAdsConsentHandler from "@/screens/MainScreen/hooks/useAdsConsentHandler";
 import NativeAdBannerSlim from "@/common/components/NativeAdBanner/NativeAdBannerSlim";
@@ -14,7 +14,7 @@ import CalendarList from "./CalendarList/CalendarList";
 
 const MainScreen = () => {
   const theme = useTheme();
-  const { showSettingsDrawer } = useSettingsDrawer();
+  const { openDrawer } = useSettingsDrawer();
   const { bottom } = useSafeAreaInsets();
 
   const [monthYear, setMonthYear] = useState(formatMonthYear(new Date()));
@@ -48,7 +48,7 @@ const MainScreen = () => {
               />
               <Appbar.Action
                 icon="cog-outline"
-                onPress={showSettingsDrawer}
+                onPress={openDrawer}
                 color={theme.colors.onBackground}
               />
             </Appbar.Header>

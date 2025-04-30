@@ -1,12 +1,12 @@
 import { spacing } from "@/common/constants/theme";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
-import { useSnackbar } from "@/common/contexts/SnackbarContext";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import { formatFullDate, parseDayId } from "@/common/utils/date";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { FAB } from "react-native-paper";
 import { DaySearchTermParams } from "./types";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 
 const ConfirmButton = () => {
   const { showSnackbar } = useSnackbar();
@@ -21,7 +21,7 @@ const ConfirmButton = () => {
     feelingsEmotions,
     feelingsGroup,
     clear,
-  } = useEntryDraft();
+  } = useEntryEditor();
 
   if (isEmpty) {
     return null;

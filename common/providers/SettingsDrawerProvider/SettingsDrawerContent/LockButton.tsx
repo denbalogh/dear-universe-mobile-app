@@ -4,56 +4,49 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Avatar, Button, Card } from "react-native-paper";
+import { useSettings } from "../../SettingsProvider";
 
-type Props = {
-  closeSettingsDrawer: () => void;
-};
-
-const LockButton = ({ closeSettingsDrawer }: Props) => {
+const LockButton = () => {
   const router = useRouter();
   const theme = useCustomTheme();
-
-  // const { lockCodeHash, lockUseBiometrics = false } = settingsObject || {};
+  const { lockCodeHash, lockUseBiometrics } = useSettings();
 
   const handleOnSetupPress = () => {
     router.navigate({ pathname: "/lock/setup" });
-    closeSettingsDrawer();
   };
 
   const handleOnEditPress = () => {
     router.navigate({ pathname: "/lock/edit" });
-    closeSettingsDrawer();
   };
 
   const handleOnDeletePress = () => {
     router.navigate({ pathname: "/lock/delete" });
-    closeSettingsDrawer();
   };
 
-  // if (lockCodeHash) {
-  //   return (
-  //     <Card style={styles.wrapper} mode="contained" onPress={handleOnEditPress}>
-  //       <Card.Title
-  //         title="App locked"
-  //         subtitle={lockUseBiometrics && "Unlock with biometrics enabled"}
-  //         left={(props) => <Avatar.Icon {...props} icon="lock" />}
-  //         subtitleNumberOfLines={2}
-  //       />
-  //       <Card.Actions style={styles.cardActions}>
-  //         <Button mode="text" onPress={handleOnEditPress}>
-  //           Edit
-  //         </Button>
-  //         <Button
-  //           mode="text"
-  //           textColor={theme.colors.error}
-  //           onPress={handleOnDeletePress}
-  //         >
-  //           Delete
-  //         </Button>
-  //       </Card.Actions>
-  //     </Card>
-  //   );
-  // }
+  if (lockCodeHash) {
+    return (
+      <Card style={styles.wrapper} mode="contained" onPress={handleOnEditPress}>
+        <Card.Title
+          title="App locked"
+          subtitle={lockUseBiometrics && "Unlock with biometrics enabled"}
+          left={(props) => <Avatar.Icon {...props} icon="lock" />}
+          subtitleNumberOfLines={2}
+        />
+        <Card.Actions style={styles.cardActions}>
+          <Button mode="text" onPress={handleOnEditPress}>
+            Edit
+          </Button>
+          <Button
+            mode="text"
+            textColor={theme.colors.error}
+            onPress={handleOnDeletePress}
+          >
+            Delete
+          </Button>
+        </Card.Actions>
+      </Card>
+    );
+  }
 
   return (
     <Card style={styles.wrapper} onPress={handleOnSetupPress} mode="elevated">

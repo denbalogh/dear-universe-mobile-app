@@ -1,5 +1,4 @@
 import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
-import { Media } from "@/common/types/Media";
 import React, {
   createContext,
   ReactNode,
@@ -7,8 +6,10 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import Media from "../models/Media";
 
-type EntryDraftContextType = {
+type EntryEditorContextType = {
+  entryId: string | null;
   text: string;
   recordingUri: string;
   media: Media[];
@@ -23,7 +24,8 @@ type EntryDraftContextType = {
   clear: () => void;
 };
 
-const EntryDraftContext = createContext<EntryDraftContextType>({
+const EntryEditorContext = createContext<EntryEditorContextType>({
+  entryId: null,
   text: "",
   recordingUri: "",
   media: [],
@@ -42,7 +44,8 @@ type ProviderProps = {
   children: ReactNode;
 };
 
-const EntryDraftContextProvider = ({ children }: ProviderProps) => {
+const EntryEditorProvider = ({ children }: ProviderProps) => {
+  const [entryId, setEntryId] = useState<string | null>(null);
   const [text, setText] = useState<string>("");
   const [recordingUri, setRecordingUri] = useState<string>("");
   const [media, setMedia] = useState<Media[]>([]);
@@ -58,6 +61,7 @@ const EntryDraftContextProvider = ({ children }: ProviderProps) => {
   }, [text, recordingUri, media, feelingsEmotions]);
 
   const clear = () => {
+    setEntryId(null);
     setText("");
     setRecordingUri("");
     setMedia([]);
@@ -66,8 +70,9 @@ const EntryDraftContextProvider = ({ children }: ProviderProps) => {
   };
 
   return (
-    <EntryDraftContext.Provider
+    <EntryEditorContext.Provider
       value={{
+        entryId,
         text,
         recordingUri,
         media,
@@ -83,10 +88,10 @@ const EntryDraftContextProvider = ({ children }: ProviderProps) => {
       }}
     >
       {children}
-    </EntryDraftContext.Provider>
+    </EntryEditorContext.Provider>
   );
 };
 
-const useEntryDraft = () => useContext(EntryDraftContext);
+export const useEntryEditor = () => useContext(EntryEditorContext);
 
-export { useEntryDraft, EntryDraftContextProvider };
+export default EntryEditorProvider;

@@ -1,4 +1,4 @@
-import { useConfirmDialog } from "@/common/contexts/ConfirmDialogContext";
+import { useConfirmDialog } from "@/common/providers/ConfirmDialogProvider";
 import useRecordingPermissions from "@/common/hooks/useRecordingPermissions";
 import {
   Recording,
@@ -15,20 +15,20 @@ import { format } from "date-fns";
 import { normalizeMeteringForScale } from "../../../common/components/RecordingControls/utils";
 import { StyleSheet, View } from "react-native";
 import { spacing } from "@/common/constants/theme";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
 import AudioPlayer from "@/common/components/AudioPlayer/AudioPlayer";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 
 const RecordingSection = () => {
   const {
     granted: recordingPermissionsGranted,
     requestPermissions: requestRecordingPermissions,
   } = useRecordingPermissions();
-  const { showConfirmDialog } = useConfirmDialog();
+  const { showDialog } = useConfirmDialog();
 
   const [recording, setRecording] = useState<Recording>();
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>();
 
-  const { setRecordingUri, recordingUri } = useEntryDraft();
+  const { setRecordingUri, recordingUri } = useEntryEditor();
 
   const startRecording = async () => {
     await setAudioModeAsync({
@@ -110,11 +110,11 @@ const RecordingSection = () => {
   }, [unloadRecording]);
 
   const handleDiscardRecording = () => {
-    showConfirmDialog("Do you want to discard the recording?", unloadRecording);
+    showDialog("Do you want to discard the recording?", unloadRecording);
   };
 
   const handleDiscardRecordingUri = () => {
-    showConfirmDialog("Do you want to discard the recording?", () =>
+    showDialog("Do you want to discard the recording?", () =>
       setRecordingUri(""),
     );
   };

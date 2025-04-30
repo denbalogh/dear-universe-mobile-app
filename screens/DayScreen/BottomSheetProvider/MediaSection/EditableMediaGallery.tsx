@@ -5,10 +5,10 @@ import MediaGalleryPreview from "../../EntriesList/Entry/MediaGallery/MediaGalle
 import { DndProvider, DndProviderProps } from "@mgcrea/react-native-dnd";
 import EditableMediaGalleryItem from "./EditableMediaGalleryItem";
 import { runOnJS } from "react-native-reanimated";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import { Button, IconButton } from "react-native-paper";
 import { spacing } from "@/common/constants/theme";
-import { useConfirmDialog } from "@/common/contexts/ConfirmDialogContext";
+import { useConfirmDialog } from "@/common/providers/ConfirmDialogProvider";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 
 type Props = {
@@ -18,9 +18,9 @@ type Props = {
 
 const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
   const theme = useCustomTheme();
-  const { media, setMedia } = useEntryDraft();
+  const { media, setMedia } = useEntryEditor();
 
-  const { showConfirmDialog } = useConfirmDialog();
+  const { showDialog } = useConfirmDialog();
 
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
@@ -101,7 +101,7 @@ const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
   };
 
   const handleOnSelectedDelete = () => {
-    showConfirmDialog("Do you wish to delete the selected media?", () => {
+    showDialog("Do you wish to delete the selected media?", () => {
       const newMedia = media.filter(({ uri }) => !selectedUri.includes(uri));
 
       setMedia(newMedia);

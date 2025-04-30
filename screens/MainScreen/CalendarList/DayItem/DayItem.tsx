@@ -14,19 +14,16 @@ import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
 import MediaPreview from "./MediaPreview";
 import FeelingsIndicator from "@/screens/MainScreen/CalendarList/DayItem/FeelingsIndicator";
 import { ITEM_HEIGHT } from "../../constants";
-import { withObservables } from "@nozbe/watermelondb/react";
 import Day from "@/common/models/Day";
 import { parseDayId } from "@/common/utils/date";
 import Media from "@/common/models/Media";
 import { useRouter } from "expo-router";
+import { useDay } from "@/common/providers/DayProvider";
 
-type Props = {
-  day: Day;
-};
-
-const ListItem = ({ day }: Props) => {
+const ListItem = () => {
   const theme = useTheme();
   const router = useRouter();
+  const day = useDay();
   const date = parseDayId(day.id);
 
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
@@ -140,9 +137,7 @@ const ListItem = ({ day }: Props) => {
   );
 };
 
-const enhance = withObservables<Props, Props>(["day"], ({ day }) => ({ day }));
-
-export default enhance(ListItem);
+export default ListItem;
 
 const styles = StyleSheet.create({
   itemWrapper: {

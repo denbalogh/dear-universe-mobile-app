@@ -1,22 +1,28 @@
 import { spacing } from "@/common/constants/theme";
+import database from "@/common/models/db";
+import { useDay } from "@/common/providers/DayProvider";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import { isEqual } from "lodash";
-import React, { memo, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 
-type Props = {
-  defaultValue: string;
-  onSubmit: (value: string) => void;
-};
+const TitleInput = () => {
+  const { showSnackbar } = useSnackbar();
+  const day = useDay();
+  const [value, setValue] = useState<string | undefined>(day.title);
 
-const TitleInput = ({ defaultValue, onSubmit }: Props) => {
-  const [value, setValue] = useState<string>(defaultValue);
+  const handleOnSubmit = useCallback(async () => {
+    if (isEqual(value, day.title)) return;
 
-  const handleOnSubmit = () => {
-    if (!isEqual(value, defaultValue)) {
-      onSubmit(value);
-    }
-  };
+    await database.write(async () => {
+      await day.update((d) => {
+        d.title = value;
+      });
+    });
+
+    showSnackbar("Title for the day was updated");
+  }, [value, day, showSnackbar]);
 
   return (
     <TextInput
@@ -29,7 +35,7 @@ const TitleInput = ({ defaultValue, onSubmit }: Props) => {
       onEndEditing={handleOnSubmit}
       style={styles.dayTitleInput}
       mode="outlined"
-      autoFocus={!defaultValue}
+      autoFocus={!day.title}
       contentStyle={{ marginTop: 5 }}
     />
   );

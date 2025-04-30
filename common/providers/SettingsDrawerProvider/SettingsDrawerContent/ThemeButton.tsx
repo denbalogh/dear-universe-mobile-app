@@ -3,17 +3,27 @@ import React from "react";
 import { Button } from "react-native-paper";
 import CustomMenu from "../../../components/CustomMenu";
 import { SettingsTheme } from "@/common/types/Settings";
+import database from "@/common/models/db";
+import { useSettings } from "@/common/providers/SettingsProvider";
 
 const ThemeButton = () => {
-  const colorScheme = "system"; // #TODO: Replace with actual color scheme
+  const settings = useSettings();
+
+  const colorScheme = settings.theme;
   const activeIcon = {
     system: "theme-light-dark",
     light: "weather-sunny",
     dark: "weather-night",
-  }[colorScheme];
+  }[settings.theme];
 
-  const onItemPress = (colorScheme: SettingsTheme) => {
-    // updateSettingsObject({ theme: colorScheme });
+  const onItemPress = async (colorScheme: SettingsTheme) => {
+    if (!settings) return;
+
+    await database.write(async () => {
+      await settings.update((settings) => {
+        settings.theme = colorScheme;
+      });
+    });
   };
 
   return (
@@ -37,7 +47,12 @@ const ThemeButton = () => {
       ]}
     >
       {({ openMenu }) => (
-        <Button icon={activeIcon} mode="elevated" onPress={openMenu}>
+        <Button
+          icon={activeIcon}
+          mode="elevated"
+          onPress={openMenu}
+          loading={!settings}
+        >
           {capitalize(colorScheme)}
         </Button>
       )}

@@ -1,5 +1,3 @@
-export const SETTINGS_ID = "settings";
-
 export const TERMS_AND_CONDITIONS_URL =
   "https://docs.google.com/document/d/1FydBhtw1EuW3g9vdnaMjnI9QbsZaMlpmd7WlJoAXwdo/mobilebasic?rm=minimal";
 

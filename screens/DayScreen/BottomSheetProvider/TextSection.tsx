@@ -1,13 +1,13 @@
 import { roundness, spacing } from "@/common/constants/theme";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React from "react";
 import { StyleSheet } from "react-native";
 
 const TextSection = () => {
   const theme = useCustomTheme();
-  const { text, setText } = useEntryDraft();
+  const { text, setText } = useEntryEditor();
 
   return (
     <BottomSheetTextInput

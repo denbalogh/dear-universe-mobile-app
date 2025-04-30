@@ -4,11 +4,11 @@ import { StyleSheet, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
 import AudioPlayer from "@/common/components/AudioPlayer/AudioPlayer";
-import { Media } from "@/common/types/Media";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import CustomMenu from "@/common/components/CustomMenu";
-import { useEntryDraft } from "@/contexts/EntryDraftContext";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import MediaGallery from "./MediaGallery/MediaGallery";
+import Media from "@/common/models/Media";
 
 export type EntryData = {
   text: string;
@@ -34,7 +34,7 @@ const Entry = ({
   const hasText = !!text;
   const hasFeelings = feelingsEmotions.length > 0;
 
-  const { clear } = useEntryDraft();
+  const { clear } = useEntryEditor();
 
   const optionsMenu = useMemo(() => {
     if (isDraft) {
