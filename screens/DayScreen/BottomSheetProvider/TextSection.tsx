@@ -15,7 +15,8 @@ const TextSection = () => {
       value={text}
       onChangeText={setText}
       scrollEnabled={false}
-      style={styles.input}
+      style={[styles.input, { color: theme.colors.onBackground }]}
+      placeholderTextColor={theme.colors.onBackground}
       multiline={true}
       cursorColor={theme.colors.secondary}
       selectionColor={theme.colors.secondaryContainer}

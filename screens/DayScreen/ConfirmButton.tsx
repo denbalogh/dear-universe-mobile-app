@@ -1,8 +1,8 @@
-import { sizing, spacing } from "@/common/constants/theme";
+import { spacing } from "@/common/constants/theme";
 import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { FAB, IconButton } from "react-native-paper";
+import { FAB } from "react-native-paper";
 import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import { useDay } from "@/common/providers/DayProvider";
 import database, { entriesCollection } from "@/common/models/db";
@@ -90,14 +90,13 @@ const ConfirmButton = () => {
 
   return (
     <View style={styles.wrapper}>
-      <IconButton
-        size={sizing.sizeMedium}
+      <FAB
         icon="close"
+        color={theme.colors.error}
         onPress={clear}
-        iconColor={theme.colors.error}
-        mode="contained-tonal"
+        variant="tertiary"
       />
-      <FAB icon="check" style={styles.check} onPress={handleOnPress} />
+      <FAB icon="check" onPress={handleOnPress} />
     </View>
   );
 };
@@ -108,10 +107,11 @@ const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
     bottom: spacing.spaceLarge,
-    right: spacing.spaceMedium,
+    right: 0,
+    left: 0,
+    marginHorizontal: spacing.spaceMedium,
     alignItems: "center",
-  },
-  check: {
-    marginTop: spacing.spaceMedium,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
