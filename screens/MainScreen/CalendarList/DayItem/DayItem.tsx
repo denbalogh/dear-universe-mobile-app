@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Text,
@@ -14,35 +14,36 @@ import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
 import MediaPreview from "./MediaPreview";
 import FeelingsIndicator from "@/screens/MainScreen/CalendarList/DayItem/FeelingsIndicator";
 import { ITEM_HEIGHT } from "../../constants";
-import Day from "@/common/models/Day";
 import { parseDayId } from "@/common/utils/date";
-import Media from "@/common/models/Media";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useDay } from "@/common/providers/DayProvider";
+import { Media } from "@/common/types/Media";
 
 const ListItem = () => {
   const theme = useTheme();
   const router = useRouter();
-  const day = useDay();
+  const { day } = useDay();
   const date = parseDayId(day.id);
 
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const [feelings, setFeelings] = useState<FEELING_GROUP_NAMES[] | null>(null);
-  const [media, setMedia] = useState<Media[] | null>([]);
+  const [media, setMedia] = useState<Media[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      if (day) {
-        const isEmpty = await day.isEmpty();
-        const feelings = await day.feelings();
-        const media = await day.media();
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        if (day) {
+          const isEmpty = await day.isEmpty();
+          const feelings = await day.feelings();
+          const media = await day.media();
 
-        setIsEmpty(isEmpty);
-        setFeelings(feelings);
-        setMedia(media);
-      }
-    })();
-  }, [day]);
+          setIsEmpty(isEmpty);
+          setFeelings(feelings);
+          setMedia(media);
+        }
+      })();
+    }, [day]),
+  );
 
   const isToday = isTodayDateFns(date);
 
@@ -118,12 +119,12 @@ const ListItem = () => {
           <View style={styles.contentWrapper}>
             <Text
               style={[styles.title, { color: textColor }]}
-              variant="bodyMedium"
-              numberOfLines={4}
+              variant="bodyLarge"
+              numberOfLines={3}
             >
               {day.title || "No title for the day"}
             </Text>
-            <MediaPreview date={date} />
+            <MediaPreview media={media} />
           </View>
         )}
         {feelings && (
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flexShrink: 1,
-    marginVertical: spacing.spaceSmall,
+    marginVertical: spacing.spaceMedium,
     marginRight: spacing.spaceMedium,
     width: "100%",
     lineHeight: 18,

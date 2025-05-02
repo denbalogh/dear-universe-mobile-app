@@ -1,19 +1,27 @@
-import { spacing } from "@/common/constants/theme";
+import { sizing, spacing } from "@/common/constants/theme";
 import { useSnackbar } from "@/common/providers/SnackbarProvider";
-import { formatFullDate, parseDayId } from "@/common/utils/date";
-import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { StyleSheet } from "react-native";
-import { FAB } from "react-native-paper";
-import { DaySearchTermParams } from "./types";
+import { StyleSheet, View } from "react-native";
+import { FAB, IconButton } from "react-native-paper";
 import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
+import { useDay } from "@/common/providers/DayProvider";
+import database, { entriesCollection } from "@/common/models/db";
+import {
+  moveAndDeleteUpdatedMediaAndGetPaths,
+  moveAndDeleteUpdatedRecordingAndGetPath,
+  moveMediaToAppDirAndGetPaths,
+  moveRecordingToAppDirAndGetPath,
+} from "@/common/utils/files";
+import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 
 const ConfirmButton = () => {
+  const theme = useCustomTheme();
   const { showSnackbar } = useSnackbar();
 
-  const { dayId } = useLocalSearchParams<DaySearchTermParams>();
+  const { day, entries } = useDay();
 
   const {
+    entryId,
     isEmpty,
     text,
     recordingUri,
@@ -23,41 +31,87 @@ const ConfirmButton = () => {
     clear,
   } = useEntryEditor();
 
-  if (isEmpty) {
+  const isDraft = !entryId;
+
+  if (isDraft && isEmpty) {
     return null;
   }
 
-  const handleOnPress = () => {
-    // if (!dayObject) {
-    //   return;
-    // }
+  const handleCreateNewEntry = async () => {
+    const newMedia = await moveMediaToAppDirAndGetPaths(media);
+    const newRecordingUri = await moveRecordingToAppDirAndGetPath(recordingUri);
 
-    // realm.write(() => {
-    //   const entry = realm.create(Entry, {
-    //     text,
-    //     recordingUri,
-    //     media: media as Media[],
-    //     feelingsGroup,
-    //     feelingsEmotions,
-    //     day: dayObject,
-    //   });
+    await database.write(async () => {
+      await entriesCollection.create((entry) => {
+        entry.day.set(day);
+        entry.text = text;
+        entry.language = "en";
+        entry.orderIndex = entries.length;
+        entry.recordingUri = newRecordingUri;
+        entry.feelingsGroup = feelingsGroup;
+        entry.feelingsEmotions = feelingsEmotions;
+        entry.media = newMedia;
+      });
+    });
+    showSnackbar("Entry created");
+  };
 
-    //   dayObject.entryObjects.push(entry);
-    // });
+  const handleUpdateEntry = async () => {
+    const entry = await entriesCollection.find(entryId as string);
+    const newMedia = await moveAndDeleteUpdatedMediaAndGetPaths(
+      media,
+      entry.media,
+    );
+    const newRecordingUri = await moveAndDeleteUpdatedRecordingAndGetPath(
+      recordingUri,
+      entry.recordingUri,
+    );
 
-    showSnackbar(`Entry saved for ${formatFullDate(parseDayId(dayId))}`);
+    await database.write(async () => {
+      await entry.update((entry) => {
+        entry.text = text;
+        entry.recordingUri = newRecordingUri;
+        entry.feelingsGroup = feelingsGroup;
+        entry.feelingsEmotions = feelingsEmotions;
+        entry.media = newMedia;
+      });
+    });
+    showSnackbar("Entry updated");
+  };
+
+  const handleOnPress = async () => {
+    if (isDraft) {
+      await handleCreateNewEntry();
+    } else {
+      await handleUpdateEntry();
+    }
     clear();
   };
 
-  return <FAB icon="check" style={styles.fab} onPress={handleOnPress} />;
+  return (
+    <View style={styles.wrapper}>
+      <IconButton
+        size={sizing.sizeMedium}
+        icon="close"
+        onPress={clear}
+        iconColor={theme.colors.error}
+        mode="contained-tonal"
+      />
+      <FAB icon="check" style={styles.check} onPress={handleOnPress} />
+    </View>
+  );
 };
 
 export default ConfirmButton;
 
 const styles = StyleSheet.create({
-  fab: {
+  wrapper: {
     position: "absolute",
     bottom: spacing.spaceLarge,
     right: spacing.spaceMedium,
+    alignItems: "center",
+  },
+  check: {
+    marginTop: spacing.spaceMedium,
   },
 });

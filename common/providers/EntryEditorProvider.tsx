@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import Media from "../models/Media";
+import { Media } from "../types/Media";
 
 type EntryEditorContextType = {
   entryId: string | null;
@@ -15,6 +15,7 @@ type EntryEditorContextType = {
   media: Media[];
   feelingsGroup: FEELING_GROUP_NAMES;
   feelingsEmotions: string[];
+  setEntryId: (id: string | null) => void;
   setText: (text: string) => void;
   setRecordingUri: (uri: string) => void;
   setMedia: (media: Media[]) => void;
@@ -31,6 +32,7 @@ const EntryEditorContext = createContext<EntryEditorContextType>({
   media: [],
   feelingsGroup: FEELING_GROUP_NAMES.NEUTRAL,
   feelingsEmotions: [],
+  setEntryId: () => {},
   setText: () => {},
   setRecordingUri: () => {},
   setMedia: () => {},
@@ -78,6 +80,7 @@ const EntryEditorProvider = ({ children }: ProviderProps) => {
         media,
         feelingsGroup,
         feelingsEmotions,
+        setEntryId,
         setText,
         setRecordingUri,
         setMedia,

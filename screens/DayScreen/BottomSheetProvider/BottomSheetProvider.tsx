@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { StyleSheet, View } from "react-native";
@@ -27,24 +28,22 @@ enum Tabs {
 }
 
 type BottomSheetContextType = {
-  activeSnapPoint: number;
-  setActiveSnapPoint: (index: number) => void;
+  snapToIndex: (index: number) => void;
 };
 
 const BottomSheetContext = createContext<BottomSheetContextType>({
-  activeSnapPoint: -1,
-  setActiveSnapPoint: () => {},
+  snapToIndex: () => {},
 });
 
 const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const theme = useCustomTheme();
-  const day = useDay();
+  const { day, entries } = useDay();
 
-  const [activeSnapPoint, setActiveSnapPoint] = useState(day.title ? 0 : -1);
+  const hasTitle = !!day.title;
+  const hasEntries = entries.length > 0;
 
-  const onChange = useCallback((index: number) => {
-    setActiveSnapPoint(index);
-  }, []);
+  const initialSnapPoint = hasTitle && !hasEntries ? 0 : -1;
+  const [activeSnapPoint, setActiveSnapPoint] = useState(initialSnapPoint);
 
   const [activeTab, setActiveTab] = useState<Tabs>(Tabs.Text);
 
@@ -65,7 +64,6 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
 
   const onTabChange = useCallback((tab: string) => {
     setActiveTab(tab as Tabs);
-    setActiveSnapPoint(0);
   }, []);
 
   const tabButtonStyle = {
@@ -74,10 +72,15 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
 
   const isBottomSheetHidden = activeSnapPoint === -1;
 
+  const ref = useRef<BottomSheet>(null);
+  const snapToIndex = useCallback((index: number) => {
+    if (ref.current) {
+      ref.current.snapToIndex(index);
+    }
+  }, []);
+
   return (
-    <BottomSheetContext.Provider
-      value={{ activeSnapPoint, setActiveSnapPoint }}
-    >
+    <BottomSheetContext.Provider value={{ snapToIndex }}>
       <Stack.Screen
         options={{
           navigationBarColor: isBottomSheetHidden
@@ -88,12 +91,14 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
       {children}
       <Button
         icon="arrow-up"
-        onPress={() => setActiveSnapPoint(0)}
+        onPress={() => snapToIndex(0)}
         style={styles.showPanelButton}
       >
         Show editor
       </Button>
       <BottomSheet
+        ref={ref}
+        animateOnMount={false}
         enablePanDownToClose={true}
         snapPoints={snapPoints}
         backgroundStyle={{ backgroundColor: theme.colors.background }}
@@ -103,8 +108,8 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
         }}
         handleIndicatorStyle={{ backgroundColor: theme.colors.onBackground }}
         enableDynamicSizing={false}
-        // onChange={onChange} // We save active snap index to state to trigger render,
-        index={activeSnapPoint} // because buttons inside bottom sheet weren't responding to presses
+        onChange={setActiveSnapPoint}
+        index={initialSnapPoint}
         android_keyboardInputMode="adjustResize"
         style={styles.bottomSheet}
       >

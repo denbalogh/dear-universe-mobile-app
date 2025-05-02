@@ -6,7 +6,6 @@ import migrations from "./migrations";
 import Day from "./Day";
 import Entry from "./Entry";
 import Settings from "./Settings";
-import Media from "./Media";
 import { Platform } from "react-native";
 
 const adapter = new SQLiteAdapter({
@@ -21,12 +20,11 @@ const adapter = new SQLiteAdapter({
 
 const database = new Database({
   adapter,
-  modelClasses: [Day, Entry, Media, Settings],
+  modelClasses: [Day, Entry, Settings],
 });
 
 export default database;
 
 export const daysCollection = database.get<Day>(TableName.DAYS);
 export const entriesCollection = database.get<Entry>(TableName.ENTRIES);
-export const mediaCollection = database.get<Media>(TableName.MEDIA);
 export const settingsCollection = database.get<Settings>(TableName.SETTINGS);

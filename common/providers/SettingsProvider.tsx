@@ -36,7 +36,7 @@ type Observed = {
 };
 
 const EnhancedProvider = withObservables<Observed, Observed>(
-  [],
+  ["settings"],
   ({ settings }) => ({ settings }),
 )(Provider);
 

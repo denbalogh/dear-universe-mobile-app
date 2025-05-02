@@ -4,7 +4,7 @@ import { Button } from "react-native-paper";
 import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import useMediaLibrary from "@/common/hooks/useMediaLibrary";
 import EditableMediaGallery from "./EditableMediaGallery";
-import Media from "@/common/models/Media";
+import { Media } from "@/common/types/Media";
 
 const MediaSection = () => {
   const { media, setMedia } = useEntryEditor();

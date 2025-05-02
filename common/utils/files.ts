@@ -4,10 +4,10 @@ import {
   makeDirectoryAsync,
   moveAsync,
 } from "expo-file-system";
-import { Media } from "../types/Media";
 import { IMAGES_DIR, RECORDINGS_DIR, VIDEOS_DIR } from "../constants/files";
+import { Media } from "../types/Media";
 
-const createDirectoryIfNotExists = async (directory: string) => {
+const createDirIfNotExists = async (directory: string) => {
   const { exists } = await getInfoAsync(directory);
 
   if (!exists) {
@@ -15,7 +15,7 @@ const createDirectoryIfNotExists = async (directory: string) => {
   }
 };
 
-export const moveMediaToAppDirectoryAndGetPaths = async (media: Media[]) => {
+export const moveMediaToAppDirAndGetPaths = async (media: Media[]) => {
   const newFiles: Media[] = [];
 
   for (const { uri, mediaType } of media) {
@@ -23,10 +23,10 @@ export const moveMediaToAppDirectoryAndGetPaths = async (media: Media[]) => {
     let dest;
 
     if (mediaType === "image") {
-      await createDirectoryIfNotExists(IMAGES_DIR);
+      await createDirIfNotExists(IMAGES_DIR);
       dest = `${IMAGES_DIR}${filename}`;
     } else if (mediaType === "video") {
-      await createDirectoryIfNotExists(VIDEOS_DIR);
+      await createDirIfNotExists(VIDEOS_DIR);
       dest = `${VIDEOS_DIR}${filename}`;
     } else {
       // Skip unsupported media types
@@ -40,12 +40,10 @@ export const moveMediaToAppDirectoryAndGetPaths = async (media: Media[]) => {
   return newFiles;
 };
 
-export const moveRecordingToAppDirectoryAndGetPath = async (
-  recordingUri: string,
-) => {
+export const moveRecordingToAppDirAndGetPath = async (recordingUri: string) => {
   if (!recordingUri) return "";
 
-  await createDirectoryIfNotExists(RECORDINGS_DIR);
+  await createDirIfNotExists(RECORDINGS_DIR);
 
   const filename = recordingUri.split("/").pop();
   const dest = `${RECORDINGS_DIR}${filename}`;
@@ -84,10 +82,10 @@ export const moveAndDeleteUpdatedMediaAndGetPaths = async (
       let dest;
 
       if (mediaType === "image") {
-        await createDirectoryIfNotExists(IMAGES_DIR);
+        await createDirIfNotExists(IMAGES_DIR);
         dest = `${IMAGES_DIR}${filename}`;
       } else if (mediaType === "video") {
-        await createDirectoryIfNotExists(VIDEOS_DIR);
+        await createDirIfNotExists(VIDEOS_DIR);
         dest = `${VIDEOS_DIR}${filename}`;
       } else {
         // Skip unsupported media types
@@ -108,9 +106,14 @@ export const moveAndDeleteUpdatedRecordingAndGetPath = async (
   recordingUri: string,
   initialRecordingUri: string,
 ) => {
+  if (initialRecordingUri && !recordingUri) {
+    // Remove deleted recording from phone storage
+    await deleteAsync(initialRecordingUri);
+  }
+
   if (!recordingUri) return "";
 
-  await createDirectoryIfNotExists(RECORDINGS_DIR);
+  await createDirIfNotExists(RECORDINGS_DIR);
 
   // Remove deleted recording from phone storage
   if (initialRecordingUri && recordingUri !== initialRecordingUri) {

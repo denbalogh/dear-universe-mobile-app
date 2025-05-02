@@ -13,26 +13,19 @@ export default appSchema({
   tables: [
     tableSchema({
       name: TableName.DAYS,
-      columns: [{ name: "title", type: "string", isOptional: true }],
+      columns: [{ name: "title", type: "string" }],
     }),
     tableSchema({
       name: TableName.ENTRIES,
       columns: [
         { name: "day_id", type: "string", isIndexed: true },
-        { name: "text", type: "string", isOptional: true },
+        { name: "text", type: "string" },
         { name: "feelings_group", type: "string" },
-        { name: "feelings_emotions", type: "string", isOptional: true },
+        { name: "feelings_emotions", type: "string" },
         { name: "order_index", type: "number" },
         { name: "language", type: "string" },
-        { name: "recording_uri", type: "string", isOptional: true },
-      ],
-    }),
-    tableSchema({
-      name: TableName.MEDIA,
-      columns: [
-        { name: "uri", type: "string" },
-        { name: "mediaType", type: "string" },
-        { name: "entry_id", type: "string", isIndexed: true },
+        { name: "recording_uri", type: "string" },
+        { name: "media", type: "string" },
       ],
     }),
     tableSchema({

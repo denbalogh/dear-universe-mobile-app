@@ -6,10 +6,14 @@ import { isEqual } from "lodash";
 import React, { memo, useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
+import { useBottomSheet } from "./BottomSheetProvider/BottomSheetProvider";
+
+const MAX_LENGTH = 50;
 
 const TitleInput = () => {
   const { showSnackbar } = useSnackbar();
-  const day = useDay();
+  const { snapToIndex } = useBottomSheet();
+  const { day } = useDay();
   const [value, setValue] = useState<string | undefined>(day.title);
 
   const handleOnSubmit = useCallback(async () => {
@@ -17,12 +21,13 @@ const TitleInput = () => {
 
     await database.write(async () => {
       await day.update((d) => {
-        d.title = value;
+        d.title = value || "";
       });
     });
 
     showSnackbar("Title for the day was updated");
-  }, [value, day, showSnackbar]);
+    snapToIndex(0);
+  }, [value, day, showSnackbar, snapToIndex]);
 
   return (
     <TextInput
@@ -37,6 +42,8 @@ const TitleInput = () => {
       mode="outlined"
       autoFocus={!day.title}
       contentStyle={{ marginTop: 5 }}
+      maxLength={MAX_LENGTH}
+      right={<TextInput.Affix text={`${String(value).length}/${MAX_LENGTH}`} />}
     />
   );
 };

@@ -1,74 +1,59 @@
 import { roundness, sizing, spacing } from "@/common/constants/theme";
-import React, { memo, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
-import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
 import AudioPlayer from "@/common/components/AudioPlayer/AudioPlayer";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import CustomMenu from "@/common/components/CustomMenu";
 import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 import MediaGallery from "./MediaGallery/MediaGallery";
-import Media from "@/common/models/Media";
+import { default as EntryModel } from "@/common/models/Entry";
+import Feelings from "./Feelings";
+import { useBottomSheet } from "../../BottomSheetProvider/BottomSheetProvider";
 
-export type EntryData = {
-  text: string;
-  recordingUri: string;
-  media: Media[];
-  feelingsGroup: FEELING_GROUP_NAMES;
-  feelingsEmotions: string[];
+type Props = {
+  entry: EntryModel;
 };
 
-type Props = { isDraft?: boolean } & EntryData;
-
-const Entry = ({
-  text,
-  recordingUri,
-  media,
-  feelingsGroup,
-  feelingsEmotions,
-  isDraft = false,
-}: Props) => {
+const Entry = ({ entry }: Props) => {
   const theme = useCustomTheme();
-  const hasMedia = media.length > 0;
-  const hasRecording = !!recordingUri;
+  const { snapToIndex } = useBottomSheet();
+  const entryEditor = useEntryEditor();
+
+  const isEdited = entryEditor.entryId === entry.id;
+  const entrySource = isEdited ? entryEditor : entry;
+
+  const { text, media, recordingUri, feelingsEmotions, feelingsGroup } =
+    entrySource;
+
   const hasText = !!text;
-  const hasFeelings = feelingsEmotions.length > 0;
+  const hasRecording = !!recordingUri;
+  const hasMedia = media.length > 0;
 
-  const { clear } = useEntryEditor();
-
-  const optionsMenu = useMemo(() => {
-    if (isDraft) {
-      return [
-        {
-          title: "Clear",
-          onPress: clear,
-          leadingIcon: "close",
-        },
-      ];
-    }
-
-    return [];
-  }, [isDraft, clear]);
+  const handleEdit = useCallback(() => {
+    entryEditor.setEntryId(entry.id);
+    entryEditor.setText(entry.text);
+    entryEditor.setRecordingUri(entry.recordingUri);
+    entryEditor.setMedia(entry.media);
+    entryEditor.setFeelingsGroup(entry.feelingsGroup);
+    entryEditor.setFeelingsEmotions(entry.feelingsEmotions);
+    snapToIndex(0);
+  }, [snapToIndex, entry, entryEditor]);
 
   return (
     <Card
-      style={[
-        styles.wrapper,
-        {
-          marginTop: isDraft ? spacing.spaceSmall : 0,
-        },
-      ]}
-      mode={isDraft ? "outlined" : "contained"}
+      style={[styles.wrapper, { marginTop: isEdited ? spacing.spaceSmall : 0 }]}
+      mode={isEdited ? "outlined" : "contained"}
     >
       <Card.Content style={styles.cardContent}>
-        {isDraft && (
+        {isEdited && (
           <Text
             style={[
               styles.draftText,
               { backgroundColor: theme.colors.surface },
             ]}
           >
-            DRAFT
+            EDITING
           </Text>
         )}
         {hasMedia && (
@@ -87,34 +72,35 @@ const Entry = ({
           </Text>
         )}
         <View style={styles.bottomBarWrapper}>
-          <View style={styles.emotionsWrapper}>
-            {(hasFeelings ? feelingsEmotions : [feelingsGroup]).map(
-              (emotion, index) => (
-                <Text
-                  key={`${emotion}-${index}`}
-                  style={[
-                    styles.emotion,
-                    {
-                      backgroundColor:
-                        theme.colors[`${feelingsGroup}Container`],
-                    },
-                  ]}
-                >
-                  {emotion}
-                </Text>
-              ),
-            )}
-          </View>
-          <CustomMenu menuItems={optionsMenu}>
-            {({ openMenu }) => (
-              <IconButton
-                size={sizing.sizeMedium}
-                icon="dots-horizontal"
-                onPress={openMenu}
-                style={styles.bottomBarIconButton}
-              />
-            )}
-          </CustomMenu>
+          <Feelings
+            feelingsGroup={feelingsGroup}
+            feelingsEmotions={feelingsEmotions}
+          />
+          {isEdited ? null : (
+            <CustomMenu
+              menuItems={[
+                {
+                  title: "Edit",
+                  onPress: handleEdit,
+                  leadingIcon: "pencil",
+                },
+                {
+                  title: "Delete",
+                  onPress: () => console.log("Delete entry"),
+                  leadingIcon: "trash-can",
+                },
+              ]}
+            >
+              {({ openMenu }) => (
+                <IconButton
+                  size={sizing.sizeMedium}
+                  icon="dots-horizontal"
+                  onPress={openMenu}
+                  style={styles.bottomBarIconButton}
+                />
+              )}
+            </CustomMenu>
+          )}
         </View>
       </Card.Content>
     </Card>
@@ -126,7 +112,7 @@ export default memo(Entry);
 const styles = StyleSheet.create({
   wrapper: {
     borderRadius: roundness,
-    marginVertical: spacing.spaceSmall,
+    marginBottom: spacing.spaceSmall,
   },
   cardContent: {
     paddingHorizontal: spacing.spaceSmall,
@@ -154,18 +140,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  emotionsWrapper: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    flexShrink: 1,
-  },
-  emotion: {
-    marginRight: spacing.spaceExtraSmall,
-    marginVertical: spacing.spaceExtraSmall,
-    padding: spacing.spaceExtraSmall,
-    borderRadius: roundness,
-  },
   bottomBarIconButton: {
-    height: 25,
+    marginVertical: 0,
+    marginRight: -spacing.spaceExtraSmall,
   },
 });

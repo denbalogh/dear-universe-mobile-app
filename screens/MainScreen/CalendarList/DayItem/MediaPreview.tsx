@@ -8,45 +8,37 @@ import { Media } from "@/common/types/Media";
 import { ITEM_HEIGHT } from "../../constants";
 
 type Props = {
-  date: Date;
+  media: Media[];
 };
 
-const MediaPreview = ({ date }: Props) => {
-  // const theme = useCustomTheme();
-  // const [counter, setCounter] = useState(0);
+const MediaPreview = ({ media }: Props) => {
+  const theme = useCustomTheme();
+  const [counter, setCounter] = useState(0);
 
-  // const { dayObject } = useDayObject(dateId);
-  // const { entryObjects = [] } = dayObject || {};
+  const intervalId = useRef<NodeJS.Timeout>();
 
-  // const media = (entryObjects as EntryData[]).reduce(
-  //   (acc, entry) => (entry?.media ? [...acc, ...entry.media] : acc),
-  //   [] as Media[],
-  // );
+  useEffect(() => {
+    intervalId.current = setInterval(() => {
+      setCounter((curr) => curr + 1);
+    }, 5000);
 
-  // const intervalId = useRef<NodeJS.Timeout>();
+    return () => {
+      clearTimeout(intervalId.current);
+    };
+  }, []);
 
-  // useEffect(() => {
-  //   intervalId.current = setInterval(() => {
-  //     setCounter((curr) => curr + 1);
-  //   }, 5000);
+  if (media.length === 0) {
+    return null;
+  }
 
-  //   return () => {
-  //     clearTimeout(intervalId.current);
-  //   };
-  // }, []);
+  const activeIndex = counter % media.length;
 
-  // if (media.length === 0) {
-  //   return null;
-  // }
-
-  // const activeIndex = counter % media.length;
-
-  // const uri = media[activeIndex].uri;
-  // const hasVideo = media[activeIndex].mediaType === "video";
+  const uri = media[activeIndex].uri;
+  const hasVideo = media[activeIndex].mediaType === "video";
 
   return (
     <View style={styles.wrapper}>
-      {/* <Image style={styles.image} source={{ uri }} />
+      <Image style={styles.image} source={{ uri }} />
       {hasVideo && (
         <View
           style={[
@@ -60,7 +52,7 @@ const MediaPreview = ({ date }: Props) => {
             color={theme.colors.onSurfaceVariant}
           />
         </View>
-      )} */}
+      )}
     </View>
   );
 };

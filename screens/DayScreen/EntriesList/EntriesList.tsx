@@ -3,36 +3,21 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import { spacing } from "@/common/constants/theme";
 import Entry from "./Entry/Entry";
-import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
+import { useDay } from "@/common/providers/DayProvider";
+import EntryDraft from "./Entry/EntryDraft";
 
 const EntriesList = () => {
-  const {
-    entryId,
-    isEmpty,
-    text,
-    recordingUri,
-    media,
-    feelingsEmotions,
-    feelingsGroup,
-  } = useEntryEditor();
-
-  const isDraft = entryId === null;
+  const { entries } = useDay();
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Text style={styles.universeText}>
         The universe is listening. Share your day.
       </Text>
-      {isDraft && !isEmpty && (
-        <Entry
-          text={text}
-          recordingUri={recordingUri}
-          media={media}
-          feelingsEmotions={feelingsEmotions}
-          feelingsGroup={feelingsGroup}
-          isDraft={true}
-        />
-      )}
+      <EntryDraft />
+      {entries.map((entry) => (
+        <Entry key={entry.id} entry={entry} />
+      ))}
     </ScrollView>
   );
 };
