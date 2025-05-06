@@ -1,4 +1,4 @@
-import { spacing } from "@/common/constants/theme";
+import { roundness, spacing } from "@/common/constants/theme";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, IconButton, useTheme } from "react-native-paper";
@@ -35,9 +35,10 @@ const Controls = ({
   onRecordPress,
   onStopPress,
   onRequestPermissionsPress,
-  metering = 1,
+  metering = 0,
 }: Props) => {
   const theme = useTheme();
+
   const scale = useSharedValue(metering);
 
   useEffect(() => {
@@ -54,70 +55,69 @@ const Controls = ({
     };
   });
 
+  const showSideButtons = hasRecordingStarted && !isRecording;
+
   return (
     <View style={styles.wrapper}>
-      <View style={styles.buttonsWrapper}>
-        {hasRecordingStarted && (
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: theme.colors.primaryContainer },
-              styles.meteringAnimated,
-              animatedStyles,
-            ]}
-            testID="metering-animated"
-          />
-        )}
+      {hasRecordingStarted && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: theme.colors.primaryContainer },
+            styles.meteringAnimated,
+            animatedStyles,
+          ]}
+          testID="metering-animated"
+        />
+      )}
+      {showSideButtons && (
         <IconButton
           icon="delete"
           onPress={onDiscardPress}
           iconColor={theme.colors.error}
-          disabled={!hasRecordingStarted || isRecording}
           accessibilityLabel="Discard recording"
+          style={styles.iconButton}
         />
-        {!hasRecordingStarted ? (
-          <Button
-            onPress={hasPermissions ? onRecordPress : onRequestPermissionsPress}
-            icon="record"
-            mode="elevated"
-            style={styles.recordButton}
-            accessibilityLabel={
-              hasPermissions
-                ? "Start recording"
-                : "Request recording permission"
-            }
-          >
-            Record
-          </Button>
-        ) : isRecording ? (
-          <Button
-            onPress={onPausePress}
-            icon="pause"
-            mode="elevated"
-            style={styles.recordButton}
-            accessibilityLabel="Pause recording"
-          >
-            {`Pause | ${time}`}
-          </Button>
-        ) : (
-          <Button
-            onPress={onContinuePress}
-            icon="record"
-            mode="elevated"
-            style={styles.recordButton}
-            accessibilityLabel="Continue recording"
-          >
-            {`Continue | ${time}`}
-          </Button>
-        )}
+      )}
+      {!hasRecordingStarted ? (
+        <Button
+          onPress={hasPermissions ? onRecordPress : onRequestPermissionsPress}
+          icon="microphone"
+          mode="outlined"
+          style={styles.button}
+        >
+          Recording
+        </Button>
+      ) : isRecording ? (
+        <Button
+          onPress={onPausePress}
+          icon="pause"
+          mode="text"
+          style={[styles.button, styles.recordButton]}
+          accessibilityLabel="Pause recording"
+        >
+          {`Pause recording | ${time}`}
+        </Button>
+      ) : (
+        <Button
+          onPress={onContinuePress}
+          icon="record"
+          mode="text"
+          style={[styles.button, styles.recordButton]}
+          accessibilityLabel="Continue recording"
+        >
+          {`Continue recording | ${time}`}
+        </Button>
+      )}
+      {showSideButtons && (
         <IconButton
           icon="stop"
           mode="contained-tonal"
           onPress={onStopPress}
-          disabled={!hasRecordingStarted || isRecording}
           accessibilityLabel="Stop recording"
+          style={styles.iconButton}
         />
-      </View>
+      )}
     </View>
   );
 };
@@ -129,17 +129,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderRadius: roundness,
   },
-  buttonsWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+  button: {
+    flex: 1,
   },
   recordButton: {
-    flex: 1,
-    marginHorizontal: spacing.spaceSmall,
+    marginVertical: spacing.spaceExtraSmall,
+  },
+  iconButton: {
+    marginVertical: 0,
   },
   meteringAnimated: {
-    borderRadius: 100,
+    borderRadius: roundness,
+    transformOrigin: "bottom",
   },
 });

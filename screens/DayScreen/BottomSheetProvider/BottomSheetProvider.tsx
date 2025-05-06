@@ -1,6 +1,9 @@
 import { roundness, spacing } from "@/common/constants/theme";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 import React, {
   createContext,
   ReactNode,
@@ -15,23 +18,26 @@ import TextSection from "./TextSection";
 import RecordingSection from "./RecordingSection";
 import MediaSection from "./MediaSection/MediaSection";
 import FeelingsSection from "./FeelingsSection/FeelingsSection";
-import { Button } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { Stack } from "expo-router";
 import { useDay } from "@/common/providers/DayProvider";
-import ConfirmButton from "../ConfirmButton";
-import { Tabs, TabScreen, TabsProvider } from "react-native-paper-tabs";
+import { Tabs, TabScreen, useTabNavigation } from "react-native-paper-tabs";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
 
 type BottomSheetContextType = {
   snapToIndex: (index: number) => void;
+  switchToTab: (index: number) => void;
 };
 
 const BottomSheetContext = createContext<BottomSheetContextType>({
   snapToIndex: () => {},
+  switchToTab: () => {},
 });
 
 const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const theme = useCustomTheme();
   const { day, entries } = useDay();
+  const { isEmpty } = useEntryEditor();
 
   const hasTitle = !!day.title;
   const hasEntries = entries.length > 0;
@@ -43,15 +49,19 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
 
   const isBottomSheetHidden = activeSnapPoint === -1;
 
-  const ref = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
   const snapToIndex = useCallback((index: number) => {
-    if (ref.current) {
-      ref.current.snapToIndex(index);
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.present();
+      // bottomSheetRef.current.snapToIndex(index);
     }
   }, []);
 
+  const switchToTab = useTabNavigation();
+
   return (
-    <BottomSheetContext.Provider value={{ snapToIndex }}>
+    <BottomSheetContext.Provider value={{ snapToIndex, switchToTab }}>
       <Stack.Screen
         options={{
           navigationBarColor: isBottomSheetHidden
@@ -60,31 +70,31 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
         }}
       />
       {children}
-      <Button
-        icon="arrow-up"
-        onPress={() => snapToIndex(0)}
-        style={styles.showPanelButton}
-      >
-        Show editor
-      </Button>
-      <BottomSheet
-        ref={ref}
-        animateOnMount={false}
-        enablePanDownToClose={true}
-        snapPoints={snapPoints}
-        backgroundStyle={{ backgroundColor: theme.colors.background }}
-        handleStyle={{
-          backgroundColor: theme.colors.background,
-          borderRadius: roundness,
-        }}
-        handleIndicatorStyle={{ backgroundColor: theme.colors.onBackground }}
-        enableDynamicSizing={false}
-        onChange={setActiveSnapPoint}
-        index={initialSnapPoint}
-        android_keyboardInputMode="adjustResize"
-        style={styles.bottomSheet}
-      >
-        <TabsProvider defaultIndex={0}>
+      <BottomSheetModalProvider>
+        <Button
+          icon={isEmpty ? "plus" : "arrow-up"}
+          onPress={() => snapToIndex(0)}
+          style={styles.showPanelButton}
+          mode={isEmpty ? "contained" : "text"}
+        >
+          {isEmpty ? "Add Entry" : "Open editor"}
+        </Button>
+        <BottomSheetModal
+          ref={bottomSheetRef}
+          enablePanDownToClose={true}
+          snapPoints={snapPoints}
+          backgroundStyle={{ backgroundColor: theme.colors.background }}
+          handleStyle={{
+            backgroundColor: theme.colors.background,
+            borderRadius: roundness,
+          }}
+          handleIndicatorStyle={{ backgroundColor: theme.colors.onBackground }}
+          enableDynamicSizing={false}
+          onChange={setActiveSnapPoint}
+          index={initialSnapPoint}
+          android_keyboardInputMode="adjustResize"
+          style={styles.bottomSheet}
+        >
           <Tabs
             showTextLabel={false}
             style={{ backgroundColor: theme.colors.background }}
@@ -110,9 +120,8 @@ const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
               </View>
             </TabScreen>
           </Tabs>
-        </TabsProvider>
-      </BottomSheet>
-      <ConfirmButton />
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     </BottomSheetContext.Provider>
   );
 };
@@ -123,7 +132,7 @@ export default BottomSheetProvider;
 
 const styles = StyleSheet.create({
   showPanelButton: {
-    marginVertical: spacing.spaceSmall,
+    margin: spacing.spaceSmall,
   },
   bottomSheet: {
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",

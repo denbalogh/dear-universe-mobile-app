@@ -2,24 +2,28 @@ import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
 import React, {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useMemo,
   useState,
 } from "react";
 import { Media } from "../types/Media";
 
+export const NEW_ENTRY_ID = "new-entry";
+
 type EntryEditorContextType = {
   entryId: string | null;
-  text: string;
-  recordingUri: string;
-  media: Media[];
-  feelingsGroup: FEELING_GROUP_NAMES;
-  feelingsEmotions: string[];
   setEntryId: (id: string | null) => void;
+  setNewEntryId: () => void;
+  text: string;
   setText: (text: string) => void;
+  recordingUri: string;
   setRecordingUri: (uri: string) => void;
+  media: Media[];
   setMedia: (media: Media[]) => void;
+  feelingsGroup: FEELING_GROUP_NAMES;
   setFeelingsGroup: (group: FEELING_GROUP_NAMES) => void;
+  feelingsEmotions: string[];
   setFeelingsEmotions: (emotions: string[]) => void;
   isEmpty: boolean;
   clear: () => void;
@@ -27,16 +31,17 @@ type EntryEditorContextType = {
 
 const EntryEditorContext = createContext<EntryEditorContextType>({
   entryId: null,
-  text: "",
-  recordingUri: "",
-  media: [],
-  feelingsGroup: FEELING_GROUP_NAMES.NEUTRAL,
-  feelingsEmotions: [],
   setEntryId: () => {},
+  setNewEntryId: () => {},
+  text: "",
   setText: () => {},
+  recordingUri: "",
   setRecordingUri: () => {},
+  media: [],
   setMedia: () => {},
+  feelingsGroup: FEELING_GROUP_NAMES.NEUTRAL,
   setFeelingsGroup: () => {},
+  feelingsEmotions: [],
   setFeelingsEmotions: () => {},
   isEmpty: true,
   clear: () => {},
@@ -71,20 +76,25 @@ const EntryEditorProvider = ({ children }: ProviderProps) => {
     setFeelingsEmotions([]);
   };
 
+  const setNewEntryId = useCallback(() => {
+    setEntryId(NEW_ENTRY_ID);
+  }, []);
+
   return (
     <EntryEditorContext.Provider
       value={{
         entryId,
-        text,
-        recordingUri,
-        media,
-        feelingsGroup,
-        feelingsEmotions,
         setEntryId,
+        setNewEntryId,
+        text,
         setText,
+        recordingUri,
         setRecordingUri,
+        media,
         setMedia,
+        feelingsGroup,
         setFeelingsGroup,
+        feelingsEmotions,
         setFeelingsEmotions,
         isEmpty,
         clear,

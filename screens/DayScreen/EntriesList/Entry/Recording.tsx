@@ -1,42 +1,38 @@
 import { useConfirmDialog } from "@/common/providers/ConfirmDialogProvider";
 import useRecordingPermissions from "@/common/hooks/useRecordingPermissions";
 import {
-  Recording,
+  Recording as AVRecording,
   RecordingOptionsPresets,
   RecordingStatus,
   setAudioModeAsync,
 } from "expo-av/build/Audio";
 import React, { useCallback, useEffect, useState } from "react";
-import RecordingControls, {
-  UPDATE_INTERVAL,
-} from "../EntriesList/Entry/RecordingControls/RecordingControls";
 import useAppState from "@/common/hooks/useAppState";
 import { format } from "date-fns";
-import { normalizeMeteringForScale } from "../EntriesList/Entry/RecordingControls/utils";
-import { StyleSheet, View } from "react-native";
-import { spacing } from "@/common/constants/theme";
-import AudioPlayer from "@/common/components/AudioPlayer/AudioPlayer";
 import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
+import { UPDATE_INTERVAL } from "@/screens/DayScreen/EntriesList/Entry/RecordingControls/RecordingControls";
+import { normalizeMeteringForScale } from "@/screens/DayScreen/EntriesList/Entry/RecordingControls/utils";
+import RecordingControls from "@/screens/DayScreen/EntriesList/Entry/RecordingControls/RecordingControls";
 
-const RecordingSection = () => {
+const Recording = () => {
   const {
     granted: recordingPermissionsGranted,
     requestPermissions: requestRecordingPermissions,
   } = useRecordingPermissions();
   const { showDialog } = useConfirmDialog();
 
-  const [recording, setRecording] = useState<Recording>();
+  const [recording, setRecording] = useState<AVRecording>();
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>();
 
-  const { setRecordingUri, recordingUri } = useEntryEditor();
+  const { setRecordingUri } = useEntryEditor();
 
-  const startRecording = async () => {
+  const startRecording = useCallback(async () => {
     await setAudioModeAsync({
       allowsRecordingIOS: true,
       playsInSilentModeIOS: true,
     });
 
-    const { recording, status } = await Recording.createAsync(
+    const { recording, status } = await AVRecording.createAsync(
       RecordingOptionsPresets.HIGH_QUALITY,
       setRecordingStatus,
       UPDATE_INTERVAL,
@@ -44,7 +40,7 @@ const RecordingSection = () => {
 
     setRecording(recording);
     setRecordingStatus(status);
-  };
+  }, []);
 
   const pauseRecording = useCallback(async () => {
     if (recording) {
@@ -113,54 +109,21 @@ const RecordingSection = () => {
     showDialog("Do you want to discard the recording?", unloadRecording);
   };
 
-  const handleDiscardRecordingUri = () => {
-    showDialog("Do you want to discard the recording?", () =>
-      setRecordingUri(""),
-    );
-  };
-
   return (
-    <View
-      style={[
-        styles.wrapper,
-        {
-          paddingVertical: recordingUri
-            ? spacing.spaceSmall
-            : spacing.spaceMedium,
-        },
-      ]}
-    >
-      {recordingUri ? (
-        <AudioPlayer
-          sourceUri={recordingUri}
-          onDiscard={handleDiscardRecordingUri}
-        />
-      ) : (
-        <RecordingControls
-          time={time}
-          hasRecordingStarted={hasRecordingStarted}
-          isRecording={isRecording}
-          hasPermissions={recordingPermissionsGranted}
-          onRequestPermissionsPress={requestRecordingPermissions}
-          onRecordPress={startRecording}
-          onPausePress={pauseRecording}
-          onStopPress={stopRecording}
-          onDiscardPress={handleDiscardRecording}
-          onContinuePress={continueRecording}
-          metering={normalizedMetering}
-        />
-      )}
-    </View>
+    <RecordingControls
+      time={time}
+      hasRecordingStarted={hasRecordingStarted}
+      isRecording={isRecording}
+      hasPermissions={recordingPermissionsGranted}
+      onRequestPermissionsPress={requestRecordingPermissions}
+      onRecordPress={startRecording}
+      onPausePress={pauseRecording}
+      onStopPress={stopRecording}
+      onDiscardPress={handleDiscardRecording}
+      onContinuePress={continueRecording}
+      metering={normalizedMetering}
+    />
   );
 };
 
-export default RecordingSection;
-
-const styles = StyleSheet.create({
-  wrapper: {
-    paddingHorizontal: spacing.spaceSmall,
-  },
-  deleteButton: {
-    marginTop: spacing.spaceMedium,
-  },
-});
+export default Recording;

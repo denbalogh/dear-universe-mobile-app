@@ -3,6 +3,7 @@ import Settings, { SETTINGS_INSTANCE_ID } from "@/common/models/Settings";
 import { withObservables } from "@nozbe/watermelondb/react";
 import React, {
   createContext,
+  FC,
   ReactNode,
   useContext,
   useEffect,
@@ -35,10 +36,10 @@ type Observed = {
   settings: Settings;
 };
 
-const EnhancedProvider = withObservables<Observed, Observed>(
-  ["settings"],
-  ({ settings }) => ({ settings }),
-)(Provider);
+const EnhancedProvider: FC<ProviderProps> = withObservables<
+  ProviderProps,
+  Observed
+>(["settings"], ({ settings }) => ({ settings }))(Provider);
 
 type SettingsProviderProps = {
   children: ReactNode;

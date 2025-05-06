@@ -10,6 +10,11 @@ import { Button, IconButton } from "react-native-paper";
 import { spacing } from "@/common/constants/theme";
 import { useConfirmDialog } from "@/common/providers/ConfirmDialogProvider";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
+import Sortable, {
+  SortableGridDragEndParams,
+  SortableGridRenderItem,
+} from "react-native-sortables";
+import { Media } from "@/common/types/Media";
 
 type Props = {
   gridSize?: number;
@@ -28,10 +33,10 @@ const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
 
   const [selectedUri, setSelectedUri] = useState<string[]>([]);
 
-  const handleOnImagePress = (index: number) => {
+  const handleOnImagePress = useCallback((index: number) => {
     setInitialIndex(index);
     setIsPreviewVisible(true);
-  };
+  }, []);
 
   const handleOnPreviewClose = () => {
     setIsPreviewVisible(false);
@@ -49,26 +54,13 @@ const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
   const itemCountPlusAddButton = media.length + 1;
 
   const imageStyle = useMemo(
-    () => ({
-      width: imageSize,
-      height: imageSize,
-      marginHorizontal: -0.1,
-    }),
+    () => ({ width: imageSize, height: imageSize }),
     [imageSize],
   );
 
   const handleOrderChange = useCallback(
-    (fromId: string, toId: string) => {
-      const fromIndex = media.findIndex(({ uri }) => uri === fromId);
-      const toIndex = media.findIndex(({ uri }) => uri === toId);
-
-      const newMedia = [...media];
-      const [removed] = newMedia.splice(fromIndex, 1);
-      newMedia.splice(toIndex, 0, removed);
-
-      setMedia(newMedia);
-    },
-    [media, setMedia],
+    ({ data }: SortableGridDragEndParams<Media>) => setMedia(data),
+    [setMedia],
   );
 
   const handleOnSelect = useCallback(
@@ -82,15 +74,6 @@ const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
     },
     [selectedUri],
   );
-
-  const handleOnDragEnd: DndProviderProps["onDragEnd"] = ({ active, over }) => {
-    "worklet";
-    if (over) {
-      const activeId = active.id as string;
-      const overId = over.id as string;
-      runOnJS(handleOrderChange)(activeId, overId);
-    }
-  };
 
   const handleSelectAll = () => {
     setSelectedUri(media.map(({ uri }) => uri));
@@ -109,10 +92,30 @@ const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
     });
   };
 
-  const mediaConcatKey = useMemo(
-    () => media.map(({ uri }) => uri).join(""),
-    [media],
+  const renderItem = useCallback<SortableGridRenderItem<Media>>(
+    ({ item, index }) => (
+      <EditableMediaGalleryItem
+        item={item}
+        index={index}
+        imagesCount={itemCountPlusAddButton}
+        gridSize={gridSize}
+        style={imageStyle}
+        isSelected={selectedUri.includes(item.uri)}
+        onSelect={handleOnSelect}
+        onImagePress={handleOnImagePress}
+      />
+    ),
+    [
+      gridSize,
+      imageStyle,
+      itemCountPlusAddButton,
+      selectedUri,
+      handleOnSelect,
+      handleOnImagePress,
+    ],
   );
+
+  const keyExtractor = useCallback((item: Media) => item.uri, []);
 
   return (
     <>
@@ -133,38 +136,15 @@ const EditableMediaGallery = ({ gridSize = 4, onAddImagePress }: Props) => {
           Delete selected
         </Button>
       </View>
-      <DndProvider
-        key={mediaConcatKey} // When media reorders or changes, we need to reset the DND state, because it was not updating correctly
-        activationDelay={500}
-        onDragEnd={handleOnDragEnd}
-      >
-        <View style={styles.wrapper} onLayout={handleOnLayout}>
-          {media.map((item, index) => {
-            const isSelected = selectedUri.includes(item.uri);
-
-            return (
-              <EditableMediaGalleryItem
-                key={item.uri}
-                item={item}
-                index={index}
-                imagesCount={itemCountPlusAddButton}
-                gridSize={gridSize}
-                style={imageStyle}
-                isSelected={isSelected}
-                onSelect={handleOnSelect}
-                onImagePress={handleOnImagePress}
-              />
-            );
-          })}
-          <AddImageGridItem
-            imagesCount={itemCountPlusAddButton}
-            gridSize={gridSize}
-            style={{ width: imageSize, height: imageSize }}
-            loading={false}
-            onPress={onAddImagePress}
-          />
-        </View>
-      </DndProvider>
+      <View onLayout={handleOnLayout}>
+        <Sortable.Grid
+          columns={gridSize}
+          data={media}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onDragEnd={handleOrderChange}
+        />
+      </View>
       <MediaGalleryPreview
         media={media}
         isVisible={isPreviewVisible}

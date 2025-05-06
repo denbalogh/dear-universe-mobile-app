@@ -1,12 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  Text,
-  IconButton,
-  useTheme,
-  TouchableRipple,
-} from "react-native-paper";
-import { roundness, sizing, spacing } from "@/common/constants/theme";
+import { Text, useTheme, TouchableRipple, Button } from "react-native-paper";
+import { roundness, spacing } from "@/common/constants/theme";
 import { format } from "date-fns/format";
 import { getDate } from "date-fns/getDate";
 import { isToday as isTodayDateFns } from "date-fns/isToday";
@@ -64,7 +59,12 @@ const ListItem = () => {
         borderless: false,
       }}
     >
-      <View style={[styles.itemContentWrapper, { backgroundColor }]}>
+      <View
+        style={[
+          styles.itemContentWrapper,
+          { backgroundColor, borderColor: theme.colors.outline },
+        ]}
+      >
         <View style={styles.dayWrapper}>
           <Text
             variant="displaySmall"
@@ -89,31 +89,21 @@ const ListItem = () => {
           </Text>
         </View>
         {isEmpty ? (
-          <View style={styles.addEntryButtonsWrapper}>
-            <IconButton
-              icon="pen"
-              onPress={() => {}}
-              accessibilityLabel="Add text"
-              size={sizing.sizeMedium}
-            />
-            <IconButton
-              icon="microphone"
-              onPress={() => {}}
-              accessibilityLabel="Add recording"
-              size={sizing.sizeMedium}
-            />
-            <IconButton
-              icon="image-multiple"
-              onPress={() => {}}
-              accessibilityLabel="Add media"
-              size={sizing.sizeMedium}
-            />
-            <IconButton
-              icon="emoticon-neutral-outline"
-              onPress={() => {}}
-              accessibilityLabel="Add feelings"
-              size={sizing.sizeMedium}
-            />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              paddingHorizontal: spacing.spaceSmall,
+            }}
+          >
+            <Text
+              style={{ textAlign: "center", marginBottom: spacing.spaceSmall }}
+            >
+              This day is empty so far
+            </Text>
+            <Button icon="plus" mode="outlined" onPress={() => {}}>
+              Add entry
+            </Button>
           </View>
         ) : (
           <View style={styles.contentWrapper}>

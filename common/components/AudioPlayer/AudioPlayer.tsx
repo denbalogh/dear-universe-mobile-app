@@ -2,20 +2,20 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Slider from "@react-native-community/slider";
 import { Button, IconButton, useTheme } from "react-native-paper";
-import { roundness, sizing } from "@/common/constants/theme";
+import { roundness, sizing, spacing } from "@/common/constants/theme";
 import { Audio, AVPlaybackStatus, AVPlaybackStatusSuccess } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
 import { format } from "date-fns/format";
 import useAppState from "@/common/hooks/useAppState";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
+import { useConfirmDialog } from "@/common/providers/ConfirmDialogProvider";
 
-type Props = {
-  sourceUri: string;
-  onDiscard?: () => void;
-};
-
-const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
+const AudioPlayer = ({ sourceUri }: { sourceUri: string }) => {
   const theme = useTheme();
   const appState = useAppState();
+  const { showDialog } = useConfirmDialog();
+
+  const { entryId, setRecordingUri } = useEntryEditor();
 
   const sound = useRef<Sound>();
   const [soundStatus, setSoundStatus] = useState<AVPlaybackStatus>();
@@ -88,6 +88,12 @@ const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
     }
   }, [appState]);
 
+  const handleRemoveRecording = useCallback(() => {
+    showDialog("Do you want to remove the recording?", () =>
+      setRecordingUri(""),
+    );
+  }, [setRecordingUri, showDialog]);
+
   return (
     <View
       style={[
@@ -133,13 +139,13 @@ const AudioPlayer = ({ sourceUri, onDiscard }: Props) => {
         value={positionMillis}
         onSlidingComplete={(value) => setSoundPosition(value)}
       />
-      {onDiscard && (
+      {entryId && (
         <IconButton
-          icon="delete"
+          icon="trash-can"
           size={sizing.sizeSmall}
-          onPress={onDiscard}
-          iconColor={theme.colors.error}
+          onPress={handleRemoveRecording}
           accessibilityLabel="Discard"
+          style={{ margin: 0 }}
         />
       )}
     </View>
@@ -154,6 +160,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderRadius: roundness,
+    padding: spacing.spaceExtraSmall,
   },
   slider: {
     flex: 1,

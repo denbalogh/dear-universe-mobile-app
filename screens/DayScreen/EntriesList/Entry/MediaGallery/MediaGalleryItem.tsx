@@ -1,8 +1,7 @@
-import React, { memo, useMemo } from "react";
-import { Image, ImageProps } from "expo-image";
+import React, { memo } from "react";
+import { Image } from "expo-image";
 import { Icon, TouchableRipple } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
-import { getBorderRadius } from "./utils";
 import { roundness, sizing, spacing } from "@/common/constants/theme";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import { getColorWithOpacity } from "@/common/utils/style";
@@ -11,26 +10,15 @@ import { Media } from "@/common/types/Media";
 export type MediaGalleryItemProps = {
   item: Media;
   index: number;
-  imagesCount: number;
-  gridSize: number;
   onPress: (index: number) => void;
-  style: ImageProps["style"];
 };
 
 const MediaGalleryItem = ({
   item: { uri, mediaType },
   index,
-  imagesCount,
-  gridSize,
-  style,
   onPress,
 }: MediaGalleryItemProps) => {
   const theme = useCustomTheme();
-  const borderRadii = useMemo(
-    () => getBorderRadius(index, imagesCount, gridSize),
-    [index, imagesCount, gridSize],
-  );
-
   const isVideo = mediaType === "video";
 
   const handleOnPress = () => {
@@ -40,14 +28,13 @@ const MediaGalleryItem = ({
   return (
     <TouchableRipple
       onPress={handleOnPress}
-      style={[styles.touchable, { ...borderRadii }]}
       background={{
         borderless: false,
         foreground: true,
       }}
     >
       <View>
-        <Image style={[style, { ...borderRadii }]} source={uri} />
+        <Image style={styles.image} source={uri} />
         {isVideo && (
           <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
             <View
@@ -77,8 +64,10 @@ const MediaGalleryItem = ({
 export default memo(MediaGalleryItem);
 
 const styles = StyleSheet.create({
-  touchable: {
-    overflow: "hidden",
+  image: {
+    width: "100%",
+    height: 80,
+    borderRadius: roundness,
   },
   playIconWrapper: {
     justifyContent: "center",

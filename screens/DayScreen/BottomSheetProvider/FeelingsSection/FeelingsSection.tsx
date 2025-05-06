@@ -2,20 +2,22 @@ import {
   emotionsGroups,
   FEELING_GROUP_NAMES,
 } from "@/common/constants/feelings";
-import { spacing } from "@/common/constants/theme";
+import { roundness, spacing } from "@/common/constants/theme";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import EmotionChips from "./EmotionChips";
-import { IconButton, Text } from "react-native-paper";
-import { toLower } from "lodash";
+import { TouchableRipple } from "react-native-paper";
 import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
-import { LinearGradient } from "expo-linear-gradient";
 
-const EmojiButton = ({
+const FeelingsGroupButton = ({
   feelingsGroup,
+  isFirst = false,
+  isLast = false,
 }: {
   feelingsGroup: FEELING_GROUP_NAMES;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) => {
   const theme = useCustomTheme();
 
@@ -25,21 +27,6 @@ const EmojiButton = ({
     setFeelingsEmotions,
   } = useEntryEditor();
 
-  const icon = useMemo(() => {
-    switch (feelingsGroup) {
-      case FEELING_GROUP_NAMES.VERY_UNPLEASANT:
-        return "emoticon-dead-outline";
-      case FEELING_GROUP_NAMES.UNPLEASANT:
-        return "emoticon-sad-outline";
-      case FEELING_GROUP_NAMES.NEUTRAL:
-        return "emoticon-neutral-outline";
-      case FEELING_GROUP_NAMES.PLEASANT:
-        return "emoticon-happy-outline";
-      case FEELING_GROUP_NAMES.VERY_PLEASANT:
-        return "emoticon-excited-outline";
-    }
-  }, [feelingsGroup]);
-
   const handleOnPress = () => {
     setFeelingsGroup(feelingsGroup);
     setFeelingsEmotions([]);
@@ -48,22 +35,24 @@ const EmojiButton = ({
   const isActive = activeFeelingsGroup === feelingsGroup;
 
   return (
-    <IconButton
-      icon={icon}
-      onPress={handleOnPress}
-      iconColor={isActive ? "white" : theme.colors[`${feelingsGroup}base`]}
-      style={{
-        backgroundColor: isActive
-          ? theme.colors[`${feelingsGroup}base`]
-          : "transparent",
-      }}
-    />
+    <TouchableRipple style={styles.buttonTouchable} onPress={handleOnPress}>
+      <View
+        style={[
+          styles.buttonContent,
+          isFirst && styles.buttonFirst,
+          isLast && styles.buttonLast,
+          {
+            backgroundColor: isActive
+              ? theme.colors[`${feelingsGroup}base`]
+              : theme.colors[`${feelingsGroup}Container`],
+          },
+        ]}
+      />
+    </TouchableRipple>
   );
 };
 
 const FeelingsSection = () => {
-  const theme = useCustomTheme();
-
   const { feelingsGroup, feelingsEmotions, setFeelingsEmotions } =
     useEntryEditor();
 
@@ -80,32 +69,19 @@ const FeelingsSection = () => {
 
   return (
     <View>
-      <LinearGradient
-        colors={[
-          theme.colors[`${FEELING_GROUP_NAMES.VERY_UNPLEASANT}Container`],
-          theme.colors[`${FEELING_GROUP_NAMES.UNPLEASANT}Container`],
-          theme.colors[`${FEELING_GROUP_NAMES.NEUTRAL}Container`],
-          theme.colors[`${FEELING_GROUP_NAMES.PLEASANT}Container`],
-          theme.colors[`${FEELING_GROUP_NAMES.VERY_PLEASANT}Container`],
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.gradient}
-      >
-        <View style={styles.buttonsWrapper}>
-          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.VERY_UNPLEASANT} />
-          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.UNPLEASANT} />
-          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.NEUTRAL} />
-          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.PLEASANT} />
-          <EmojiButton feelingsGroup={FEELING_GROUP_NAMES.VERY_PLEASANT} />
-        </View>
-      </LinearGradient>
-      <Text style={styles.feelingsGroupTitle} variant="titleLarge">
-        I felt{" "}
-        <Text style={{ color: theme.colors[`${feelingsGroup}base`] }}>
-          {toLower(feelingsGroup)}
-        </Text>
-      </Text>
+      <View style={styles.buttonsWrapper}>
+        <FeelingsGroupButton
+          feelingsGroup={FEELING_GROUP_NAMES.VERY_UNPLEASANT}
+          isFirst={true}
+        />
+        <FeelingsGroupButton feelingsGroup={FEELING_GROUP_NAMES.UNPLEASANT} />
+        <FeelingsGroupButton feelingsGroup={FEELING_GROUP_NAMES.NEUTRAL} />
+        <FeelingsGroupButton feelingsGroup={FEELING_GROUP_NAMES.PLEASANT} />
+        <FeelingsGroupButton
+          feelingsGroup={FEELING_GROUP_NAMES.VERY_PLEASANT}
+          isLast={true}
+        />
+      </View>
       <EmotionChips
         emotions={emotionsGroups[feelingsGroup]}
         activeEmotions={feelingsEmotions}
@@ -119,15 +95,22 @@ const FeelingsSection = () => {
 export default FeelingsSection;
 
 const styles = StyleSheet.create({
-  gradient: {
-    borderRadius: 100,
-  },
   buttonsWrapper: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    marginBottom: spacing.spaceExtraSmall,
   },
-  feelingsGroupTitle: {
-    marginVertical: spacing.spaceMedium,
-    textAlign: "center",
+  buttonTouchable: {
+    width: "20%",
+  },
+  buttonContent: {
+    height: 40,
+    marginHorizontal: 2,
+    borderRadius: roundness,
+  },
+  buttonFirst: {
+    marginLeft: 0,
+  },
+  buttonLast: {
+    marginRight: 0,
   },
 });

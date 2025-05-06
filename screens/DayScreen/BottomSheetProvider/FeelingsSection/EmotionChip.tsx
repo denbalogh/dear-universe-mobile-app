@@ -1,19 +1,22 @@
 import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
+import { spacing } from "@/common/constants/theme";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import React, { useMemo } from "react";
-import { Chip, ChipProps } from "react-native-paper";
+import { StyleSheet } from "react-native";
+import { Chip } from "react-native-paper";
 
 type Props = {
   feelingsGroupName: FEELING_GROUP_NAMES;
   emotion: string;
-} & Omit<ChipProps, "children">;
+  selected?: boolean;
+  onPress?: () => void;
+};
 
 const EmotionChip = ({
   feelingsGroupName,
   emotion,
   selected,
-  style,
-  ...chipProps
+  onPress,
 }: Props) => {
   const theme = useCustomTheme();
 
@@ -33,9 +36,10 @@ const EmotionChip = ({
     <Chip
       selected={selected}
       selectedColor={theme.colors[`on${feelingsGroupName}`]}
-      style={[style, { backgroundColor }]}
+      style={[styles.chip, { backgroundColor }]}
       textStyle={{ color }}
-      {...chipProps}
+      compact={true}
+      onPress={onPress}
     >
       {emotion}
     </Chip>
@@ -43,3 +47,10 @@ const EmotionChip = ({
 };
 
 export default EmotionChip;
+
+const styles = StyleSheet.create({
+  chip: {
+    marginTop: spacing.spaceExtraSmall,
+    marginRight: spacing.spaceExtraSmall,
+  },
+});

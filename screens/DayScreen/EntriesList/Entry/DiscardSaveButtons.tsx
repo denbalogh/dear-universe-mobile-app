@@ -1,41 +1,36 @@
-import { spacing } from "@/common/constants/theme";
-import { useSnackbar } from "@/common/providers/SnackbarProvider";
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { FAB } from "react-native-paper";
-import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
-import { useDay } from "@/common/providers/DayProvider";
+import { sizing } from "@/common/constants/theme";
 import database, { entriesCollection } from "@/common/models/db";
+import { useDay } from "@/common/providers/DayProvider";
+import {
+  NEW_ENTRY_ID,
+  useEntryEditor,
+} from "@/common/providers/EntryEditorProvider";
+import { useSnackbar } from "@/common/providers/SnackbarProvider";
 import {
   moveAndDeleteUpdatedMediaAndGetPaths,
   moveAndDeleteUpdatedRecordingAndGetPath,
   moveMediaToAppDirAndGetPaths,
   moveRecordingToAppDirAndGetPath,
 } from "@/common/utils/files";
-import { useCustomTheme } from "@/common/hooks/useCustomTheme";
+import React from "react";
+import { IconButton } from "react-native-paper";
 
-const ConfirmButton = () => {
-  const theme = useCustomTheme();
+const DiscardSaveButtons = () => {
   const { showSnackbar } = useSnackbar();
-
   const { day, entries } = useDay();
 
   const {
     entryId,
-    isEmpty,
     text,
     recordingUri,
     media,
     feelingsEmotions,
     feelingsGroup,
     clear,
+    isEmpty,
   } = useEntryEditor();
 
-  const isDraft = !entryId;
-
-  if (isDraft && isEmpty) {
-    return null;
-  }
+  const isNewEntry = entryId === NEW_ENTRY_ID;
 
   const handleCreateNewEntry = async () => {
     const newMedia = await moveMediaToAppDirAndGetPaths(media);
@@ -79,8 +74,8 @@ const ConfirmButton = () => {
     showSnackbar("Entry updated");
   };
 
-  const handleOnPress = async () => {
-    if (isDraft) {
+  const handleOnSave = async () => {
+    if (isNewEntry) {
       await handleCreateNewEntry();
     } else {
       await handleUpdateEntry();
@@ -89,29 +84,17 @@ const ConfirmButton = () => {
   };
 
   return (
-    <View style={styles.wrapper}>
-      <FAB
-        icon="close"
-        color={theme.colors.error}
-        onPress={clear}
-        variant="tertiary"
+    <>
+      <IconButton size={sizing.sizeMedium} icon="close" onPress={clear} />
+      <IconButton
+        size={sizing.sizeMedium}
+        icon="check"
+        onPress={handleOnSave}
+        mode="contained"
+        disabled={isEmpty}
       />
-      <FAB icon="check" onPress={handleOnPress} />
-    </View>
+    </>
   );
 };
 
-export default ConfirmButton;
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: "absolute",
-    bottom: spacing.spaceLarge,
-    right: 0,
-    left: 0,
-    marginHorizontal: spacing.spaceMedium,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-});
+export default DiscardSaveButtons;

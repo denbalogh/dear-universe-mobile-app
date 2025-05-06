@@ -1,13 +1,13 @@
 import React, { memo, useMemo } from "react";
 import { Image, ImageProps } from "expo-image";
-import { Checkbox, Icon, TouchableRipple } from "react-native-paper";
+import { Checkbox, Icon } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { getBorderRadius } from "../../EntriesList/Entry/MediaGallery/utils";
 import { roundness, sizing, spacing } from "@/common/constants/theme";
 import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import { getColorWithOpacity } from "@/common/utils/style";
-import { Draggable, Droppable } from "@mgcrea/react-native-dnd";
 import { Media } from "@/common/types/Media";
+import Sortable from "react-native-sortables";
 
 export type EditableMediaGalleryItemProps = {
   item: Media;
@@ -40,42 +40,35 @@ const EditableMediaGalleryItem = ({
   const backgroundColor = getColorWithOpacity(theme.colors.background, 0.6);
 
   return (
-    <Draggable id={uri} activeOpacity={0.8}>
-      <Droppable id={uri} activeOpacity={0.2}>
+    <View>
+      <Sortable.Pressable
+        style={[styles.touchable, { ...borderRadii }]}
+        onPress={() => onImagePress(index)}
+        onLongPress={() => console.log("long pressed")}
+      >
         <View>
-          <TouchableRipple
-            style={[styles.touchable, { ...borderRadii }]}
-            background={{
-              borderless: false,
-              foreground: true,
-            }}
-            onPress={() => onImagePress(index)}
-          >
-            <View>
-              <Image style={[style, { ...borderRadii }]} source={uri} />
-              {isVideo && (
-                <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
-                  <View style={[styles.playIcon, { backgroundColor }]}>
-                    <Icon
-                      source="play"
-                      size={sizing.sizeMedium}
-                      color={theme.colors.onBackground}
-                    />
-                  </View>
-                </View>
-              )}
+          <Image style={[style, { ...borderRadii }]} source={uri} />
+          {isVideo && (
+            <View style={[StyleSheet.absoluteFill, styles.playIconWrapper]}>
+              <View style={[styles.playIcon, { backgroundColor }]}>
+                <Icon
+                  source="play"
+                  size={sizing.sizeMedium}
+                  color={theme.colors.onBackground}
+                />
+              </View>
             </View>
-          </TouchableRipple>
-          <View style={[styles.select, { backgroundColor }]}>
-            <Checkbox
-              status={isSelected ? "checked" : "unchecked"}
-              onPress={() => onSelect(uri)}
-              color={theme.colors.onBackground}
-            />
-          </View>
+          )}
         </View>
-      </Droppable>
-    </Draggable>
+      </Sortable.Pressable>
+      <View style={[styles.select, { backgroundColor }]}>
+        <Checkbox
+          status={isSelected ? "checked" : "unchecked"}
+          onPress={() => onSelect(uri)}
+          color={theme.colors.onBackground}
+        />
+      </View>
+    </View>
   );
 };
 

@@ -10,13 +10,11 @@ import { DaySearchTermParams } from "@/screens/DayScreen/types";
 import EntriesList from "./EntriesList/EntriesList";
 import TitleInput from "./TitleInput";
 import DayProvider from "@/common/providers/DayProvider";
-import BottomSheetProvider from "./BottomSheetProvider/BottomSheetProvider";
 
 const DayScreen = () => {
   const theme = useTheme();
   const router = useRouter();
   const { bottom } = useSafeAreaInsets();
-
   const { dayId } = useLocalSearchParams<DaySearchTermParams>();
 
   const fullDate = useMemo(() => formatFullDate(parseDayId(dayId)), [dayId]);
@@ -41,10 +39,8 @@ const DayScreen = () => {
         />
         <DayProvider dayId={dayId}>
           <EntryEditorProvider>
-            <BottomSheetProvider>
-              <TitleInput />
-              <EntriesList />
-            </BottomSheetProvider>
+            <TitleInput />
+            <EntriesList />
           </EntryEditorProvider>
         </DayProvider>
       </View>

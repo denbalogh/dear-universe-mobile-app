@@ -1,29 +1,22 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { LayoutChangeEvent, StyleSheet } from "react-native";
+import React, { useCallback, useState } from "react";
 import MediaGalleryItem from "./MediaGalleryItem";
-import { View } from "react-native";
 import MediaGalleryPreview from "./MediaGalleryPreview/MediaGalleryPreview";
 import { Media } from "@/common/types/Media";
+import Sortable, {
+  SortableGridDragEndParams,
+  SortableGridRenderItem,
+} from "react-native-sortables";
+import { spacing } from "@/common/constants/theme";
 
 type Props = {
   media: Media[];
-  gridSize?: number;
+  onOrderChange: (media: Media[]) => void;
+  disabled: boolean;
 };
 
-const MediaGallery = ({ media, gridSize = 5 }: Props) => {
+const MediaGallery = ({ media, onOrderChange, disabled }: Props) => {
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
-  const [gridWidth, setGridWidth] = useState(0);
-
-  const handleOnLayout = ({
-    nativeEvent: {
-      layout: { width },
-    },
-  }: LayoutChangeEvent) => {
-    setGridWidth(width);
-  };
-
-  const imageSize = gridWidth / gridSize;
 
   const handleOnPreviewClose = () => {
     setIsPreviewVisible(false);
@@ -34,42 +27,46 @@ const MediaGallery = ({ media, gridSize = 5 }: Props) => {
     setIsPreviewVisible(true);
   }, []);
 
-  const imageStyle = useMemo(
-    () => ({ width: imageSize, height: imageSize, marginHorizontal: -0.001 }),
-    [imageSize],
+  const keyExtractor = useCallback((item: Media) => item.uri, []);
+
+  const renderItem = useCallback<SortableGridRenderItem<Media>>(
+    ({ item, index }) => (
+      <MediaGalleryItem
+        key={item.uri}
+        item={item}
+        index={index}
+        onPress={handleOnImagePress}
+      />
+    ),
+    [handleOnImagePress],
+  );
+
+  const handleDragEnd = useCallback(
+    (params: SortableGridDragEndParams<Media>) => onOrderChange(params.data),
+    [onOrderChange],
   );
 
   return (
-    <View onLayout={handleOnLayout} style={styles.wrapper}>
-      {media.map((item, index) => {
-        return (
-          <MediaGalleryItem
-            key={item.uri}
-            item={item}
-            index={index}
-            imagesCount={media.length}
-            gridSize={gridSize}
-            style={imageStyle}
-            onPress={handleOnImagePress}
-          />
-        );
-      })}
+    <>
+      <Sortable.Grid
+        rowGap={spacing.spaceExtraSmall}
+        columnGap={spacing.spaceExtraSmall}
+        columns={Math.min(5, media.length)}
+        data={media}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        onDragEnd={handleDragEnd}
+        sortEnabled={!disabled}
+        enableActiveItemSnap={false}
+      />
       <MediaGalleryPreview
         media={media}
         onClose={handleOnPreviewClose}
         isVisible={isPreviewVisible}
         initialIndex={initialIndex}
       />
-    </View>
+    </>
   );
 };
 
 export default MediaGallery;
-
-const styles = StyleSheet.create({
-  wrapper: {
-    width: "100%",
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-});

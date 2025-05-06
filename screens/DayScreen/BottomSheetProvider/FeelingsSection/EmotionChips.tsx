@@ -1,8 +1,8 @@
 import { FEELING_GROUP_NAMES } from "@/common/constants/feelings";
-import { spacing } from "@/common/constants/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import EmotionChip from "./EmotionChip";
+import { spacing } from "@/common/constants/theme";
 
 type Props = {
   emotions: string[];
@@ -26,10 +26,8 @@ const EmotionChips = ({
           key={emotion}
           feelingsGroupName={feelingsGroupName}
           emotion={emotion}
-          style={styles.emotion}
           onPress={() => onEmotionPress(emotion)}
           selected={isActiveEmotion}
-          elevated={true}
         />
       );
     })}
@@ -42,9 +40,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
-  },
-  emotion: {
-    margin: spacing.spaceExtraSmall,
+    justifyContent: "space-between",
+    marginRight: -spacing.spaceExtraSmall,
   },
 });
