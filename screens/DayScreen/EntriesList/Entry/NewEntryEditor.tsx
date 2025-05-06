@@ -14,7 +14,7 @@ import DiscardSaveButtons from "./DiscardSaveButtons";
 import useAddMedia from "../../hooks/useAddMedia";
 import Recording from "./Recording";
 import { Media } from "@/common/types/Media";
-import FeelingsSection from "../../BottomSheetProvider/FeelingsSection/FeelingsSection";
+import FeelingsSection from "./FeelingsSection/FeelingsSection";
 
 const NewEntryEditor = () => {
   const theme = useCustomTheme();

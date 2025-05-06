@@ -17,7 +17,7 @@ import { StyleSheet, View } from "react-native";
 import TextSection from "./TextSection";
 import RecordingSection from "./RecordingSection";
 import MediaSection from "./MediaSection/MediaSection";
-import FeelingsSection from "./FeelingsSection/FeelingsSection";
+import FeelingsSection from "../EntriesList/Entry/FeelingsSection/FeelingsSection";
 import { Button, Text } from "react-native-paper";
 import { Stack } from "expo-router";
 import { useDay } from "@/common/providers/DayProvider";

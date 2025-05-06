@@ -23,7 +23,8 @@ import Sortable from "react-native-sortables";
 import DiscardSaveButtons from "./DiscardSaveButtons";
 import useAddMedia from "../../hooks/useAddMedia";
 import Recording from "./Recording";
-import FeelingsSection from "../../BottomSheetProvider/FeelingsSection/FeelingsSection";
+import FeelingsSection from "./FeelingsSection/FeelingsSection";
+import CustomMenu from "@/common/components/CustomMenu";
 
 type Props = {
   entry: EntryModel;
@@ -131,6 +132,11 @@ const Entry = ({ entry }: Props) => {
             { justifyContent: !isEdited ? "space-between" : "flex-end" },
           ]}
         >
+          <Sortable.Handle>
+            <View style={{ padding: spacing.spaceSmall }}>
+              <Icon source="drag" size={sizing.sizeMedium} />
+            </View>
+          </Sortable.Handle>
           {!isEdited && (
             <Feelings
               feelingsGroup={feelingsGroup}
@@ -142,7 +148,7 @@ const Entry = ({ entry }: Props) => {
             <DiscardSaveButtons />
           ) : (
             <>
-              <IconButton
+              {/* <IconButton
                 size={sizing.sizeMedium}
                 icon="trash-can"
                 onPress={handleOnDeletePress}
@@ -151,12 +157,25 @@ const Entry = ({ entry }: Props) => {
                 size={sizing.sizeMedium}
                 icon="pencil"
                 onPress={setEntryEditor}
-              />
-              <Sortable.Handle>
-                <View style={{ padding: spacing.spaceSmall }}>
-                  <Icon source="drag" size={sizing.sizeMedium} />
-                </View>
-              </Sortable.Handle>
+              /> */}
+              <CustomMenu
+                menuItems={[
+                  {
+                    leadingIcon: "pencil",
+                    title: "Edit",
+                    onPress: setEntryEditor,
+                  },
+                  {
+                    leadingIcon: "trash-can",
+                    title: "Delete",
+                    onPress: handleOnDeletePress,
+                  },
+                ]}
+              >
+                {({ openMenu }) => (
+                  <IconButton onPress={openMenu} icon="dots-vertical" />
+                )}
+              </CustomMenu>
             </>
           )}
         </View>

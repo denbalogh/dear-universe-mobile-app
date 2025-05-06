@@ -4,7 +4,7 @@ import { useCustomTheme } from "@/common/hooks/useCustomTheme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Chip, Text, TouchableRipple } from "react-native-paper";
-import EmotionChip from "../../BottomSheetProvider/FeelingsSection/EmotionChip";
+import EmotionChip from "./FeelingsSection/EmotionChip";
 
 type Props = {
   feelingsGroup: FEELING_GROUP_NAMES;
@@ -13,26 +13,24 @@ type Props = {
 };
 
 const Feelings = ({ feelingsGroup, feelingsEmotions, disabled }: Props) => {
+  const theme = useCustomTheme();
   const hasFeelings = feelingsEmotions.length > 0;
 
   return (
-    <TouchableRipple
-      onPress={() => console.log("Pressed feelings")}
-      style={styles.wrapper}
-      disabled={disabled}
+    <View
+      style={[
+        styles.wrapper,
+        { backgroundColor: theme.colors[`${feelingsGroup}Container`] },
+      ]}
     >
-      <View style={styles.emotionsWrapper}>
-        {(hasFeelings ? feelingsEmotions : [feelingsGroup]).map(
-          (emotion, index) => (
-            <EmotionChip
-              key={`${emotion}-${index}`}
-              feelingsGroupName={feelingsGroup}
-              emotion={emotion}
-            />
-          ),
-        )}
-      </View>
-    </TouchableRipple>
+      {(hasFeelings ? feelingsEmotions : [feelingsGroup]).map(
+        (emotion, index) => (
+          <Text key={index} style={styles.emotion}>
+            {emotion}
+          </Text>
+        ),
+      )}
+    </View>
   );
 };
 
@@ -41,15 +39,14 @@ export default Feelings;
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    paddingBottom: spacing.spaceExtraSmall,
-  },
-  emotionsWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    flexShrink: 1,
+    justifyContent: "center",
+    borderRadius: roundness,
+    padding: spacing.spaceExtraSmall,
+    marginHorizontal: spacing.spaceExtraSmall,
   },
   emotion: {
-    marginRight: spacing.spaceExtraSmall,
-    marginTop: spacing.spaceExtraSmall,
+    margin: spacing.spaceExtraSmall,
   },
 });

@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
     marginRight: -spacing.spaceExtraSmall,
+    marginVertical: spacing.spaceExtraSmall,
   },
 });
