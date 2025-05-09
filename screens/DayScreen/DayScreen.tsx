@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useMemo } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar, useTheme } from "react-native-paper";
 import { formatFullDate, parseDayId } from "@/common/utils/date";
@@ -17,7 +17,7 @@ const DayScreen = () => {
   const { bottom } = useSafeAreaInsets();
   const { dayId } = useLocalSearchParams<DaySearchTermParams>();
 
-  const fullDate = useMemo(() => formatFullDate(parseDayId(dayId)), [dayId]);
+  const fullDate = formatFullDate(parseDayId(dayId));
 
   return (
     <FlingGesture onFlingRight={router.back}>

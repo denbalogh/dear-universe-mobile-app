@@ -6,7 +6,6 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
-  useMemo,
   useState,
 } from "react";
 import Entry from "../models/Entry";
@@ -19,13 +18,10 @@ const DayContext = createContext<{ day: Day | null; entries: Entry[] }>({
 
 export const useDay = () => {
   const { day, entries } = useContext(DayContext);
-  return useMemo(
-    () => ({
-      day: day as Day, // Cast to Day, since we know it's not null
-      entries,
-    }),
-    [day, entries],
-  );
+  return {
+    day: day as Day, // Cast to Day, since we know it's not null
+    entries,
+  };
 };
 
 type ProviderProps = {

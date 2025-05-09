@@ -4,7 +4,6 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
-  useMemo,
   useState,
 } from "react";
 import { Media } from "../types/Media";
@@ -61,12 +60,6 @@ const EntryEditorProvider = ({ children }: ProviderProps) => {
   );
   const [feelingsEmotions, setFeelingsEmotions] = useState<string[]>([]);
 
-  const isEmpty = useMemo(() => {
-    return (
-      !text && !recordingUri && media.length === 0 && !feelingsEmotions.length
-    );
-  }, [text, recordingUri, media, feelingsEmotions]);
-
   const clear = () => {
     setEntryId(null);
     setText("");
@@ -79,6 +72,9 @@ const EntryEditorProvider = ({ children }: ProviderProps) => {
   const setNewEntryId = useCallback(() => {
     setEntryId(NEW_ENTRY_ID);
   }, []);
+
+  const isEmpty =
+    !text && !recordingUri && media.length === 0 && !feelingsEmotions.length;
 
   return (
     <EntryEditorContext.Provider

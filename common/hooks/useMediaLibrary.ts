@@ -4,7 +4,7 @@ import {
   MediaType,
   useMediaLibraryPermissions,
 } from "expo-image-picker";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 
 const useMediaLibrary = (
@@ -17,10 +17,7 @@ const useMediaLibrary = (
   const [libraryPermissions, requestLibraryPermission] =
     useMediaLibraryPermissions();
 
-  const isLibraryAllowed = useMemo(
-    () => libraryPermissions?.status === "granted",
-    [libraryPermissions],
-  );
+  const isLibraryAllowed = libraryPermissions?.status === "granted";
 
   const handleOpenLibrary = useCallback(async () => {
     const selectedImages = await launchImageLibraryAsync({

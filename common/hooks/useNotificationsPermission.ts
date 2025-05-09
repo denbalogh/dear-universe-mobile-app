@@ -1,12 +1,8 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import usePermissionDeniedSnackbar from "./usePermissionDeniedSnackbar";
 import { requestPermissionsAsync } from "expo-notifications";
 
-type ReturnType = {
-  requestPermissions: (onSuccess: () => void) => Promise<void>;
-};
-
-const useNotificationsPermissions = (): ReturnType => {
+const useNotificationsPermissions = () => {
   const { showPermissionDeniedSnackbar } = usePermissionDeniedSnackbar();
 
   const requestNotificationsPermissions = useCallback(
@@ -24,12 +20,9 @@ const useNotificationsPermissions = (): ReturnType => {
     [showPermissionDeniedSnackbar],
   );
 
-  return useMemo(
-    () => ({
-      requestPermissions: requestNotificationsPermissions,
-    }),
-    [requestNotificationsPermissions],
-  );
+  return {
+    requestPermissions: requestNotificationsPermissions,
+  };
 };
 
 export default useNotificationsPermissions;

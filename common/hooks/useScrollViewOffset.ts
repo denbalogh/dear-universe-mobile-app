@@ -1,12 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 
-type ReturnType = {
-  scrollOffset: number;
-  handleOnScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-};
-
-const useScrollViewOffset = (): ReturnType => {
+const useScrollViewOffset = () => {
   const [scrollOffset, setScrollOffset] = useState(0);
 
   const handleOnScroll = useCallback(
@@ -20,10 +15,7 @@ const useScrollViewOffset = (): ReturnType => {
     [],
   );
 
-  return useMemo(
-    () => ({ scrollOffset, handleOnScroll }),
-    [scrollOffset, handleOnScroll],
-  );
+  return { scrollOffset, handleOnScroll };
 };
 
 export default useScrollViewOffset;

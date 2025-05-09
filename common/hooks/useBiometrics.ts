@@ -6,13 +6,9 @@ import {
   LocalAuthenticationResult,
   SecurityLevel,
 } from "expo-local-authentication";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
-type ReturnType = {
-  authenticate: (promptMessage: string) => Promise<LocalAuthenticationResult>;
-};
-
-const useBiometrics = (): ReturnType => {
+const useBiometrics = () => {
   const { showSnackbar } = useSnackbar();
 
   const authenticate = useCallback(
@@ -39,7 +35,7 @@ const useBiometrics = (): ReturnType => {
     [showSnackbar],
   );
 
-  return useMemo(() => ({ authenticate }), [authenticate]);
+  return { authenticate };
 };
 
 export default useBiometrics;

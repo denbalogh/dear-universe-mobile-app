@@ -1,38 +1,25 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Appearance } from "react-native";
 import { useSettings } from "../providers/SettingsProvider";
 
 type ColorScheme = "light" | "dark";
 
-type ReturnType = {
-  statusBarStyle: ColorScheme;
-  colorScheme: ColorScheme;
-};
-
-const useActiveColorScheme = (): ReturnType => {
+const useActiveColorScheme = () => {
   const { theme } = useSettings();
 
-  const [systemColorScheme, setSystemColorScheme] = useState(
-    Appearance.getColorScheme(),
+  const [systemColorScheme, setSystemColorScheme] = useState<ColorScheme>(
+    Appearance.getColorScheme() || "light",
   );
 
   Appearance.addChangeListener(({ colorScheme }) => {
-    setSystemColorScheme(colorScheme);
+    setSystemColorScheme(colorScheme || "light");
   });
 
-  const activeColorScheme = useMemo(() => {
-    return theme === "system" ? systemColorScheme : theme;
-  }, [theme, systemColorScheme]);
+  const activeColorScheme = theme === "system" ? systemColorScheme : theme;
+  const statusBarStyle: ColorScheme =
+    activeColorScheme === "dark" ? "light" : "dark";
 
-  return useMemo(() => {
-    const statusBarStyle = activeColorScheme === "dark" ? "light" : "dark";
-    const colorScheme = activeColorScheme as ColorScheme;
-
-    return {
-      statusBarStyle,
-      colorScheme,
-    };
-  }, [activeColorScheme]);
+  return { statusBarStyle, colorScheme: activeColorScheme };
 };
 
 export default useActiveColorScheme;

@@ -6,7 +6,6 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
-  useMemo,
   useState,
 } from "react";
 import { Drawer } from "react-native-drawer-layout";
@@ -26,13 +25,8 @@ const SettingsDrawerProvider = ({ children }: { children: ReactNode }) => {
   const segments = useSegments();
   const { termsAndPoliciesUnderstood = false } = {};
 
-  const isOnLockScreen = useMemo(() => {
-    return segments.length === 1 && segments[0] === "lock";
-  }, [segments]);
-
-  const isOnTermsScreen = useMemo(() => {
-    return segments.length === 1 && segments[0] === "terms";
-  }, [segments]);
+  const isOnLockScreen = segments.length === 1 && segments[0] === "lock";
+  const isOnTermsScreen = segments.length === 1 && segments[0] === "terms";
 
   const isSwipeDisabled =
     isOnLockScreen || (isOnTermsScreen && !termsAndPoliciesUnderstood);

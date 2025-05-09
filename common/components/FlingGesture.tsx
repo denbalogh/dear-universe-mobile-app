@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode } from "react";
 import {
   Directions,
   Gesture,
@@ -19,23 +19,17 @@ const FlingGesture = ({
   onFlingDown = () => {},
   children,
 }: Props) => {
-  const flingLeft = useMemo(() => {
-    return Gesture.Fling()
-      .direction(Directions.LEFT)
-      .onEnd(() => runOnJS(onFlingLeft)());
-  }, [onFlingLeft]);
+  const flingLeft = Gesture.Fling()
+    .direction(Directions.LEFT)
+    .onEnd(() => runOnJS(onFlingLeft)());
 
-  const flingRight = useMemo(() => {
-    return Gesture.Fling()
-      .direction(Directions.RIGHT)
-      .onEnd(() => runOnJS(onFlingRight)());
-  }, [onFlingRight]);
+  const flingRight = Gesture.Fling()
+    .direction(Directions.RIGHT)
+    .onEnd(() => runOnJS(onFlingRight)());
 
-  const flingDown = useMemo(() => {
-    return Gesture.Fling()
-      .direction(Directions.DOWN)
-      .onEnd(() => runOnJS(onFlingDown)());
-  }, [onFlingDown]);
+  const flingDown = Gesture.Fling()
+    .direction(Directions.DOWN)
+    .onEnd(() => runOnJS(onFlingDown)());
 
   return (
     <GestureDetector gesture={Gesture.Race(flingLeft, flingRight, flingDown)}>
