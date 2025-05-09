@@ -1,25 +1,18 @@
 // Polyfill for React Native's `crypto` module
 import "react-native-get-random-values";
 
-import { Stack, usePathname } from "expo-router";
-import Storybook from "../.storybook";
-import { RealmProvider } from "@realm/react";
-import { schemas } from "@/models";
-import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
-import { ConfirmDialogContextProvider } from "@/contexts/ConfirmDialogContext";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
-import { SettingsDrawerContextProvider } from "@/contexts/SettingsDrawerContext";
-import PaperProviderWithTheme from "@/components/PaperProviderWithTheme.tsx/PaperProviderWithTheme";
+import PaperProviderWithTheme from "@/common/providers/PaperProviderWithTheme";
 import { setNotificationHandler } from "expo-notifications";
-import { useEffect } from "react";
-import { logScreenView } from "@react-native-firebase/analytics";
-import { getApp } from "@react-native-firebase/app";
-import logCrashlytics from "@/utils/logCrashlytics";
-import { EXPO_CONFIG_EXTRA } from "@/constants/expoConfig";
+import ConfirmDialogProvider from "@/common/providers/ConfirmDialogProvider";
+import SnackbarProvider from "@/common/providers/SnackbarProvider";
+import SettingsDrawerProvider from "@/common/providers/SettingsDrawerProvider/SettingsDrawerProvider";
+import SettingsProvider from "@/common/providers/SettingsProvider";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -34,39 +27,20 @@ setNotificationHandler({
   }),
 });
 
-const App = () => {
-  const pathname = usePathname();
-
-  useEffect(() => {
-    logCrashlytics("App mounted.");
-  }, []);
-
-  useEffect(() => {
-    logCrashlytics(`Navigated to ${pathname}`);
-    logScreenView(getApp().analytics(), { screen_name: pathname });
-  }, [pathname]);
-
+export default function Layout() {
   return (
-    <RealmProvider schema={schemas} schemaVersion={1} path="default.realm">
+    <SettingsProvider>
       <PaperProviderWithTheme>
-        <ConfirmDialogContextProvider>
-          <SnackbarContextProvider>
+        <ConfirmDialogProvider>
+          <SnackbarProvider>
             <GestureHandlerRootView>
-              <SettingsDrawerContextProvider>
+              <SettingsDrawerProvider>
                 <Stack screenOptions={{ animation: "fade_from_bottom" }} />
-              </SettingsDrawerContextProvider>
+              </SettingsDrawerProvider>
             </GestureHandlerRootView>
-          </SnackbarContextProvider>
-        </ConfirmDialogContextProvider>
+          </SnackbarProvider>
+        </ConfirmDialogProvider>
       </PaperProviderWithTheme>
-    </RealmProvider>
+    </SettingsProvider>
   );
-};
-
-let AppEntryPoint = App;
-
-if (EXPO_CONFIG_EXTRA.storybookEnabled === "true") {
-  AppEntryPoint = Storybook;
 }
-
-export default AppEntryPoint;

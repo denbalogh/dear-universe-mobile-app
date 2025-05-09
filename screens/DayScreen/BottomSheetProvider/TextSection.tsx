@@ -1,0 +1,37 @@
+import { roundness, spacing } from "@/common/constants/theme";
+import { useCustomTheme } from "@/common/hooks/useCustomTheme";
+import { useEntryEditor } from "@/common/providers/EntryEditorProvider";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import React from "react";
+import { StyleSheet } from "react-native";
+
+const TextSection = () => {
+  const theme = useCustomTheme();
+  const { text, setText } = useEntryEditor();
+
+  return (
+    <BottomSheetTextInput
+      placeholder="Type it out..."
+      value={text}
+      onChangeText={setText}
+      scrollEnabled={false}
+      style={[styles.input, { color: theme.colors.onBackground }]}
+      placeholderTextColor={theme.colors.onBackground}
+      multiline={true}
+      cursorColor={theme.colors.secondary}
+      selectionColor={theme.colors.secondaryContainer}
+      selectionHandleColor={theme.colors.secondary}
+      submitBehavior="blurAndSubmit"
+    />
+  );
+};
+
+export default TextSection;
+
+const styles = StyleSheet.create({
+  input: {
+    padding: spacing.spaceSmall,
+    borderRadius: roundness,
+    textAlignVertical: "top",
+  },
+});

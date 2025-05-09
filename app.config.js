@@ -1,4 +1,5 @@
-import "dotenv/config";
+const GOOGLE_ADS_ANDROID_APP_ID = "ca-app-pub-3470994410920852~8621670596";
+const GOOGLE_ADS_IOS_APP_ID = "ca-app-pub-3470994410920852~4803018548";
 
 module.exports = {
   expo: {
@@ -13,8 +14,6 @@ module.exports = {
       bundleIdentifier: "com.denbalogh.dearuniverseapp",
       requireFullScreen: true,
       supportsTablet: false,
-      googleServicesFile:
-        process.env.GOOGLE_SERVICES_IOS ?? "./GoogleService-Info.plist",
       infoPlist: {
         NSMicrophoneUsageDescription:
           "The app needs access to your microphone in order to record audio for your entry.",
@@ -27,8 +26,6 @@ module.exports = {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#FDF8FF",
       },
-      googleServicesFile:
-        process.env.GOOGLE_SERVICES_ANDROID ?? "./google-services.json",
       permissions: [
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.RECEIVE_BOOT_COMPLETED",
@@ -36,14 +33,11 @@ module.exports = {
     },
     plugins: [
       "expo-router",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      "@react-native-firebase/crashlytics",
       [
         "react-native-google-mobile-ads",
         {
-          androidAppId: process.env.GOOGLE_ADS_ANDROID_APP_ID,
-          iosAppId: process.env.GOOGLE_ADS_IOS_APP_ID,
+          androidAppId: GOOGLE_ADS_ANDROID_APP_ID,
+          iosAppId: GOOGLE_ADS_IOS_APP_ID,
           delayAppMeasurementInit: true,
         },
       ],
@@ -59,10 +53,19 @@ module.exports = {
         {
           ios: {
             useFrameworks: "static",
+            extraPods: [
+              {
+                name: "simdjson",
+                configurations: ["Debug", "Release"],
+                path: "../node_modules/@nozbe/simdjson",
+                modular_headers: true,
+              },
+            ],
           },
           android: {
             extraProguardRules:
               "-keep class com.google.android.gms.internal.consent_sdk.** { *; }",
+            kotlinVersion: "1.9.25",
           },
         },
       ],
@@ -79,17 +82,7 @@ module.exports = {
         "expo-image-picker",
         {
           photosPermission:
-            "The app needs access to your media library in order to add photos to your entry.",
-        },
-      ],
-      [
-        "expo-camera",
-        {
-          cameraPermission:
-            "The app needs access to your camera in order to take photos/videos for your entry.",
-          microphonePermission:
-            "The app needs access to your microphone in order to record audio in the videos.",
-          recordAudioAndroid: true,
+            "The app needs access to your media library in order to add photos/videos to your entry.",
         },
       ],
       [
@@ -137,16 +130,15 @@ module.exports = {
     },
     extra: {
       eas: {
-        projectId: process.env.EAS_PROJECT_ID,
+        projectId: "179716c1-8891-4d76-8d1f-1e24dfb89a6d",
       },
-      storybookEnabled: process.env.STORYBOOK_ENABLED,
-      hideAds: process.env.HIDE_ADS,
-      adsTest: process.env.ADS_TEST,
+      GOOGLE_ADS_ANDROID_APP_ID: GOOGLE_ADS_ANDROID_APP_ID,
+      GOOGLE_ADS_IOS_APP_ID: GOOGLE_ADS_IOS_APP_ID,
     },
     owner: "denbalogh",
     newArchEnabled: true,
     updates: {
-      url: process.env.EAS_UPDATES_URL,
+      url: "https://u.expo.dev/179716c1-8891-4d76-8d1f-1e24dfb89a6d",
     },
     runtimeVersion: "1.0.0",
   },
